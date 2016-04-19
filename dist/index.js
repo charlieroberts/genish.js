@@ -6,5 +6,6 @@ module.exports = {
   abs: require('./abs.js'),
   param: require('./param.js'),
   add: require('./add.js'),
-  mul: require('./mul.js')
+  mul: require('./mul.js'),
+  accum: require('./accum.js')
 };

@@ -6,11 +6,11 @@ let assert = require('assert'),
     gen = genlib.gen,
     mul = genlib.mul,
     add = genlib.add,
-    param = genlib.param
+    param = genlib.param,
+    accum = genlib.accum
 
 
 describe( 'monops', ()=> {
-
   it( 'should generate the absolute value of -.5 as .5', ()=> {
 
     let answer = .5,
@@ -24,7 +24,6 @@ describe( 'monops', ()=> {
 })
 
 describe( 'binnops', ()=> {
-
   it( 'should add 4 and 7 to get 11', ()=> {
 
     let answer = 11,
@@ -54,7 +53,7 @@ describe( 'params', ()=> {
         out   = gen.createCallback( graph ),
         result = out( 42 )
     
-    assert( result, answer )
+    assert.equal( result, answer )
   })
 
 })
@@ -66,6 +65,46 @@ describe( 'complex', ()=> {
         out    = gen.createCallback( graph ),
         result = out()
 
-    assert( result, answer )
+    assert.equal( result, answer )
+  })
+})
+
+describe( 'accum', ()=>{
+  it( 'should ramp to .5 with an increment of .1 after five executions', ()=> {
+    let answer = .5,
+        graph  = accum(.1),
+        out    = gen.createCallback( graph ),
+        result = 0
+    
+    for( let i = 0; i < 4; i++ ) out()
+    
+    result = out()
+    
+    assert.equal( result, answer )
+  })
+
+  it( 'should return to its min value of 0 on the 11th execution with an increment of .1', ()=> {
+    let answer = 0,
+        graph  = accum(.1),
+        out    = gen.createCallback( graph ),
+        result = 0
+    
+    for( let i = 0; i < 10; i++ ) out()
+
+    result = out()
+    assert.equal( result, answer )
+  })
+
+  it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
+    let answer = .0,
+        graph  = accum( .1, param() ),
+        out    = gen.createCallback( graph ),
+        result = 0
+
+    out(); out(); out();
+
+    result = out( 1 )
+
+    assert.equal( result, answer )
   })
 })
