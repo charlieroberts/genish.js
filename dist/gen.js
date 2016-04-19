@@ -28,6 +28,8 @@ module.exports = {
 
   parameters: [],
 
+  memo: {},
+
   /* export
    *
    * place gen functions into another object for easier reference
@@ -51,15 +53,22 @@ module.exports = {
    */
 
   createCallback: function createCallback(ugen) {
+    this.memo = {};
     this.closures.clear();
     this.parameters.length = 0;
 
-    var functionBody = ugen.gen(),
-        closures = [].concat(_toConsumableArray(this.closures)),
-        _function = void 0,
+    this.functionBody = "'use strict';\n";
+
+    var _function = void 0,
+        closures = void 0,
         argumentNames = void 0,
         argumentValues = void 0;
 
+    //if( Array.isArray( functionBody ) ) {
+    //  this.memo[ functionBody[0] ] = functionBody[0] + '_out'
+    //}
+    ugen.gen();
+    closures = [].concat(_toConsumableArray(this.closures));
     // entries in closure set take from { name, function }
     argumentNames = closures.map(function (v) {
       return Object.keys(v)[0];
@@ -74,7 +83,13 @@ module.exports = {
 
     argumentNames = argumentNames.concat(this.parameters);
 
-    _function = new Function(argumentNames, 'return ' + functionBody);
+    this.functionBody = this.functionBody.split('\n');
+    var lastidx = this.functionBody.length - 1;
+    this.functionBody[lastidx] = 'return ' + this.functionBody[lastidx];
+    this.functionBody = this.functionBody.join('\n');
+
+    console.log(this.functionBody);
+    _function = new Function(argumentNames, this.functionBody);
 
     _function.closures = argumentValues;
 
@@ -92,8 +107,32 @@ module.exports = {
     return out;
   },
   getInputs: function getInputs(ugen) {
-    var inputs = ugen.inputs.map(function (v) {
-      return (typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object' ? v.gen() : v;
+    var _this = this;
+
+    var inputs = ugen.inputs.map(function (input) {
+      var isObject = (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object',
+          out = void 0;
+      if (isObject) {
+        if (_this.memo[input.name]) {
+          console.log("MEMO", input.name, _this.memo[input.name]);
+          out = _this.memo[input.name];
+        } else {
+          var code = input.gen();
+          if (Array.isArray(code)) {
+            _this.functionBody += code[1];
+            out = code[0];
+          } else {
+            out = code;
+          }
+        }
+      } else {
+        out = input;
+      }
+
+      if (out === undefined) {
+        console.log('undefined input: ', input);
+      }
+      return out;
     });
 
     return inputs;

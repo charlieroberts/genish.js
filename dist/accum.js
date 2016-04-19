@@ -5,17 +5,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _gen = require('./gen.js');
 
 var proto = {
-  name: 'accum',
+  basename: 'accum',
 
   gen: function gen() {
     var code = void 0,
-        inputs = _gen.getInputs(this);
+        inputs = _gen.getInputs(this),
+        functionBody = void 0;
 
-    _gen.closures.add(_defineProperty({}, this.name, this.boundCallback));
+    _gen.closures.add(_defineProperty({}, this.name, this));
 
-    code = this.name + '( ' + inputs[0] + ',' + inputs[1] + ' )';
+    functionBody = this.callback.toString().split('\n');
+    functionBody = functionBody.slice(1, -2);
+    functionBody = functionBody.join('\n');
 
-    return code;
+    this.properties.forEach(function (v, idx) {
+      return functionBody = functionBody.replace(v, inputs[idx]);
+    });
+
+    functionBody = functionBody.replace(/this/gi, this.name);
+    functionBody += '\n';
+    // put this at end so previous properties replacement doesn't interfere
+
+    _gen.memo[this.name] = this.name + '.value';
+
+    return [this.name + '.value', functionBody];
   }
 };
 
@@ -33,6 +46,7 @@ module.exports = function (incr) {
     basename: 'accum',
     uid: _gen.getUID(),
     inputs: [incr, reset],
+    properties: ['_incr', '_reset'],
 
     callback: function callback(_incr, _reset) {
 
@@ -49,13 +63,6 @@ module.exports = function (incr) {
   });
 
   ugen.name = '' + ugen.basename + ugen.uid;
-  ugen.boundCallback = function () {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return ugen.callback.apply(ugen, args);
-  };
 
   return ugen;
 };

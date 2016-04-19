@@ -1,17 +1,28 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'accum',
+  basename:'accum',
 
   gen() {
     let code,
-        inputs = gen.getInputs( this )
-    
-    gen.closures.add({ [this.name]: this.boundCallback })
+        inputs = gen.getInputs( this ),
+        functionBody
 
-    code = `${this.name}( ${inputs[0]},${inputs[1]} )`
+    gen.closures.add({ [this.name]: this }) 
+
+    functionBody = this.callback.toString().split('\n')
+    functionBody = functionBody.slice( 1, -2 )
+    functionBody = functionBody.join('\n')
     
-    return code
+    this.properties.forEach( (v,idx) => functionBody = functionBody.replace( v, inputs[ idx ] ) )
+
+    functionBody = functionBody.replace( /this/gi, this.name )
+    functionBody += '\n'; 
+    // put this at end so previous properties replacement doesn't interfere
+    
+    gen.memo[ this.name ] = this.name + '.value'
+
+    return [ this.name + '.value', functionBody ]
   }
 }
 
@@ -25,6 +36,7 @@ module.exports = ( incr, reset=0, min=0, max=1 ) => {
     basename:'accum',
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
+    properties: [ '_incr','_reset' ],
 
     callback( _incr, _reset ) {
       
@@ -42,7 +54,6 @@ module.exports = ( incr, reset=0, min=0, max=1 ) => {
   })
   
   ugen.name = `${ugen.basename}${ugen.uid}`
-  ugen.boundCallback = (...args) => { return ugen.callback.apply( ugen, args ) }
 
   return ugen
 }

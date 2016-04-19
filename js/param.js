@@ -4,8 +4,12 @@ let proto = {
   basename:'p',
 
   gen() {
+    if( gen.memo[ this.name ] ) return gen.memo[ this.name ]
+    
     gen.parameters.push( this.name )
-  
+    
+    gen.memo[ this.name ] = this.name
+
     return this.name
   } 
 }

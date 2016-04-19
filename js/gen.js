@@ -20,6 +20,8 @@ module.exports = {
   closures:new Set(),
 
   parameters:[],
+
+  memo: {},
   
   /* export
    *
@@ -43,15 +45,23 @@ module.exports = {
    */
 
   createCallback( ugen ) {
+    this.memo = {}
     this.closures.clear()
     this.parameters.length = 0
 
-    let functionBody = ugen.gen(),
-        closures = [ ...this.closures ],
-        _function,
+    this.functionBody = "'use strict';\n"
+
+    let _function,
+        closures,
         argumentNames,
         argumentValues
+    
 
+    //if( Array.isArray( functionBody ) ) {
+    //  this.memo[ functionBody[0] ] = functionBody[0] + '_out'
+    //} 
+    ugen.gen()
+    closures = [...this.closures]
     // entries in closure set take from { name, function }
     argumentNames = closures.map( v => Object.keys( v )[0] ) 
     
@@ -60,7 +70,13 @@ module.exports = {
     
     argumentNames = argumentNames.concat( this.parameters )
 
-    _function = new Function( argumentNames, `return ${functionBody}` )
+    this.functionBody = this.functionBody.split('\n')
+    let lastidx = this.functionBody.length - 1
+    this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
+    this.functionBody = this.functionBody.join('\n')
+    
+    console.log( this.functionBody )
+    _function = new Function( argumentNames, this.functionBody )
 
     _function.closures = argumentValues
     
@@ -79,8 +95,30 @@ module.exports = {
   },
 
   getInputs( ugen ) {
-    let inputs = ugen.inputs.map( v => {
-      return typeof v === 'object' ? v.gen() : v
+    let inputs = ugen.inputs.map( input => {
+      let isObject = typeof input === 'object',
+          out
+      if( isObject ) {
+        if( this.memo[ input.name ] ) {
+          console.log("MEMO", input.name, this.memo[ input.name ] )
+          out = this.memo[ input.name ]
+        }else{
+          let code = input.gen()
+          if( Array.isArray( code ) ) {
+            this.functionBody += code[1]
+            out = code[0]
+          }else{
+            out = code
+          }
+        }
+      }else{
+        out = input
+      }
+
+      if( out === undefined ) {
+        console.log( 'undefined input: ', input )
+      }
+      return out
     })
 
     return inputs
