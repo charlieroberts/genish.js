@@ -120,4 +120,15 @@ describe( 'complex', ()=> {
 
     assert.equal( result, answer )
   })
+
+  it( 'should create a sine wave', ()=> {
+    let frequency = param(),
+        phasor  = accum( mul(frequency,1/44100) ),
+        oscgraph = sin( mul( phasor, Math.PI * 2 ) ), 
+        osc  = gen.createCallback( oscgraph )
+    
+    for( let i = 0; i < 10; i++ ) console.log( osc(2400) )
+    
+    assert.ok(1)
+  })
 })

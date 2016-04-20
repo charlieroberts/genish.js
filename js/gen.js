@@ -54,14 +54,14 @@ module.exports = {
     let _function,
         closures,
         argumentNames,
-        argumentValues
-    
+        argumentValues,
+        headOutput
 
-    //if( Array.isArray( functionBody ) ) {
-    //  this.memo[ functionBody[0] ] = functionBody[0] + '_out'
-    //} 
-    ugen.gen()
+    headOutput = ugen.gen()
+    this.functionBody += Array.isArray( headOutput ) ? headOutput[1] + '\n' + headOutput[0] : headOutput
+
     closures = [...this.closures]
+
     // entries in closure set take from { name, function }
     argumentNames = closures.map( v => Object.keys( v )[0] ) 
     
@@ -75,7 +75,6 @@ module.exports = {
     this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
     this.functionBody = this.functionBody.join('\n')
     
-    console.log( this.functionBody )
     _function = new Function( argumentNames, this.functionBody )
 
     _function.closures = argumentValues
@@ -100,7 +99,7 @@ module.exports = {
           out
       if( isObject ) {
         if( this.memo[ input.name ] ) {
-          console.log("MEMO", input.name, this.memo[ input.name ] )
+          //console.log("MEMO", input.name, this.memo[ input.name ] )
           out = this.memo[ input.name ]
         }else{
           let code = input.gen()

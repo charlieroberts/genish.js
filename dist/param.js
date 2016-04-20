@@ -6,8 +6,6 @@ var proto = {
   basename: 'p',
 
   gen: function gen() {
-    if (_gen.memo[this.name]) return _gen.memo[this.name];
-
     _gen.parameters.push(this.name);
 
     _gen.memo[this.name] = this.name;

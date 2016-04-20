@@ -10,25 +10,18 @@ var proto = {
   gen: function gen() {
     var code = void 0,
         inputs = _gen.getInputs(this),
-        functionBody = void 0;
+        functionBody = this.callback(this.name, inputs[0], inputs[1]);
 
     _gen.closures.add(_defineProperty({}, this.name, this));
-
-    functionBody = this.callback.toString().split('\n');
-    functionBody = functionBody.slice(1, -2);
-    functionBody = functionBody.join('\n');
-
-    this.properties.forEach(function (v, idx) {
-      return functionBody = functionBody.replace(v, inputs[idx]);
-    });
-
-    functionBody = functionBody.replace(/this/gi, this.name);
-    functionBody += '\n';
-    // put this at end so previous properties replacement doesn't interfere
 
     _gen.memo[this.name] = this.name + '.value';
 
     return [this.name + '.value', functionBody];
+  },
+  callback: function callback(_name, _incr, _reset) {
+    var out = _name + '.value += ' + _incr + '\n\n    if( ' + _reset + ' >= 1 ) {\n      ' + _name + '.value = ' + _name + '.min\n    }else{\n      if( ' + _name + '.value > ' + _name + '.max ) ' + _name + '.value = ' + _name + '.min\n    }\n    ';
+
+    return out;
   }
 };
 
@@ -43,23 +36,9 @@ module.exports = function (incr) {
     min: min,
     max: max,
     value: 0,
-    basename: 'accum',
     uid: _gen.getUID(),
     inputs: [incr, reset],
-    properties: ['_incr', '_reset'],
-
-    callback: function callback(_incr, _reset) {
-
-      this.value += _incr;
-
-      if (_reset >= 1) {
-        this.value = this.min;
-      } else {
-        if (this.value > this.max) this.value = this.min;
-      }
-
-      return this.value;
-    }
+    properties: ['_incr', '_reset']
   });
 
   ugen.name = '' + ugen.basename + ugen.uid;
