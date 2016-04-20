@@ -123,7 +123,7 @@ describe( 'complex', ()=> {
 
   it( 'should create a sine wave', ()=> {
     let frequency = param(),
-        phasor  = accum( mul(frequency,1/44100) ),
+        phasor  = accum( mul( frequency, 1/44100 ) ),
         oscgraph = sin( mul( phasor, Math.PI * 2 ) ), 
         osc  = gen.createCallback( oscgraph )
     

@@ -66,6 +66,9 @@ module.exports = {
         headOutput = void 0;
 
     headOutput = ugen.gen();
+
+    // if gen returns array, add ugen callback body and then return name of ugen
+    // otherwise, return what ever the output of the call to .gen() is
     this.functionBody += Array.isArray(headOutput) ? headOutput[1] + '\n' + headOutput[0] : headOutput;
 
     closures = [].concat(_toConsumableArray(this.closures));
@@ -85,8 +88,12 @@ module.exports = {
     argumentNames = argumentNames.concat(this.parameters);
 
     this.functionBody = this.functionBody.split('\n');
+
     var lastidx = this.functionBody.length - 1;
+
+    // insert return keyword
     this.functionBody[lastidx] = 'return ' + this.functionBody[lastidx];
+
     this.functionBody = this.functionBody.join('\n');
 
     _function = new Function(argumentNames, this.functionBody);
@@ -138,15 +145,3 @@ module.exports = {
     return inputs;
   }
 };
-
-//import abs   from './abs.js'
-//import param from './param.js'
-//import add   from './add.js'
-//import mul   from './add.js'
-
-//Object.assign( gen, {
-//  abs,
-//  param,
-//  add,
-//  mul
-//})
