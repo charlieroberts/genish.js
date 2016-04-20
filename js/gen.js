@@ -10,6 +10,7 @@ module.exports = {
 
   accum:0,
   getUID() { return this.accum++ },
+  debug:false,
   
   /* closures
    *
@@ -86,7 +87,7 @@ module.exports = {
 
     _function.closures = argumentValues
     
-    //console.log( _function.toString() )
+    if( this.debug ) console.log( _function.toString() )
     
     // XXX can the array slicing / concatentation be optimized?
     // perhaps the closure functions could instead be properties of the function
@@ -121,9 +122,9 @@ module.exports = {
         out = input
       }
 
-      if( out === undefined ) {
-        console.log( 'undefined input: ', input )
-      }
+      //if( out === undefined ) {
+      //  console.log( 'undefined input: ', input )
+      //}
       return out
     })
 

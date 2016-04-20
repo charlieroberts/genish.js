@@ -1,7 +1,19 @@
+/* gen.tests.js
+ *
+ * This file is for testing the functionality of the gen.js library.
+ *
+ * To run: mocha gen.tests.js
+ *
+ * ... after installing all necessary dependencies by running npm install in the
+ * top level of the genish.js repo.
+ *
+ */
+
+
 'use strict'
 
 let assert = require('assert'),
-    genlib = require( './dist/index.js' ), 
+    genlib = require( '../dist/index.js' ), 
     abs = genlib.abs,
     gen = genlib.gen,
     mul = genlib.mul,
@@ -10,6 +22,21 @@ let assert = require('assert'),
     accum = genlib.accum,
     sin   = genlib.sin
 
+describe( 'gen', ()=> {
+  it( 'should get back two numbers when fetching the arguments from an add ugen', ()=> {
+    let answer = [5,3],
+        graph  = add(5,3),
+        result = gen.getInputs( graph )
+
+    assert.deepEqual( result, answer )
+  })
+  it( 'should generate unique ids', ()=> {
+    let answer = gen.getUID(),
+        result = gen.getUID()
+
+    assert.notEqual( result, answer )
+  })
+})
 
 describe( 'monops', ()=> {
   it( 'should generate the absolute value of -.5 as .5', ()=> {
@@ -123,12 +150,25 @@ describe( 'complex', ()=> {
 
   it( 'should create a sine wave', ()=> {
     let frequency = param(),
-        phasor  = accum( mul( frequency, 1/44100 ) ),
-        oscgraph = sin( mul( phasor, Math.PI * 2 ) ), 
-        osc  = gen.createCallback( oscgraph )
+        phasor    = accum( mul( frequency, 1/44100 ) ),
+        oscgraph  = sin( mul( phasor, Math.PI * 2 ) ), 
+        osc       = gen.createCallback( oscgraph ),
+        answer = [
+          0.3353173459027643,
+          0.6318084552474613,
+          0.8551427630053461,
+          0.9794604955306667,
+          0.9903669614948382,
+          0.8865993063730001,
+          0.6801727377709197,
+          0.3949892902309387,
+          0.06407021998071323,
+          -0.27426751067492994
+       ],
+       result = []
     
-    for( let i = 0; i < 10; i++ ) console.log( osc(2400) )
+    for( let i = 0; i < 10; i++ ) result[i] = osc(2400) 
     
-    assert.ok(1)
+    assert.deepEqual( result, answer )
   })
 })
