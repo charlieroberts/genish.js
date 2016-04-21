@@ -10,13 +10,14 @@ var proto = {
   gen: function gen() {
     var code = void 0,
         inputs = _gen.getInputs(this),
-        functionBody = this.callback(this.name, inputs[0], inputs[1]);
+        genName = 'gen.' + this.name,
+        functionBody = this.callback(genName, inputs[0], inputs[1]);
 
     _gen.closures.add(_defineProperty({}, this.name, this));
 
-    _gen.memo[this.name] = this.name + '.value';
+    _gen.memo[this.name] = genName + '.value';
 
-    return [this.name + '.value', functionBody];
+    return [genName + '.value', functionBody];
   },
   callback: function callback(_name, _incr, _reset) {
     var out = _name + '.value += ' + _incr + '\n\n    if( ' + _reset + ' >= 1 ) {\n      ' + _name + '.value = ' + _name + '.min\n    }else{\n      if( ' + _name + '.value > ' + _name + '.max ) ' + _name + '.value = ' + _name + '.min\n    }\n    ';

@@ -8,12 +8,9 @@ let proto = {
         inputs = gen.getInputs( this )
     
     if( isNaN( inputs[0] ) ) {
-      //for ( let key in this.closures ) {
-      //  gen.closures.add({ [key]:this.closures[key] })
-      //}
-      
-      gen.closures.add({ sin: Math.sin })
-      out = `sin( ${inputs[0]} )`
+      gen.closures.add({ 'sin': Math.sin })
+
+      out = `gen.sin( ${inputs[0]} )` 
 
     } else {
       out = Math.sin( parseFloat( inputs[0] ) )

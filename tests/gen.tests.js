@@ -22,6 +22,8 @@ let assert = require('assert'),
     accum = genlib.accum,
     sin   = genlib.sin
 
+//gen.debug = true
+
 describe( 'gen', ()=> {
   it( 'should get back two numbers when fetching the arguments from an add ugen', ()=> {
     let answer = [5,3],

@@ -7,20 +7,14 @@ var _gen = require('./gen.js');
 var proto = {
   name: 'abs',
 
-  closures: {
-    abs: Math.abs
-  },
-
   gen: function gen() {
     var out = void 0,
         inputs = _gen.getInputs(this);
 
     if (isNaN(inputs[0])) {
-      for (var key in this.closures) {
-        _gen.closures.add(_defineProperty({}, key, this.closures[key]));
-      }
+      _gen.closures.add(_defineProperty({}, 'gen.' + this.name, Math.abs));
 
-      out = 'abs( ' + inputs[0] + ' )';
+      out = 'gen.abs( ' + inputs[0] + ' )';
     } else {
       out = Math.abs(parseFloat(inputs[0]));
     }

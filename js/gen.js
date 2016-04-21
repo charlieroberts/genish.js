@@ -66,13 +66,13 @@ module.exports = {
 
     closures = [...this.closures]
 
-    // entries in closure set take from { name, function }
-    argumentNames = closures.map( v => Object.keys( v )[0] ) 
+    // entries in closure set take from { name: function/object }
+    // argumentNames = closures.map( v => Object.keys( v )[0] ) 
     
     // XXX errr... this could be more readable. Essenetially, loop through names, find closure with name, return closure value
-    argumentValues= argumentNames.map( key => closures.find( v => v[key] !== undefined )[ key ] )
+    //argumentValues= argumentNames.map( key => closures.find( v => v[key] !== undefined )[ key ] )
     
-    argumentNames = argumentNames.concat( this.parameters )
+    argumentNames = this.parameters
 
     this.functionBody = this.functionBody.split('\n')
 
@@ -82,21 +82,23 @@ module.exports = {
     this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
     
     this.functionBody = this.functionBody.join('\n')
-    console.log( 'before function builder' )
 
-    let buildString = `return function foo(${argumentNames.join(',')}){\n${this.functionBody}\n}`
+    let buildString = `return function gen(${argumentNames.join(',')}){\n${this.functionBody}\n}`
     
-    console.log( 'build string:', buildString )
-    let functionBuilder = new Function( 
-      null,
+    if( this.debug ) console.log( buildString ) 
+    let functionBuilder = new Function(
       buildString      
     )
 
-    console.log( 'FUNCTION', functionBuilder.toString() )
-    
     _function = functionBuilder() //new Function( argumentNames, this.functionBody )
+    
+    closures.forEach( dict => {
+      let name = Object.keys( dict )[0],
+          value = dict[ name ]
 
-    _function.closures = argumentValues
+      _function[ name ] = value
+    })
+    //_function.closures = argumentValues
     
     if( this.debug ) console.log( _function.toString() )
     
@@ -104,12 +106,12 @@ module.exports = {
     // perhaps the closure functions could instead be properties of the function
     // itself, referenced via 'this' in the function body, instead of inlined
     // function arguments. Then no concatenation would be required.
-    let out = function() { 
-      let args = Array.prototype.slice.call( arguments, 0 )
-      return _function.apply( null, _function.closures.concat( args ) ) 
-    }
+    //let out = function() { 
+    //  let args = Array.prototype.slice.call( arguments, 0 )
+    //  return _function.apply( null, _function.closures.concat( args ) ) 
+    //}
 
-    return out
+    return _function
   },
 
   getInputs( ugen ) {

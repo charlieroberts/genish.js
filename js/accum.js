@@ -6,13 +6,14 @@ let proto = {
   gen() {
     let code,
         inputs = gen.getInputs( this ),
-        functionBody = this.callback( this.name, inputs[0], inputs[1] )
+        genName = 'gen.' + this.name,
+        functionBody = this.callback( genName, inputs[0], inputs[1] )
 
-    gen.closures.add({ [this.name]: this }) 
+    gen.closures.add({ [ this.name ]: this }) 
 
-    gen.memo[ this.name ] = this.name + '.value'
+    gen.memo[ this.name ] = genName + '.value'
     
-    return [ this.name + '.value', functionBody ]
+    return [ genName + '.value', functionBody ]
   },
 
   callback( _name, _incr, _reset ) {
