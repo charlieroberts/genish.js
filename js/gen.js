@@ -15,7 +15,7 @@ module.exports = {
   /* closures
    *
    * Functions that are included as arguments to master callback. Examples: Math.abs, Math.random etc.
-   *
+   * XXX Should probably be renamed callbackProperties or something similar... closures are no longer used.
    */
 
   closures:new Set(),
@@ -46,74 +46,59 @@ module.exports = {
    */
 
   createCallback( ugen ) {
+    let callback, graphOutput
+
     this.memo = {}
     this.closures.clear()
     this.parameters.length = 0
 
     this.functionBody = "'use strict';\n"
 
-    let _function,
-        closures,
-        argumentNames,
-        argumentValues,
-        headOutput
+    // call .gen() on the head of the graph we are generating the callback for
+    graphOutput = ugen.gen()
 
-    headOutput = ugen.gen()
+    // if .gen() returns array, add ugen callback to our output functions body
+    // and then return name of ugen. Otherwise, return output of call to .gen()
+    this.functionBody += Array.isArray( graphOutput ) ? graphOutput[1] + '\n' + graphOutput[0] : graphOutput
 
-    // if gen returns array, add ugen callback body and then return name of ugen
-    // otherwise, return what ever the output of the call to .gen() is
-    this.functionBody += Array.isArray( headOutput ) ? headOutput[1] + '\n' + headOutput[0] : headOutput
-
-    closures = [...this.closures]
-
-    // entries in closure set take from { name: function/object }
-    // argumentNames = closures.map( v => Object.keys( v )[0] ) 
-    
-    // XXX errr... this could be more readable. Essenetially, loop through names, find closure with name, return closure value
-    //argumentValues= argumentNames.map( key => closures.find( v => v[key] !== undefined )[ key ] )
-    
-    argumentNames = this.parameters
-
+    // split body to inject return keyword on last line
     this.functionBody = this.functionBody.split('\n')
-
+    
+    // get index of last line
     let lastidx = this.functionBody.length - 1
 
     // insert return keyword
     this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
     
+    // reassemble function body
     this.functionBody = this.functionBody.join('\n')
 
-    let buildString = `return function gen(${argumentNames.join(',')}){\n${this.functionBody}\n}`
+    // we can only dynamically create a named function by dynamically creating another function
+    // to construct the named function! sheesh...
+    let buildString = `return function gen( ${this.parameters.join(',')} ){ \n${this.functionBody}\n }`
     
     if( this.debug ) console.log( buildString ) 
-    let functionBuilder = new Function(
-      buildString      
-    )
 
-    _function = functionBuilder() //new Function( argumentNames, this.functionBody )
+    callback = new Function( buildString )()
     
-    closures.forEach( dict => {
+    // assign properties to named function
+    for( let dict of this.closures.values() ) {
       let name = Object.keys( dict )[0],
           value = dict[ name ]
 
-      _function[ name ] = value
-    })
-    //_function.closures = argumentValues
+      callback[ name ] = value
+    }
     
-    if( this.debug ) console.log( _function.toString() )
-    
-    // XXX can the array slicing / concatentation be optimized?
-    // perhaps the closure functions could instead be properties of the function
-    // itself, referenced via 'this' in the function body, instead of inlined
-    // function arguments. Then no concatenation would be required.
-    //let out = function() { 
-    //  let args = Array.prototype.slice.call( arguments, 0 )
-    //  return _function.apply( null, _function.closures.concat( args ) ) 
-    //}
-
-    return _function
+    return callback
   },
-
+  
+  /* getInputs
+   *
+   * Given an argument ugen, extract its inputs. If they are numbers, return the numebrs. If
+   * they are ugens, call .gen() on the ugen, memoize the result and return the result. If the
+   * ugen has previously been memoized return the memoized value.
+   *
+   */
   getInputs( ugen ) {
     let inputs = ugen.inputs.map( input => {
       let isObject = typeof input === 'object',
@@ -135,9 +120,6 @@ module.exports = {
         out = input
       }
 
-      //if( out === undefined ) {
-      //  console.log( 'undefined input: ', input )
-      //}
       return out
     })
 
