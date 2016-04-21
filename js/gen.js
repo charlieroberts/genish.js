@@ -82,8 +82,19 @@ module.exports = {
     this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
     
     this.functionBody = this.functionBody.join('\n')
+    console.log( 'before function builder' )
+
+    let buildString = `return function foo(${argumentNames.join(',')}){\n${this.functionBody}\n}`
     
-    _function = new Function( argumentNames, this.functionBody )
+    console.log( 'build string:', buildString )
+    let functionBuilder = new Function( 
+      null,
+      buildString      
+    )
+
+    console.log( 'FUNCTION', functionBuilder.toString() )
+    
+    _function = functionBuilder() //new Function( argumentNames, this.functionBody )
 
     _function.closures = argumentValues
     

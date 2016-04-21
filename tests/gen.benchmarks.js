@@ -21,6 +21,11 @@ function foo( p0 ) {
 foo.sin = Math.sin
 foo.abs = Math.abs
 
+let bar = function( p0 ) {
+    return bar.sin( bar.abs( p0 ) )
+}
+bar.sin = Math.sin
+bar.abs = Math.abs
 
 let curryFoo = function( sin, abs, p0 ) {
   return sin( abs( p0 ) )
@@ -30,6 +35,11 @@ let curried = function( p0 ) {
   return curryFoo.call( null, Math.sin,Math.abs,p0 )
 }
 
+let _abs_ = Math.abs, _sin_ = Math.sin
+let closure = function( p0 ){
+  return _sin_( _abs_( p0 ) )
+}
+
 
 // add tests
 suite.add( 'named function w/ parameters', function() {
@@ -37,6 +47,12 @@ suite.add( 'named function w/ parameters', function() {
 })
 .add( 'curry', function() {
   curried( Math.random() * 30 )
+})
+.add( 'closure', function() {
+  closure( Math.random() * 30 )
+})
+.add( 'upvalue reference to function', function() {
+  bar( Math.random() * 30 )
 })
 // add listeners
 .on( 'cycle', function(event) {
