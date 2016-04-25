@@ -73,7 +73,7 @@ describe( 'monops', ()=> {
   })
 })
 
-describe( 'binnops', ()=> {
+describe( 'binops', ()=> {
   it( 'should add 4 and 7 to get 11', ()=> {
     let answer = 11,
         graph = add( 4,7 ),
@@ -160,14 +160,28 @@ describe( 'phasor', ()=>{
 })
 
 describe( 'data + peek', ()=>{
-  it( 'should return the value of index data[2] (50) when requesting it via peek', ()=> {
-    let answer = 50,
+  it( 'should return the value of index data[2] (49) when requesting it via peek', ()=> {
+    let answer = 49,
         d = data( 'test' ),
         p = peek( 'test', 2 ),
         out = gen.createCallback( p ),
         result = 0
     
-    d[2] = 50
+    d[2] = answer
+
+    result = out()
+    
+    assert.equal( result, answer )
+  })
+
+  it( 'should return the value of 49 when indexing uisng phase w/ peek', ()=> {
+    let answer = 49,
+        d = data( 'test' ),
+        p = peek( 'test', .00390625, 1, 1 ), //.00390625 is phase for index[2] assuming 512 data length
+        out = gen.createCallback( p ),
+        result = 0
+    
+    d[2] = answer
 
     result = out()
     
