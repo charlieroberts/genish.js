@@ -131,6 +131,7 @@ describe( 'accum', ()=>{
   })
 
   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
+    gen.debug = true
     let answer = .0,
         graph  = accum( .1, param() ),
         out    = gen.createCallback( graph ),
@@ -139,8 +140,9 @@ describe( 'accum', ()=>{
     out(); out(); out();
 
     result = out( 1 )
-
+    
     assert.equal( result, answer )
+
   })
 })
 
