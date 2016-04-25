@@ -1,4 +1,4 @@
-module.exports = {
+let library = {
   gen:    require( './gen.js' ),
   
   abs:    require('./abs.js'),
@@ -8,4 +8,10 @@ module.exports = {
   accum:  require('./accum.js'),
   sin:    require('./sin.js'),
   phasor: require('./phasor.js'),
+  data:   require('./data.js'),
+  peek:   require('./peek.js')
 }
+
+library.gen.lib = library
+
+module.exports = library

@@ -21,7 +21,10 @@ let assert = require('assert'),
     param = genlib.param,
     accum = genlib.accum,
     sin   = genlib.sin,
-    phasor= genlib.phasor
+    phasor= genlib.phasor,
+    data  = genlib.data,
+    peek  = genlib.peek
+
 
 //gen.debug = true
 
@@ -150,6 +153,22 @@ describe( 'phasor', ()=>{
     
     for( let i = 0; i < 4; i++ ) out()
     
+    result = out()
+    
+    assert.equal( result, answer )
+  })
+})
+
+describe( 'data + peek', ()=>{
+  it( 'should return the value of index data[2] (50) when requesting it via peek', ()=> {
+    let answer = 50,
+        d = data( 'test' ),
+        p = peek( 'test', 2 ),
+        out = gen.createCallback( p ),
+        result = 0
+    
+    d[2] = 50
+
     result = out()
     
     assert.equal( result, answer )

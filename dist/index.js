@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+var library = {
   gen: require('./gen.js'),
 
   abs: require('./abs.js'),
@@ -9,5 +9,11 @@ module.exports = {
   mul: require('./mul.js'),
   accum: require('./accum.js'),
   sin: require('./sin.js'),
-  phasor: require('./phasor.js')
+  phasor: require('./phasor.js'),
+  data: require('./data.js'),
+  peek: require('./peek.js')
 };
+
+library.gen.lib = library;
+
+module.exports = library;

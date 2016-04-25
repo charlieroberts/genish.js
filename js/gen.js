@@ -23,6 +23,8 @@ module.exports = {
   parameters:[],
 
   memo: {},
+
+  data: {},
   
   /* export
    *
@@ -52,9 +54,10 @@ module.exports = {
     this.closures.clear()
     this.parameters.length = 0
 
-    this.functionBody = "'use strict';\n"
+    this.functionBody = "  'use strict';\n"
 
     // call .gen() on the head of the graph we are generating the callback for
+    //console.log( 'HEAD', ugen )
     graphOutput = ugen.gen()
 
     // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
@@ -69,7 +72,7 @@ module.exports = {
     let lastidx = this.functionBody.length - 1
 
     // insert return keyword
-    this.functionBody[ lastidx ] = 'return ' + this.functionBody[ lastidx ] 
+    this.functionBody[ lastidx ] = '  return ' + this.functionBody[ lastidx ] 
     
     // reassemble function body
     this.functionBody = this.functionBody.join('\n')
@@ -90,6 +93,8 @@ module.exports = {
       callback[ name ] = value
     }
     
+    callback.data = this.data
+
     return callback
   },
   
