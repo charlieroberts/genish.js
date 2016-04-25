@@ -57,8 +57,9 @@ module.exports = {
     // call .gen() on the head of the graph we are generating the callback for
     graphOutput = ugen.gen()
 
-    // if .gen() returns array, add ugen callback to our output functions body
-    // and then return name of ugen. Otherwise, return output of call to .gen()
+    // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
+    // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
+    // just return that number (graphOutput[0]).
     this.functionBody += Array.isArray( graphOutput ) ? graphOutput[1] + '\n' + graphOutput[0] : graphOutput
 
     // split body to inject return keyword on last line
@@ -102,25 +103,25 @@ module.exports = {
   getInputs( ugen ) {
     let inputs = ugen.inputs.map( input => {
       let isObject = typeof input === 'object',
-          out
-      if( isObject ) {
-        if( this.memo[ input.name ] ) {
-          //console.log("MEMO", input.name, this.memo[ input.name ] )
-          out = this.memo[ input.name ]
-        }else{
+          processedInput
+
+      if( isObject ) { // if input is a ugen... 
+        if( this.memo[ input.name ] ) { // if it has been memoized...
+          processedInput = this.memo[ input.name ]
+        }else{ // if not memoized generate code
           let code = input.gen()
           if( Array.isArray( code ) ) {
             this.functionBody += code[1]
-            out = code[0]
+            processedInput = code[0]
           }else{
-            out = code
+            processedInput = code
           }
         }
-      }else{
-        out = input
+      }else{ // it input is a number
+        processedInput = input
       }
 
-      return out
+      return processedInput
     })
 
     return inputs

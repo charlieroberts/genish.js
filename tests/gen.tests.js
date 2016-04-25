@@ -20,7 +20,8 @@ let assert = require('assert'),
     add = genlib.add,
     param = genlib.param,
     accum = genlib.accum,
-    sin   = genlib.sin
+    sin   = genlib.sin,
+    phasor= genlib.phasor
 
 //gen.debug = true
 
@@ -136,6 +137,21 @@ describe( 'accum', ()=>{
 
     result = out( 1 )
 
+    assert.equal( result, answer )
+  })
+})
+
+describe( 'phasor', ()=>{
+  it( 'should ramp to .5 with an frequency of 4410 after five executions', ()=> {
+    let answer = .5,
+        graph  = phasor( 4410 ),
+        out    = gen.createCallback( graph ),
+        result = 0
+    
+    for( let i = 0; i < 4; i++ ) out()
+    
+    result = out()
+    
     assert.equal( result, answer )
   })
 })

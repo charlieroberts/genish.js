@@ -7,4 +7,5 @@ module.exports = {
   mul:    require('./mul.js'),
   accum:  require('./accum.js'),
   sin:    require('./sin.js'),
+  phasor: require('./phasor.js'),
 }

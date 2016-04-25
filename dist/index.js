@@ -8,5 +8,6 @@ module.exports = {
   add: require('./add.js'),
   mul: require('./mul.js'),
   accum: require('./accum.js'),
-  sin: require('./sin.js')
+  sin: require('./sin.js'),
+  phasor: require('./phasor.js')
 };
