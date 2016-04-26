@@ -85,7 +85,8 @@ describe( 'binops', ()=> {
   })
 
   it( 'should multiply 4 and 7 to get 28', ()=> {
-    let answer = 28,
+ 
+  let answer = 28,
         graph = mul( 4,7 ),
         out = gen.createCallback( graph ),
         result = out()
@@ -197,8 +198,6 @@ describe( 'cycle', ()=> {
         c = cycle( 11025 ),
         out = gen.createCallback( c ),
         result = 0
-
-    //console.log( out.toString(), c ) 
 
     for( let i = 0; i < 4; i++ ) result = out()
     

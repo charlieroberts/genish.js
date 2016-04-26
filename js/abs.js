@@ -8,7 +8,7 @@ let proto = {
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ 'gen.' + this.name ]: Math.abs })
+      gen.closures.add({ [ this.name ]: Math.abs })
 
       out = `gen.abs( ${inputs[0]} )`
 

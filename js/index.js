@@ -1,4 +1,8 @@
 let library = {
+  export( destination ) {
+    Object.assign( destination, library )
+  },
+
   gen:    require( './gen.js' ),
   
   abs:    require('./abs.js'),

@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <title>Genish.js Playground</title>
+    <script src="../node_modules/codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
+    <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
+    <script src="../dist/gen.lib.js"></script>
+<style>
+.CodeMirror-highlight {
+  background:red
+}
+body { margin: 0 }
+
+#editor { width:40%; display:inline-block; height:100%; }
+#console {width:59%; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
+
+</style>
+
+  </head>
+
+  <body>
+    <div id='editor'></div>
+    <div id='console'></div>
+  
+  </body>
+  <script>
+    var cm, cmconsole
+    window.onload = function() {
+      cm = CodeMirror( document.querySelector('#editor'), {
+        mode:'javascript',
+        value:'play( cycle( 440 ) )',
+        keyMap:'playground'
+      })
+
+      cm.setSize( null, '100%' )
+
+      cmconsole = CodeMirror( document.querySelector('#console'), {
+        mode:'javascript',
+        value:'// genish playground, v0.0.1',
+      })     
+      
+      cmconsole.setSize( null, '100%' )
+      genish.export( window )
+    }
+    
+    var ctx = new AudioContext(),
+        node = ctx.createScriptProcessor( 2048, 1, 1 ),
+        clear = function() { return 0 },
+        fnc  = clear,
+        play = function( graph ) {
+          fnc = gen.createCallback( graph )
+          cmconsole.setValue( fnc.toString() )
+        }
+
+    node.onaudioprocess = function( audioProcessingEvent ) {
+      var outputBuffer = audioProcessingEvent.outputBuffer;
+
+      for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+        var outputData = outputBuffer.getChannelData(channel);
+
+        for (var sample = 0; sample < outputBuffer.length; sample++) {
+          outputData[sample] = fnc()
+        }
+      }
+    }
+    
+    node.connect( ctx.destination )
+
+    CodeMirror.keyMap.playground =  {
+      fallthrough:'default',
+
+      'Ctrl-Enter'( cm ) {
+        try {
+          let selectedCode = getSelectionCodeColumn( cm, false )
+
+            flash( cm, selectedCode.selection )
+
+            let func = new Function( selectedCode.code )
+
+            func()
+        } catch (e) {
+          console.log( e )
+        }
+      },
+      'Alt-Enter'( cm ) {
+        try {
+          let selectedCode = Environment.getSelectionCodeColumn( cm, true )
+
+            Environment.flash( cm, selectedCode.selection )
+
+            let func = new Function( selectedCode.code ).bind( Gibber.currentTrack ),
+          markupFunction = () => { 
+            Environment.codeMarkup.process( 
+                selectedCode.code, 
+                selectedCode.selection, 
+                cm, 
+                Gibber.currentTrack 
+                ) 
+          }
+
+          markupFunction.origin  = func
+
+            if( !Environment.debug ) {
+              Gibber.Scheduler.functionsToExecute.push( func );
+              Gibber.Scheduler.functionsToExecute.push( markupFunction  )
+            }else{
+              func()
+                markupFunction()
+            }
+        } catch (e) {
+          console.log( e )
+            Environment.log( 'ERROR', e )
+        }
+      },
+      'Ctrl-.'( cm ) {
+        fnc = clear
+        console.log( 'silencio.' )
+      },
+    }
+
+    var getSelectionCodeColumn = function( cm, findBlock ) {
+      let pos = cm.getCursor(), 
+          text = null
+
+      if( !findBlock ) {
+        text = cm.getDoc().getSelection()
+
+          if ( text === "") {
+            text = cm.getLine( pos.line )
+          }else{
+            pos = { start: cm.getCursor('start'), end: cm.getCursor('end') }
+            //pos = null
+          }
+      }else{
+        let startline = pos.line, 
+          endline = pos.line,
+          pos1, pos2, sel
+
+            while ( startline > 0 && cm.getLine( startline ) !== "" ) { startline-- }
+        while ( endline < cm.lineCount() && cm.getLine( endline ) !== "" ) { endline++ }
+
+        pos1 = { line: startline, ch: 0 }
+        pos2 = { line: endline, ch: 0 }
+
+        text = cm.getRange( pos1, pos2 )
+
+          pos = { start: pos1, end: pos2 }
+      }
+
+      if( pos.start === undefined ) {
+        let lineNumber = pos.line,
+          start = 0,
+          end = text.length
+
+            pos = { start:{ line:lineNumber, ch:start }, end:{ line:lineNumber, ch: end } }
+      }
+
+      return { selection: pos, code: text }
+    }
+
+    var flash = function(cm, pos) {
+      let sel,
+          cb = function() { sel.clear() }
+
+      if (pos !== null) {
+        if( pos.start ) { // if called from a findBlock keymap
+          sel = cm.markText( pos.start, pos.end, { className:"CodeMirror-highlight" } );
+        }else{ // called with single line
+          sel = cm.markText( { line: pos.line, ch:0 }, { line: pos.line, ch:null }, { className: "CodeMirror-highlight" } )
+        }
+      }else{ // called with selected block
+        sel = cm.markText( cm.getCursor(true), cm.getCursor(false), { className: "CodeMirror-highlight" } );
+      }
+
+      window.setTimeout(cb, 250);
+    }
+  </script>
+</html>

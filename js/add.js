@@ -1,23 +1,37 @@
 let gen = require('./gen.js')
 
-module.exports = ( x,y ) => {
+module.exports = (...args) => {
   let add = {
     id:     gen.getUID(),
-    inputs: [ x,y ],
+    inputs: args,
 
     gen() {
       let inputs = gen.getInputs( this ),
-          out
-      
-      if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
-        out = `${inputs[0]} + ${inputs[1]}`
-      }else{
-        out = parseFloat( inputs[0] ) + parseFloat( inputs[1] ) 
+          out='(',
+          sum = 0, numCount = 0, adderAtEnd = false
+
+      inputs.forEach( (v,i) => {
+        if( isNaN( v ) ) {
+          out += v
+          if( i < inputs.length -1 ) {
+            adderAtEnd = true
+            out += ' + '
+          }
+        }else{
+          sum += parseFloat( v )
+          numCount++
+        }
+      })
+
+      if( numCount > 0 ) {
+        out += adderAtEnd ? sum : ' + ' + sum
       }
+      
+      out += ')'
 
       return out
     }
   }
-
+  
   return add
 }

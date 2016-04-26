@@ -79,7 +79,7 @@ module.exports = {
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
-    let buildString = `return function gen( ${this.parameters.join(',')} ){ \n${this.functionBody}\n }`
+    let buildString = `return function gen( ${this.parameters.join(',')} ){ \n${this.functionBody}\n}`
     
     if( this.debug ) console.log( buildString ) 
 

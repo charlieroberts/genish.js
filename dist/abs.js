@@ -12,7 +12,7 @@ var proto = {
         inputs = _gen.getInputs(this);
 
     if (isNaN(inputs[0])) {
-      _gen.closures.add(_defineProperty({}, 'gen.' + this.name, Math.abs));
+      _gen.closures.add(_defineProperty({}, this.name, Math.abs));
 
       out = 'gen.abs( ' + inputs[0] + ' )';
     } else {

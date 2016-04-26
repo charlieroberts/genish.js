@@ -1,6 +1,11 @@
 'use strict';
 
 var library = {
+  export: function _export(destination) {
+    Object.assign(destination, library);
+  },
+
+
   gen: require('./gen.js'),
 
   abs: require('./abs.js'),

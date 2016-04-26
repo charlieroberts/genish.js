@@ -2,20 +2,40 @@
 
 var _gen = require('./gen.js');
 
-module.exports = function (x, y) {
+module.exports = function () {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
   var add = {
     id: _gen.getUID(),
-    inputs: [x, y],
+    inputs: args,
 
     gen: function gen() {
       var inputs = _gen.getInputs(this),
-          out = void 0;
+          out = '(',
+          sum = 0,
+          numCount = 0,
+          adderAtEnd = false;
 
-      if (isNaN(inputs[0]) || isNaN(inputs[1])) {
-        out = inputs[0] + ' + ' + inputs[1];
-      } else {
-        out = parseFloat(inputs[0]) + parseFloat(inputs[1]);
+      inputs.forEach(function (v, i) {
+        if (isNaN(v)) {
+          out += v;
+          if (i < inputs.length - 1) {
+            adderAtEnd = true;
+            out += ' + ';
+          }
+        } else {
+          sum += parseFloat(v);
+          numCount++;
+        }
+      });
+
+      if (numCount > 0) {
+        out += adderAtEnd ? sum : ' + ' + sum;
       }
+
+      out += ')';
 
       return out;
     }

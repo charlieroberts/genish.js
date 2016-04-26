@@ -10,9 +10,9 @@ var gulp = require('gulp'),
     babelify   = require('babelify')
 
 gulp.task( 'js', function() {
-  browserify({ debug:true })
+  browserify({ debug:true, standalone:'genish' })
     .transform( babelify, { presets:['es2015'] })
-    .require( './js/gen.js', { entry: true } ) 
+    .require( './js/index.js', { entry: true } ) 
     .bundle()
     .pipe( source('gen.lib.js') )
     .pipe( gulp.dest('./dist') )
