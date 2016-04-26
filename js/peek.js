@@ -11,7 +11,7 @@ let proto = {
 
 functionBody = `   
   let ${this.name}_data = gen.data.${this.dataName},
-      ${this.name}_phase = ${this.mode === 0 ? inputs[0] : inputs[0] + ' * gen.data.' +this.dataName+'.length'}, 
+      ${this.name}_phase = ${this.mode === 0 ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length'}, 
       ${this.name}_index = ${this.name}_phase | 0,
       ${this.name}_frac = ${this.name}_phase - ${this.name}_index,
       ${this.name}_base =  ${this.name}_data[ ${this.name}_index ],

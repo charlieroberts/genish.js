@@ -17,10 +17,12 @@ let proto = {
   },
 
   callback( _name, _incr, _reset ) {
+    let diff = this.max - this.min
     let out = `  ${_name}.value += ${_incr}
   ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + _name + '.min\n'}
-  if( ${_name}.value >= ${_name}.max ) ${_name}.value = ${_name}.min
-    `
+  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}
+  
+`
     
     return out
   }

@@ -24,7 +24,8 @@ body { margin: 0 }
   
   </body>
   <script>
-    var cm, cmconsole, exampleCode
+    var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContext
+
     window.onload = function() {
       cm = CodeMirror( document.querySelector('#editor'), {
         mode:   'javascript',
@@ -61,7 +62,7 @@ body { margin: 0 }
           right= outputBuffer.getChannelData( 1 )
 
       for (var sample = 0; sample < left.length; sample++) {
-        left[ sample ] = right[ sample ] = fnc()
+        left[ sample ] = right[ sample ] = fnc();
       }
     }
     
@@ -72,11 +73,11 @@ body { margin: 0 }
 
       'Ctrl-Enter'( cm ) {
         try {
-          let selectedCode = getSelectionCodeColumn( cm, false )
+          var selectedCode = getSelectionCodeColumn( cm, false )
 
             flash( cm, selectedCode.selection )
 
-            let func = new Function( selectedCode.code )
+            var func = new Function( selectedCode.code )
 
             func()
         } catch (e) {
@@ -85,32 +86,14 @@ body { margin: 0 }
       },
       'Alt-Enter'( cm ) {
         try {
-          let selectedCode = Environment.getSelectionCodeColumn( cm, true )
+          var selectedCode = getSelectionCodeColumn( cm, true )
 
-            Environment.flash( cm, selectedCode.selection )
+            flash( cm, selectedCode.selection )
 
-            let func = new Function( selectedCode.code ).bind( Gibber.currentTrack ),
-          markupFunction = () => { 
-            Environment.codeMarkup.process( 
-                selectedCode.code, 
-                selectedCode.selection, 
-                cm, 
-                Gibber.currentTrack 
-                ) 
-          }
-
-          markupFunction.origin  = func
-
-            if( !Environment.debug ) {
-              Gibber.Scheduler.functionsToExecute.push( func );
-              Gibber.Scheduler.functionsToExecute.push( markupFunction  )
-            }else{
-              func()
-                markupFunction()
-            }
+            var func = new Function( selectedCode.code )
+            func()
         } catch (e) {
           console.log( e )
-            Environment.log( 'ERROR', e )
         }
       },
       'Ctrl-.'( cm ) {
@@ -121,7 +104,7 @@ body { margin: 0 }
     }
 
     var getSelectionCodeColumn = function( cm, findBlock ) {
-      let pos = cm.getCursor(), 
+      var pos = cm.getCursor(), 
           text = null
 
       if( !findBlock ) {
@@ -134,7 +117,7 @@ body { margin: 0 }
             //pos = null
           }
       }else{
-        let startline = pos.line, 
+        var startline = pos.line, 
           endline = pos.line,
           pos1, pos2, sel
 
@@ -150,7 +133,7 @@ body { margin: 0 }
       }
 
       if( pos.start === undefined ) {
-        let lineNumber = pos.line,
+        var lineNumber = pos.line,
           start = 0,
           end = text.length
 
@@ -161,7 +144,7 @@ body { margin: 0 }
     }
 
     var flash = function(cm, pos) {
-      let sel,
+      var sel,
           cb = function() { sel.clear() }
 
       if (pos !== null) {
@@ -179,10 +162,19 @@ body { margin: 0 }
     
     exampleCode = 
 `/*
-To execute code: select code and hit Ctrl+Enter
-To clear audio graph: Ctrl+.
+To execute code: 
+  a. execute selected block: hit Ctrl+Enter
+  b. execute one line: place cursor on line and hit Ctrl+Enter
+  c. execute block: place cursor in block and hit Alt+Enter
 
-To run any genish graph, wrap it in a call to the play() function
+Most examples are formatted so that they can be executed as a
+single block; just place your cursor inside of them and hit
+Alt+Enter.
+
+To clear audio graph and stop sound: Ctrl+. (Ctrl+Period)
+
+To run an arbitrary genish graph, wrap it in a call to
+the play() function
 
 Available ugens: add, mul, abs, sin, accum, cycle, peek, 
 phasor, data, param (param doesn't work with play)
@@ -195,16 +187,17 @@ saw = mul( phasor(330), .05 )
 play( saw )
 
 /****** sine oscillator (no wavetable) *******/
+
 graph = sin( 
   mul( 
     accum( mul( 440, 1/44100 ) ), 
     Math.PI * 2 
   )
 )
-
 play( graph )
 
 /****** amplitude modulation *******/
+
 graph = mul( 
   cycle(440), 
   add( 
@@ -212,17 +205,34 @@ graph = mul(
     mul( cycle(4), .1 ) 
   ) 
 )
+play( graph )
 
+/****** using data with peek *******/
+
+d = data('frequencyModData',4,1)
+ 
+d[0] = 440
+d[1] = 880
+d[2] = 220
+d[3] = 330
+ 
+graph = mul( 
+  cycle( 
+    peek('frequencyModData', phasor(.1), 1, 1 ) 
+  ), 
+  .1 
+)
+ 
 play( graph )
 
 /****** 150 sine oscillators *******/
 summer = add()
 numOscillators = 150
-
+ 
 for( var i = 0; i < numOscillators; i++ ) {
   summer.inputs.push( mul( cycle( 100 + i *20 ), 1/numOscillators ) )
 }
-
+ 
 play( summer )	
 
 `
