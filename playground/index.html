@@ -24,12 +24,13 @@ body { margin: 0 }
   
   </body>
   <script>
-    var cm, cmconsole
+    var cm, cmconsole, exampleCode
     window.onload = function() {
       cm = CodeMirror( document.querySelector('#editor'), {
-        mode:'javascript',
-        value:'play( cycle( 440 ) )',
-        keyMap:'playground'
+        mode:   'javascript',
+        value:  exampleCode,
+        keyMap: 'playground',
+        autofocus: true
       })
 
       cm.setSize( null, '100%' )
@@ -37,6 +38,7 @@ body { margin: 0 }
       cmconsole = CodeMirror( document.querySelector('#console'), {
         mode:'javascript',
         value:'// genish playground, v0.0.1',
+        readOnly:'nocursor'
       })     
       
       cmconsole.setSize( null, '100%' )
@@ -44,7 +46,7 @@ body { margin: 0 }
     }
     
     var ctx = new AudioContext(),
-        node = ctx.createScriptProcessor( 2048, 1, 1 ),
+        node = ctx.createScriptProcessor( 2048, 0, 2 ),
         clear = function() { return 0 },
         fnc  = clear,
         play = function( graph ) {
@@ -55,12 +57,11 @@ body { margin: 0 }
     node.onaudioprocess = function( audioProcessingEvent ) {
       var outputBuffer = audioProcessingEvent.outputBuffer;
 
-      for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-        var outputData = outputBuffer.getChannelData(channel);
+      var left = outputBuffer.getChannelData( 0 ),
+          right= outputBuffer.getChannelData( 1 )
 
-        for (var sample = 0; sample < outputBuffer.length; sample++) {
-          outputData[sample] = fnc()
-        }
+      for (var sample = 0; sample < left.length; sample++) {
+        left[ sample ] = right[ sample ] = fnc()
       }
     }
     
@@ -114,6 +115,7 @@ body { margin: 0 }
       },
       'Ctrl-.'( cm ) {
         fnc = clear
+        cmconsole.setValue('// silencio.\n' + fnc.toString() )
         console.log( 'silencio.' )
       },
     }
@@ -174,5 +176,55 @@ body { margin: 0 }
 
       window.setTimeout(cb, 250);
     }
+    
+    exampleCode = 
+`/*
+To execute code: select code and hit Ctrl+Enter
+To clear audio graph: Ctrl+.
+
+To run any genish graph, wrap it in a call to the play() function
+
+Available ugens: add, mul, abs, sin, accum, cycle, peek, 
+phasor, data, param (param doesn't work with play)
+
+Only one graph can be played at a time in this playground.
+*/
+
+/****** non-band-limited saw *******/
+saw = mul( phasor(330), .05 )
+play( saw )
+
+/****** sine oscillator (no wavetable) *******/
+graph = sin( 
+  mul( 
+    accum( mul( 440, 1/44100 ) ), 
+    Math.PI * 2 
+  )
+)
+
+play( graph )
+
+/****** amplitude modulation *******/
+graph = mul( 
+  cycle(440), 
+  add( 
+    .1, 
+    mul( cycle(4), .1 ) 
+  ) 
+)
+
+play( graph )
+
+/****** 150 sine oscillators *******/
+summer = add()
+numOscillators = 150
+
+for( var i = 0; i < numOscillators; i++ ) {
+  summer.inputs.push( mul( cycle( 100 + i *20 ), 1/numOscillators ) )
+}
+
+play( summer )	
+
+`
   </script>
 </html>
