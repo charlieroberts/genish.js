@@ -16,6 +16,8 @@ functionBody = `
       ${this.name}_frac = ${this.name}_phase - ${this.name}_index,
       ${this.name}_base =  ${this.name}_data[ ${this.name}_index ],
       ${this.name}_out  = ${this.name}_base + ${this.name}_frac * ( ${this.name}_data[ (${this.name}_index+1) & (${this.name}_data.length - 1) ] - ${this.name}_base ) 
+
+      //console.log( ${this.name}_index, ${this.name}_data.length - 1, ${this.name}_out )
 `
     return [ this.name+'_out', functionBody ]
   },

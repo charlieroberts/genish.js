@@ -20,7 +20,7 @@ var proto = {
     return [genName + '.value', functionBody];
   },
   callback: function callback(_name, _incr, _reset) {
-    var out = '   ' + _name + '.value += ' + _incr + '\n    ' + (typeof _reset === 'number' && _reset < 1 ? '' : 'if(' + _reset + '>=1 ) ' + _name + '.value = ' + _name + '.min\n') + '\n    if( ' + _name + '.value > ' + _name + '.max ) ' + _name + '.value = ' + _name + '.min\n    ';
+    var out = '   ' + _name + '.value += ' + _incr + '\n    ' + (typeof _reset === 'number' && _reset < 1 ? '' : 'if(' + _reset + '>=1 ) ' + _name + '.value = ' + _name + '.min\n') + '\n    if( ' + _name + '.value >= ' + _name + '.max ) ' + _name + '.value = ' + _name + '.min\n    ';
 
     return out;
   }

@@ -12,7 +12,7 @@ var proto = {
         out = void 0,
         functionBody = void 0;
 
-    functionBody = '   \n  let ' + this.name + '_data = gen.data.' + this.dataName + ',\n      ' + this.name + '_phase = ' + (this.mode === 0 ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length') + ', \n      ' + this.name + '_index = ' + this.name + '_phase | 0,\n      ' + this.name + '_frac = ' + this.name + '_phase - ' + this.name + '_index,\n      ' + this.name + '_base =  ' + this.name + '_data[ ' + this.name + '_index ],\n      ' + this.name + '_out  = ' + this.name + '_base + ' + this.name + '_frac * ( ' + this.name + '_data[ (' + this.name + '_index+1) & (' + this.name + '_data.length - 1) ] - ' + this.name + '_base ) \n';
+    functionBody = '   \n  let ' + this.name + '_data = gen.data.' + this.dataName + ',\n      ' + this.name + '_phase = ' + (this.mode === 0 ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length') + ', \n      ' + this.name + '_index = ' + this.name + '_phase | 0,\n      ' + this.name + '_frac = ' + this.name + '_phase - ' + this.name + '_index,\n      ' + this.name + '_base =  ' + this.name + '_data[ ' + this.name + '_index ],\n      ' + this.name + '_out  = ' + this.name + '_base + ' + this.name + '_frac * ( ' + this.name + '_data[ (' + this.name + '_index+1) & (' + this.name + '_data.length - 1) ] - ' + this.name + '_base ) \n\n      //console.log( ' + this.name + '_index, ' + this.name + '_data.length - 1, ' + this.name + '_out )\n';
     return [this.name + '_out', functionBody];
   }
 };

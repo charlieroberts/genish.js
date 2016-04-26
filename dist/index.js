@@ -11,7 +11,8 @@ var library = {
   sin: require('./sin.js'),
   phasor: require('./phasor.js'),
   data: require('./data.js'),
-  peek: require('./peek.js')
+  peek: require('./peek.js'),
+  cycle: require('./cycle.js')
 };
 
 library.gen.lib = library;

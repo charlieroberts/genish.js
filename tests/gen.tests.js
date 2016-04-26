@@ -23,7 +23,8 @@ let assert = require('assert'),
     sin   = genlib.sin,
     phasor= genlib.phasor,
     data  = genlib.data,
-    peek  = genlib.peek
+    peek  = genlib.peek,
+    cycle = genlib.cycle
 
 
 //gen.debug = true
@@ -131,7 +132,6 @@ describe( 'accum', ()=>{
   })
 
   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
-    gen.debug = true
     let answer = .0,
         graph  = accum( .1, param() ),
         out    = gen.createCallback( graph ),
@@ -189,6 +189,22 @@ describe( 'data + peek', ()=>{
     
     assert.equal( result, answer )
   })
+})
+
+describe( 'cycle', ()=> {
+  it( 'should be at 0 after four outputs at 11025 hz', ()=> {
+    let answer = 0,
+        c = cycle( 11025 ),
+        out = gen.createCallback( c ),
+        result = 0
+
+    //console.log( out.toString(), c ) 
+
+    for( let i = 0; i < 4; i++ ) result = out()
+    
+    assert.equal( result, answer )
+  })
+
 })
 
 describe( 'complex', ()=> {
