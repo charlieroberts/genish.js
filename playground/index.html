@@ -11,7 +11,7 @@
 }
 body { margin: 0 }
 
-#editor { width:40%; display:inline-block; height:100%; }
+#editor { width:40%; display:inline-block; height:100%; border-right:1px solid #ddd  }
 #console {width:59%; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
 
 </style>
@@ -38,7 +38,7 @@ body { margin: 0 }
 
       cmconsole = CodeMirror( document.querySelector('#console'), {
         mode:'javascript',
-        value:'// genish playground, v0.0.1',
+        value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
         readOnly:'nocursor'
       })     
       

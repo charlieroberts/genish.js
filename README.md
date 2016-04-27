@@ -1,6 +1,9 @@
 # genish.js
 an experimental repo that might, someday, mimic gen~ in Max/MSP
 
+## try it out
+http://www.charlie-roberts.com/genish/playground
+
 ## what?
 A little more detail: genish.js will codegen per-sample callbacks with an API that mirrors gen~ closely. Given the following code:
 
