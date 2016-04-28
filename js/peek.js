@@ -9,13 +9,12 @@ let proto = {
         inputs = gen.getInputs( this ),
         out, functionBody
 
-functionBody = `   
-  let ${this.name}_data = gen.data.${this.dataName},
+functionBody = `  let ${this.name}_data  = gen.data.${this.dataName},
       ${this.name}_phase = ${this.mode === 0 ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length'}, 
       ${this.name}_index = ${this.name}_phase | 0,
-      ${this.name}_frac = ${this.name}_phase - ${this.name}_index,
-      ${this.name}_base =  ${this.name}_data[ ${this.name}_index ],
-      ${this.name}_out  = ${this.name}_base + ${this.name}_frac * ( ${this.name}_data[ (${this.name}_index+1) & (${this.name}_data.length - 1) ] - ${this.name}_base ) 
+      ${this.name}_frac  = ${this.name}_phase - ${this.name}_index,
+      ${this.name}_base  = ${this.name}_data[ ${this.name}_index ],
+      ${this.name}_out   = ${this.name}_base + ${this.name}_frac * ( ${this.name}_data[ (${this.name}_index+1) & (${this.name}_data.length - 1) ] - ${this.name}_base ) 
 
 `
     return [ this.name+'_out', functionBody ]

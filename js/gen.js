@@ -21,6 +21,7 @@ module.exports = {
   closures:new Set(),
 
   parameters:[],
+  endBlock: [],
 
   memo: {},
 
@@ -32,6 +33,10 @@ module.exports = {
    */
 
   export( obj ) {},
+
+  addToEndBlock( v ) {
+    this.endBlock.push( '  ' + v )
+  },
   
   /* createCallback
    *
@@ -46,15 +51,16 @@ module.exports = {
    *
    * ... the generated function will have a signature of ( abs, p0 ).
    */
-
+  
   createCallback( ugen ) {
     let callback, graphOutput
 
     this.memo = {}
+    this.endBlock.length = 0
     this.closures.clear()
     this.parameters.length = 0
 
-    this.functionBody = "  'use strict';\n"
+    this.functionBody = "  'use strict';\n\n"
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -72,8 +78,14 @@ module.exports = {
     let lastidx = this.functionBody.length - 1
 
     // insert return keyword
-    this.functionBody[ lastidx ] = '  return ' + this.functionBody[ lastidx ] 
+    this.functionBody[ lastidx ] = '  let out = ' + this.functionBody[ lastidx] + '\n'
     
+    if( this.endBlock.length ) { 
+      this.functionBody = this.functionBody.concat( this.endBlock ) 
+      this.functionBody.push( '\n  return out' )
+    }else{
+      this.functionBody.push( '  return out' )
+    }
     // reassemble function body
     this.functionBody = this.functionBody.join('\n')
 

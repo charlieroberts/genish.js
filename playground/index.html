@@ -207,6 +207,16 @@ graph = mul(
 )
 play( graph )
 
+/****** frequency modulation *******/
+
+lfo = mul( cycle(4), .5 )
+ramp = mul( phasor(.1), 200 )
+rampedLFO = mul( lfo, ramp )
+ 
+graph = cycle( add( 440, rampedLFO ) )
+ 
+play( graph )
+
 /****** using data with peek *******/
 
 d = data('frequencyModData',4,1)

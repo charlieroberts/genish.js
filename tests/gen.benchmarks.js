@@ -40,6 +40,11 @@ let closure = function( p0 ){
   return _sin_( _abs_( p0 ) )
 }
 
+let gen = {
+  out: function( p0 ) { return this.sin( this.abs( p0 ) ) },
+  sin: Math.sin,
+  abs: Math.abs
+}
 
 // add tests
 suite.add( 'named function w/ parameters', function() {
@@ -54,6 +59,10 @@ suite.add( 'named function w/ parameters', function() {
 .add( 'upvalue reference to function', function() {
   bar( Math.random() * 30 )
 })
+.add( 'call as method of object, with functions as properties', function() {
+  gen.out( Math.random() * 30 )
+})
+
 // add listeners
 .on( 'cycle', function(event) {
   console.log(String(event.target));

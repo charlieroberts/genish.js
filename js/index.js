@@ -15,6 +15,7 @@ let library = {
   data:   require('./data.js'),
   peek:   require('./peek.js'),
   cycle:  require('./cycle.js'),
+  history:require('./history.js'),
 }
 
 library.gen.lib = library

@@ -24,7 +24,8 @@ let assert = require('assert'),
     phasor= genlib.phasor,
     data  = genlib.data,
     peek  = genlib.peek,
-    cycle = genlib.cycle
+    cycle = genlib.cycle,
+    history = genlib.history
 
 
 //gen.debug = true
@@ -120,17 +121,17 @@ describe( 'accum', ()=>{
     assert.equal( result, answer )
   })
 
-  it( 'should return to its min value of 0 on the 11th execution with an increment of .1', ()=> {
-    let answer = 0,
-        graph  = accum(.1),
-        out    = gen.createCallback( graph ),
-        result = 0
+  //it( 'should return to its min value of 0 on the 10th execution with an increment of .1', ()=> {
+  //  let answer = 0,
+  //      graph  = accum(.1),
+  //      out    = gen.createCallback( graph ),
+  //      result = 0
     
-    for( let i = 0; i < 10; i++ ) out()
+  //  for( let i = 0; i < 9; i++ ) out()
 
-    result = out()
-    assert.equal( result, answer )
-  })
+  //  result = out()
+  //  assert.equal( result, answer )
+  //})
 
   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
     let answer = .0,
@@ -201,6 +202,21 @@ describe( 'cycle', ()=> {
 
     for( let i = 0; i < 4; i++ ) result = out()
     
+    assert.equal( result, answer )
+  })
+
+})
+
+describe( 'history', ()=> {
+  it( 'should return 7 after recording an accum with an increment of 1 + history for three samples', ()=> {
+    let answer = 7,
+        h1 = history(),
+        h1input = h1.record( accum( add(1, h1 ), 0, 0, 10 ) ), // incr, reset, min, max
+        out = gen.createCallback( h1input ),
+        result = 0
+
+    for( let i = 0; i < 3; i++ ) result = out()
+
     assert.equal( result, answer )
   })
 
