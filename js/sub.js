@@ -8,25 +8,28 @@ module.exports = (...args) => {
     gen() {
       let inputs = gen.getInputs( this ),
           out='(',
-          diff = 0, numCount = 0, subAtEnd = false
+          diff = 0, 
+          numCount = 0,
+          lastNumber = inputs[ 0 ],
+          lastNumberIsUgen = isNaN( lastNumber ), 
+          subAtEnd = false
 
       inputs.forEach( (v,i) => {
-        if( isNaN( v ) ) {
-          out += v
-          if( i < inputs.length -1 ) {
-            subAtEnd = true
-            out += ' - '
-          }
+        if( i === 0 ) return
+
+        let isNumberUgen = isNaN( v ),
+            isFinalIdx   = i === inputs.length - 1
+
+        if( !lastNumberIsUgen && !isNumberUgen ) {
+          lastNumber = lastNumber - v
+          out += lastNumber
         }else{
-          diff += parseFloat( v )
-          numCount++
+          out += `${lastNumber} - ${v}`
         }
+
+        if( !isFinalIdx ) out += ' - ' 
       })
 
-      if( numCount > 0 ) {
-        out += subAtEnd ? diff : ' - ' + diff
-      }
-      
       out += ')'
 
       return out

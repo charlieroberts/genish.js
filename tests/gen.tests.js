@@ -18,6 +18,7 @@ let assert = require('assert'),
     gen = genlib.gen,
     mul = genlib.mul,
     add = genlib.add,
+    sub = genlib.sub,
     param = genlib.param,
     accum = genlib.accum,
     sin   = genlib.sin,
@@ -26,10 +27,11 @@ let assert = require('assert'),
     peek  = genlib.peek,
     cycle = genlib.cycle,
     history = genlib.history,
-    delta   = genlib.delta
+    delta   = genlib.delta,
+    round   = genlib.round
 
 
-//gen.debug = true
+gen.debug = true
 
 describe( 'gen', ()=> {
   it( 'should get back two numbers when fetching the arguments from an add ugen', ()=> {
@@ -51,6 +53,15 @@ describe( 'monops', ()=> {
   it( 'should generate the absolute value of -.5 as .5', ()=> {
     let answer = .5,
         graph = abs( -.5 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+  
+  it( 'should round .75 to 1', ()=> {
+    let answer = 1,
+        graph = round( .75 ),
         out = gen.createCallback( graph ),
         result = out()
 
@@ -86,12 +97,20 @@ describe( 'binops', ()=> {
     assert.equal( result, answer )
   })
 
-  it( 'should multiply 4 and 7 to get 28', ()=> {
- 
-  let answer = 28,
-        graph = mul( 4,7 ),
+  it( 'should sub 4 and 7 to get -3', ()=> {
+    let answer = -3,
+        graph = sub( 4,7 ),
         out = gen.createCallback( graph ),
         result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should multiply 4 and 7 to get 28', ()=> {
+    let answer = 28,
+      graph = mul( 4,7 ),
+      out = gen.createCallback( graph ),
+      result = out()
 
     assert.equal( result, answer )
   })
@@ -215,7 +234,8 @@ describe( 'history', ()=> {
         h1input = h1.record( accum( add(1, h1 ), 0, 0, 10 ) ), // incr, reset, min, max
         out = gen.createCallback( h1input ),
         result = 0
-
+    
+    // 1 + 0 = 1, 1 + 1 = 2, 1 + 2 = 3
     for( let i = 0; i < 3; i++ ) result = out()
 
     assert.equal( result, answer )

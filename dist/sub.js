@@ -16,24 +16,25 @@ module.exports = function () {
           out = '(',
           diff = 0,
           numCount = 0,
+          lastNumber = inputs[0],
+          lastNumberIsUgen = isNaN(lastNumber),
           subAtEnd = false;
 
       inputs.forEach(function (v, i) {
-        if (isNaN(v)) {
-          out += v;
-          if (i < inputs.length - 1) {
-            subAtEnd = true;
-            out += ' - ';
-          }
-        } else {
-          diff += parseFloat(v);
-          numCount++;
-        }
-      });
+        if (i === 0) return;
 
-      if (numCount > 0) {
-        out += subAtEnd ? diff : ' - ' + diff;
-      }
+        var isNumberUgen = isNaN(v),
+            isFinalIdx = i === inputs.length - 1;
+
+        if (!lastNumberIsUgen && !isNumberUgen) {
+          lastNumber = lastNumber - v;
+          out += lastNumber;
+        } else {
+          out += lastNumber + ' - ' + v;
+        }
+
+        if (!isFinalIdx) out += ' - ';
+      });
 
       out += ')';
 

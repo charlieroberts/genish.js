@@ -7,6 +7,7 @@ let library = {
   gen:    require( './gen.js' ),
   
   abs:    require('./abs.js'),
+  round:  require('./round.js'),
   param:  require('./param.js'),
   add:    require('./add.js'),
   sub:    require('./sub.js'),
