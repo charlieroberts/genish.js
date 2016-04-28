@@ -11,8 +11,8 @@
 }
 body { margin: 0 }
 
-#editor { width:40%; display:inline-block; height:100%; border-right:1px solid #ddd  }
-#console {width:59%; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
+#editor { width:45%; display:inline-block; height:100%; border-right:1px solid #ddd  }
+#console {width:54%; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
 
 </style>
 
@@ -214,6 +214,18 @@ ramp = mul( phasor(.1), 200 )
 rampedLFO = mul( lfo, ramp )
  
 graph = cycle( add( 440, rampedLFO ) )
+ 
+play( graph )
+
+/****** (noisy) frequency modulation using feedback ******/
+
+// ssd is equivalent to history in gen~, a single-sample delay
+// (the history name is used by the window object in js...)
+d1 = ssd() 
+ 
+//here we record the output of a sawtooth wave into our ssd,
+//and then  use that output on the next sample to modulate its frequency
+graph = d1.record( phasor( add( .001, mul( 3000, d1 ) ) ) )
  
 play( graph )
 

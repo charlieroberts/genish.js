@@ -16,10 +16,12 @@ let proto = {
     return [ genName + '.value', functionBody ]
   },
 
+  // ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + _name + '.min\n'}
+
   callback( _name, _incr, _reset ) {
     let diff = this.max - this.min,
         out = `  ${_name}.value += ${_incr}
-  ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + _name + '.min\n'}
+  ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'}
   if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}
   
 `

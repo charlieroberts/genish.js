@@ -78,7 +78,7 @@ module.exports = {
     let lastidx = this.functionBody.length - 1
 
     // insert return keyword
-    this.functionBody[ lastidx ] = '  let out = ' + this.functionBody[ lastidx] + '\n'
+    this.functionBody[ lastidx ] = '  let out = ' + this.functionBody[ lastidx ] + '\n'
     
     if( this.endBlock.length ) { 
       this.functionBody = this.functionBody.concat( this.endBlock ) 

@@ -13,6 +13,9 @@ module.exports = function () {
 
           _gen.addToEndBlock('gen.data.' + ugen.name + ' = ' + inputs[0]);
 
+          // return ugen that is being recorded instead of ssd.
+          // this effectively makes a call to ssd.record() transparent to the graph.
+          // recording is triggered by prior call to gen.addToEndBlock.
           return inputs[0];
         }
       };

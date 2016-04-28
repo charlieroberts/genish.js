@@ -25,7 +25,8 @@ let assert = require('assert'),
     data  = genlib.data,
     peek  = genlib.peek,
     cycle = genlib.cycle,
-    history = genlib.history
+    history = genlib.history,
+    delta   = genlib.delta
 
 
 //gen.debug = true
@@ -219,7 +220,21 @@ describe( 'history', ()=> {
 
     assert.equal( result, answer )
   })
+})
 
+//.1 = ( .1 - 0 = .1) (.1 - .1 = 0)
+
+describe( 'delta', ()=> {
+  it( 'should return .1 when tracking accum(.1) for first 10 samples, -.9 for 11th (after accum wraps)' , ()=> {
+    let answer = [.1,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
+        d1 = delta( accum(.1) ),
+        out = gen.createCallback( d1 ), 
+        result = []
+
+    for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
+
+    assert.deepEqual( result, answer )
+  })
 })
 
 describe( 'complex', ()=> {
