@@ -19,6 +19,7 @@ let assert = require('assert'),
     mul = genlib.mul,
     add = genlib.add,
     sub = genlib.sub,
+    div = genlib.div,
     param = genlib.param,
     accum = genlib.accum,
     sin   = genlib.sin,
@@ -29,7 +30,6 @@ let assert = require('assert'),
     history = genlib.history,
     delta   = genlib.delta,
     round   = genlib.round
-
 
 gen.debug = true
 
@@ -109,6 +109,15 @@ describe( 'binops', ()=> {
   it( 'should multiply 4 and 7 to get 28', ()=> {
     let answer = 28,
       graph = mul( 4,7 ),
+      out = gen.createCallback( graph ),
+      result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should divide 49 and 7 to get 7', ()=> {
+    let answer = 7,
+      graph = div( 49,7 ),
       out = gen.createCallback( graph ),
       result = out()
 
@@ -201,7 +210,7 @@ describe( 'data + peek', ()=>{
   it( 'should return the value of 49 when indexing uisng phase w/ peek', ()=> {
     let answer = 49,
         d = data( 'test' ),
-        p = peek( 'test', .00390625, 1, 1 ), //.00390625 is phase for index[2] assuming 512 data length
+        p = peek( 'test', .00390625, { mode:1 } ), //.00390625 is phase for index[2] assuming 512 data length
         out = gen.createCallback( p ),
         result = 0
     
@@ -241,8 +250,6 @@ describe( 'history', ()=> {
     assert.equal( result, answer )
   })
 })
-
-//.1 = ( .1 - 0 = .1) (.1 - .1 = 0)
 
 describe( 'delta', ()=> {
   it( 'should return .1 when tracking accum(.1) for first 10 samples, -.9 for 11th (after accum wraps)' , ()=> {

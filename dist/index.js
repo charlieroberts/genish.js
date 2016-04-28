@@ -15,6 +15,7 @@ var library = {
   add: require('./add.js'),
   sub: require('./sub.js'),
   mul: require('./mul.js'),
+  div: require('./div.js'),
   accum: require('./accum.js'),
   sin: require('./sin.js'),
   phasor: require('./phasor.js'),
