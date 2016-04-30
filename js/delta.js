@@ -1,3 +1,5 @@
+'use strict'
+
 let gen     = require( './gen.js' ),
     history = require( './history.js' ),
     sub     = require( './sub.js' )

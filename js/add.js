@@ -1,3 +1,5 @@
+'use strict'
+
 let gen = require('./gen.js')
 
 module.exports = (...args) => {

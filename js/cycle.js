@@ -1,3 +1,5 @@
+'use strict'
+
 let gen  = require( './gen.js' ),
     accum= require( './phasor.js' ),
     data = require( './data.js' ),

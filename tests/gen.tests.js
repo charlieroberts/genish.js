@@ -196,7 +196,7 @@ describe( 'data + peek', ()=>{
   it( 'should return the value of index data[2] (49) when requesting it via peek', ()=> {
     let answer = 49,
         d = data( 'test' ),
-        p = peek( 'test', 2 ),
+        p = peek( 'test', 2, { mode:'samples' }),
         out = gen.createCallback( p ),
         result = 0
     

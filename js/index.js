@@ -1,3 +1,5 @@
+'use strict'
+
 let library = {
   export( destination ) {
     Object.assign( destination, library )

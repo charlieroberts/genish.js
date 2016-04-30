@@ -229,33 +229,42 @@ graph = d1.record( phasor( add( .001, mul( 3000, d1 ) ) ) )
  
 play( graph )
 
-/****** using data with peek *******/
+/****** using data with peek (defaults to linear interpolation) *******/
 
 d = data('frequencyModData',4,1)
  
-d[0] = 440
-d[1] = 880
-d[2] = 220
-d[3] = 330
+Object.assign( d, [440,880,220,330] )
  
-graph = mul( 
-  cycle( 
-    peek('frequencyModData', phasor(.1), 1, 1 ) 
-  ), 
-  .1 
+graph = cycle( peek('frequencyModData', phasor(.1) ) )
+ 
+play( graph )
+
+/******* using data w/ peek (no interpolation) ******/
+
+d = data('frequencyModData',4,1)
+ 
+Object.assign( d, [440,880,220,330] )
+ 
+acceleration = mul( phasor(.1), 4 )
+ 
+graph = cycle( 
+  peek('frequencyModData', phasor( acceleration ), { interp:'none' } ) 
 )
  
 play( graph )
 
 /****** 150 sine oscillators *******/
-summer = add()
+ 
+oscillators = []
 numOscillators = 150
  
 for( var i = 0; i < numOscillators; i++ ) {
-  summer.inputs.push( mul( cycle( 100 + i *20 ), 1/numOscillators ) )
+  oscillators.push( 
+    mul( cycle( 100 + i *20 ), 1/numOscillators ) 
+  )
 }
  
-play( summer )	
+play( add.apply(null, oscillators) )
 
 `
   </script>

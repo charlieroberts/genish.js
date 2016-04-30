@@ -1,3 +1,5 @@
+'use strict'
+
 let gen = require('./gen.js')
 
 let proto = {
