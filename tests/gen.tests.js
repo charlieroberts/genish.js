@@ -29,9 +29,14 @@ let assert = require('assert'),
     cycle = genlib.cycle,
     history = genlib.history,
     delta   = genlib.delta,
-    round   = genlib.round
+    round   = genlib.round,
+    floor   = genlib.floor,
+    ceil    = genlib.ceil,
+    max     = genlib.max,
+    min     = genlib.min,
+    sign    = genlib.sign
 
-gen.debug = true
+//gen.debug = true
 
 describe( 'gen', ()=> {
   it( 'should get back two numbers when fetching the arguments from an add ugen', ()=> {
@@ -68,6 +73,40 @@ describe( 'monops', ()=> {
     assert.equal( result, answer )
   })
 
+  it( 'should floor .75 to 0', ()=> {
+    let answer = 0,
+        graph = floor( .75 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should ceil .25 to 1', ()=> {
+    let answer = 1,
+        graph = ceil( .25 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should return -1 for sign(-1000)', ()=> {
+    let answer = -1,
+        graph = sign( -1000 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+  it( 'should return 1 for sign(1000)', ()=> {
+    let answer = 1,
+        graph = sign( 1000 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
   it( 'should generate a value of 0 for sin(0)', ()=> {
     let answer = 0,
         graph = sin( 0 ),
@@ -123,6 +162,26 @@ describe( 'binops', ()=> {
 
     assert.equal( result, answer )
   })
+  
+  it( 'should return 4 for max(2,4)', ()=> {
+    let answer = 4,
+        graph = max(2,4),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should return 2 for min(2,4)', ()=> {
+    let answer = 2,
+        graph = min(2,4),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+
 })
 
 describe( 'params', ()=> {

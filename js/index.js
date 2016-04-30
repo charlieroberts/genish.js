@@ -23,6 +23,11 @@ let library = {
   cycle:  require('./cycle.js'),
   history:require('./history.js'),
   delta:  require('./delta.js'),
+  floor:  require('./floor.js'),
+  ceil:   require('./ceil.js'),
+  min:    require('./min.js'),
+  max:    require('./max.js'),
+  sign:   require('./sign.js')
 }
 
 library.gen.lib = library
