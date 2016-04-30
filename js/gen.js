@@ -52,7 +52,7 @@ module.exports = {
    * ... the generated function will have a signature of ( abs, p0 ).
    */
   
-  createCallback( ugen ) {
+  createCallback( ugen, debug = false ) {
     let callback, graphOutput
 
     this.memo = {}
@@ -73,7 +73,12 @@ module.exports = {
 
     // split body to inject return keyword on last line
     this.functionBody = this.functionBody.split('\n')
+   
+    //if( debug ) console.log( 'functionBody length', this.functionBody )
     
+    // next line is to accommodate memo as graph head
+    if( this.functionBody[ this.functionBody.length -1 ].trim().indexOf('let') > -1 ) { this.functionBody.push( '\n' ) } 
+
     // get index of last line
     let lastidx = this.functionBody.length - 1
 
@@ -93,7 +98,7 @@ module.exports = {
     // to construct the named function! sheesh...
     let buildString = `return function gen( ${this.parameters.join(',')} ){ \n${this.functionBody}\n}`
     
-    if( this.debug ) console.log( buildString ) 
+    if( this.debug || debug ) console.log( buildString ) 
 
     callback = new Function( buildString )()
     

@@ -28,17 +28,17 @@ if( this.interp === 'linear' ) {
   },
 }
 
-module.exports = ( dataName, index, properties ) => {
+module.exports = ( data, index, properties ) => {
   let ugen = Object.create( proto ),
       defaults = { channels:1, mode:'phase', interp:'linear' } 
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 
   Object.assign( ugen, { 
-    dataName,
+    data,
+    dataName:   data.name,
     uid:        gen.getUID(),
     inputs:     [ index ],
-    properties: null,
   },
   defaults )
   

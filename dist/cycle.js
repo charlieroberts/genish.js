@@ -14,10 +14,10 @@ var proto = {
   gen: function gen() {
     var inputs = _gen.getInputs(this);
 
-    return peek('sinTable', phasor(inputs[0]), 1, 1).gen();
+    return peek(proto.table, phasor(inputs[0]), 1, 1).gen();
   },
   initTable: function initTable() {
-    this.table = data('sinTable', 1024);
+    this.table = data(1024);
 
     for (var i = 0, l = this.table.length; i < l; i++) {
       this.table[i] = Math.sin(i / l * (Math.PI * 2));

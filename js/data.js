@@ -10,18 +10,33 @@ let proto = {
   },
 }
 
-module.exports = ( username, dim=512, channels=1 ) => {
-  let ugen = new Float32Array( dim )
+module.exports = ( x, y=1 ) => {
+  let ugen 
+    
+  if( typeof x === 'number' ) {
+    if( y !== 1 ) {
+      ugen = []
+      for( let i = 0; i < y; i++ ) {
+        ugen[ i ] = new Float32Array( x )
+      }
+    }else{
+      ugen = new Float32Array( x )
+    }
+  }else{
+    let size = x.length
+    ugen = new Float32Array( size )
+    for( let i = 0; i < x.length; i++ ) {
+      ugen[ i ] = x[ i ]
+    }
+  }
 
   Object.assign( ugen, { 
-    username,
-    dim,
-    channels,
-    gen:        proto.gen
+    name: proto.basename + gen.getUID(),
+    dim: y === 1 ? ugen.length : x,
+    channels : 1,
+    gen:  proto.gen
   })
   
-  ugen.name = username
-
   gen.data[ ugen.name ] = ugen
   
   return ugen

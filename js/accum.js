@@ -22,11 +22,16 @@ let proto = {
 
   callback( _name, _incr, _reset ) {
     let diff = this.max - this.min,
-        out = `  ${_name}.value += ${_incr}
+        out
+
+  // begin accum body
+
+  out = `  ${_name}.value += ${_incr}
   ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'}
-  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}
-  
-`
+  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
+
+  // end accum body
+
     return out
   }
 }

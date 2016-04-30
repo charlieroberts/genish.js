@@ -34,7 +34,9 @@ let assert = require('assert'),
     ceil    = genlib.ceil,
     max     = genlib.max,
     min     = genlib.min,
-    sign    = genlib.sign
+    sign    = genlib.sign,
+    dcblock = genlib.dcblock,
+    memo    = genlib.memo
 
 //gen.debug = true
 
@@ -195,6 +197,18 @@ describe( 'params', ()=> {
   })
 })
 
+describe( 'memo', ()=> {
+  it( 'should store a value after calculating, and subsequently return calculated value', ()=> {
+    let answer = 26,
+        m = memo( add( 5, 8 ) ),
+        graph = add( m, m ),
+        out   = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+})
+
 describe( 'accum', ()=>{
   it( 'should ramp to .5 with an increment of .1 after five executions', ()=> {
     let answer = .5,
@@ -254,13 +268,11 @@ describe( 'phasor', ()=>{
 describe( 'data + peek', ()=>{
   it( 'should return the value of index data[2] (49) when requesting it via peek', ()=> {
     let answer = 49,
-        d = data( 'test' ),
-        p = peek( 'test', 2, { mode:'samples' }),
+        d = data( [0,0,49] ),
+        p = peek( d, 2, { mode:'samples' }),
         out = gen.createCallback( p ),
-        result = 0
+        result
     
-    d[2] = answer
-
     result = out()
     
     assert.equal( result, answer )
@@ -268,12 +280,12 @@ describe( 'data + peek', ()=>{
 
   it( 'should return the value of 49 when indexing uisng phase w/ peek', ()=> {
     let answer = 49,
-        d = data( 'test' ),
-        p = peek( 'test', .00390625, { mode:1 } ), //.00390625 is phase for index[2] assuming 512 data length
+        d = data( 512 ),
+        p = peek( d, .00390625, { mode:'phase', interp:'none' } ), //.00390625 is phase for index[2] if 512 data length
         out = gen.createCallback( p ),
-        result = 0
+        result
     
-    d[2] = answer
+    d[2] = 49
 
     result = out()
     
@@ -293,6 +305,20 @@ describe( 'cycle', ()=> {
     assert.equal( result, answer )
   })
 
+  it( 'should generate values in the range {-1,1}', ()=> {
+    let storage = [],
+        c = cycle( 440 ),
+        out = gen.createCallback( c ),
+        outputMin, outputMax
+
+    for( let i = 0; i < 2000; i++ ) storage[i] = out()
+    
+    outputMin = Math.min.apply( null, storage )
+    outputMax = Math.max.apply( null, storage )
+    
+    //console.log( '  ', outputMin, outputMax )
+    assert( (outputMin <= -.99 && outputMin >= -1.0001) && (outputMax >= .99 && outputMax <= 1.0001) )
+  }) 
 })
 
 describe( 'history', ()=> {
@@ -320,6 +346,25 @@ describe( 'delta', ()=> {
     for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
 
     assert.deepEqual( result, answer )
+  })
+})
+
+describe( 'dcblock', ()=>{
+  it( 'should remove offset of .5 to make signal range {-1,1}', ()=> {
+    let storage = [],
+        graph  = dcblock( add( .5, cycle( 440 ) ) ),
+        out    = gen.createCallback( graph ),
+        outputMax, outputMin
+
+    // let filter run for a bit
+    for( let i = 0; i < 20000; i++ ) out()
+
+    for( let i = 0; i < 1000; i++ ) storage[ i ] = out()
+    
+    outputMax = Math.max.apply( null, storage )
+    outputMin = Math.min.apply( null, storage )
+
+    assert( outputMax <=1.1 && outputMin >= -1.1 )
   })
 })
 

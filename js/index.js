@@ -27,7 +27,9 @@ let library = {
   ceil:   require('./ceil.js'),
   min:    require('./min.js'),
   max:    require('./max.js'),
-  sign:   require('./sign.js')
+  sign:   require('./sign.js'),
+  dcblock:require('./dcblock.js'),
+  memo:   require('./memo.js')
 }
 
 library.gen.lib = library

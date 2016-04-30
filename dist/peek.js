@@ -23,17 +23,17 @@ var proto = {
   }
 };
 
-module.exports = function (dataName, index, properties) {
+module.exports = function (data, index, properties) {
   var ugen = Object.create(proto),
       defaults = { channels: 1, mode: 'phase', interp: 'linear' };
 
   if (properties !== undefined) Object.assign(defaults, properties);
 
   Object.assign(ugen, {
-    dataName: dataName,
+    data: data,
+    dataName: data.name,
     uid: _gen.getUID(),
-    inputs: [index],
-    properties: null
+    inputs: [index]
   }, defaults);
 
   ugen.name = ugen.basename + ugen.uid;

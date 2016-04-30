@@ -10,20 +10,34 @@ var proto = {
   }
 };
 
-module.exports = function (username) {
-  var dim = arguments.length <= 1 || arguments[1] === undefined ? 512 : arguments[1];
-  var channels = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+module.exports = function (x) {
+  var y = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-  var ugen = new Float32Array(dim);
+  var ugen = void 0;
+
+  if (typeof x === 'number') {
+    if (y !== 1) {
+      ugen = [];
+      for (var i = 0; i < y; i++) {
+        ugen[i] = new Float32Array(x);
+      }
+    } else {
+      ugen = new Float32Array(x);
+    }
+  } else {
+    var size = x.length;
+    ugen = new Float32Array(size);
+    for (var _i = 0; _i < x.length; _i++) {
+      ugen[_i] = x[_i];
+    }
+  }
 
   Object.assign(ugen, {
-    username: username,
-    dim: dim,
-    channels: channels,
+    name: proto.basename + gen.getUID(),
+    dim: y === 1 ? ugen.length : x,
+    channels: 1,
     gen: proto.gen
   });
-
-  ugen.name = username;
 
   gen.data[ugen.name] = ugen;
 

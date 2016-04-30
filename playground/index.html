@@ -177,7 +177,8 @@ To run an arbitrary genish graph, wrap it in a call to
 the play() function
 
 Available ugens: add,sub, mul, div, abs, round, sin, accum, cycle, peek, 
-phasor, data, ssd (single-sample delay), delta, param (param doesn't work with play).
+phasor, data, ssd (single-sample delay), delta, param (param doesn't work with play),
+ceil, max, min, floor, sign
 
 Only one graph can be played at a time in this playground.
 */
@@ -231,24 +232,21 @@ play( graph )
 
 /****** using data with peek (defaults to linear interpolation) *******/
 
-d = data('frequencyModData',4,1)
+d = data( [440,880,220,330] )
  
-Object.assign( d, [440,880,220,330] )
- 
-graph = cycle( peek('frequencyModData', phasor(.1) ) )
+graph = cycle( peek( d, phasor(.1) ) )
  
 play( graph )
 
 /******* using data w/ peek (no interpolation) ******/
 
-d = data('frequencyModData',4,1)
- 
-Object.assign( d, [440,880,220,330] )
- 
+d = data( [220,330,440,880] )
+
+// create a ramp from 1-4 over 10 seconds
 acceleration = mul( phasor(.1), 4 )
  
 graph = cycle( 
-  peek('frequencyModData', phasor( acceleration ), { interp:'none' } ) 
+  peek( d, phasor( acceleration ), { interp:'none' } ) 
 )
  
 play( graph )
