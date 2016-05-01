@@ -4,6 +4,7 @@ var library = {
   export: function _export(destination) {
     Object.assign(destination, library);
     destination.ssd = library.history; // history is window object property, so use ssd as alias
+    destination.clip = library.clamp;
   },
 
 
@@ -38,7 +39,8 @@ var library = {
   memo: require('./memo.js'),
   rate: require('./rate.js'),
   wrap: require('./wrap.js'),
-  mix: require('./mix.js')
+  mix: require('./mix.js'),
+  clamp: require('./clamp.js')
 };
 
 library.gen.lib = library;

@@ -44,7 +44,8 @@ let assert = require('assert'),
     memo    = genlib.memo,
     wrap    = genlib.wrap,
     mix     = genlib.mix,
-    rate    = genlib.rate
+    rate    = genlib.rate,
+    clamp   = genlib.clamp
 
 //gen.debug = true
 
@@ -361,6 +362,21 @@ describe( 'wrap', () => {
 
     assert( result < max )
 
+  })
+})
+
+describe( 'clamp', () => {
+  it( 'should not let samples outside the range of -1..1', ()=> {
+    let graph = clamp( mul( cycle(440), 10 ), -1, 1 ),
+        storage = [],
+        out = gen.createCallback( graph )
+
+    for( let i = 0; i < 200; i++ ) storage[i] = out()
+
+    let min = Math.min.apply( null, storage),
+        max = Math.max.apply( null, storage)
+
+    assert( min >= -1 && max <= 1 )
   })
 })
 
