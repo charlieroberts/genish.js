@@ -23,6 +23,7 @@ let assert = require('assert'),
     param = genlib.param,
     accum = genlib.accum,
     sin   = genlib.sin,
+    cos   = genlib.cos,
     phasor= genlib.phasor,
     data  = genlib.data,
     peek  = genlib.peek,
@@ -128,6 +129,24 @@ describe( 'monops', ()=> {
 
     assert.equal( result, answer )
   })
+  it( 'should generate a value of 1 for cos(0)', ()=> {
+    let answer = 1,
+        graph = cos( 0 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of 0 for cos( PI/2 )', ()=> {
+    let answer = 0,
+        graph = cos( Math.PI * .5 ),
+        out = gen.createCallback( graph ),
+        result = out().toFixed( 6 )
+
+    assert.equal( result, answer )
+  })
+
 })
 
 describe( 'binops', ()=> {

@@ -10,12 +10,12 @@ let proto = {
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ this.name ]: Math.floor })
+      //gen.closures.add({ [ this.name ]: Math.floor })
 
-      out = `gen.floor( ${inputs[0]} )`
+      out = `( ${inputs[0]} | 0 )`
 
     } else {
-      out = Math.floor( parseFloat( inputs[0] ) )
+      out = inputs[0] | 0
     }
     
     return out

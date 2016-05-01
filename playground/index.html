@@ -3,6 +3,7 @@
     <title>Genish.js Playground</title>
     <script src="../node_modules/codemirror/lib/codemirror.js"></script>
     <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
     <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
     <script src="../dist/gen.lib.js"></script>
 <style>
@@ -11,8 +12,8 @@
 }
 body { margin: 0 }
 
-#editor { width:45%; display:inline-block; height:100%; border-right:1px solid #ddd  }
-#console {width:54%; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
+#editor { width:45%; box-sizing: border; display:inline-block; height:100%; border-right:1px solid #666  }
+#console {width:55%; box-sizing:border; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
 
 </style>
 
@@ -31,7 +32,8 @@ body { margin: 0 }
         mode:   'javascript',
         value:  exampleCode,
         keyMap: 'playground',
-        autofocus: true
+        autofocus: true,
+        theme:'monokai'
       })
 
       cm.setSize( null, '100%' )
@@ -39,7 +41,8 @@ body { margin: 0 }
       cmconsole = CodeMirror( document.querySelector('#console'), {
         mode:'javascript',
         value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
-        readOnly:'nocursor'
+        readOnly:'nocursor',
+        theme:'monokai'
       })     
       
       cmconsole.setSize( null, '100%' )

@@ -17,6 +17,7 @@ let library = {
   div:    require('./div.js'),
   accum:  require('./accum.js'),
   sin:    require('./sin.js'),
+  cos:    require('./cos.js'),
   phasor: require('./phasor.js'),
   data:   require('./data.js'),
   peek:   require('./peek.js'),
