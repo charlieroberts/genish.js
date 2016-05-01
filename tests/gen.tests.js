@@ -24,6 +24,10 @@ let assert = require('assert'),
     accum = genlib.accum,
     sin   = genlib.sin,
     cos   = genlib.cos,
+    tan   = genlib.tan,
+    asin  = genlib.asin,
+    acos  = genlib.acos,
+    atan  = genlib.atan,
     phasor= genlib.phasor,
     data  = genlib.data,
     peek  = genlib.peek,
@@ -147,6 +151,76 @@ describe( 'monops', ()=> {
     assert.equal( result, answer )
   })
 
+  it( 'should generate a value of 0 for tan(0)', ()=> {
+    let answer = 0,
+        graph = tan( 0 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of 1 for tan( PI/4 )', ()=> {
+    let answer = 1,
+        graph = tan( Math.PI / 4 ),
+        out = gen.createCallback( graph ),
+        result = parseFloat( out().toFixed( 6 ) )
+
+    assert.equal( result, answer )
+  })
+  it( 'should generate a value of 0 for asin(0)', ()=> {
+    let answer = 0,
+        graph = asin( 0 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of PI/2 for asin( 1 )', ()=> {
+    let answer = Math.PI * .5,
+        graph = asin( 1 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of PI/2 for acos(0)', ()=> {
+    let answer = Math.PI * .5,
+        graph = acos( 0 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of 0 for acos( 1 )', ()=> {
+    let answer = 0,
+        graph = acos( 1 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of 0 for atan(0)', ()=> {
+    let answer = 0,
+        graph = atan( 0 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should generate a value of PI/4 for atan( 1 )', ()=> {
+    let answer = Math.PI / 4,
+        graph = atan( 1 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
 })
 
 describe( 'binops', ()=> {
