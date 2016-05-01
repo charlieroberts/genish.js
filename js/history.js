@@ -7,6 +7,12 @@ module.exports = () => {
     inputs: [ 0 ],
 
     record( v ) {
+      if( gen.histories.has( v ) ){
+        let memoHistory = gen.histories.get( v )
+        ugen.name = memoHistory.name
+        return memoHistory
+      }
+
       let obj = {
         gen() {
           let inputs = gen.getInputs( ugen )
@@ -17,10 +23,13 @@ module.exports = () => {
           // this effectively makes a call to ssd.record() transparent to the graph.
           // recording is triggered by prior call to gen.addToEndBlock.
           return inputs[ 0 ]
-        }
+        },
+        name: ugen.name
       }
 
       this.inputs[ 0 ] = v
+      
+      gen.histories.set( v, obj )
 
       return obj
     },

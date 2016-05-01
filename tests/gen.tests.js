@@ -37,7 +37,8 @@ let assert = require('assert'),
     sign    = genlib.sign,
     dcblock = genlib.dcblock,
     memo    = genlib.memo,
-    wrap    = genlib.wrap
+    wrap    = genlib.wrap,
+    rate    = genlib.rate
 
 //gen.debug = true
 
@@ -273,6 +274,21 @@ describe( 'phasor', ()=>{
   it( 'should ramp to .5 with an frequency of 4410 after five executions', ()=> {
     let answer = .5,
         graph  = phasor( 4410 ),
+        out    = gen.createCallback( graph ),
+        result = 0
+    
+    for( let i = 0; i < 4; i++ ) out()
+    
+    result = out()
+    
+    assert.equal( result, answer )
+  })
+})
+
+describe( 'rate', ()=>{
+  it( 'should cause a phasor with an frequency of 4410 to ramp to .25 after five executions instead of .5', ()=> {
+    let answer = .25,
+        graph  = rate( phasor( 4410 ), .5 ),
         out    = gen.createCallback( graph ),
         result = 0
     

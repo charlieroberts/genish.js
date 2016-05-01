@@ -7,6 +7,12 @@ module.exports = function () {
     inputs: [0],
 
     record: function record(v) {
+      if (_gen.histories.has(v)) {
+        var memoHistory = _gen.histories.get(v);
+        ugen.name = memoHistory.name;
+        return memoHistory;
+      }
+
       var obj = {
         gen: function gen() {
           var inputs = _gen.getInputs(ugen);
@@ -17,10 +23,14 @@ module.exports = function () {
           // this effectively makes a call to ssd.record() transparent to the graph.
           // recording is triggered by prior call to gen.addToEndBlock.
           return inputs[0];
-        }
+        },
+
+        name: ugen.name
       };
 
       this.inputs[0] = v;
+
+      _gen.histories.set(v, obj);
 
       return obj;
     },

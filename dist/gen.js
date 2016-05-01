@@ -26,7 +26,8 @@ module.exports = {
   closures: new Set(),
 
   parameters: [],
-  endBlock: [],
+  endBlock: new Set(),
+  histories: new Map(),
 
   memo: {},
 
@@ -39,7 +40,7 @@ module.exports = {
 
   export: function _export(obj) {},
   addToEndBlock: function addToEndBlock(v) {
-    this.endBlock.push('  ' + v);
+    this.endBlock.add('  ' + v);
   },
 
 
@@ -64,8 +65,9 @@ module.exports = {
         graphOutput = void 0;
 
     this.memo = {};
-    this.endBlock.length = 0;
+    this.endBlock.clear();
     this.closures.clear();
+    this.histories.clear();
     this.parameters.length = 0;
 
     this.functionBody = "  'use strict';\n\n";
@@ -95,8 +97,8 @@ module.exports = {
     // insert return keyword
     this.functionBody[lastidx] = '  let out = ' + this.functionBody[lastidx] + '\n';
 
-    if (this.endBlock.length) {
-      this.functionBody = this.functionBody.concat(this.endBlock);
+    if (this.endBlock.size) {
+      this.functionBody = this.functionBody.concat(Array.from(this.endBlock));
       this.functionBody.push('\n  return out');
     } else {
       this.functionBody.push('  return out');
