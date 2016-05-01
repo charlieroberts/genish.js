@@ -10,7 +10,8 @@ module.exports = (...args) => {
     gen() {
       let inputs = gen.getInputs( this ),
           out='(',
-          diff = 0, 
+          diff = 0,
+          needsParens = false, 
           numCount = 0,
           lastNumber = inputs[ 0 ],
           lastNumberIsUgen = isNaN( lastNumber ), 
@@ -25,14 +26,20 @@ module.exports = (...args) => {
         if( !lastNumberIsUgen && !isNumberUgen ) {
           lastNumber = lastNumber - v
           out += lastNumber
+          return
         }else{
+          needsParens = true
           out += `${lastNumber} - ${v}`
         }
 
         if( !isFinalIdx ) out += ' - ' 
       })
-
-      out += ')'
+    
+      if( needsParens ) {
+        out += ')'
+      }else{
+        out = out.slice( 1 ) // remove opening paren
+      }
 
       return out
     }

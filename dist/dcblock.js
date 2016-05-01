@@ -1,4 +1,3 @@
-
 'use strict';
 
 var _gen = require('./gen.js'),

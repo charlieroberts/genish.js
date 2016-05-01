@@ -36,7 +36,8 @@ let assert = require('assert'),
     min     = genlib.min,
     sign    = genlib.sign,
     dcblock = genlib.dcblock,
-    memo    = genlib.memo
+    memo    = genlib.memo,
+    wrap    = genlib.wrap
 
 //gen.debug = true
 
@@ -250,6 +251,24 @@ describe( 'accum', ()=>{
   })
 })
 
+describe( 'wrap', () => {
+  it( 'should not let an accum with a max of 1000 travel past 1', ()=> {
+    let max = 1,
+        storage = [],
+        acc = accum( .5, 0, 0, 100 ),
+        graph = wrap( acc, 0, max ),
+        out = gen.createCallback( graph ),
+        result
+
+    for( let i = 0; i < 20; i++ ) storage[ i ] = out()
+
+    result = Math.max.apply( null, storage )
+
+    assert( result < max )
+
+  })
+})
+
 describe( 'phasor', ()=>{
   it( 'should ramp to .5 with an frequency of 4410 after five executions', ()=> {
     let answer = .5,
@@ -305,7 +324,7 @@ describe( 'cycle', ()=> {
     assert.equal( result, answer )
   })
 
-  it( 'should generate values in the range {-1,1}', ()=> {
+  it( 'should generate values in the range {-1,1} over 2000 samples', ()=> {
     let storage = [],
         c = cycle( 440 ),
         out = gen.createCallback( c ),
@@ -349,8 +368,21 @@ describe( 'delta', ()=> {
   })
 })
 
+//describe( 'rate', ()=> {
+//  it( 'should cycle 4 times over  given a phasor with a frequency of 1 and a scaling value of .25' , ()=> {
+//    let answer = [.1,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
+//    d1 = delta( accum(.1) ),
+//    out = gen.createCallback( d1 ), 
+//    result = []
+
+//    for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
+
+//    assert.deepEqual( result, answer )
+//  })
+//})
+
 describe( 'dcblock', ()=>{
-  it( 'should remove offset of .5 to make signal range {-1,1}', ()=> {
+  it( 'should filter offset of .5 to make signal range {-1,1} after >20000 samples', ()=> {
     let storage = [],
         graph  = dcblock( add( .5, cycle( 440 ) ) ),
         out    = gen.createCallback( graph ),

@@ -1,4 +1,3 @@
-
 'use strict'
 
 let gen     = require( './gen.js' ),

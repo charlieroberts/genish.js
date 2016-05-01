@@ -29,7 +29,9 @@ let library = {
   max:    require('./max.js'),
   sign:   require('./sign.js'),
   dcblock:require('./dcblock.js'),
-  memo:   require('./memo.js')
+  memo:   require('./memo.js'),
+  rate:   require('./rate.js'),
+  wrap:   require('./wrap.js')
 }
 
 library.gen.lib = library

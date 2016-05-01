@@ -50,8 +50,9 @@ body { margin: 0 }
         node = ctx.createScriptProcessor( 2048, 0, 2 ),
         clear = function() { return 0 },
         fnc  = clear,
-        play = function( graph ) {
-          fnc = gen.createCallback( graph )
+        play = function( graph, debug ) {
+          if( debug === undefined ) debug = false
+          fnc = gen.createCallback( graph, debug )
           cmconsole.setValue( fnc.toString() )
         }
 
