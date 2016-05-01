@@ -8,9 +8,14 @@ var proto = {
   basename: 'phasor',
 
   gen: function gen() {
-    var inputs = _gen.getInputs(this);
+    var inputs = _gen.getInputs(this),
+        out = void 0;
 
-    return accum(mul(inputs[0], 1 / 44100), inputs[1]).gen();
+    out = accum(mul(inputs[0], 1 / 44100), inputs[1]).gen();
+
+    _gen.memo[this.name] = out[0];
+
+    return out;
   }
 };
 

@@ -12,9 +12,13 @@ let proto = {
   table:null,
 
   gen() {
-    let inputs = gen.getInputs( this )
-
-    return peek( proto.table, phasor( inputs[0] ), 1, 1 ).gen()
+    let inputs = gen.getInputs( this ), out
+    
+    out = peek( proto.table, phasor( inputs[0] ) ).gen()
+    
+    gen.memo[ this.name ] = out[0]
+    
+    return out
   },
 
   initTable() {
@@ -38,7 +42,6 @@ module.exports = ( frequency=1, reset=0 ) => {
     table:      proto.table,
     uid:        gen.getUID(),
     inputs:     [ frequency, reset ],
-    properties: [ 'frequency','reset' ],
   })
   
   ugen.name = `${ugen.basename}${ugen.uid}`

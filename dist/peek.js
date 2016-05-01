@@ -19,6 +19,8 @@ var proto = {
     } else {
       functionBody += '      ' + this.name + '_out = ' + this.name + '_data[ ' + this.name + '_index ]\n\n';
     }
+    _gen.memo[this.name] = this.name + '_out';
+
     return [this.name + '_out', functionBody];
   }
 };

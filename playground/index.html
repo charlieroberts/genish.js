@@ -222,15 +222,16 @@ graph = cycle( add( 440, rampedLFO ) )
  
 play( graph )
 
-/****** (noisy) frequency modulation using feedback ******/
+/****** (LOUD + noisy) frequency modulation using feedback ******/
 
 // ssd is equivalent to history in gen~, a single-sample delay
 // (the history name is used by the window object in js...)
-d1 = ssd() 
+// an argument to ssd sets its initial value
+sampler = ssd(.001) 
  
-//here we record the output of a sawtooth wave into our ssd,
-//and then  use that output on the next sample to modulate its frequency
-graph = d1.record( phasor( add( .001, mul( 3000, d1 ) ) ) )
+//here we record the output of a sawtooth wave into our ssd each sampel,
+//and then use this value on the next sample to modulate its frequency
+graph = sampler.record( phasor( mul( 3000, sampler ) ) )
  
 play( graph )
 

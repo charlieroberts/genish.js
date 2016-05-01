@@ -12,9 +12,14 @@ var proto = {
   table: null,
 
   gen: function gen() {
-    var inputs = _gen.getInputs(this);
+    var inputs = _gen.getInputs(this),
+        out = void 0;
 
-    return peek(proto.table, phasor(inputs[0]), 1, 1).gen();
+    out = peek(proto.table, phasor(inputs[0])).gen();
+
+    _gen.memo[this.name] = out[0];
+
+    return out;
   },
   initTable: function initTable() {
     this.table = data(1024);
@@ -38,8 +43,7 @@ module.exports = function () {
     reset: reset,
     table: proto.table,
     uid: _gen.getUID(),
-    inputs: [frequency, reset],
-    properties: ['frequency', 'reset']
+    inputs: [frequency, reset]
   });
 
   ugen.name = '' + ugen.basename + ugen.uid;

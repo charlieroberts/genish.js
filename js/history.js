@@ -2,9 +2,9 @@
 
 let gen  = require('./gen.js')
 
-module.exports = () => {
+module.exports = ( in1=0 ) => {
   let ugen = {
-    inputs: [ 0 ],
+    inputs: [ in1 ],
 
     record( v ) {
       if( gen.histories.has( v ) ){
@@ -41,7 +41,7 @@ module.exports = () => {
   
   ugen.name = 'history' + ugen.uid
 
-  gen.data[ ugen.name ] = 0
+  gen.data[ ugen.name ] = in1
   
   return ugen
 }

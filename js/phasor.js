@@ -8,9 +8,13 @@ let proto = {
   basename:'phasor',
 
   gen() {
-    let inputs = gen.getInputs( this )
+    let inputs = gen.getInputs( this ), out
 
-    return accum( mul( inputs[0], 1/44100 ), inputs[1] ).gen()
+    out = accum( mul( inputs[0], 1/44100 ), inputs[1] ).gen()
+
+    gen.memo[ this.name ] = out[0]
+
+    return out
   }
 
 }

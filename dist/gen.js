@@ -167,6 +167,7 @@ module.exports = {
         // if input is a ugen...
         if (_this.memo[input.name]) {
           // if it has been memoized...
+          console.log("MEMO", input.name, _this.memo[input.name]);
           processedInput = _this.memo[input.name];
         } else {
           // if not memoized generate code

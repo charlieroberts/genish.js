@@ -3,8 +3,10 @@
 var _gen = require('./gen.js');
 
 module.exports = function () {
+  var in1 = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+
   var ugen = {
-    inputs: [0],
+    inputs: [in1],
 
     record: function record(v) {
       if (_gen.histories.has(v)) {
@@ -44,7 +46,7 @@ module.exports = function () {
 
   ugen.name = 'history' + ugen.uid;
 
-  _gen.data[ugen.name] = 0;
+  _gen.data[ugen.name] = in1;
 
   return ugen;
 };
