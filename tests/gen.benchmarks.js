@@ -15,7 +15,8 @@ let Benchmark = require( 'benchmark' )
 
 let tests = {
   functionArguments:  require( './gen.benchmarks.functionArguments.js' ),
-  floor:              require( './gen.benchmarks.floor.js' )
+  floor:              require( './gen.benchmarks.floor.js' ),
+  clamp:              require( './gen.benchmarks.clip.js' )
 }
 
 for( let i = 2; i < process.argv.length; i++ ) {

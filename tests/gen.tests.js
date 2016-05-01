@@ -367,7 +367,7 @@ describe( 'wrap', () => {
 describe( 'mix', () => {
   it( 'should output .5 given mix(0,2,.25)', ()=> {
     let answer = .5,
-        graph = mix( 0,2,.25 ) 
+        graph = mix( 0,2,.25 ), 
         out = gen.createCallback( graph ),
         result = out()
 

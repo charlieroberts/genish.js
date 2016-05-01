@@ -1,6 +1,9 @@
 'use strict'
 
-let gen  = require('./gen.js')
+let gen = require('./gen.js'),
+    add = require('./add.js'),
+    mul = require('./mul.js'),
+    sub = require('./sub.js')
 
 let proto = {
   basename:'mix',
