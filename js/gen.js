@@ -54,8 +54,10 @@ module.exports = {
    */
   
   createCallback( ugen, debug = false ) {
-    let callback, graphOutput
-
+    let isStereo = Array.isArray( ugen ),
+        callback, 
+        channel1, channel2
+    
     this.memo = {}
     this.endBlock.clear()
     this.closures.clear()
@@ -66,32 +68,41 @@ module.exports = {
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
-    graphOutput = ugen.gen()
+    for( let i = 0; i < 1 + isStereo; i++ ) {
+      let channel = isStereo ? ugen[i].gen() : ugen.gen(),
+          body = ''
 
-    // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
-    // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
-    // just return that number (graphOutput[0]).
-    this.functionBody += Array.isArray( graphOutput ) ? graphOutput[1] + '\n' + graphOutput[0] : graphOutput
+      // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
+      // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
+      // just return that number (graphOutput[0]).
+      body += Array.isArray( channel ) ? channel[1] + '\n' + channel[0] : channel
 
-    // split body to inject return keyword on last line
+      // split body to inject return keyword on last line
+      body = body.split('\n')
+     
+      //if( debug ) console.log( 'functionBody length', body )
+      
+      // next line is to accommodate memo as graph head
+      if( body[ body.length -1 ].trim().indexOf('let') > -1 ) { body.push( '\n' ) } 
+
+      // get index of last line
+      let lastidx = body.length - 1
+
+      // insert return keyword
+      body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+
+      this.functionBody += body.join('\n')
+    }
+
+    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
+    
     this.functionBody = this.functionBody.split('\n')
-   
-    //if( debug ) console.log( 'functionBody length', this.functionBody )
-    
-    // next line is to accommodate memo as graph head
-    if( this.functionBody[ this.functionBody.length -1 ].trim().indexOf('let') > -1 ) { this.functionBody.push( '\n' ) } 
 
-    // get index of last line
-    let lastidx = this.functionBody.length - 1
-
-    // insert return keyword
-    this.functionBody[ lastidx ] = '  let out = ' + this.functionBody[ lastidx ] + '\n'
-    
     if( this.endBlock.size ) { 
-      this.functionBody = this.functionBody.concat( Array.from( this.endBlock ) ) 
-      this.functionBody.push( '\n  return out' )
+      this.functionBody = this.functionBody.concat( Array.from( this.endBlock ) )
+      this.functionBody.push( returnStatement )
     }else{
-      this.functionBody.push( '  return out' )
+      this.functionBody.push( returnStatement )
     }
     // reassemble function body
     this.functionBody = this.functionBody.join('\n')
@@ -113,6 +124,7 @@ module.exports = {
     }
     
     callback.data = this.data
+    callback.out  = []
 
     return callback
   },

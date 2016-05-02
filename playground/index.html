@@ -25,7 +25,8 @@ body { margin: 0 }
   
   </body>
   <script>
-    var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContext
+    var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContext,
+        isStereo = false
 
     window.onload = function() {
       cm = CodeMirror( document.querySelector('#editor'), {
@@ -55,6 +56,9 @@ body { margin: 0 }
         fnc  = clear,
         play = function( graph, debug ) {
           if( debug === undefined ) debug = false
+          
+          isStereo = Array.isArray( graph )
+
           fnc = gen.createCallback( graph, debug )
           cmconsole.setValue( fnc.toString() )
         }
@@ -66,7 +70,13 @@ body { margin: 0 }
           right= outputBuffer.getChannelData( 1 )
 
       for (var sample = 0; sample < left.length; sample++) {
-        left[ sample ] = right[ sample ] = fnc();
+        if( !isStereo ) {
+          left[ sample ] = right[ sample ] = fnc();
+        }else{
+          let out = fnc()
+          left[ sample ] = out[0]
+          right[ sample] = out[1]
+        }
       }
     }
     
@@ -223,6 +233,17 @@ rampedLFO = mul( lfo, ramp )
 graph = cycle( add( 440, rampedLFO ) )
  
 play( graph )
+
+/******** stereo sound ***********/
+
+mod = mul( phasor(.1), 800 )
+p  = mul( cycle( add( 400, mod  ) ), sub(1,phasor(8) ) )
+p2 = mul( cycle( sub( 1200, mod ) ), sub(1,phasor(5) ) )
+ 
+// by passing an array to play we provide a left and a right channel,
+// in this instance both of them are using the phasor named 'mod', which
+// is memoized to avoid extra computation
+play( [ p, p2 ] )
 
 /****** (LOUD + noisy) frequency modulation using feedback ******/
 
