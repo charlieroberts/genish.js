@@ -40,7 +40,7 @@ module.exports = ( incr, reset=0, properties ) => {
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 
-  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min - 1
+  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min
 
   Object.assign( ugen, { 
     min: defaults.min, 

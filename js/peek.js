@@ -1,7 +1,6 @@
 'use strict'
 
-let gen  = require('./gen.js'),
-    mul  = require('./mul.js')
+let gen  = require('./gen.js')
 
 let proto = {
   basename:'peek',

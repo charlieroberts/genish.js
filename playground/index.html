@@ -181,8 +181,10 @@ To run an arbitrary genish graph, wrap it in a call to
 the play() function
 
 Available ugens: add,sub, mul, div, abs, round, sin, accum, cycle, peek, 
-phasor, data, ssd (single-sample delay), delta, param (param doesn't work with play),
-ceil, max, min, floor, sign
+phasor, data, ssd (single-sample delay), delta,
+param (although param doesn't work with play()),
+ceil, max, min, floor, sign, sin, cos, tan, asin, acos, atan, poke,
+wrap, clamp, delay
 
 Only one graph can be played at a time in this playground.
 */
@@ -255,6 +257,22 @@ graph = cycle(
 )
  
 play( graph )
+
+/******** notes w/ delay ***********/
+
+frequencies = data( [220,330,440,880] )
+ 
+freqSignal = peek( frequencies, phasor( .5 ), { interp:'none' } ) 
+ 
+envelope = sub( 1, phasor(2) )
+ 
+notes = mul( cycle( freqSignal ), envelope )
+ 
+gain = mul( notes, .1 )
+ 
+echo = delay( gain, 11025, { size: 22050 })
+ 
+play( add( gain, echo ) )
 
 /****** 150 sine oscillators *******/
  

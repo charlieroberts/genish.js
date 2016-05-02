@@ -42,6 +42,7 @@ let library = {
   clamp:  require('./clamp.js'),
   poke:   require('./poke.js'),
   delay:  require('./delay.js'),
+  fold:   require('./fold.js')
 }
 
 library.gen.lib = library

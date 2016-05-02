@@ -1,7 +1,6 @@
 'use strict';
 
-var _gen = require('./gen.js'),
-    mul = require('./mul.js');
+var _gen = require('./gen.js');
 
 var proto = {
   basename: 'peek',

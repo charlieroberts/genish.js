@@ -45,7 +45,8 @@ let assert = require('assert'),
     wrap    = genlib.wrap,
     mix     = genlib.mix,
     rate    = genlib.rate,
-    clamp   = genlib.clamp
+    clamp   = genlib.clamp,
+    fold    = genlib.fold
 
 //gen.debug = true
 
@@ -365,6 +366,17 @@ describe( 'wrap', () => {
   })
 })
 
+describe( 'fold', ()=> {
+  it( 'should generate a value of .75 given an input of 1.25, a min of 0 and a max of 1', ()=> {
+    let answer = .75,
+        graph = fold( 1.25 ),
+        out = gen.createCallback( graph ),
+        result = out()
+    
+    assert.equal( answer, result )
+  })
+})
+
 describe( 'clamp', () => {
   it( 'should not let samples outside the range of -1..1', ()=> {
     let graph = clamp( mul( cycle(440), 10 ), -1, 1 ),
@@ -481,11 +493,10 @@ describe( 'history', ()=> {
   it( 'should return 7 after recording an accum with an increment of 1 + history for three samples', ()=> {
     let answer = 7,
         h1 = history(),
-        h1input = h1.record( accum( add(1, h1 ), 0, 0, 10 ) ), // incr, reset, min, max
+        h1input = h1.record( accum( add(1, h1 ), 0, {min:0, max:10} ) ),
         out = gen.createCallback( h1input ),
         result = 0
     
-    // 1 + 0 = 1, 1 + 1 = 2, 1 + 2 = 3
     for( let i = 0; i < 3; i++ ) result = out()
 
     assert.equal( result, answer )

@@ -9,7 +9,7 @@ var proto = {
   basename: 'mix',
 
   gen: function gen() {
-    _gen.memo[this.name] = add(this.inputs[0], mul(sub(this.inputs[1], this.inputs[0]), this.inputs[2])).gen();
+    _gen.memo[this.name] = add(mul(this.inputs[0], sub(1, this.inputs[2])), mul(this.inputs[1], this.inputs[2])).gen();
 
     return _gen.memo[this.name];
   }
