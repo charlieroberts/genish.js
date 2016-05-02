@@ -18,36 +18,39 @@ let proto = {
     return [ genName + '.value', functionBody ]
   },
 
-  // ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + _name + '.min\n'}
-
   callback( _name, _incr, _reset ) {
     let diff = this.max - this.min,
         out
 
-  // begin accum body
+    out = 
 
-  out = `  ${_name}.value += ${_incr}
+`  ${_name}.value += ${_incr}
   ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'}
   if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
-
-  // end accum body
+  
+    out = ' ' + out
 
     return out
   }
 }
 
-module.exports = ( incr, reset=0, min=0, max=1 ) => {
-  let ugen = Object.create( proto )
+module.exports = ( incr, reset=0, properties ) => {
+  let ugen = Object.create( proto ),
+      defaults = { min:0, max:1 }
+
+  if( properties !== undefined ) Object.assign( defaults, properties )
+
+  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min - 1
 
   Object.assign( ugen, { 
-    min, 
-    max,
-    value:   0,
+    min: defaults.min, 
+    max: defaults.max,
+    value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
-    properties: [ '_incr','_reset' ],
-  })
-  
+  },
+  defaults )
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

@@ -19,6 +19,8 @@ let proto = {
   else if( ${this.name} < ${inputs[1]} ) ${this.name} = ${inputs[1]}
 `
     out = ' ' + out
+    
+    gen.memo[ this.name ] = this.name
 
     return [ this.name, out ]
   },

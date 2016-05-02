@@ -19,19 +19,13 @@ var proto = {
 
     return [genName + '.value', functionBody];
   },
-
-
-  // ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + _name + '.min\n'}
-
   callback: function callback(_name, _incr, _reset) {
     var diff = this.max - this.min,
         out = void 0;
 
-    // begin accum body
-
     out = '  ' + _name + '.value += ' + _incr + '\n  ' + (typeof _reset === 'number' && _reset < 1 ? '' : 'if(' + _reset + '>=1 ) ' + _name + '.value = ' + this.min + '\n') + '\n  if( ' + _name + '.value >= ' + this.max + ' ) ' + _name + '.value -= ' + diff + '\n\n';
 
-    // end accum body
+    out = ' ' + out;
 
     return out;
   }
@@ -39,19 +33,22 @@ var proto = {
 
 module.exports = function (incr) {
   var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-  var min = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
-  var max = arguments.length <= 3 || arguments[3] === undefined ? 1 : arguments[3];
+  var properties = arguments[2];
 
-  var ugen = Object.create(proto);
+  var ugen = Object.create(proto),
+      defaults = { min: 0, max: 1 };
+
+  if (properties !== undefined) Object.assign(defaults, properties);
+
+  if (defaults.initialValue === undefined) defaults.initialValue = defaults.min - 1;
 
   Object.assign(ugen, {
-    min: min,
-    max: max,
-    value: 0,
+    min: defaults.min,
+    max: defaults.max,
+    value: defaults.initialValue,
     uid: _gen.getUID(),
-    inputs: [incr, reset],
-    properties: ['_incr', '_reset']
-  });
+    inputs: [incr, reset]
+  }, defaults);
 
   ugen.name = '' + ugen.basename + ugen.uid;
 
