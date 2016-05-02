@@ -13,9 +13,7 @@ let proto = {
         idx, out
 
     idx = wrap( inputs[1], 0, this.dataLength ).gen()
-    out = `${dataName}[${idx}] = ${inputs[0]}`
-    
-    return out
+    gen.functionBody += `  ${dataName}[${idx}] = ${inputs[0]}\n\n`
   }
 }
 module.exports = ( data, value, index, properties ) => {

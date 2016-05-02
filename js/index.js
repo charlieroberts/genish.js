@@ -40,7 +40,8 @@ let library = {
   wrap:   require('./wrap.js'),
   mix:    require('./mix.js'),
   clamp:  require('./clamp.js'),
-  poke:   require('./poke.js')
+  poke:   require('./poke.js'),
+  delay:  require('./delay.js'),
 }
 
 library.gen.lib = library
