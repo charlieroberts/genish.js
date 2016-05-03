@@ -6,26 +6,96 @@
     <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
     <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
     <script src="../dist/gen.lib.js"></script>
-    <script src="./example.js"></script>
     <script src="./environment.js"></script>
 <style>
 .CodeMirror-highlight {
   background:red
 }
-body { margin: 0 }
 
-#editor { width:45%; box-sizing: border; display:inline-block; height:100%; border-right:1px solid #666  }
-#console {width:55%; box-sizing:border; float:right; display:inline-block; top:0; background:grey; position:absolute; height:100% }
+body { 
+  margin: 0;
+  box-sizing:border;
+  color:#ddd;
+  font-family: Helvetica Neue, sans-serif;
+}
+
+#header { 
+  width:100%; 
+  height:2em; 
+  background:#272822; 
+  border-bottom:1px solid #666;
+}
+
+select{ 
+  display:inline-block;
+  background: #666;
+  color: #ccc;
+  -webkit-border-radius:2px;
+  -moz-border-radius:2px;
+  border-radius:2px;
+}
+
+h1 {
+  font-family: monospace;
+  font-size: 1.5em;
+  font-weight: normal;
+  padding-left:.5em;
+  padding-top:.25em;
+  padding-right: 3em;
+  height:1.5em;
+  vertical-align:middle;
+  display:inline-block;
+  margin:0
+}
+
+#header span { font-size: .8em; }
+
+#editor { width:45%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
+#console{ width:55%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ) }
 
 </style>
 
   </head>
 
   <body>
+
+    <div id='header'>
+      <h1>genish.js</h1>
+
+      <span>demos:</span>
+      <select>
+        <option>intro & instructions</option>
+        <option>garden of delays</option>
+      </select>
+
+    </div>
+
     <div id='editor'></div>
     <div id='console'></div>
   </body>
 
-  <script> </script>
+  <script> 
+    let select = document.querySelector( 'select' ),
+        files = ['intro.js','gardenOfDelays.js']
+
+    select.onchange = function( e ) {
+      console.log( files[ select.selectedIndex ] )
+      loadexample( files[ select.selectedIndex ] )
+    }
+    
+    let loadexample = function( filename ) {
+      var req = new XMLHttpRequest()
+        req.open( 'GET', './examples/'+filename, true )
+        req.onload = function() {
+          var js = req.responseText
+          utilities.editor.setValue( js )
+        }
+    
+      req.send()
+    }
+    
+    loadexample( 'intro.js' )
+
+  </script>
 
 </html>

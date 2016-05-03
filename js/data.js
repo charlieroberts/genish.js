@@ -41,12 +41,20 @@ module.exports = ( x, y=1 ) => {
     name: proto.basename + gen.getUID(),
     dim: y === 1 ? buffer.length : x,
     channels : 1,
-    gen:  proto.gen
+    gen:  proto.gen,
+    onload: null,
+    then( fnc ) {
+      ugen.onload = fnc
+      return ugen
+    },
   }
   
   gen.data[ ugen.name ] = ugen
 
-  if( shouldLoad ) utilities.loadSample( x, ugen )
-  
+  if( shouldLoad ) {
+    let promise = utilities.loadSample( x, ugen )
+    promise.then( ()=> { ugen.onload() })
+  }
+
   return ugen
 }

@@ -46,12 +46,22 @@ module.exports = function (x) {
     name: proto.basename + gen.getUID(),
     dim: y === 1 ? buffer.length : x,
     channels: 1,
-    gen: proto.gen
+    gen: proto.gen,
+    onload: null,
+    then: function then(fnc) {
+      ugen.onload = fnc;
+      return ugen;
+    }
   };
 
   gen.data[ugen.name] = ugen;
 
-  if (shouldLoad) utilities.loadSample(x, ugen);
+  if (shouldLoad) {
+    var promise = utilities.loadSample(x, ugen);
+    promise.then(function () {
+      ugen.onload();
+    });
+  }
 
   return ugen;
 };

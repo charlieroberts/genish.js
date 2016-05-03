@@ -4,7 +4,7 @@ isStereo = false
 window.onload = function() {
   cm = CodeMirror( document.querySelector('#editor'), {
     mode:   'javascript',
-    value:  exampleCode,
+    value:  'loading...',
     keyMap: 'playground',
     autofocus: true,
     theme:'monokai'
@@ -24,6 +24,7 @@ window.onload = function() {
 
   utilities.createContext().createScriptProcessor()
   utilities.console = cmconsole
+  utilities.editor  = cm
 
   window.play = utilities.playGraph
 }

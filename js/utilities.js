@@ -59,14 +59,21 @@ let utilities = {
     let req = new XMLHttpRequest()
     req.open( 'GET', soundFilePath, true )
     req.responseType = 'arraybuffer' 
+    
+    let promise = new Promise( (resolve,reject) => {
+      req.onload = function() {
+        var audioData = req.response
 
-    req.onload = function() {
-      var audioData = req.response
-
-      utilities.ctx.decodeAudioData( audioData, buffer => data.buffer = buffer.getChannelData(0) )
-    }
+        utilities.ctx.decodeAudioData( audioData, (buffer) => {
+          data.buffer = buffer.getChannelData(0)
+          resolve( data.buffer )
+        })
+      }
+    })
 
     req.send()
+
+    return promise
   }
 
 }

@@ -1,6 +1,7 @@
-window.exampleCode = 
-`/*
-To execute code: 
+/*
+---=== GETTING STARTED ===---
+
+To execute code in the left-hand editor: 
   a. execute selected block: hit Ctrl+Enter
   b. execute one line: place cursor on line and hit Ctrl+Enter
   c. execute block: place cursor in block and hit Alt+Enter
@@ -15,12 +16,29 @@ To run an arbitrary genish graph, wrap it in a call to
 the play() function
 
 Available ugens: add,sub, mul, div, abs, round, sin, accum, cycle, peek, 
-phasor, data, ssd (single-sample delay), delta,
+phasor, rate, data, ssd (single-sample delay), delta,
 param (although param doesn't work with play()),
-ceil, max, min, floor, sign, sin, cos, tan, asin, acos, atan, poke,
-wrap, clamp, delay
+ceil, max, min, floor, sign, cos, tan, asin, acos, atan, poke,
+wrap, clamp, delay, fold, dcblock
 
 Only one graph can be played at a time in this playground.
+
+---=== ABOUT ===---
+
+genish.js is a library designed to create optimized dsp graphs, using
+per-sample processing. Per-sample processing means the entire graph
+is processed one sample at a time, enabling fun techniques like
+single-sample feedback. In this demo, the callbacks are used to
+generate audio, but the library could also be used for modeling
+physical systems.
+
+The code display on the right side of the screen shows the 
+callback generated; calling this function once will output a single
+sample (potentially stereo) of data. The idea of genish.js is to 
+provide a higher level kit for building these types of functions.
+
+genish.js is inspired by gen~ for Max/MSP: https://cycling74.com/max7/
+
 */
 
 /****** non-band-limited saw *******/
@@ -93,7 +111,7 @@ play( graph )
 /******* using data w/ peek (no interpolation) ******/
 
 d = data( [220,330,440,880] )
-
+ 
 // create a ramp from 1-4 over 10 seconds
 acceleration = mul( phasor(.1), 4 )
  
@@ -103,7 +121,7 @@ graph = cycle(
  
 play( graph )
 
-/******** notes w/ delay ***********/
+/******** notes w/ ping-pong echo ***********/
 
 frequencies = data( [220,330,440,880] )
  
@@ -117,7 +135,7 @@ gain = mul( notes, .1 )
  
 echo = delay( gain, 11025, { size: 22050 })
  
-play( add( gain, echo ) )
+play( [gain, echo] )
 
 /****** 150 sine oscillators *******/
  
@@ -131,5 +149,3 @@ for( var i = 0; i < numOscillators; i++ ) {
 }
  
 play( add.apply(null, oscillators) )
-
-`

@@ -58,15 +58,20 @@ var utilities = {
     req.open('GET', soundFilePath, true);
     req.responseType = 'arraybuffer';
 
-    req.onload = function () {
-      var audioData = req.response;
+    var promise = new Promise(function (resolve, reject) {
+      req.onload = function () {
+        var audioData = req.response;
 
-      utilities.ctx.decodeAudioData(audioData, function (buffer) {
-        return data.buffer = buffer.getChannelData(0);
-      });
-    };
+        utilities.ctx.decodeAudioData(audioData, function (buffer) {
+          data.buffer = buffer.getChannelData(0);
+          resolve(data.buffer);
+        });
+      };
+    });
 
     req.send();
+
+    return promise;
   }
 };
 
