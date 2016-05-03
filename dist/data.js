@@ -1,45 +1,57 @@
 'use strict';
 
-var gen = require('./gen.js');
+var gen = require('./gen.js'),
+    utilities = require('./utilities.js');
 
 var proto = {
   basename: 'data',
 
   gen: function gen() {
-    return 'gen.data.' + this.name;
+    return 'gen.data.' + this.name + '.buffer';
   }
 };
 
 module.exports = function (x) {
   var y = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-  var ugen = void 0;
+  var ugen = void 0,
+      buffer = void 0,
+      shouldLoad = false;
 
   if (typeof x === 'number') {
     if (y !== 1) {
-      ugen = [];
+      buffer = [];
       for (var i = 0; i < y; i++) {
-        ugen[i] = new Float32Array(x);
+        buffer[i] = new Float32Array(x);
       }
     } else {
-      ugen = new Float32Array(x);
+      buffer = new Float32Array(x);
     }
-  } else {
+  } else if (Array.isArray(x)) {
+    //! (x instanceof Float32Array ) ) {
     var size = x.length;
-    ugen = new Float32Array(size);
+    buffer = new Float32Array(size);
     for (var _i = 0; _i < x.length; _i++) {
-      ugen[_i] = x[_i];
+      buffer[_i] = x[_i];
     }
+  } else if (typeof x === 'string') {
+    buffer = [0];
+    shouldLoad = true;
+  } else {
+    buffer = x;
   }
 
-  Object.assign(ugen, {
+  ugen = {
+    buffer: buffer,
     name: proto.basename + gen.getUID(),
-    dim: y === 1 ? ugen.length : x,
+    dim: y === 1 ? buffer.length : x,
     channels: 1,
     gen: proto.gen
-  });
+  };
 
   gen.data[ugen.name] = ugen;
+
+  if (shouldLoad) utilities.loadSample(x, ugen);
 
   return ugen;
 };

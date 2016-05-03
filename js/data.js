@@ -1,43 +1,52 @@
 'use strict'
 
-let gen  = require('./gen.js')
+let gen  = require('./gen.js'),
+    utilities = require( './utilities.js' )
 
 let proto = {
   basename:'data',
 
   gen() {
-    return 'gen.data.' + this.name
+    return 'gen.data.' + this.name + '.buffer'
   },
 }
 
 module.exports = ( x, y=1 ) => {
-  let ugen 
+  let ugen, buffer, shouldLoad = false
     
   if( typeof x === 'number' ) {
     if( y !== 1 ) {
-      ugen = []
+      buffer = []
       for( let i = 0; i < y; i++ ) {
-        ugen[ i ] = new Float32Array( x )
+        buffer[ i ] = new Float32Array( x )
       }
     }else{
-      ugen = new Float32Array( x )
+      buffer = new Float32Array( x )
     }
-  }else{
+  }else if( Array.isArray( x ) ) { //! (x instanceof Float32Array ) ) {
     let size = x.length
-    ugen = new Float32Array( size )
+    buffer = new Float32Array( size )
     for( let i = 0; i < x.length; i++ ) {
-      ugen[ i ] = x[ i ]
+      buffer[ i ] = x[ i ]
     }
+  }else if( typeof x === 'string' ) {
+    buffer = [ 0 ]
+    shouldLoad = true
+  }else{
+    buffer = x
   }
 
-  Object.assign( ugen, { 
+  ugen = { 
+    buffer,
     name: proto.basename + gen.getUID(),
-    dim: y === 1 ? ugen.length : x,
+    dim: y === 1 ? buffer.length : x,
     channels : 1,
     gen:  proto.gen
-  })
+  }
   
   gen.data[ ugen.name ] = ugen
+
+  if( shouldLoad ) utilities.loadSample( x, ugen )
   
   return ugen
 }

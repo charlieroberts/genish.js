@@ -19,7 +19,7 @@ var proto = {
 
     acc = accum(1, 0, { max: this.size });
 
-    out = peek(this.buffer, acc, { mode: 'samples' }).gen();
+    out = peek(this.buffer, acc, { mode: 'samples', interp: 'none' }).gen();
 
     _gen.memo[this.name] = out;
 

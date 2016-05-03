@@ -10,8 +10,8 @@ let proto = {
         inputs = gen.getInputs( this ),
         out, functionBody
 
-functionBody = `  let ${this.name}_data  = gen.data.${this.dataName},
-      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length'}, 
+functionBody = `  let ${this.name}_data  = gen.data.${this.dataName}.buffer,
+      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.buffer.length'}, 
       ${this.name}_index = ${this.name}_phase | 0,\n`
       
 if( this.interp === 'linear' ) {      

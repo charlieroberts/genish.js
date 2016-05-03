@@ -11,7 +11,7 @@ var proto = {
         out = void 0,
         functionBody = void 0;
 
-    functionBody = '  let ' + this.name + '_data  = gen.data.' + this.dataName + ',\n      ' + this.name + '_phase = ' + (this.mode === 'samples' ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.length') + ', \n      ' + this.name + '_index = ' + this.name + '_phase | 0,\n';
+    functionBody = '  let ' + this.name + '_data  = gen.data.' + this.dataName + '.buffer,\n      ' + this.name + '_phase = ' + (this.mode === 'samples' ? inputs[0] : inputs[0] + ' * gen.data.' + this.dataName + '.buffer.length') + ', \n      ' + this.name + '_index = ' + this.name + '_phase | 0,\n';
 
     if (this.interp === 'linear') {
       functionBody += '      ' + this.name + '_frac  = ' + this.name + '_phase - ' + this.name + '_index,\n      ' + this.name + '_base  = ' + this.name + '_data[ ' + this.name + '_index ],\n      ' + this.name + '_out   = ' + this.name + '_base + ' + this.name + '_frac * ( ' + this.name + '_data[ (' + this.name + '_index+1) & (' + this.name + '_data.length - 1) ] - ' + this.name + '_base ) \n\n';

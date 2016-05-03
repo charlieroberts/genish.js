@@ -438,7 +438,7 @@ describe( 'data + peek', ()=>{
     let answer = 49,
         d = data( [0,0,49] ),
         p = peek( d, 2, { mode:'samples' }),
-        out = gen.createCallback( p ),
+        out = gen.createCallback( p  ),
         result
     
     result = out()
@@ -453,7 +453,7 @@ describe( 'data + peek', ()=>{
         out = gen.createCallback( p ),
         result
     
-    d[2] = 49
+    d.buffer[2] = 49
 
     result = out()
     

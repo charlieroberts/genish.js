@@ -24,8 +24,8 @@ let proto = {
   initTable() {
     this.table = data( 1024 )
 
-    for( let i = 0, l = this.table.length; i < l; i++ ) {
-      this.table[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
+    for( let i = 0, l = this.table.buffer.length; i < l; i++ ) {
+      this.table.buffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
     }
   }
 

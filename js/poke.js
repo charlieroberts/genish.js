@@ -8,7 +8,7 @@ let proto = {
   basename:'poke',
 
   gen() {
-    let dataName = 'gen.data.' + this.dataName,
+    let dataName = 'gen.data.' + this.dataName + '.buffer',
         inputs = gen.getInputs( this ),
         idx, out
 
@@ -25,7 +25,7 @@ module.exports = ( data, value, index, properties ) => {
   Object.assign( ugen, { 
     data,
     dataName:   data.name,
-    dataLength: data.length,
+    dataLength: data.buffer.length,
     uid:        gen.getUID(),
     inputs:     [ value, index ],
   },

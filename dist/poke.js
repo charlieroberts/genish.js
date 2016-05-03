@@ -8,7 +8,7 @@ var proto = {
   basename: 'poke',
 
   gen: function gen() {
-    var dataName = 'gen.data.' + this.dataName,
+    var dataName = 'gen.data.' + this.dataName + '.buffer',
         inputs = _gen.getInputs(this),
         idx = void 0,
         out = void 0;
@@ -26,7 +26,7 @@ module.exports = function (data, value, index, properties) {
   Object.assign(ugen, {
     data: data,
     dataName: data.name,
-    dataLength: data.length,
+    dataLength: data.buffer.length,
     uid: _gen.getUID(),
     inputs: [value, index]
   }, defaults);

@@ -43,7 +43,8 @@ var library = {
   clamp: require('./clamp.js'),
   poke: require('./poke.js'),
   delay: require('./delay.js'),
-  fold: require('./fold.js')
+  fold: require('./fold.js'),
+  utilities: require('./utilities.js')
 };
 
 library.gen.lib = library;

@@ -24,8 +24,8 @@ var proto = {
   initTable: function initTable() {
     this.table = data(1024);
 
-    for (var i = 0, l = this.table.length; i < l; i++) {
-      this.table[i] = Math.sin(i / l * (Math.PI * 2));
+    for (var i = 0, l = this.table.buffer.length; i < l; i++) {
+      this.table.buffer[i] = Math.sin(i / l * (Math.PI * 2));
     }
   }
 };

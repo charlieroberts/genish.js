@@ -143,7 +143,6 @@ module.exports = {
 
       if( isObject ) { // if input is a ugen... 
         if( this.memo[ input.name ] ) { // if it has been memoized...
-          console.log( "MEMO", input.name, this.memo[ input.name]  )
           processedInput = this.memo[ input.name ]
         }else{ // if not memoized generate code
           let code = input.gen()

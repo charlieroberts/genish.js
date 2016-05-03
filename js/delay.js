@@ -18,7 +18,7 @@ let proto = {
 
     acc = accum(1,0,{ max:this.size })
 
-    out = peek( this.buffer, acc, { mode:'samples' }).gen()
+    out = peek( this.buffer, acc, { mode:'samples', interp:'none' }).gen()
 
     gen.memo[ this.name ] = out
     
