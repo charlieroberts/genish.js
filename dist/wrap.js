@@ -14,9 +14,10 @@ var proto = {
         diff = this.max - this.min,
         out = void 0;
 
-    out = '(((' + inputs[0] + ' - ' + this.min + ') % ' + diff + '  + ' + diff + ') % ' + diff + ' + ' + this.min + ')';
+    //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
 
-    return out;
+    out = ' \n  let ' + this.name + ' = ' + inputs[0] + '\n  if( ' + this.name + ' < ' + this.min + ' ) ' + this.name + ' += ' + this.max + ' - ' + this.min + '\n  else if( ' + this.name + ' > ' + this.max + ' ) ' + this.name + ' -= ' + this.max + ' - ' + this.min + '\n\n';
+    return [this.name, ' ' + out];
   }
 };
 

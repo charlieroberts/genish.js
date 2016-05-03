@@ -3,7 +3,7 @@
 let gen = require('./gen.js')
 
 module.exports = (...args) => {
-  let div = {
+  let mod = {
     id:     gen.getUID(),
     inputs: args,
 
@@ -14,7 +14,7 @@ module.exports = (...args) => {
           numCount = 0,
           lastNumber = inputs[ 0 ],
           lastNumberIsUgen = isNaN( lastNumber ), 
-          divAtEnd = false
+          modAtEnd = false
 
       inputs.forEach( (v,i) => {
         if( i === 0 ) return
@@ -23,13 +23,13 @@ module.exports = (...args) => {
             isFinalIdx   = i === inputs.length - 1
 
         if( !lastNumberIsUgen && !isNumberUgen ) {
-          lastNumber = lastNumber / v
+          lastNumber = lastNumber % v
           out += lastNumber
         }else{
-          out += `${lastNumber} / ${v}`
+          out += `${lastNumber} % ${v}`
         }
 
-        if( !isFinalIdx ) out += ' / ' 
+        if( !isFinalIdx ) out += ' % ' 
       })
 
       out += ')'
@@ -38,5 +38,5 @@ module.exports = (...args) => {
     }
   }
   
-  return div
+  return mod
 }

@@ -7,7 +7,7 @@ module.exports = function () {
     args[_key] = arguments[_key];
   }
 
-  var div = {
+  var mod = {
     id: _gen.getUID(),
     inputs: args,
 
@@ -18,7 +18,7 @@ module.exports = function () {
           numCount = 0,
           lastNumber = inputs[0],
           lastNumberIsUgen = isNaN(lastNumber),
-          divAtEnd = false;
+          modAtEnd = false;
 
       inputs.forEach(function (v, i) {
         if (i === 0) return;
@@ -27,13 +27,13 @@ module.exports = function () {
             isFinalIdx = i === inputs.length - 1;
 
         if (!lastNumberIsUgen && !isNumberUgen) {
-          lastNumber = lastNumber / v;
+          lastNumber = lastNumber % v;
           out += lastNumber;
         } else {
-          out += lastNumber + ' / ' + v;
+          out += lastNumber + ' % ' + v;
         }
 
-        if (!isFinalIdx) out += ' / ';
+        if (!isFinalIdx) out += ' % ';
       });
 
       out += ')';
@@ -42,5 +42,5 @@ module.exports = function () {
     }
   };
 
-  return div;
+  return mod;
 };

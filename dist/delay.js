@@ -11,11 +11,12 @@ var proto = {
 
   gen: function gen() {
     var code = void 0,
-        inputs = _gen.getInputs(this),
-        out = void 0,
+
+    //inputs = gen.getInputs( this ),
+    out = void 0,
         acc = void 0;
 
-    poke(this.buffer, inputs[0], accum(1, 0, { max: this.size, initialValue: this.time })).gen();
+    poke(this.buffer, this.inputs[0], accum(1, 0, { max: this.size, initialValue: this.time })).gen();
 
     acc = accum(1, 0, { max: this.size });
 

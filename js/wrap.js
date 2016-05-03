@@ -14,9 +14,17 @@ let proto = {
         diff = this.max - this.min,
         out
 
-    out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
+    //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
+    
+    out = 
 
-    return out
+` 
+  let ${this.name} = ${inputs[0]}
+  if( ${this.name} < ${this.min} ) ${this.name} += ${this.max} - ${this.min}
+  else if( ${this.name} > ${this.max} ) ${this.name} -= ${this.max} - ${this.min}
+
+`
+    return [ this.name, ' ' + out ]
   },
 }
 

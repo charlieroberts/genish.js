@@ -20,15 +20,17 @@ let proto = {
 
   callback( _name, _incr, _reset ) {
     let diff = this.max - this.min,
-        out
+        out,
+        scale = this.min === 0 && this.max === 1 ? 
+          `  ${_name}.value = ${_name}.value - (${_name}.value | 0)\n\n` : `  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
+
 
     out = 
 
-` ${_name}.value += ${_incr}
-  ${typeof _reset === 'number' && _reset < 1 ? '' : 'if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'}
-  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
+` ${_name}.value += ${_incr} ${typeof _reset === 'number' && _reset < 1 ? '\n' : '\n  if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'}`
+
   
-    out = ' ' + out
+    out = ' ' + out + scale
 
     return out
   }

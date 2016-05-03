@@ -10,13 +10,11 @@ let proto = {
   basename:'delay',
 
   gen() {
-    let code,
-        inputs = gen.getInputs( this ),
-        out, acc
+    let code, out, acc
 
-    poke( this.buffer, inputs[0], accum( 1,0, { max:this.size, initialValue:this.time }) ).gen()
+    poke( this.buffer, this.inputs[0], accum( 1, 0, { max:this.size, initialValue:this.time }) ).gen()
 
-    acc = accum(1,0,{ max:this.size })
+    acc = accum( 1, 0, { max:this.size })
 
     out = peek( this.buffer, acc, { mode:'samples', interp:'none' }).gen()
 

@@ -43,6 +43,7 @@ let library = {
   poke:   require('./poke.js'),
   delay:  require('./delay.js'),
   fold:   require('./fold.js'),
+  mod :   require('./mod.js'),
   utilities: require( './utilities.js' )
 }
 

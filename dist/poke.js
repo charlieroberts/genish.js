@@ -11,9 +11,12 @@ var proto = {
     var dataName = 'gen.data.' + this.dataName + '.buffer',
         inputs = _gen.getInputs(this),
         idx = void 0,
-        out = void 0;
+        out = void 0,
+        wrapped = void 0;
 
-    idx = wrap(inputs[1], 0, this.dataLength).gen();
+    wrapped = wrap(this.inputs[1], 0, this.dataLength).gen();
+    idx = wrapped[0];
+    _gen.functionBody += wrapped[1];
     _gen.functionBody += '  ' + dataName + '[' + idx + '] = ' + inputs[0] + '\n\n';
   }
 };

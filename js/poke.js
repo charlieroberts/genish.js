@@ -10,9 +10,11 @@ let proto = {
   gen() {
     let dataName = 'gen.data.' + this.dataName + '.buffer',
         inputs = gen.getInputs( this ),
-        idx, out
+        idx, out, wrapped
 
-    idx = wrap( inputs[1], 0, this.dataLength ).gen()
+    wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
+    idx = wrapped[0]
+    gen.functionBody += wrapped[1]
     gen.functionBody += `  ${dataName}[${idx}] = ${inputs[0]}\n\n`
   }
 }
