@@ -47,7 +47,10 @@ let assert = require('assert'),
     rate    = genlib.rate,
     clamp   = genlib.clamp,
     fold    = genlib.fold,
-    noise   = genlib.noise
+    noise   = genlib.noise,
+    sah     = genlib.sah,
+    gt      = genlib.gt,
+    lt      = genlib.lt
 
 //gen.debug = true
 
@@ -264,6 +267,28 @@ describe( 'binops', ()=> {
     assert.equal( result, answer )
   })
   
+})
+
+describe( 'logic', ()=> {
+
+  it( 'should return 1 for gt(1,0)', ()=> {
+    let answer = 1,
+        graph = gt(1,0),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should return 0 for lt(1,0)', ()=> {
+    let answer = 0,
+        graph = lt(1,0),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
   it( 'should return 4 for max(2,4)', ()=> {
     let answer = 4,
         graph = max(2,4),
@@ -280,6 +305,19 @@ describe( 'binops', ()=> {
         result = out()
 
     assert.equal( result, answer )
+  })
+
+})
+
+describe( 'sah', ()=> {
+  it( 'should return the same value until told to sample', ()=> {
+    let graph = sah( noise(), peek( data([1,0,1,0]), accum(1,0,{ max:4 }), {interp:'none', mode:'samples'} ) ),
+        out   = gen.createCallback( graph ),
+        result = []
+
+    for( let i = 0; i < 4; i++ ) result[i] = out()
+
+    assert( result[0] === result[1] && result[2] !== result[1]  )
   })
 
 
@@ -334,7 +372,7 @@ describe( 'accum', ()=>{
         out    = gen.createCallback( graph ),
         result = 0
     
-    for( let i = 0; i < 4; i++ ) out()
+    for( let i = 0; i < 5; i++ ) out()
     
     result = out()
     
@@ -430,7 +468,7 @@ describe( 'phasor', ()=>{
         out    = gen.createCallback( graph ),
         result = 0
     
-    for( let i = 0; i < 4; i++ ) out()
+    for( let i = 0; i < 5; i++ ) out()
     
     result = out()
     
@@ -445,7 +483,7 @@ describe( 'rate', ()=>{
         out    = gen.createCallback( graph ),
         result = 0
     
-    for( let i = 0; i < 4; i++ ) out()
+    for( let i = 0; i < 5; i++ ) out()
     
     result = out()
     
@@ -482,15 +520,14 @@ describe( 'data + peek', ()=>{
 })
 
 describe( 'cycle', ()=> {
-  it( 'should be at 0 after four outputs at 11025 hz', ()=> {
+  it( 'should be at 0 after five outputs at 11025 hz', ()=> {
     let answer = 0,
         c = cycle( 11025 ),
         out = gen.createCallback( c ),
-        result = 0
+        result = []
 
-    for( let i = 0; i < 4; i++ ) result = out()
-    
-    assert.equal( result, answer )
+    for( let i = 0; i < 5; i++ ) result[i] = out()
+    assert.equal( result[4], answer )
   })
 
   it( 'should generate values in the range {-1,1} over 2000 samples', ()=> {
@@ -508,29 +545,28 @@ describe( 'cycle', ()=> {
     assert( (outputMin <= -.99 && outputMin >= -1.0001) && (outputMax >= .99 && outputMax <= 1.0001) )
   }) 
 })
-
+// 0 (+1) 1 (+2) 3 (+3) 6 
 describe( 'history', ()=> {
   it( 'should return 7 after recording an accum with an increment of 1 + history for three samples', ()=> {
     let answer = 7,
         h1 = history(),
         h1input = h1.record( accum( add(1, h1 ), 0, {min:0, max:10} ) ),
         out = gen.createCallback( h1input ),
-        result = 0
+        result = []
     
-    for( let i = 0; i < 3; i++ ) result = out()
-
-    assert.equal( result, answer )
+    for( let i = 0; i < 5; i++ ) result[i] = out()
+    assert.equal( result[4], answer )
   })
 })
 
 describe( 'delta', ()=> {
-  it( 'should return .1 when tracking accum(.1) for first 10 samples, -.9 for 11th (after accum wraps)' , ()=> {
-    let answer = [.1,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
+  it( 'should return 0 or .1 when tracking accum(.1) for first 11 samples, -.9 for 12th (after accum wraps)' , ()=> {
+    let answer = [0,.1,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
         d1 = delta( accum(.1) ),
         out = gen.createCallback( d1 ), 
         result = []
 
-    for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
+    for( let i = 0; i < 12; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
 
     assert.deepEqual( result, answer )
   })
@@ -584,6 +620,7 @@ describe( 'complex', ()=> {
         oscgraph  = sin( mul( phasor, Math.PI * 2 ) ), 
         osc       = gen.createCallback( oscgraph ),
         answer = [
+          0,
           0.3353173459027643,
           0.6318084552474613,
           0.8551427630053461,
@@ -593,7 +630,6 @@ describe( 'complex', ()=> {
           0.6801727377709197,
           0.3949892902309387,
           0.06407021998071323,
-          -0.27426751067492994
        ],
        result = []
     

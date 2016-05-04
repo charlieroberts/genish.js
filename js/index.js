@@ -47,6 +47,8 @@ let library = {
   sah :   require('./sah.js'),
   noise:  require('./noise.js'),
   not:    require('./not.js'),
+  gt:     require('./gt.js'),
+  lt:     require('./lt.js'), 
   prop:   require('./prop.js'),
   utilities: require( './utilities.js' )
 }

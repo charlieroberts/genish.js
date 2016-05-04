@@ -13,14 +13,14 @@ let proto = {
 
     gen.closures.add({ [ this.name ]: this }) 
 
-    gen.memo[ this.name ] = genName + '.value'
+    gen.memo[ this.name ] = this.name + '_value'
     
-    return [ genName + '.value', functionBody ]
+    return [ this.name + '_value', functionBody ]
   },
 
   callback( _name, _incr, _reset ) {
     let diff = this.max - this.min,
-        out,
+        out = '',
         wrap
     
     /* three different methods of wrapping, third is most expensive:
@@ -31,18 +31,19 @@ let proto = {
      *
      */
 
+    // must check for reset before storing value for output
+    if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
+      out += '  if( '+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'
+    }
+
+    out += `  let ${this.name}_value = ${_name}.value;\n  ${_name}.value += ${_incr}\n` // store output value before accumulating  
+    
     if( this.min === 0 && this.max === 1 ) { 
       wrap =  `  ${_name}.value = ${_name}.value - (${_name}.value | 0)\n\n`
     } else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
       wrap =  `  ${_name}.value = ${_name}.value & (${this.max} - 1)\n\n`
     } else {
       wrap = `  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
-    }
-
-    out = `  ${_name}.value += ${_incr}\n`
-   
-    if( !(typeof _reset === 'number' && _reset < 1) ) { 
-      out += '  if('+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'
     }
 
     out = out + wrap

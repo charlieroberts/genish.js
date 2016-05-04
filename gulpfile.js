@@ -1,13 +1,13 @@
 var gulp = require('gulp'),
-    //uglify = require('gulp-uglify'),
-    //notify = require('gulp-notify'),
-    //rename = require('gulp-rename'),
-    babel  = require('gulp-babel'),
+    //uglify   = require('gulp-uglify'),
+    notify     = require('gulp-notify'),
+    babel      = require('gulp-babel'),
     browserify = require('browserify'),
-    //tap        = require('gulp-tap'),
+    //tap       = require('gulp-tap'),
     buffer     = require('gulp-buffer'),
     source     = require('vinyl-source-stream'),
-    babelify   = require('babelify')
+    babelify   = require('babelify'),
+    mocha      = require('gulp-mocha')
 
 gulp.task( 'js', function() {
   browserify({ debug:true, standalone:'genish' })
@@ -18,24 +18,28 @@ gulp.task( 'js', function() {
     .pipe( gulp.dest('./dist') )
     //.pipe( uglify() )
     //.pipe( gulp.dest('./dist') )
-    //.pipe( 
-    //  notify({ 
-    //    message:'Build has been completed',
-    //    onLast:true
-    //  }) 
-    //)
+    .pipe( 
+      notify({ 
+        message:'Build has been completed',
+        onLast:true
+      }) 
+    )
   
   // transpile (but don't browserify) for use with node.js tests
-  gulp.src( './js/**.js' )
+  return gulp.src( './js/**.js' )
     .pipe( babel({ presets:['es2015'] }) )
     .pipe( gulp.dest('./dist' ) )
 
 })
 
-gulp.task( 'watch', function() {
-  gulp.watch( './js/**.js', function() {
-    gulp.run( 'js' )
-  })
+gulp.task( 'test', ['js'], ()=> {
+  return gulp.src('tests/gen.tests.js', {read:false})
+    .pipe( mocha({ reporter:'nyan' }) ) // spec, min, nyan, list
 })
 
-gulp.task( 'default', ['js'] )
+
+gulp.task( 'watch', function() {
+  gulp.watch( './js/**.js', ['test'] )
+})
+
+gulp.task( 'default', ['js','test'] )
