@@ -12,11 +12,11 @@ let proto = {
   gen() {
     let code, out, acc
 
-    poke( this.buffer, this.inputs[0], accum( 1, 0, { max:this.size, initialValue:this.time }) ).gen()
+    poke( this.buffer, this.inputs[0], accum( 1, 0, { max:this.size, initialValue:Math.floor(this.time) }) ).gen()
 
     acc = accum( 1, 0, { max:this.size })
 
-    out = peek( this.buffer, acc, { mode:'samples', interp:'none' }).gen()
+    out = peek( this.buffer, acc, { mode:'samples', interp:this.interp }).gen()
 
     gen.memo[ this.name ] = out
     
@@ -26,7 +26,7 @@ let proto = {
 
 module.exports = ( in1, time=256, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { size: 512, feedback:0 }
+      defaults = { size: 512, feedback:0, interp:'none' }
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 

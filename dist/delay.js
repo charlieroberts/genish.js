@@ -11,16 +11,14 @@ var proto = {
 
   gen: function gen() {
     var code = void 0,
-
-    //inputs = gen.getInputs( this ),
-    out = void 0,
+        out = void 0,
         acc = void 0;
 
-    poke(this.buffer, this.inputs[0], accum(1, 0, { max: this.size, initialValue: this.time })).gen();
+    poke(this.buffer, this.inputs[0], accum(1, 0, { max: this.size, initialValue: Math.floor(this.time) })).gen();
 
     acc = accum(1, 0, { max: this.size });
 
-    out = peek(this.buffer, acc, { mode: 'samples', interp: 'none' }).gen();
+    out = peek(this.buffer, acc, { mode: 'samples', interp: this.interp }).gen();
 
     _gen.memo[this.name] = out;
 
@@ -33,7 +31,7 @@ module.exports = function (in1) {
   var properties = arguments[2];
 
   var ugen = Object.create(proto),
-      defaults = { size: 512, feedback: 0 };
+      defaults = { size: 512, feedback: 0, interp: 'none' };
 
   if (properties !== undefined) Object.assign(defaults, properties);
 

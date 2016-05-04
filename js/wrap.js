@@ -18,8 +18,7 @@ let proto = {
     
     out = 
 
-` 
-  let ${this.name} = ${inputs[0]}
+` let ${this.name} = ${inputs[0]}
   if( ${this.name} < ${this.min} ) ${this.name} += ${this.max} - ${this.min}
   else if( ${this.name} > ${this.max} ) ${this.name} -= ${this.max} - ${this.min}
 

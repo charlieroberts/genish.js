@@ -22,11 +22,31 @@ var proto = {
   callback: function callback(_name, _incr, _reset) {
     var diff = this.max - this.min,
         out = void 0,
-        scale = this.min === 0 && this.max === 1 ? '  ' + _name + '.value = ' + _name + '.value - (' + _name + '.value | 0)\n\n' : '  if( ' + _name + '.value >= ' + this.max + ' ) ' + _name + '.value -= ' + diff + '\n\n';
+        wrap = void 0;
 
-    out = ' ' + _name + '.value += ' + _incr + ' ' + (typeof _reset === 'number' && _reset < 1 ? '\n' : '\n  if(' + _reset + '>=1 ) ' + _name + '.value = ' + this.min + '\n');
+    /* three different methods of wrapping, third is most expensive:
+     *
+     * 1: range {0,1}: y = x - (x | 0)
+     * 2: log2(this.max) == integer: y = x & (this.max - 1)
+     * 3: all others: if( x >= this.max ) y = this.max -x
+     *
+     */
 
-    out = ' ' + out + scale;
+    if (this.min === 0 && this.max === 1) {
+      wrap = '  ' + _name + '.value = ' + _name + '.value - (' + _name + '.value | 0)\n\n';
+    } else if (this.min === 0 && (Math.log2(this.max) | 0) === Math.log2(this.max)) {
+      wrap = '  ' + _name + '.value = ' + _name + '.value & (' + this.max + ' - 1)\n\n';
+    } else {
+      wrap = '  if( ' + _name + '.value >= ' + this.max + ' ) ' + _name + '.value -= ' + diff + '\n\n';
+    }
+
+    out = '  ' + _name + '.value += ' + _incr + '\n';
+
+    if (!(typeof _reset === 'number' && _reset < 1)) {
+      out += '  if(' + _reset + '>=1 ) ' + _name + '.value = ' + this.min + '\n';
+    }
+
+    out = out + wrap;
 
     return out;
   }

@@ -45,6 +45,9 @@ var library = {
   delay: require('./delay.js'),
   fold: require('./fold.js'),
   mod: require('./mod.js'),
+  sah: require('./sah.js'),
+  noise: require('./noise.js'),
+  not: require('./not.js'),
   utilities: require('./utilities.js')
 };
 

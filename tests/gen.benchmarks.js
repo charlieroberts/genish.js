@@ -17,7 +17,8 @@ let tests = {
   functionArguments:  require( './gen.benchmarks.functionArguments.js' ),
   floor:              require( './gen.benchmarks.floor.js' ),
   clamp:              require( './gen.benchmarks.clip.js' ),
-  ifVsWrap:           require( './gen.benchmarks.accumMethods.js' )
+  ifVsWrap:           require( './gen.benchmarks.accumMethods.js' ),
+  boolToNumber:       require( './gen.benchmarks.boolToNumber.js' )
 }
 
 for( let i = 2; i < process.argv.length; i++ ) {

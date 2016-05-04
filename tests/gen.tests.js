@@ -46,7 +46,8 @@ let assert = require('assert'),
     mix     = genlib.mix,
     rate    = genlib.rate,
     clamp   = genlib.clamp,
-    fold    = genlib.fold
+    fold    = genlib.fold,
+    noise   = genlib.noise
 
 //gen.debug = true
 
@@ -302,6 +303,25 @@ describe( 'memo', ()=> {
         graph = add( m, m ),
         out   = gen.createCallback( graph ),
         result = out()
+
+    assert.equal( result, answer )
+  })
+})
+
+describe( 'noise', ()=> {
+  it( 'should not return the same number', ()=> {
+    let answer = -1,
+        storage = [],
+        graph = noise(),
+        out   = gen.createCallback( graph ),
+        result
+
+    for( var i = 0; i < 256; i++ ) {
+      var sample = out()
+      result = storage.indexOf( sample )
+      if( result !== -1 ) break
+      storage.push( sample )
+    }
 
     assert.equal( result, answer )
   })

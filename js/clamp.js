@@ -13,7 +13,8 @@ let proto = {
         inputs = gen.getInputs( this ),
         out
 
-    out = 
+    out =
+
 ` let ${this.name} = ${inputs[0]}
   if( ${this.name} > ${inputs[2]} ) ${this.name} = ${inputs[2]}
   else if( ${this.name} < ${inputs[1]} ) ${this.name} = ${inputs[1]}
