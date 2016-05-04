@@ -26,7 +26,15 @@ window.onload = function() {
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = utilities.playGraph
+  window.play = function( v ) {
+    if( dat !== undefined ) {
+      dat.GUI.__all__.forEach( v => v.destroy() )
+      dat.GUI.__all__.length = 0
+    }
+    var cb = utilities.playGraph( v )
+
+    return cb
+  }
 }
 
 
@@ -60,8 +68,11 @@ CodeMirror.keyMap.playground =  {
   },
   'Ctrl-.'( cm ) {
     utilities.clear()
+    if( dat !== undefined ) {
+      dat.GUI.__all__.forEach( v => v.destroy() )
+      dat.GUI.__all__.length = 0
+    }
     cmconsole.setValue('// silencio.\n' )
-    console.log( 'silencio.' )
   },
 }
 

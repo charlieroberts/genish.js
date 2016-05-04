@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
     <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
+    <script src="./dat.gui.js"></script>
     <script src="../dist/gen.lib.js"></script>
     <script src="./environment.js"></script>
 <style>
@@ -51,8 +52,10 @@ h1 {
 
 #header span { font-size: .8em; }
 
-#editor { width:45%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
-#console{ width:55%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ) }
+#editor { width:60%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
+#console{ width:40%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ); }
+
+.dg { z-index:100 !important }
 
 </style>
 
@@ -66,7 +69,9 @@ h1 {
       <span>demos:</span>
       <select>
         <option>intro & instructions</option>
+        <option>stereo + gui</option>
         <option>garden of delays</option>
+       
       </select>
 
     </div>
@@ -77,7 +82,7 @@ h1 {
 
   <script> 
     let select = document.querySelector( 'select' ),
-        files = ['intro.js','gardenOfDelays.js']
+        files = ['intro.js','stereoGUI.js','gardenOfDelays.js']
 
     select.onchange = function( e ) {
       console.log( files[ select.selectedIndex ] )

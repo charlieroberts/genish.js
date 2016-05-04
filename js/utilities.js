@@ -19,7 +19,7 @@ let utilities = {
   },
 
   createScriptProcessor() {
-    this.node = this.ctx.createScriptProcessor( 2048, 0, 2 ),
+    this.node = this.ctx.createScriptProcessor( 1024, 0, 2 ),
     this.clearFunction = function() { return 0 },
     this.callback = this.clearFunction
 
@@ -53,6 +53,8 @@ let utilities = {
     utilities.callback = gen.createCallback( graph, debug )
     
     if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
+
+    return utilities.callback
   },
 
   loadSample( soundFilePath, data ) {
