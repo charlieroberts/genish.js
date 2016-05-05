@@ -18,7 +18,7 @@ let proto = {
   ${data}.outputs[ ${inputs[1]} ] = ${inputs[0]} 
 `
 
-    gein.memo[ this.name ] = `gen.data.${this.name}`
+    gen.memo[ this.name ] = `gen.data.${this.name}`
 
     return [ `gen.data.${this.name}`, ' ' + out ]
   },
@@ -26,14 +26,12 @@ let proto = {
   childgen() {
     if( gen.memo[ this.parent.name ] === undefined ) {
       gen.getInputs( this )
-    }else{
-      console.log( "memoizing" )
     }
     return `gen.data.${this.parent.name}.outputs[ ${this.index} ]`
   }
 }
 
-module.exports = ( in1, control, properties ) => {
+module.exports = ( control, in1, properties ) => {
   let ugen = Object.create( proto ),
       defaults = { count: 2 }
 
@@ -48,7 +46,7 @@ module.exports = ( in1, control, properties ) => {
   
   ugen.name = `${ugen.basename}${ugen.uid}`
 
-  gen.data[ ugen.name ] = { outputs: ugen.outputs, lastInput:0 }
+  gen.data[ ugen.name ] = { outputs: [], lastInput:0 }
 
   for( let i = 0; i < ugen.count; i++ ) {
     ugen.outputs.push({
@@ -57,6 +55,7 @@ module.exports = ( in1, control, properties ) => {
       parent:ugen,
       inputs: [ ugen ]
     })
+    gen.data[ ugen.name ].outputs[ i ] = 0
   }
 
   return ugen

@@ -14,21 +14,19 @@ var proto = {
 
     out = ' let ' + this.name + '_index = ' + inputs[1] + '\n  if( ' + this.name + '_index != ' + data + '.lastInput ) {\n    ' + data + '.outputs[ ' + data + '.lastInput ] = 0\n    ' + data + '.lastInput = ' + inputs[1] + '\n  }\n  ' + data + '.outputs[ ' + inputs[1] + ' ] = ' + inputs[0] + ' \n';
 
-    gein.memo[this.name] = 'gen.data.' + this.name;
+    _gen.memo[this.name] = 'gen.data.' + this.name;
 
     return ['gen.data.' + this.name, ' ' + out];
   },
   childgen: function childgen() {
     if (_gen.memo[this.parent.name] === undefined) {
       _gen.getInputs(this);
-    } else {
-      console.log("memoizing");
     }
     return 'gen.data.' + this.parent.name + '.outputs[ ' + this.index + ' ]';
   }
 };
 
-module.exports = function (in1, control, properties) {
+module.exports = function (control, in1, properties) {
   var ugen = Object.create(proto),
       defaults = { count: 2 };
 
@@ -42,7 +40,7 @@ module.exports = function (in1, control, properties) {
 
   ugen.name = '' + ugen.basename + ugen.uid;
 
-  _gen.data[ugen.name] = { outputs: ugen.outputs, lastInput: 0 };
+  _gen.data[ugen.name] = { outputs: [], lastInput: 0 };
 
   for (var i = 0; i < ugen.count; i++) {
     ugen.outputs.push({
@@ -51,6 +49,7 @@ module.exports = function (in1, control, properties) {
       parent: ugen,
       inputs: [ugen]
     });
+    _gen.data[ugen.name].outputs[i] = 0;
   }
 
   return ugen;
