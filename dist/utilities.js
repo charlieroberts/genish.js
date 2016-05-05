@@ -42,6 +42,8 @@ var utilities = {
 
     this.node.connect(this.ctx.destination);
 
+    //this.node.connect( this.analyzer )
+
     return this;
   },
   playGraph: function playGraph(graph, debug) {

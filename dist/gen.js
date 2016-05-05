@@ -185,6 +185,7 @@ module.exports = {
           var code = input.gen();
           if (Array.isArray(code)) {
             _this.functionBody += code[1];
+            //console.log( 'after GEN' , this.functionBody )
             processedInput = code[0];
           } else {
             processedInput = code;

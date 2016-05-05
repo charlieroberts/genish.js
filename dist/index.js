@@ -51,6 +51,7 @@ var library = {
   gt: require('./gt.js'),
   lt: require('./lt.js'),
   prop: require('./prop.js'),
+  gate: require('./gate.js'),
   utilities: require('./utilities.js')
 };
 
