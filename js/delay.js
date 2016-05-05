@@ -10,13 +10,14 @@ let proto = {
   basename:'delay',
 
   gen() {
-    let code, out, acc
+    let code, out, acc, writeIdx, readIdx
+    
+    writeIdx = accum( 1, 0, { max:this.size}) // initialValue:Math.floor(this.time) }) 
+    readIdx  = wrap( sub( writeIdx, this.inputs[1] ), 0, this.size )
 
-    poke( this.buffer, this.inputs[0], accum( 1, 0, { max:this.size, initialValue:Math.floor(this.time) }) ).gen()
+    poke( this.buffer, this.inputs[0], writeIdx ).gen()
 
-    acc = accum( 1, 0, { max:this.size })
-
-    out = peek( this.buffer, acc, { mode:'samples', interp:this.interp }).gen()
+    out = peek( this.buffer, readIdx, { mode:'samples', interp:this.interp }).gen()
 
     gen.memo[ this.name ] = out
     
@@ -26,7 +27,7 @@ let proto = {
 
 module.exports = ( in1, time=256, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { size: 512, feedback:0, interp:'none' }
+      defaults = { size: 512, feedback:0, interp:'linear' }
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 

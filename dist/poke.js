@@ -14,10 +14,10 @@ var proto = {
         out = void 0,
         wrapped = void 0;
 
-    wrapped = wrap(this.inputs[1], 0, this.dataLength).gen();
-    idx = wrapped[0];
-    _gen.functionBody += wrapped[1];
-    _gen.functionBody += '  ' + dataName + '[' + idx + '] = ' + inputs[0] + '\n\n';
+    //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
+    //idx = wrapped[0]
+    //gen.functionBody += wrapped[1]
+    _gen.functionBody += '  ' + dataName + '[' + inputs[1] + '] = ' + inputs[0] + '\n\n';
   }
 };
 module.exports = function (data, value, index, properties) {

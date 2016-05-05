@@ -12,10 +12,10 @@ let proto = {
         inputs = gen.getInputs( this ),
         idx, out, wrapped
 
-    wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
-    idx = wrapped[0]
-    gen.functionBody += wrapped[1]
-    gen.functionBody += `  ${dataName}[${idx}] = ${inputs[0]}\n\n`
+    //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
+    //idx = wrapped[0]
+    //gen.functionBody += wrapped[1]
+    gen.functionBody += `  ${dataName}[${inputs[1]}] = ${inputs[0]}\n\n`
   }
 }
 module.exports = ( data, value, index, properties ) => {
