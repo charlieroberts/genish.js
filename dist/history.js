@@ -8,7 +8,7 @@ module.exports = function () {
   var ugen = {
     inputs: [in1],
 
-    record: function record(v) {
+    in: function _in(v) {
       if (_gen.histories.has(v)) {
         var memoHistory = _gen.histories.get(v);
         ugen.name = memoHistory.name;
@@ -36,10 +36,13 @@ module.exports = function () {
 
       return obj;
     },
-    gen: function gen() {
-      return 'gen.data.' + ugen.name;
-    },
 
+
+    out: {
+      gen: function gen() {
+        return 'gen.data.' + ugen.name;
+      }
+    },
 
     uid: _gen.getUID()
   };

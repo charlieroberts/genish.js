@@ -71,6 +71,7 @@ h1 {
       <select>
         <option>intro & instructions</option>
         <option>stereo + gui</option>
+        <option>one delay line</option>
         <option>garden of delays</option>
        
       </select>
@@ -85,7 +86,7 @@ h1 {
 
   <script> 
     let select = document.querySelector( 'select' ),
-        files = ['intro.js','stereoGUI.js','gardenOfDelays.js']
+        files = ['intro.js','stereoGUI.js','oneDelayLine.js','gardenOfDelays.js']
 
     select.onchange = function( e ) {
       console.log( files[ select.selectedIndex ] )

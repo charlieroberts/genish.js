@@ -51,6 +51,7 @@ var library = {
   not: require('./not.js'),
   gt: require('./gt.js'),
   lt: require('./lt.js'),
+  bool: require('./bool.js'),
   prop: require('./prop.js'),
   gate: require('./gate.js'),
   train: require('./train.js'),

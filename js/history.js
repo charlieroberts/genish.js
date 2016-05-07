@@ -6,7 +6,7 @@ module.exports = ( in1=0 ) => {
   let ugen = {
     inputs: [ in1 ],
 
-    record( v ) {
+    in( v ) {
       if( gen.histories.has( v ) ){
         let memoHistory = gen.histories.get( v )
         ugen.name = memoHistory.name
@@ -33,8 +33,10 @@ module.exports = ( in1=0 ) => {
 
       return obj
     },
-
-    gen() { return 'gen.data.' + ugen.name },
+    
+    out: {
+      gen() { return 'gen.data.' + ugen.name },
+    },
 
     uid: gen.getUID(),
   }

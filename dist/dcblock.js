@@ -17,9 +17,9 @@ var proto = {
         filter = void 0;
 
     //History x1, y1; y = in1 - x1 + y1*0.9997; x1 = in1; y1 = y; out1 = y;
-    filter = memo(add(sub(inputs[0], x1), mul(y1, .9997)));
-    x1.record(inputs[0]).gen();
-    y1.record(filter).gen();
+    filter = memo(add(sub(inputs[0], x1.out), mul(y1.out, .9997)));
+    x1.in(inputs[0]).gen();
+    y1.in(filter).gen();
 
     return filter.name;
   }

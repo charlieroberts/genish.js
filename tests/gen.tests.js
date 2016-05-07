@@ -550,7 +550,7 @@ describe( 'history', ()=> {
   it( 'should return 7 after recording an accum with an increment of 1 + history for three samples', ()=> {
     let answer = 7,
         h1 = history(),
-        h1input = h1.record( accum( add(1, h1 ), 0, {min:0, max:10} ) ),
+        h1input = h1.in( accum( add(1, h1.out ), 0, {min:0, max:10} ) ),
         out = gen.createCallback( h1input ),
         result = []
     

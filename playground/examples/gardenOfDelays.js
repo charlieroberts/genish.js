@@ -1,3 +1,4 @@
+
 /* garden of earthly delays
  *
  * original gen~ patch by Gregory Taylor
@@ -31,10 +32,10 @@ in1 = peek(
   { interp:'none', mode:'samples' } 			// attributes
 )
  
-gate1 = gate( gateCtrl, feedback1, { count:4 } )
-gate2 = gate( gateCtrl, feedback2, { count:4 } )
-gate3 = gate( gateCtrl, feedback3, { count:4 } )
-gate4 = gate( gateCtrl, feedback4, { count:4 } )
+gate1 = gate( gateCtrl, feedback1.out, { count:4 } )
+gate2 = gate( gateCtrl, feedback2.out, { count:4 } )
+gate3 = gate( gateCtrl, feedback3.out, { count:4 } )
+gate4 = gate( gateCtrl, feedback4.out, { count:4 } )
  
 delay1In = add( in1, gate1.outputs[0], gate2.outputs[1], gate3.outputs[2], gate4.outputs[3] )
 delay2In = add( in1, gate1.outputs[1], gate2.outputs[0], gate3.outputs[3], gate4.outputs[3] )
@@ -54,16 +55,16 @@ foldedDelay3 = fold( delay3, -1,1 )
 foldedDelay4 = fold( delay4, -1,1 )
  
 // damp feedback with folded delays
-feedbackMix1 = feedback1.record( mix( foldedDelay1, feedback1, damp ) )
-feedbackMix2 = feedback2.record( mix( foldedDelay2, feedback2, damp ) )
-feedbackMix3 = feedback3.record( mix( foldedDelay3, feedback1, damp2 ) )
-feedbackMix4 = feedback4.record( mix( foldedDelay4, feedback2, damp2 ) )
+feedbackMix1 = feedback1.in( mix( foldedDelay1, feedback1.out, damp ) )
+feedbackMix2 = feedback2.in( mix( foldedDelay2, feedback2.out, damp ) )
+feedbackMix3 = feedback3.in( mix( foldedDelay3, feedback1.out, damp2 ) )
+feedbackMix4 = feedback4.in( mix( foldedDelay4, feedback2.out, damp2 ) )
  
 ssdLeft = ssd()
 ssdRight = ssd()
  
-left  = ssdLeft.record(  mix( mul( .5, add( feedbackMix1, feedbackMix3 ) ), ssdLeft,  damp3 ) )
-right = ssdRight.record( mix( mul( .5, add( feedbackMix2, feedbackMix4 ) ), ssdRight, damp3 ) )
+left  = ssdLeft.in(  mix( mul( .5, add( feedbackMix1, feedbackMix3 ) ), ssdLeft.out,  damp3 ) )
+right = ssdRight.in( mix( mul( .5, add( feedbackMix2, feedbackMix4 ) ), ssdRight.out, damp3 ) )
  
 // limit output to {-1,1}
 limitL = clamp( left, -1,1 )

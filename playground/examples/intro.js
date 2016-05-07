@@ -118,7 +118,7 @@ sampler = ssd(.001)
  
 //here we record the output of a sawtooth wave into our ssd each sample,
 //and then use this value on the next sample to modulate its frequency
-out = sampler.record( phasor( mul( 1000, sampler ) ) )
+out = sampler.in( phasor( mul( 1000, sampler.out ) ) )
  
 play( mul( out, .05 ) )
 

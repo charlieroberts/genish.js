@@ -170,17 +170,69 @@ delay
 **in** &nbsp;  *ugen* or *number* &nbsp; The signal to be delayed.
 
 Outputs a sine wave via wavetable lookup / interpolation.
+
+history
+----
+History is used to create single-sample delays and feedback. It records one sample at a time of a ugen passed to its `in()` method, and then outputs the last recorded sample via its `.out` property. Single-sample delays are one of the justifications for the existence of genish.js; this is an important ugen.
+
+####Properties####
+###history.out###
+ *ugen* The `out` property returns a simple ugen that outputs the last recorded sample of the history object.
+
+####Methods####
+###history.in###
+**ugen** &nbsp;  *ugen* &nbsp; A genish.js unit generator (or graph) to be recorded.
+
+```js
+/* a randomly pitched oscillator and a delay line */
+frequencyControl = sah( add( 220, mul( noise(),880 ) ), noise(), .99995 )
+
+osc = mul( cycle( frequencyControl ), .025 )
+
+feedback = ssd()
+
+// feed feedback into our delay by inputting the feedback.out property
+echo = delay( add( osc, feedback.out ), 11025, { size: 22050 } )
+
+// record the output of the echo and our feedback using a call to feedback.in()
+mixer = feedback.in( mix( echo, feedback.out, .925 ) )
+
+gen.createCallback( mixer )
+```
+
+# Logic
+
+not 
+----
+**a** &nbsp;  *ugen* or *number* Input signal
+ 
+Converts signals to either 0 or 1. If the input signal does not equal 0 then output a 0; if input == 0 then output 1.
+
+```javascript
+y = x !== 0 ? 0 : 1
+```
+
+bool 
+----
+**a** &nbsp;  *ugen* or *number* Input signal
+ 
+Converts signals to either 0 or 1. If the input signal does not equal 0 then output is 1; if input == 0 then output 0.
+
+```javascript
+y = x !== 0 ? 1 : 0
+```
+
 # Numeric 
 
 round
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Rounds input up or down to nearest integer using Javascript's `Math.round()` function
 
 floor
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Rounds input down to nearest integer by performing a bitwise or with 0.
 
@@ -191,13 +243,13 @@ out = gen.createCallback( round( in() ) )
 
 ceil
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Rounds input up to nearest integer using Javascript's `Math.ceil()` function
 
 sign
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Returns 1 for positive input and -1 for negative input. Zero returns itself. Uses JavaScript's `Math.sign()` function.
 
@@ -205,37 +257,37 @@ Returns 1 for positive input and -1 for negative input. Zero returns itself. Use
 
 sin
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the sine of the input (interepreted as radians) using Javascript's `Math.sin()` function
 
 cos
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the cosine of the input (interpreted as radians) using Javascript's `Math.cos()` function
 
 tan
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the tangent of the input (interpreted as radians) using Javascript's `Math.tan()` function
 
 asin
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the arcsine of the input in radians using Javascript's `Math.asin()` function
 
 acos
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the arccosine of the input in radians using Javascript's `Math.cos()` function
 
 atan
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp
+**a** &nbsp;  *ugen* or *number*
 
 Calculates the arctangent of the input in radians using Javascript's `Math.tan()` function
 
@@ -290,3 +342,48 @@ wrap
 **max** &nbsp; *ugen* or *number* : Signal or number that sets maximum of range to fold input to.  
 
 Wrap constricts an input `a` to a particular range. Given a range of {0,1} and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,0,.1,.2}.
+
+# Routing
+
+gate
+----
+**control** &nbsp;  *data* &nbsp; Chooses the output index that the input signal travels through.  
+**input** &nbsp; *integer* &nbsp; Signal that is passed through one of various outlets.   
+**properties** &nbsp; *object* &nbsp; A dictionary of optional parameters to assign to the gate object. The main property is `count` (default value 2) which determines the number of outputs a `gate` ugen possesses.
+
+```js
+inputSignal = mul( phasor(330, .1) )
+controlSignal = gt( phasor(2), .5 )
+
+g = gate( gt( controlSignal, inputSignal, { count:4 })
+
+gen.createCallback([ g.outputs[0], g.outputs[1] ]) 
+```
+
+`gate()` routes signal from one of its outputs according to an input *control* signal, which defines an index for output. The various outputs are all stored in the `mygate.outputs` array. The code example to the right shows a signal alternating between left and right channels using the `gate` ugen.
+ 
+####Properties####
+**outputs** *string* : An array of outputs that can be used as inputs to other ugens.
+
+# Waveforms
+
+cycle
+----
+**a** &nbsp;  *ugen* or *number* &nbsp; Frequency. 
+
+Cycle creates a sine oscillator running at a provided frequency. The oscillator runs via an interpolated wavetable lookup.
+
+noise
+----
+Noise outputs a pseudo-random signal between {0,1}. The signal is generated via Javascript's `Math.random()` function.
+
+train
+-----
+**frequency** &nbsp;  *ugen* or *number* &nbsp; Frequency.  
+**pulsewidth** &nbsp;  *ugen* or *number* &nbsp;(default .5) Pulsewidth. A pulsewidth of .5 means the oscillator will spend 50% of its time outputting 1 and 50% of its time outputting 0. A pulsewidth of .2 means the oscillator spends 20% of its time outputting 1 and 80% outputting 0.  
+ 
+`train()` creates a pulse train driven by an input frequency signal and input pulsewidth signal. The pulse train is created using the genish expression displayed at right.
+
+```javascript
+pulseTrain = lt( accum( div( inputFrequency, sampleRate ) ), inputPulsewidth )
+``` 

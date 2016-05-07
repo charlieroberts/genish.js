@@ -1,32 +1,31 @@
 'use strict'
 
 let gen     = require( './gen.js' ),
-    history = require( './history.js' ),
-    sub     = require( './sub.js' )
+    lt      = require( './lt.js' ),
+    phasor  = require( './phasor.js' )
 
 let proto = {
-  basename:'delta',
+  basename:'train',
 
   gen() {
     let inputs = gen.getInputs( this ),
-        n1     = history()
+        graph = lt( accum( div( inputs[0], 44100 ) ), inputs[1] )
     
-    n1.in( inputs[0] ).gen()
-
-    return sub( inputs[0], n1.out ).gen()
+    return graph.gen()
   }
 
 }
 
-module.exports = ( in1 ) => {
+module.exports = ( period=440, pulsewidth=.5 ) => {
   let ugen = Object.create( proto )
 
   Object.assign( ugen, { 
     uid:        gen.getUID(),
-    inputs:     [ in1 ],
+    inputs:     [ period, pulsewidth ],
   })
   
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen
 }
+

@@ -1,19 +1,20 @@
 'use strict';
 
-var _gen = require('./gen.js'),
-    history = require('./history.js'),
-    sub = require('./sub.js');
+var _gen = require('./gen.js');
 
 var proto = {
-  basename: 'delta',
+  basename: 'bool',
 
   gen: function gen() {
     var inputs = _gen.getInputs(this),
-        n1 = history();
+        out = void 0;
 
-    n1.in(inputs[0]).gen();
+    out = inputs[0] + ' === 0 ? 0 : 1';
 
-    return sub(inputs[0], n1.out).gen();
+    //gen.memo[ this.name ] = `gen.data.${this.name}`
+
+    //return [ `gen.data.${this.name}`, ' ' +out ]
+    return out;
   }
 };
 
