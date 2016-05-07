@@ -2,8 +2,9 @@
 
 let library = {
   export( destination ) {
-    Object.assign( destination, library )
     destination.ssd = library.history // history is window object property, so use ssd as alias
+    delete library.history
+    Object.assign( destination, library )
     destination.clip = library.clamp
   },
 
@@ -51,6 +52,7 @@ let library = {
   lt:     require('./lt.js'), 
   prop:   require('./prop.js'),
   gate:   require('./gate.js'),
+  train:  require('./train.js'),
   utilities: require( './utilities.js' )
 }
 

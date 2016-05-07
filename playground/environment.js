@@ -26,12 +26,12 @@ window.onload = function() {
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v ) {
+  window.play = function( v, debug ) {
     if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playGraph( v )
+    var cb = utilities.playGraph( v, debug )
 
     return cb
   }

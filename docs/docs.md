@@ -53,7 +53,7 @@ add
 **args** &nbsp;  *ugens* or *numbers* &nbsp; The add unit generator accepts an unlimited number of ugens and numbers to sum.
 
 ```js
-out = gen.createCallback( 1,2 )
+out = gen.createCallback( add(1,2) )
 // creates function body out = ( 3 )
 
 out() // 3
@@ -64,7 +64,7 @@ sub
 **args** &nbsp;  *ugens* or *numbers* &nbsp; The sub unit generator accepts an unlimited number of ugens and numbers to subtract.
 
 ```js
-out = gen.createCallback( abs(.1),1,2 )
+out = gen.createCallback( sub( abs(.1),1,2 ) )
 // creates function body out = ( .1 - 3 )
 
 out() // -2.9
@@ -77,7 +77,7 @@ mul
 Multiples two number or ugens together.
 
 ```js
-out = gen.createCallback( cos(0), 5 )
+out = gen.createCallback( mul( cos(0), 5 ) )
 // creates function body out = ( gen.cos(0) * 5 )
 
 out() // 5
@@ -90,7 +90,7 @@ div
 Divides ugen or number *a* by ugen or number *b*.
 
 ```js
-out = gen.createCallback( cos(0), 2 )
+out = gen.createCallback( div( cos(0), 2 ) )
 // creates function body out = ( gen.cos(0) / 2 )
 
 out() // .5
@@ -103,7 +103,7 @@ mod
 Divides ugen or number *a* by ugen or number *b* and returns the remainder.
 
 ```js
-out = gen.createCallback( cos(0), .51 )
+out = gen.createCallback( mod( cos(0), .51 ) )
 // creates function body out = ( gen.cos(0) % .51 )
 
 out() // .49
@@ -277,16 +277,16 @@ Clamp constricts an input `a` to a particular range. If input `a` exceeds the ma
 
 fold
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp; Input signal to fold.  
-**min** &nbsp; *ugen* or *number* &nbsp; Signal or number that sets minimum of range to fold input to.  
-**max** &nbsp; *ugen* or *number* &nbsp; Signal or number that sets maximum of range to fold input to.  
+**a** &nbsp;  *ugen* or *number*  : Input signal to fold.  
+**min** &nbsp; *ugen* or *number* : Signal or number that sets minimum of range to fold input to.  
+**max** &nbsp; *ugen* or *number* : Signal or number that sets maximum of range to fold input to.  
 
 Fold constricts an input `a` to a particular range. Given a range of {0,1} and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,1,.9,.8}.
 
 wrap
 ----
-**a** &nbsp;  *ugen* or *number* &nbsp; Input signal to fold.  
-**min** &nbsp; *ugen* or *number* &nbsp; Signal or number that sets minimum of range to fold input to.  
-**max** &nbsp; *ugen* or *number* &nbsp; Signal or number that sets maximum of range to fold input to.  
+**a** &nbsp;  *ugen* or *number*  : Input signal to fold.  
+**min** &nbsp; *ugen* or *number* : Signal or number that sets minimum of range to fold input to.  
+**max** &nbsp; *ugen* or *number* : Signal or number that sets maximum of range to fold input to.  
 
 Wrap constricts an input `a` to a particular range. Given a range of {0,1} and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,0,.1,.2}.
