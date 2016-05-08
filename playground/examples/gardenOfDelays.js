@@ -57,8 +57,8 @@ foldedDelay4 = fold( delay4, -1,1 )
 // damp feedback with folded delays
 feedbackMix1 = feedback1.in( mix( foldedDelay1, feedback1.out, damp ) )
 feedbackMix2 = feedback2.in( mix( foldedDelay2, feedback2.out, damp ) )
-feedbackMix3 = feedback3.in( mix( foldedDelay3, feedback1.out, damp2 ) )
-feedbackMix4 = feedback4.in( mix( foldedDelay4, feedback2.out, damp2 ) )
+feedbackMix3 = feedback3.in( mix( foldedDelay3, feedback3.out, damp2 ) )
+feedbackMix4 = feedback4.in( mix( foldedDelay4, feedback4.out, damp2 ) )
  
 ssdLeft = ssd()
 ssdRight = ssd()

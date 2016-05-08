@@ -55,6 +55,7 @@ var library = {
   prop: require('./prop.js'),
   gate: require('./gate.js'),
   train: require('./train.js'),
+  slide: require('./slide.js'),
   utilities: require('./utilities.js')
 };
 
