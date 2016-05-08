@@ -7,7 +7,8 @@ window.onload = function() {
     value:  'loading...',
     keyMap: 'playground',
     autofocus: true,
-    theme:'monokai'
+    theme:'monokai',
+    matchBrackets:true
   })
 
   cm.setSize( null, '100%' )
