@@ -73,7 +73,7 @@ limitR = clamp( right, -1,1 )
 // play stereo out & print callback to console for potential debugging
 cb = play( [ limitL, limitR ], true )
  
-gui = new dat.GUI()
+gui = new dat.GUI({ width:400 })
 gui.add( cb, 'damping',   0, 1 )
 gui.add( cb, 'damping2',  0, 1 )
 gui.add( cb, 'damping3',  0, 1 )
