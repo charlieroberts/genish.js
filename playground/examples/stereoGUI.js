@@ -7,13 +7,13 @@
 * you clear (using ctrl+.) or run the the play() function
 */
  
-mod = mul( phasor( prop( 'modFreq', .1 ) ), 800 )
+mod = mul( phasor( param( 'modFreq', .1 ) ), 800 )
  
-amp = prop( 'amp', .15 ) 
+amp = param( 'amp', .15 ) 
  
 // we use amp in the graphs below, and also create props for the frequency of phasors
-p  = mul( cycle( add( 400, mod  ) ), sub(amp, mul( phasor( prop( 'phasor1Freq', 8 ) ), amp ) ) )
-p2 = mul( cycle( sub( 1200, mod ) ), sub(amp, mul( phasor( prop( 'phasor2Freq', 5 ) ), amp ) ) )
+p  = mul( cycle( add( 400, mod  ) ), sub(amp, mul( phasor( param( 'phasor1Freq', 8 ) ), amp ) ) )
+p2 = mul( cycle( sub( 1200, mod ) ), sub(amp, mul( phasor( param( 'phasor2Freq', 5 ) ), amp ) ) )
  
  /*
   * by passing an array to play we provide a left and a right channel,

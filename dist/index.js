@@ -3,7 +3,11 @@
 var library = {
   export: function _export(destination) {
     destination.ssd = library.history; // history is window object property, so use ssd as alias
+    destination.input = library.in; // in is a keyword in javascript
+
     delete library.history;
+    delete library.in;
+
     Object.assign(destination, library);
     destination.clip = library.clamp;
   },
@@ -52,10 +56,10 @@ var library = {
   gt: require('./gt.js'),
   lt: require('./lt.js'),
   bool: require('./bool.js'),
-  prop: require('./prop.js'),
   gate: require('./gate.js'),
   train: require('./train.js'),
   slide: require('./slide.js'),
+  in: require('./in.js'),
   utilities: require('./utilities.js')
 };
 

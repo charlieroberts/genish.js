@@ -1,24 +1,21 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var _gen = require('./gen.js');
 
 var proto = {
-  basename: 'p',
-
   gen: function gen() {
-    _gen.parameters.push(this.name);
-
-    _gen.memo[this.name] = this.name;
-
-    return this.name;
+    _gen.closures.add(_defineProperty({}, this.name, this.value));
+    return 'gen.' + this.name;
   }
 };
 
-module.exports = function () {
-  var param = Object.create(proto);
+module.exports = function (propName, value) {
+  var ugen = Object.create(proto);
 
-  param.id = _gen.getUID();
-  param.name = '' + param.basename + param.id;
+  ugen.name = propName;
+  ugen.value = value;
 
-  return param;
+  return ugen;
 };

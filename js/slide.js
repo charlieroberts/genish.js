@@ -15,8 +15,7 @@ let proto = {
         y1     = history(),
         filter
 
-    //filter = memo( add( sub( inputs[0], x1.out ), mul( y1.out, .9997 ) ) )
-    filter = memo( add( y1.out, div( sub( inputs[0], y1.out ), inputs[1] ) ) ) 
+    filter = memo( add( y1.out, div( sub( inputs[0], y1.out ), inputs[1] ) ) )
     y1.in( filter ).gen()
 
     return filter.name

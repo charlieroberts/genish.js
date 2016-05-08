@@ -19,11 +19,11 @@ feedback2 = ssd()
 feedback3 = ssd()
 feedback4 = ssd()
  
-damp     = prop( 'damping', .5 )
-damp2    = prop( 'damping2', .5 )
-damp3    = prop( 'damping3', .5 )
-delayTime= prop( 'delayTime', 4096 )
-gateCtrl = prop( 'feedbackRouter', 0 )
+damp     = param( 'damping', .5 )
+damp2    = param( 'damping2', .5 )
+damp3    = param( 'damping3', .5 )
+delayTime= param( 'delayTime', 4096 )
+gateCtrl = param( 'feedbackRouter', 0 )
  
 // read through audiofile sample by sample
 in1 = peek( 
@@ -79,5 +79,5 @@ gui.add( cb, 'damping2',  0, 1 )
 gui.add( cb, 'damping3',  0, 1 )
 gui.add( cb, 'delayTime', 128, 22050 )
 gui.add( cb, 'feedbackRouter', 0,3 ).step(1)
- 
+  
 })

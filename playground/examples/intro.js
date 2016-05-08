@@ -28,13 +28,8 @@ Alt+Enter.
 To clear audio graph and stop sound: Ctrl+. (Ctrl+Period)
 
 To run an arbitrary genish graph, wrap it in a call to
-the play() function
-
-Available ugens: add,sub, mul, div, abs, round, sin, accum, cycle, peek, 
-phasor, rate, data, ssd (single-sample delay), delta,
-param (although param doesn't work with play()),
-ceil, max, min, floor, sign, cos, tan, asin, acos, atan, poke,
-wrap, clamp, delay, fold, dcblock
+the play() function. For a list of available ugens, see the reference
+link in the header of the playground.
 
 Only one graph can be played at a time in this playground. There are a
 few different demos to try, accessible via the menu at the top of the

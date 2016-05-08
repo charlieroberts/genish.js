@@ -50,6 +50,7 @@ let assert = require('assert'),
     noise   = genlib.noise,
     sah     = genlib.sah,
     gt      = genlib.gt,
+    input   = genlib.in,
     lt      = genlib.lt
 
 //gen.debug = true
@@ -323,10 +324,10 @@ describe( 'sah', ()=> {
 
 })
 
-describe( 'params', ()=> {
+describe( 'in', ()=> {
   it( 'should return the first argument of 42', ()=> {
     let answer = 42,
-        graph = param(),
+        graph = input(),
         out   = gen.createCallback( graph ),
         result = out( 42 )
     
@@ -393,7 +394,7 @@ describe( 'accum', ()=>{
 
   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
     let answer = .0,
-        graph  = accum( .1, param() ),
+        graph  = accum( .1, input() ),
         out    = gen.createCallback( graph ),
         result = 0
 
@@ -615,7 +616,7 @@ describe( 'complex', ()=> {
   })
 
   it( 'should create a sine wave', ()=> {
-    let frequency = param(),
+    let frequency = input(),
         phasor    = accum( mul( frequency, 1/44100 ) ),
         oscgraph  = sin( mul( phasor, Math.PI * 2 ) ), 
         osc       = gen.createCallback( oscgraph ),

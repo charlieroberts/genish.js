@@ -8,13 +8,13 @@ inputs are smoothed over 1000 samples using the slide() function. */
 
 // define frequency as a property of our callback function, so that it
 // can easily be referenced and modified from outside of genish.js
-frequency = prop( 'mouseY', 330 )
+frequency = param( 'mouseY', 330 )
  
 // move from one frequency to the next logarithmically over 1000 samples
 portamento = slide( frequency, 1000 )
  
 // create an lfo for frequency modulation; base depth off mouseX
-lfo = mul( cycle(5), prop( 'mouseX', 15) )
+lfo = mul( cycle(5), param( 'mouseX', 15) )
  
 // add vibrato
 vibrato = add( portamento, lfo )
@@ -30,3 +30,4 @@ window.onmousemove = function( e ) {
   cb.mouseY = 990 - (e.clientY / window.innerHeight) * 880
   cb.mouseX = (e.clientX / window.innerWidth) * 100
 }
+

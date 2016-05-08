@@ -3,22 +3,17 @@
 let gen = require('./gen.js')
 
 let proto = {
-  basename:'p',
-
   gen() {
-    gen.parameters.push( this.name )
-    
-    gen.memo[ this.name ] = this.name
-
-    return this.name
+    gen.closures.add({ [ this.name ]: this.value }) 
+    return 'gen.' + this.name
   } 
 }
 
-module.exports = () => {
-  let param = Object.create( proto )
+module.exports = ( propName, value ) => {
+  let ugen = Object.create( proto )
 
-  param.id   = gen.getUID()
-  param.name = `${param.basename}${param.id}`
+  ugen.name = propName
+  ugen.value = value
 
-  return param
+  return ugen
 }
