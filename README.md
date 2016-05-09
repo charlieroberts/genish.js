@@ -54,9 +54,6 @@ utilities.createContext().createScriptProcessor()
 
 // second argument prints generated function body to console
 utilities.playGraph( cycle( 330 ), true ) 
-
-## develop
-The build script is a gulpfile. With gulp installed, run `gulp` or `gulp watch` in the top level of the repo.
-
-## test
-Tests are done with Mocha. With Mocha installed, run `mocha tests/gen.tests.js` from the root directory.
+```
+## develop & test
+The build script is a gulpfile. With gulp installed, run `gulp` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
