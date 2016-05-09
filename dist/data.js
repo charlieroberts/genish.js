@@ -1,12 +1,13 @@
 'use strict';
 
-var gen = require('./gen.js'),
+var _gen = require('./gen.js'),
     utilities = require('./utilities.js');
 
 var proto = {
   basename: 'data',
 
   gen: function gen() {
+    _gen.data[this.name] = this;
     return 'gen.data.' + this.name + '.buffer';
   }
 };
@@ -43,7 +44,7 @@ module.exports = function (x) {
 
   ugen = {
     buffer: buffer,
-    name: proto.basename + gen.getUID(),
+    name: proto.basename + _gen.getUID(),
     dim: y === 1 ? buffer.length : x,
     channels: 1,
     gen: proto.gen,
@@ -54,7 +55,7 @@ module.exports = function (x) {
     }
   };
 
-  gen.data[ugen.name] = ugen;
+  //gen.data[ ugen.name ] = ugen
 
   if (shouldLoad) {
     var promise = utilities.loadSample(x, ugen);

@@ -8,6 +8,9 @@ let proto = {
   gen() {
     let inputs = gen.getInputs( this ), out
 
+    gen.data[ this.name ] = 0
+    gen.data[ this.name + '_control' ] = 0
+
     out = 
 ` let ${this.name} = gen.data.${this.name}_control,
       ${this.name}_trigger = ${inputs[1]} > ${inputs[2]} ? 1 : 0
@@ -39,9 +42,6 @@ module.exports = ( in1, control, threshold=0, properties ) => {
   defaults )
   
   ugen.name = `${ugen.basename}${ugen.uid}`
-
-  gen.data[ ugen.name ] = 0
-  gen.data[ ugen.name + '_control' ] = 0
 
   return ugen
 }

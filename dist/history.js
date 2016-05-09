@@ -19,6 +19,7 @@ module.exports = function () {
         gen: function gen() {
           var inputs = _gen.getInputs(ugen);
 
+          _gen.data[ugen.name] = in1;
           _gen.addToEndBlock('gen.data.' + ugen.name + ' = ' + inputs[0]);
 
           // return ugen that is being recorded instead of ssd.
@@ -48,8 +49,5 @@ module.exports = function () {
   };
 
   ugen.name = 'history' + ugen.uid;
-
-  _gen.data[ugen.name] = in1;
-
   return ugen;
 };

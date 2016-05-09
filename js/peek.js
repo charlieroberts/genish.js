@@ -9,7 +9,8 @@ let proto = {
     let genName = 'gen.' + this.name,
         inputs = gen.getInputs( this ),
         out, functionBody, next, lengthIsLog2
-
+    
+    this.data.gen()
     lengthIsLog2 = (Math.log2( this.data.buffer.length ) | 0)  === Math.log2( this.data.buffer.length )
 
     //console.log( "LENGTH IS LOG2", lengthIsLog2, this.data.buffer.length )

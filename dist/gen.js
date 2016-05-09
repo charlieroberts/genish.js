@@ -66,6 +66,7 @@ module.exports = {
         channel1 = void 0,
         channel2 = void 0;
 
+    this.data = {};
     this.memo = {};
     this.endBlock.clear();
     this.closures.clear();

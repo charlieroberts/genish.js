@@ -13,6 +13,7 @@ var proto = {
         next = void 0,
         lengthIsLog2 = void 0;
 
+    this.data.gen();
     lengthIsLog2 = (Math.log2(this.data.buffer.length) | 0) === Math.log2(this.data.buffer.length);
 
     //console.log( "LENGTH IS LOG2", lengthIsLog2, this.data.buffer.length )

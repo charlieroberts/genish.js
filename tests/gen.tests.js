@@ -313,7 +313,8 @@ describe( 'logic', ()=> {
 describe( 'sah', ()=> {
   it( 'should return the same value until told to sample', ()=> {
     let graph = sah( noise(), peek( data([1,0,1,0]), accum(1,0,{ max:4 }), {interp:'none', mode:'samples'} ) ),
-        out   = gen.createCallback( graph ),
+        out   = gen.createCallback( graph, true ),
+
         result = []
 
     for( let i = 0; i < 4; i++ ) result[i] = out()

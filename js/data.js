@@ -7,6 +7,7 @@ let proto = {
   basename:'data',
 
   gen() {
+    gen.data[ this.name ] = this
     return 'gen.data.' + this.name + '.buffer'
   },
 }
@@ -49,7 +50,7 @@ module.exports = ( x, y=1 ) => {
     },
   }
   
-  gen.data[ ugen.name ] = ugen
+  //gen.data[ ugen.name ] = ugen
 
   if( shouldLoad ) {
     let promise = utilities.loadSample( x, ugen )
