@@ -58,7 +58,7 @@ module.exports = {
         callback, 
         channel1, channel2
     
-    this.data = {} 
+    //this.data = {} 
     this.memo = {}
     this.endBlock.clear()
     this.closures.clear()

@@ -19,7 +19,10 @@ module.exports = function () {
         gen: function gen() {
           var inputs = _gen.getInputs(ugen);
 
-          _gen.data[ugen.name] = in1;
+          if (_gen.data[ugen.name] === undefined) {
+            _gen.data[ugen.name] = in1;
+          }
+
           _gen.addToEndBlock('gen.data.' + ugen.name + ' = ' + inputs[0]);
 
           // return ugen that is being recorded instead of ssd.
@@ -41,6 +44,7 @@ module.exports = function () {
 
     out: {
       gen: function gen() {
+        if (_gen.data[ugen.name] === undefined) _gen.data[ugen.name] = parseFloat(in1);
         return 'gen.data.' + ugen.name;
       }
     },

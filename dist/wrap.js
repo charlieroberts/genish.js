@@ -20,7 +20,16 @@ var proto = {
     //const long numWraps = long((v-lo)/range) - (v < lo);
     //return v - range * double(numWraps);  
 
-    out = ' let ' + this.name + ' = ' + signal + '\n  if( ' + this.name + ' < ' + min + ' || ' + this.name + ' > ' + max + ' ) {\n    let diff = ' + max + ' - ' + min + '\n    let numWraps = (( ' + signal + ' - ' + min + ' ) / diff ) | 0\n    ' + this.name + ' = ' + this.name + ' - diff * numWraps\n  }\n';
+    out = '  let ' + this.name + ' = ' + inputs[0] + '\n  if( ' + this.name + ' < ' + this.min + ' ) ' + this.name + ' += ' + this.max + ' - ' + this.min + '\n  else if( ' + this.name + ' > ' + this.max + ' ) ' + this.name + ' -= ' + this.max + ' - ' + this.min + '\n\n';
+
+    //` let ${this.name} = ${signal}
+    //  if( ${this.name} < ${min} || ${this.name} > ${max} ) {
+    //    let diff = ${max} - ${min}
+    //    ${this.name} -= diff
+    //    //let numWraps = (( ${signal} - ${min} ) / diff ) | 0
+    //    //${this.name} = ${this.name} - diff * numWraps
+    //  }
+    //`
     //  else if( ${this.name} > ${max} ) ${this.name} -= ${max} - ${in}
 
     return [this.name, ' ' + out];

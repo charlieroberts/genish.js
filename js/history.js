@@ -16,8 +16,11 @@ module.exports = ( in1=0 ) => {
       let obj = {
         gen() {
           let inputs = gen.getInputs( ugen )
+          
+          if(  gen.data[ ugen.name ] === undefined ){
+            gen.data[ ugen.name ] = in1
+          }
 
-          gen.data[ ugen.name ] = this.inputs[0]
           gen.addToEndBlock( 'gen.data.' + ugen.name + ' = ' + inputs[ 0 ] )
           
           // return ugen that is being recorded instead of ssd.
@@ -36,8 +39,11 @@ module.exports = ( in1=0 ) => {
     },
     
     out: {
-      gen.data[ ugen.name ] = this.inputs[0]
-      gen() { return 'gen.data.' + ugen.name },
+      
+      gen() {
+        if( gen.data[ ugen.name ] === undefined ) gen.data[ ugen.name ] = parseFloat( in1 )
+        return 'gen.data.' + ugen.name 
+      },
     },
 
     uid: gen.getUID(),
