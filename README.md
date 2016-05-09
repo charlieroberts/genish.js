@@ -1,16 +1,16 @@
 # genish.js
-an experimental repo that might, someday, mimic gen~ in Max/MSP
+A library for generating optimized, single-sample audio callbacks in JavaScript. Inspired by gen~ in Max/MSP.
 
 ## try it out
 http://www.charlie-roberts.com/genish/playground
 
-Genish.js currently runs best in Chrome and the Safari Technology Preview.
+Genish.js is alpha status and currently runs in Chrome and Firefox.
 
 ## what?
-A little more detail: genish.js will codegen per-sample callbacks with an API that mirrors gen~ closely. Given the following code:
+A little more detail: genish.js will codegen per-sample callback functions from a graph. Given the following code:
 
 ```javascript
-abs( add( mul(5,2), param() ) )
+abs( add( mul(5,2), in() ) )
 ```
 
 ...genish will generate the following (approximate) function.
@@ -21,10 +21,10 @@ function gen( p0 ) {
 }
 ```
 
-`abs`, a reference to `Math.abs`, is assigned as a property to the named `gen` function as part of the codegen process. A sine oscillator accepting frequency as a parameter could be expressed as follows:
+`abs`, a reference to `Math.abs`, is assigned as a property to the named `gen` function as part of the codegen process; this removes the need to look it up in the global scope. genish is also reduces multiplcation of two numbers to a constant. A sine oscillator accepting frequency as an input could be expressed as follows:
 
 ```javascript
-frequency = param()
+frequency = in()
 sin( mul( accum( mul( frequency, 1/44100 ) ), Math.PI * 2 ) )
 ```
 
@@ -41,13 +41,22 @@ function gen( p0 ) {
 }
 ```
 
-Both the accumulator and the sin function are assigned as properties of the named `gen` function in this eaxmple.
+Both the accumulator and the sin function are assigned as properties of the named `gen` function in this eaxmple; this minimizes how far the engine
 
 ## use
-Doesn't do much at the moment, but you can import `dist/gen.lib.js` for use in the browser, or `require('./dist/index.js')` if you're using Node.
+To use genish.js, you need to create an AudioContext and a ScriptProcessor node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks, as well as inserting generated functions into the callback of the ScriptProcessor. The following example performs the necessary setup and starts a sine oscillator running:
+
+```javascript
+ // optionally put all genish object in global namespace
+genish.export( window )
+
+utilities.createContext().createScriptProcessor()
+
+// second argument prints generated function body to console
+utilities.playGraph( cycle( 330 ), true ) 
 
 ## develop
 The build script is a gulpfile. With gulp installed, run `gulp` or `gulp watch` in the top level of the repo.
 
 ## test
-Tests are done with Mocha. With Mocha installed, run `mocha test.js` in a terminal.
+Tests are done with Mocha. With Mocha installed, run `mocha tests/gen.tests.js` from the root directory.
