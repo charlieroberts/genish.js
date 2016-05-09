@@ -17,7 +17,7 @@ module.exports = ( in1=0 ) => {
         gen() {
           let inputs = gen.getInputs( ugen )
 
-          gen.data[ ugen.name ] = in1
+          gen.data[ ugen.name ] = this.inputs[0]
           gen.addToEndBlock( 'gen.data.' + ugen.name + ' = ' + inputs[ 0 ] )
           
           // return ugen that is being recorded instead of ssd.
@@ -36,6 +36,7 @@ module.exports = ( in1=0 ) => {
     },
     
     out: {
+      gen.data[ ugen.name ] = this.inputs[0]
       gen() { return 'gen.data.' + ugen.name },
     },
 
