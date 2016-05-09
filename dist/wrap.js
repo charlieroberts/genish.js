@@ -11,12 +11,18 @@ var proto = {
   gen: function gen() {
     var code = void 0,
         inputs = _gen.getInputs(this),
-        diff = this.max - this.min,
+        signal = inputs[0],
+        min = inputs[1],
+        max = inputs[2],
         out = void 0;
 
     //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
+    //const long numWraps = long((v-lo)/range) - (v < lo);
+    //return v - range * double(numWraps);  
 
-    out = ' let ' + this.name + ' = ' + inputs[0] + '\n  if( ' + this.name + ' < ' + this.min + ' ) ' + this.name + ' += ' + this.max + ' - ' + this.min + '\n  else if( ' + this.name + ' > ' + this.max + ' ) ' + this.name + ' -= ' + this.max + ' - ' + this.min + '\n\n';
+    out = ' let ' + this.name + ' = ' + signal + '\n  if( ' + this.name + ' < ' + min + ' || ' + this.name + ' > ' + max + ' ) {\n    let diff = ' + max + ' - ' + min + '\n    let numWraps = (( ' + signal + ' - ' + min + ' ) / diff ) | 0\n    ' + this.name + ' = ' + this.name + ' - diff * numWraps\n  }\n';
+    //  else if( ${this.name} > ${max} ) ${this.name} -= ${max} - ${in}
+
     return [this.name, ' ' + out];
   }
 };
@@ -31,7 +37,7 @@ module.exports = function (in1) {
     min: min,
     max: max,
     uid: _gen.getUID(),
-    inputs: [in1]
+    inputs: [in1, min, max]
   });
 
   ugen.name = '' + ugen.basename + ugen.uid;

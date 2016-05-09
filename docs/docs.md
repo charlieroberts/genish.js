@@ -28,6 +28,12 @@ gen
 
 This will codegen a callback function for the ugen passed as the first argument. If that ugen is dependent on other ugens, these in turn will also be asked to codegen until the entire graph is contained within the output callback function. If the debug flag is set then the function body will be printed to the console.
 
+###gen.getInputs###
+
+**ugen** &nbsp;  *object* &nbsp; A genish.js unit generator.
+
+This method looks at the argument ugen and, assuming it has dependencies, calls their codegen methods so that their code is added to the final output function. It is only used internally during calls to `gen.createCallback()`. The basic codegen process is calling `getInputs` recursively until the entire graph has been resolved.
+
 ```js
 out = gen.createCallback( add(5,3) )
 out() // 8
@@ -38,12 +44,6 @@ out() // [ .1, .2 ]
 out() // [ .2, .4 ]
 out() // [ .3, .6 ] etc...
 ```
-
-###gen.getInputs###
-
-**ugen** &nbsp;  *object* &nbsp; A genish.js unit generator.
-
-This method looks at the argument ugen and, assuming it has dependencies, calls their codegen methods so that their code is added to the final output function. It is only used internally during calls to `gen.createCallback()`. The basic codegen process is calling `getInputs` recursively until the entire graph has been resolved.
 
 
 # Arithmetic
@@ -123,17 +123,17 @@ data
 **dataLength** &nbsp; *integer* &nbsp; The length of a new underlying array to be created.  
 **audioFileToLoad** &nbsp; *string* &nbsp; A path to an audiofile to load into the data's buffer object.
 
-```javascript
-audiofile = data( 'myaudiofile.wav' ).then( ()=> {
-  out = gen.createCallback( peek( audiofile, phasor(.1) ) )
-})
-```
-
 Data objects serve as containers for storing numbers; these numbers can be read using calls to `peek()` and the data object can be written to using calls to `poke()`. The constructor can be called with three different argumensts. If a *dataArray* is passed as the first argument, this array becomes the data object's underlying data source. If a *dataLength* integer is passed, a Float32Array is created using the provided length. If a *audioFileToLoad* string is passed, the data object attempts to load the file at the provided URL and generates a JavaScript Promise that used with the `then()` method.
 
 ####Methods####
 ###data.then( callback )###
 When the `data` constructor is called passing in the path of a file to load, a JavaScript Promise is created that will be resovled when the audiofile has been loaded. `then()` provides a callback function to be executed when resolution is complete. You can use this to delay starting playback of a graph until all data dependencies have been loaded.
+
+```javascript
+audiofile = data( 'myaudiofile.wav' ).then( ()=> {
+  out = gen.createCallback( peek( audiofile, phasor(.1) ) )
+})
+```
 
 peek
 ---
@@ -141,15 +141,14 @@ peek
 **index** &nbsp; *integer* &nbsp; The index to be read.  
 **properties** &nbsp; *object* &nbsp; A dictionary of optional parameters to assign to the peek object, discussed under Properties.
 
+Peek reads from an input data object. It can index the data object using on of two *modes*. If the *mode* property is set to *samples* than index provides an integer index to lookup in the data object. If the *mode* property is set to *phase* then the index should be a signal in the range of {0,1}.
+
 ```js
 // create a sliding, interpolated frequency signal running between four values
 d = data( [440,880,220,1320] )
 p = peek( d, phasor(.1) )
 c = cycle( p ) // feed sine osc frequency with signal
 ```
-
-Peek reads from an input data object. It can index the data object using on of two *modes*. If the *mode* property is set to *samples* than index provides an integer index to lookup in the data object. If the *mode* property is set to *phase* then the index should be a signal in the range of {0,1}.
-
 ####Properties####
 **mode** *string* : determines how indexing is performed. Options are 'phase' and 'samples'.  
 
@@ -175,14 +174,6 @@ history
 ----
 History is used to create single-sample delays and feedback. It records one sample at a time of a ugen passed to its `in()` method, and then outputs the last recorded sample via its `.out` property. Single-sample delays are one of the justifications for the existence of genish.js; this is an important ugen.
 
-####Properties####
-###history.out###
- *ugen* The `out` property returns a simple ugen that outputs the last recorded sample of the history object.
-
-####Methods####
-###history.in###
-**ugen** &nbsp;  *ugen* &nbsp; A genish.js unit generator (or graph) to be recorded.
-
 ```js
 /* a randomly pitched oscillator and a delay line */
 frequencyControl = sah( add( 220, mul( noise(),880 ) ), noise(), .99995 )
@@ -199,6 +190,49 @@ mixer = feedback.in( mix( echo, feedback.out, .925 ) )
 
 gen.createCallback( mixer )
 ```
+
+####Properties####
+###history.out###
+ *ugen* The `out` property returns a simple ugen that outputs the last recorded sample of the history object.
+
+####Methods####
+###history.in###
+**ugen** &nbsp;  *ugen* &nbsp; A genish.js unit generator (or graph) to be recorded.
+
+# Filter
+
+dcblock
+----
+**a** &nbsp;  *ugen*  Signal.
+
+`dcblock()` remove DC offset from an input signal using a one-pole high-pass filter. 
+
+slide
+----
+**a** &nbsp;  *ugen*  Signal.
+**time** &nbsp; *integer* Length of slide in samples.
+
+`slide()` is a logarithmically scaled low-pass filter to smooth discontinuities between values. It is especially useful to make continuous transitions from discrete events; for example, sliding from one note frequency to the next. The second argument to `slide` determines the length, in samples, of transitions.
+
+# Integrator
+
+accum
+----
+**increment** &nbsp; *ugen* or *number*  (default = 1) The amount to increase the accumulator's internal value by on each sample  
+**reset**  &nbsp; *ugen* or *number* (default = 0) When `reset` has a value of 1, the accumulator will reset its internal value to 0.  
+**properties** &nbsp; *object*  An optional dictionary containing a `max` value that the `accum` increments to before wrapping, and a `min` value that the `accum` wraps to after reaching/passing its max. An `initialValue` for the `accum` can also be provided; if it is not given the initial value is assumed to be the same as its `min`.  
+
+`accum()` is used to increment a stored value between a provided range that defaults to {0,1}. If the accumulator values passes its maximum, it wraps. `accum()` is very similar to the `counter` ugen, but is slightly more efficient. Additionally, the `min` and `max` properties of `accum` are fixed values, while they can be specified with signals in `counter`.
+
+counter
+----
+**increment** &nbsp; *ugen* or *number*  (default = 1) The amount to increase the counter's internal value by on each sample  
+**min** &nbsp; *ugen* or *number* (default = 0) The minimum value of the accumulator  
+**max** &nbsp; *ugen* or *number* (default = 1) The maximum value of the accumulator  
+**reset**  &nbsp; *ugen* or *number* (default = 0) When `reset` has a value of 1, the counter will reset its internal value to 0.  
+**properties** &nbsp; *object*  An optional dictionary containing a `max` value that the `accum` increments to before wrapping, and a `min` value that the `accum` wraps to after reaching/passing its max. An `initialValue` for the `accum` can also be provided; if it is not given the initial value is assumed to be the same as its `min`.
+
+`counter()` is used to increment a stored value between a provided range that defaults to {0,1}. If the counter's interval value passes either range boundary, it is wrapped. `counter()` is very similar to the `accum` ugen, but is slightly less efficient. Additionally, the `min` and `max` properties of `accum` are fixed values, while they can be specified with signals in `counter`, enabling mix/max to change over time.
 
 # Logic
 
@@ -351,6 +385,11 @@ gate
 **input** &nbsp; *integer* &nbsp; Signal that is passed through one of various outlets.   
 **properties** &nbsp; *object* &nbsp; A dictionary of optional parameters to assign to the gate object. The main property is `count` (default value 2) which determines the number of outputs a `gate` ugen possesses.
 
+`gate()` routes signal from one of its outputs according to an input *control* signal, which defines an index for output. The various outputs are all stored in the `mygate.outputs` array. The code example to the right shows a signal alternating between left and right channels using the `gate` ugen.
+ 
+####Properties####
+**outputs** *string* : An array of outputs that can be used as inputs to other ugens.
+
 ```js
 inputSignal = mul( phasor(330, .1) )
 controlSignal = gt( phasor(2), .5 )
@@ -359,11 +398,6 @@ g = gate( gt( controlSignal, inputSignal, { count:4 })
 
 gen.createCallback([ g.outputs[0], g.outputs[1] ]) 
 ```
-
-`gate()` routes signal from one of its outputs according to an input *control* signal, which defines an index for output. The various outputs are all stored in the `mygate.outputs` array. The code example to the right shows a signal alternating between left and right channels using the `gate` ugen.
- 
-####Properties####
-**outputs** *string* : An array of outputs that can be used as inputs to other ugens.
 
 # Waveforms
 

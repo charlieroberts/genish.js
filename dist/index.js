@@ -23,6 +23,7 @@ var library = {
   mul: require('./mul.js'),
   div: require('./div.js'),
   accum: require('./accum.js'),
+  counter: require('./counter.js'),
   sin: require('./sin.js'),
   cos: require('./cos.js'),
   tan: require('./tan.js'),
