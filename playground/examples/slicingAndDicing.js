@@ -53,20 +53,20 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
   // create a random signal between 0 and 31 (or whatever numSlices equals)
   random0_31 = floor( mul( noise(), numSlices ) ) 
   
-  // count the number of samples played by the current slice. After each sample
-  // random signal to generate a new sliceNum to hold and use
-  sliceNum = sah( random0_31, counter( speed, 0, sliceLength ), sliceLength - 2 )
+  // count the number of samples played by the current slice. 
+  sliceCounter = counter( speed, 0, sliceLength )
+  
+  // After each sample sample random signal to pick a new slice to play
+  sliceNum = sah( random0_31, sliceCounter, sliceLength - 1 )
   
   // get starting position, in samples, of current slice
   start = mul( sliceNum, sliceLength )
  
   // get ending position of currentSlice
   end   = add( start, sliceLength )
- 
-  // create a counter that reads through the current slice.
-  count = counter( speed, start, end )
   
-  cb = play( peek( d, count, {mode:'samples'} ), true )
+  // add the current sliceCounter position to start to get the buffer index to read
+  cb = play( peek( d, add( start, sliceCounter ), {mode:'samples'} ), true )
   
   gui = new dat.GUI({ width: 400 }) 
   gui.add( cb, 'speed', -4, 4 )
