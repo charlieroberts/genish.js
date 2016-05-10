@@ -62,6 +62,7 @@ var library = {
   slide: require('./slide.js'),
   in: require('./in.js'),
   t60: require('./t60.js'),
+  mtof: require('./mtof.js'),
   utilities: require('./utilities.js')
 };
 

@@ -16,6 +16,7 @@ module.exports = {
   },
 
   debug: false,
+  samplerate: 44100, // change on audiocontext creation
 
   /* closures
    *

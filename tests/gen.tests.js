@@ -52,7 +52,8 @@ let assert = require('assert'),
     gt      = genlib.gt,
     input   = genlib.in,
     lt      = genlib.lt,
-    t60     = genlib.t60
+    t60     = genlib.t60,
+    mtof    = genlib.mtof
 
 //gen.debug = true
 
@@ -244,6 +245,15 @@ describe( 'monops', ()=> {
 
     assert.equal( result, answer )
 
+  })
+
+  it( 'should convert midi value 69 to 440 (hz, default tuning)', ()=> {
+    let answer = 440,
+        graph  = mtof( 69 ),
+        out    = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( answer, result )
   })
 })
 

@@ -11,6 +11,7 @@ module.exports = {
   accum:0,
   getUID() { return this.accum++ },
   debug:false,
+  samplerate: 44100, // change on audiocontext creation
   
   /* closures
    *
