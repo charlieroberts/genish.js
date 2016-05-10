@@ -10,7 +10,7 @@ let proto = {
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ this.name ]: Math.exp })
+      gen.closures.add({ [ 'exp' ]: Math.exp })
 
       out = `gen.exp( -6.907755278921 / ${inputs[0]} )`
 
