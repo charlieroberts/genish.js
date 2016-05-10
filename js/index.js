@@ -4,9 +4,11 @@ let library = {
   export( destination ) {
     destination.ssd = library.history // history is window object property, so use ssd as alias
     destination.input = library.in    // in is a keyword in javascript
+    destination.ternary = library.switch // switch is a keyword in javascript
 
     delete library.history
     delete library.in
+    delete library.switch
     
     Object.assign( destination, library )
     destination.clip = library.clamp
@@ -64,6 +66,7 @@ let library = {
   mtof:     require( './mtof.js'),
   ltp:      require( './ltp.js'),
   gtp:      require( './gtp.js'),
+  switch:   require( './switch.js' ),
   utilities:require( './utilities.js' )
 }
 

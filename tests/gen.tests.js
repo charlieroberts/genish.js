@@ -9,7 +9,6 @@
  *
  */
 
-
 'use strict'
 
 let assert = require('assert'),
@@ -53,7 +52,8 @@ let assert = require('assert'),
     input   = genlib.in,
     lt      = genlib.lt,
     t60     = genlib.t60,
-    mtof    = genlib.mtof
+    mtof    = genlib.mtof,
+    ternary = genlib.switch
 
 //gen.debug = true
 
@@ -334,6 +334,19 @@ describe( 'logic', ()=> {
     assert.equal( result, answer )
   })
 
+})
+
+describe( 'switch', ()=> {
+  it( 'should generate ouput of 0,1 given switch( in(), 0, 1 ) -> (1), (0)', ()=> {
+    let answer = [ 0,1 ],
+        graph  = ternary( input(), 0, 1 ), 
+        out    = gen.createCallback( graph ),
+        result = []
+
+    result.push( out( 1 ) ); result.push( out( 0 ) )
+
+    assert.deepEqual( result, answer )
+  })
 })
 
 describe( 'sah', ()=> {

@@ -10,6 +10,9 @@ let utilities = {
 
   clear() {
     this.callback = () => 0
+    console.log( this.clear.callbacks )
+    this.clear.callbacks.forEach( v => v() )
+    this.clear.callbacks.length = 0
   },
 
   createContext() {
@@ -82,5 +85,7 @@ let utilities = {
   }
 
 }
+
+utilities.clear.callbacks = []
 
 module.exports = utilities

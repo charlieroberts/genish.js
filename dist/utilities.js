@@ -12,6 +12,11 @@ var utilities = {
     this.callback = function () {
       return 0;
     };
+    console.log(this.clear.callbacks);
+    this.clear.callbacks.forEach(function (v) {
+      return v();
+    });
+    this.clear.callbacks.length = 0;
   },
   createContext: function createContext() {
     this.ctx = new (AudioContext || webkitAudioContext)();
@@ -79,5 +84,7 @@ var utilities = {
     return promise;
   }
 };
+
+utilities.clear.callbacks = [];
 
 module.exports = utilities;
