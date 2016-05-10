@@ -53,6 +53,7 @@ let assert = require('assert'),
     lt      = genlib.lt,
     t60     = genlib.t60,
     mtof    = genlib.mtof,
+    selector= genlib.selector,
     ternary = genlib.switch
 
 //gen.debug = true
@@ -344,6 +345,19 @@ describe( 'switch', ()=> {
         result = []
 
     result.push( out( 1 ) ); result.push( out( 0 ) )
+
+    assert.deepEqual( result, answer )
+  })
+})
+
+describe( 'selector', ()=> {
+  it( 'should generate ouput of 0,1,2 given selector( in(), 0, 1, 2 ) -> (0), (1), (2)', ()=> {
+    let answer = [ 0,1,2 ],
+        graph  = selector( input(), 0, 1, 2 ), 
+        out    = gen.createCallback( graph ),
+        result = []
+
+    result.push( out( 0 ) ); result.push( out( 1 ) ); result.push( out( 2 ) )
 
     assert.deepEqual( result, answer )
   })

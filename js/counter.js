@@ -33,7 +33,7 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[3] === 'number' && this.inputs[3] < 1) ) { 
-      out += '  if( '+_reset+' >= 1 ) '+_name+'.value = ' + _min + '\n'
+      out += `  if( ${_reset} >= 1 ) ${_name}.value = ${_min}\n`
     }
 
     out += `  let ${this.name}_value = ${_name}.value;\n  ${_name}.value += ${_incr}\n` // store output value before accumulating  
