@@ -205,4 +205,4 @@ for( var i = 0; i < numOscillators; i++ ) {
   )
 }
  
-play( add.apply(null, oscillators) )
+play( add( ...oscillators ) )

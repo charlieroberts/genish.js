@@ -51,7 +51,8 @@ let assert = require('assert'),
     sah     = genlib.sah,
     gt      = genlib.gt,
     input   = genlib.in,
-    lt      = genlib.lt
+    lt      = genlib.lt,
+    t60     = genlib.t60
 
 //gen.debug = true
 
@@ -229,6 +230,21 @@ describe( 'monops', ()=> {
 
     assert.equal( result, answer )
   })
+
+  it( 'should fade 1 to .001 over 10 samples using t60(10)', ()=> {
+    let answer = .001,
+        x = history( 1 ),
+        graph = x.in( mul( x.out, t60(10) ) ),
+        out   = gen.createCallback( graph ),
+        result = 1
+    
+    for( let i = 0 ; i < 10; i++ ) result = out()
+
+    result = parseFloat( result.toFixed( 4 ) )
+
+    assert.equal( result, answer )
+
+  })
 })
 
 describe( 'binops', ()=> {
@@ -313,7 +329,7 @@ describe( 'logic', ()=> {
 describe( 'sah', ()=> {
   it( 'should return the same value until told to sample', ()=> {
     let graph = sah( noise(), peek( data([1,0,1,0]), accum(1,0,{ max:4 }), {interp:'none', mode:'samples'} ) ),
-        out   = gen.createCallback( graph, true ),
+        out   = gen.createCallback( graph ),
 
         result = []
 

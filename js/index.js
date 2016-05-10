@@ -60,6 +60,7 @@ let library = {
   train:    require( './train.js' ),
   slide:    require( './slide.js' ),
   in:       require( './in.js' ),
+  t60:      require( './t60.js'),
   utilities:require( './utilities.js' )
 }
 
