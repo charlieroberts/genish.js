@@ -41,7 +41,7 @@ function gen( p0 ) {
 }
 ```
 
-Both the accumulator and the sin function are assigned as properties of the named `gen` function in this eaxmple; this minimizes how far the engine
+Both the accumulator and the sin function are assigned as properties of the named `gen` function in this eaxmple; this limits most objects and functions to an object in the current scope.
 
 ## use
 To use genish.js, you need to create an AudioContext and a ScriptProcessor node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks, as well as inserting generated functions into the callback of the ScriptProcessor. The following example performs the necessary setup and starts a sine oscillator running:
