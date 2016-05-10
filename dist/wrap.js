@@ -14,13 +14,22 @@ var proto = {
         signal = inputs[0],
         min = inputs[1],
         max = inputs[2],
-        out = void 0;
+        out = void 0,
+        diff = void 0;
 
     //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
     //const long numWraps = long((v-lo)/range) - (v < lo);
     //return v - range * double(numWraps);  
 
-    out = '  let ' + this.name + ' = ' + inputs[0] + '\n  if( ' + this.name + ' < ' + this.min + ' ) ' + this.name + ' += ' + this.max + ' - ' + this.min + '\n  else if( ' + this.name + ' > ' + this.max + ' ) ' + this.name + ' -= ' + this.max + ' - ' + this.min + '\n\n';
+    if (this.min === 0) {
+      diff = max;
+    } else if (isNaN(max) || isNaN(min)) {
+      diff = max + ' - ' + min;
+    } else {
+      diff = max - min;
+    }
+
+    out = ' let ' + this.name + ' = ' + inputs[0] + '\n  if( ' + this.name + ' < ' + this.min + ' ) ' + this.name + ' += ' + diff + '\n  else if( ' + this.name + ' > ' + this.max + ' ) ' + this.name + ' -= ' + diff + '\n\n';
 
     //` let ${this.name} = ${signal}
     //  if( ${this.name} < ${min} || ${this.name} > ${max} ) {
