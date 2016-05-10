@@ -17,7 +17,7 @@ let utilities = {
 
   createContext() {
     this.ctx = new ( AudioContext || webkitAudioContext )()
-    gen.samplerate = this.ctx.samplerate
+    gen.samplerate = this.ctx.sampleRate
 
     return this
   },

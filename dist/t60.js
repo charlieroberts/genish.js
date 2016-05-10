@@ -5,21 +5,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _gen = require('./gen.js');
 
 var proto = {
-  name: 't60',
+  basename: 't60',
 
   gen: function gen() {
     var out = void 0,
-        inputs = _gen.getInputs(this);
+        inputs = _gen.getInputs(this),
+        returnValue = void 0;
 
     if (isNaN(inputs[0])) {
       _gen.closures.add(_defineProperty({}, 'exp', Math.exp));
 
-      out = 'gen.exp( -6.907755278921 / ' + inputs[0] + ' )';
+      out = '  let ' + this.name + ' = gen.exp( -6.907755278921 / ' + inputs[0] + ' )\n\n';
+
+      _gen.memo[this.name] = out;
+
+      returnValue = [this.name, out];
     } else {
       out = Math.exp(-6.907755278921 / inputs[0]);
+
+      returnValue = out;
     }
 
-    return out;
+    return returnValue;
   }
 };
 
@@ -27,6 +34,7 @@ module.exports = function (x) {
   var t60 = Object.create(proto);
 
   t60.inputs = [x];
+  t60.name = proto.basename + _gen.getUID();
 
   return t60;
 };

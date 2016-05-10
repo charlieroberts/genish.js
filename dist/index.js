@@ -65,9 +65,10 @@ var library = {
   in: require('./in.js'),
   t60: require('./t60.js'),
   mtof: require('./mtof.js'),
-  ltp: require('./ltp.js'),
-  gtp: require('./gtp.js'),
+  ltp: require('./ltp.js'), // TODO: test
+  gtp: require('./gtp.js'), // TODO: test
   switch: require('./switch.js'),
+  mstosamps: require('./mstosamps.js'), // TODO: needs test
   utilities: require('./utilities.js')
 };
 

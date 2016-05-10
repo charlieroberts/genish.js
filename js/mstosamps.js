@@ -3,7 +3,7 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  basename:'t60',
+  basename:'mstosamps',
 
   gen() {
     let out,
@@ -11,15 +11,13 @@ let proto = {
         returnValue
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ 'exp' ]: Math.exp })
-
-      out = `  let ${this.name } = gen.exp( -6.907755278921 / ${inputs[0]} )\n\n`
+      out = `  let ${this.name } = ${gen.samplerate} / 1000 * ${inputs[0]} \n\n`
      
       gen.memo[ this.name ] = out
       
       returnValue = [ this.name, out ]
     } else {
-      out = Math.exp( -6.907755278921 / inputs[0] )
+      out = gen.samplerate / 1000 * this.inputs[0]
 
       returnValue = out
     }    
@@ -29,10 +27,10 @@ let proto = {
 }
 
 module.exports = x => {
-  let t60 = Object.create( proto )
+  let mstosamps = Object.create( proto )
 
-  t60.inputs = [ x ]
-  t60.name = proto.basename + gen.getUID()
+  mstosamps.inputs = [ x ]
+  mstosamps.name = proto.basename + gen.getUID()
 
-  return t60
+  return mstosamps
 }
