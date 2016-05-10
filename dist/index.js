@@ -63,6 +63,8 @@ var library = {
   in: require('./in.js'),
   t60: require('./t60.js'),
   mtof: require('./mtof.js'),
+  ltp: require('./ltp.js'),
+  gtp: require('./gtp.js'),
   utilities: require('./utilities.js')
 };
 

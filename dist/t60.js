@@ -12,7 +12,7 @@ var proto = {
         inputs = _gen.getInputs(this);
 
     if (isNaN(inputs[0])) {
-      _gen.closures.add(_defineProperty({}, this.name, Math.exp));
+      _gen.closures.add(_defineProperty({}, 'exp', Math.exp));
 
       out = 'gen.exp( -6.907755278921 / ' + inputs[0] + ' )';
     } else {
