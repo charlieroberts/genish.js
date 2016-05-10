@@ -10,14 +10,17 @@ let proto = {
 
     gen.closures.add({ 'noise' : Math.random })
 
-    out = `gen.noise()`
+    out = `  let ${this.name} = gen.noise()\n`
+    
+    gen.memo[ this.name ] = this.name
 
-    return out
+    return [ this.name, out ]
   }
 }
 
 module.exports = x => {
   let noise = Object.create( proto )
+  noise.name = proto.name + gen.getUID()
 
   return noise
 }

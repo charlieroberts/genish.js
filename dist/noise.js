@@ -10,14 +10,17 @@ var proto = {
 
     _gen.closures.add({ 'noise': Math.random });
 
-    out = 'gen.noise()';
+    out = '  let ' + this.name + ' = gen.noise()\n';
 
-    return out;
+    _gen.memo[this.name] = this.name;
+
+    return [this.name, out];
   }
 };
 
 module.exports = function (x) {
   var noise = Object.create(proto);
+  noise.name = proto.name + _gen.getUID();
 
   return noise;
 };
