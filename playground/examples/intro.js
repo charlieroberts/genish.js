@@ -111,9 +111,12 @@ play( cycle( frequency ) )
 // an argument to ssd sets its initial value
 sampler = ssd(.001) 
  
-//here we record the output of a sawtooth wave into our ssd each sample,
-//and then use this value on the next sample to modulate its frequency
-out = sampler.in( phasor( mul( 1000, sampler.out ) ) )
+// generate a sawtooth wave using our last sample output to
+// scale its frequency
+out = phasor( mul( 1000, sampler.out ) )
+
+// record the output to process the next sample
+sampler.in( out )
  
 play( mul( out, .05 ) )
 

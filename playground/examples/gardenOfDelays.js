@@ -38,7 +38,7 @@ gate3 = gate( gateCtrl, feedback3.out, { count:4 } )
 gate4 = gate( gateCtrl, feedback4.out, { count:4 } )
  
 delay1In = add( in1, gate1.outputs[0], gate2.outputs[1], gate3.outputs[2], gate4.outputs[3] )
-delay2In = add( in1, gate1.outputs[1], gate2.outputs[0], gate3.outputs[3], gate4.outputs[3] )
+delay2In = add( in1, gate1.outputs[1], gate2.outputs[0], gate3.outputs[3], gate4.outputs[2] )
 delay3In = add( in1, gate1.outputs[2], gate2.outputs[3], gate3.outputs[0], gate4.outputs[1] )
 delay4In = add( in1, gate1.outputs[3], gate2.outputs[2], gate3.outputs[1], gate4.outputs[0] )
  
@@ -55,16 +55,24 @@ foldedDelay3 = fold( delay3, -1,1 )
 foldedDelay4 = fold( delay4, -1,1 )
  
 // damp feedback with folded delays
-feedbackMix1 = feedback1.in( mix( foldedDelay1, feedback1.out, damp ) )
-feedbackMix2 = feedback2.in( mix( foldedDelay2, feedback2.out, damp ) )
-feedbackMix3 = feedback3.in( mix( foldedDelay3, feedback3.out, damp2 ) )
-feedbackMix4 = feedback4.in( mix( foldedDelay4, feedback4.out, damp2 ) )
- 
+feedbackMix1 = mix( foldedDelay1, feedback1.out, damp )
+feedbackMix2 = mix( foldedDelay2, feedback2.out, damp )
+feedbackMix3 = mix( foldedDelay3, feedback3.out, damp2 )
+feedbackMix4 = mix( foldedDelay4, feedback4.out, damp2 )
+
+// record output of mix ugens for use in next sample
+feedback1.in( feedbackMix1 ); feedback2.in( feedbackMix2 );
+feedback3.in( feedbackMix3 ); feedback4.in( feedbackMix4 );
+
 ssdLeft = ssd()
 ssdRight = ssd()
  
-left  = ssdLeft.in(  mix( mul( .5, add( feedbackMix1, feedbackMix3 ) ), ssdLeft.out,  damp3 ) )
-right = ssdRight.in( mix( mul( .5, add( feedbackMix2, feedbackMix4 ) ), ssdRight.out, damp3 ) )
+left  = mix( mul( .5, add( feedbackMix1, feedbackMix3 ) ), ssdLeft.out,  damp3 )
+right = mix( mul( .5, add( feedbackMix2, feedbackMix4 ) ), ssdRight.out, damp3 )
+
+// record left and right output to use in next sample
+ssdLeft.in( left )
+ssdRight.in( right )
  
 // limit output to {-1,1}
 limitL = clamp( left, -1,1 )
