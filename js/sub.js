@@ -9,13 +9,23 @@ module.exports = (...args) => {
 
     gen() {
       let inputs = gen.getInputs( this ),
-          out='(',
+          out=0,
           diff = 0,
           needsParens = false, 
           numCount = 0,
           lastNumber = inputs[ 0 ],
           lastNumberIsUgen = isNaN( lastNumber ), 
-          subAtEnd = false
+          subAtEnd = false,
+          hasUgens = false,
+          returnValue = 0
+
+      this.inputs.forEach( value => { if( isNaN( value ) ) hasUgens = true })
+      
+      if( hasUgens ) { // store in variable for future reference
+        out = '  let ' + this.name + ' = ('
+      }else{
+        out = '('
+      }
 
       inputs.forEach( (v,i) => {
         if( i === 0 ) return
@@ -40,10 +50,18 @@ module.exports = (...args) => {
       }else{
         out = out.slice( 1 ) // remove opening paren
       }
+      
+      if( hasUgens ) out += '\n'
 
-      return out
+      returnValue = hasUgens ? [ this.name, out ] : out
+      
+      if( hasUgens ) gen.memo[ this.name ] = this.name
+
+      return returnValue
     }
   }
-  
+   
+  sub.name = 'sub'+sub.id
+
   return sub
 }

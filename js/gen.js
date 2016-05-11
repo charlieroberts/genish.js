@@ -63,7 +63,7 @@ module.exports = {
     this.memo = {}
     this.endBlock.clear()
     this.closures.clear()
-    this.histories.clear()
+    
     this.parameters.length = 0
 
     this.functionBody = "  'use strict';\n\n"
@@ -95,6 +95,10 @@ module.exports = {
 
       this.functionBody += body.join('\n')
     }
+
+    this.histories.forEach( value => {
+      value.gen()      
+    })
 
     let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
     
@@ -128,6 +132,8 @@ module.exports = {
     callback.data = this.data
     callback.out  = []
     
+    this.histories.clear()
+
     return callback
   },
   

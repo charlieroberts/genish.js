@@ -13,13 +13,26 @@ module.exports = function () {
 
     gen: function gen() {
       var inputs = _gen.getInputs(this),
-          out = '(',
+          out = 0,
           diff = 0,
           needsParens = false,
           numCount = 0,
           lastNumber = inputs[0],
           lastNumberIsUgen = isNaN(lastNumber),
-          subAtEnd = false;
+          subAtEnd = false,
+          hasUgens = false,
+          returnValue = 0;
+
+      this.inputs.forEach(function (value) {
+        if (isNaN(value)) hasUgens = true;
+      });
+
+      if (hasUgens) {
+        // memoize
+        out = '  let ' + this.name + ' = (';
+      } else {
+        out = '(';
+      }
 
       inputs.forEach(function (v, i) {
         if (i === 0) return;
@@ -45,9 +58,17 @@ module.exports = function () {
         out = out.slice(1); // remove opening paren
       }
 
-      return out;
+      if (hasUgens) out += '\n';
+
+      returnValue = hasUgens ? [this.name, out] : out;
+
+      if (hasUgens) _gen.memo[this.name] = this.name;
+
+      return returnValue;
     }
   };
+
+  sub.name = 'sub' + sub.id;
 
   return sub;
 };
