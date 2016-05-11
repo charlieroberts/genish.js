@@ -69,7 +69,7 @@ var library = {
   gtp: require('./gtp.js'), // TODO: test
   switch: require('./switch.js'),
   mstosamps: require('./mstosamps.js'), // TODO: needs test,
-  selector: require('./selector.js'), // TODO: needs test
+  selector: require('./selector.js'),
   utilities: require('./utilities.js')
 };
 

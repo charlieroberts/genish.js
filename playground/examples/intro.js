@@ -197,15 +197,13 @@ echo = delay( gain, 11025, { size: 22050 })
 // notes on the left, echos on the right
 play( [gain, echo] )
 
-/****** 50 sine oscillators (will break in Firefox) *******/
+/****** 50 sine oscillators  *******/
  
 oscillators = []
 numOscillators = 50
  
 for( var i = 0; i < numOscillators; i++ ) {
-  oscillators.push( 
-    mul( cycle( 110 + i * 55), .1/numOscillators ) 
-  )
+  oscillators[ i ] =  mul( cycle( 110 + i * 55), .1/numOscillators ) 
 }
  
 play( add( ...oscillators ) )

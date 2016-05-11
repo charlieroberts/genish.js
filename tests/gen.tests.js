@@ -54,6 +54,8 @@ let assert = require('assert'),
     t60     = genlib.t60,
     mtof    = genlib.mtof,
     selector= genlib.selector,
+    ltp     = genlib.ltp,
+    gtp     = genlib.gtp,
     ternary = genlib.switch
 
 //gen.debug = true
@@ -297,7 +299,7 @@ describe( 'binops', ()=> {
   
 })
 
-describe( 'logic', ()=> {
+describe( 'compare', ()=> {
 
   it( 'should return 1 for gt(1,0)', ()=> {
     let answer = 1,
@@ -311,6 +313,24 @@ describe( 'logic', ()=> {
   it( 'should return 0 for lt(1,0)', ()=> {
     let answer = 0,
         graph = lt(1,0),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should return .5 for ltp(.5,1)', ()=> {
+    let answer = .5,
+        graph = ltp( .5,1 ),
+        out = gen.createCallback( graph ),
+        result = out()
+
+    assert.equal( result, answer )
+  })
+
+  it( 'should return 2 for gtp(2,1)', ()=> {
+    let answer = 2,
+        graph = gtp( 2,1 ),
         out = gen.createCallback( graph ),
         result = out()
 

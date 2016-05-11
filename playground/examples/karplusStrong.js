@@ -52,7 +52,7 @@ damped = feedback.in(
   mix( decayed, feedback.out, damp )
 )
  
-callback = play( damped )
+callback = play( mul( damped, .25 ) )
  
 // create a scheduler that picks a random frequency and 
 // resets counter value to 0 to trigger envelope.

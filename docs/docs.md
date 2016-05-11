@@ -166,9 +166,18 @@ Poke writes values to a index on a `data` object.
 
 delay
 ----
-**in** &nbsp;  *ugen* or *number* &nbsp; The signal to be delayed.
+**in** &nbsp;  *ugen* or *number* &nbsp; The signal to be delayed.  
+**delayTime** &nbsp;  *number* &nbsp; The amount of time to delay the incoming signal.  
+**properties** &nbsp; *object* &nbsp; A dictionary of properties to assign to the ugen; see below.
 
-Outputs a sine wave via wavetable lookup / interpolation.
+Creates a delay line that delays an input signal by an argument number of samples.
+
+####Properties####
+###delay.size###
+*number* (default 512) determines the length of the delay line.
+###delay.interp###
+*interp* (default 'linear') Set the interpolation used to access non-integer indices in the delay line. Currently can be 'linear' or 'none'.
+
 
 history
 ----
@@ -351,6 +360,18 @@ lt
 
 Returns 1 if `a` is less than `b`, otherwise returns 0
 
+gtp
+----
+**a,b** &nbsp;  *ugen* or *number* &nbsp; Ugens or numbers. 
+
+Returns `a` if `a` is greater than `b`, otherwise returns 0
+
+ltp
+----
+**a,b** &nbsp;  *ugen* or *number* &nbsp; Ugens or numbers. 
+
+Returns `a` if `a` is less than `b`, otherwise returns 0
+
 # Range
 
 clamp
@@ -381,7 +402,7 @@ Wrap constricts an input `a` to a particular range. Given a range of {0,1} and a
 
 gate
 ----
-**control** &nbsp;  *data* &nbsp; Chooses the output index that the input signal travels through.  
+**control** &nbsp;  *ugen or number* &nbsp; Selects the output index that the input signal travels through.  
 **input** &nbsp; *integer* &nbsp; Signal that is passed through one of various outlets.   
 **properties** &nbsp; *object* &nbsp; A dictionary of optional parameters to assign to the gate object. The main property is `count` (default value 2) which determines the number of outputs a `gate` ugen possesses.
 
@@ -399,6 +420,21 @@ g = gate( gt( controlSignal, inputSignal, { count:4 })
 gen.createCallback([ g.outputs[0], g.outputs[1] ]) 
 ```
 
+selector
+----
+**control** &nbsp; *ugen or number* &nbsp; Determines which input signal is passed to the ugen's output.  
+**...inputs** &nbsp; *ugens or numbers* &nbsp; After the `control` input, an arbitrary number of inputs can be passed to the selector constructor.
+
+Selector is basically the same as `switch()` but allows you to have an arbitrary number of inputs to choose between.
+
+switch
+----
+**control** &nbsp; *ugen or number* &nbsp; When `control` === 1, output `a`; else output `b`.  
+**a** &nbsp; *integer* &nbsp; Signal that is available to output.  
+**b** &nbsp; *integer* &nbsp; Signal that is available to ouput.
+
+A control input determines which of two additional inputs is passed to the output.  
+
 # Waveforms
 
 cycle
@@ -410,6 +446,12 @@ Cycle creates a sine oscillator running at a provided frequency. The oscillator 
 noise
 ----
 Noise outputs a pseudo-random signal between {0,1}. The signal is generated via Javascript's `Math.random()` function.
+
+phasor
+-----
+**frequency** &nbsp;  *ugen* or *number* &nbsp; Frequency.
+
+A phasor accumulates phase, as determined by its frequency, and wraps between 0 and 1. This creates a sawtooth wave, but with a dc offset of 1 (no negative numbers). If a range of {-1,1} is needed you can use an `accum()` object with the increment `1/gen.samplerate * frequency` and the desired min/max properties.
 
 train
 -----

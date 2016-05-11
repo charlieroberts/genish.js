@@ -21,7 +21,7 @@ echo = delay( add( osc, feedback.out ), 11025, { size: 22050 } )
  
 // control the mix between feedback and echo; this also damps the feedback.
 mixer = mix( echo, feedback.out, .925 )
-
+ 
 // record output of mixer to process next sample
 feedback.in( mixer )
  

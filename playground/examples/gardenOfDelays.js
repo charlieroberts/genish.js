@@ -1,4 +1,3 @@
-
 /* garden of earthly delays
  *
  * original gen~ patch by Gregory Taylor
@@ -18,7 +17,7 @@ feedback1 = ssd()
 feedback2 = ssd()
 feedback3 = ssd()
 feedback4 = ssd()
- 
+  
 damp     = param( 'damping', .5 )
 damp2    = param( 'damping2', .5 )
 damp3    = param( 'damping3', .5 )
@@ -59,17 +58,17 @@ feedbackMix1 = mix( foldedDelay1, feedback1.out, damp )
 feedbackMix2 = mix( foldedDelay2, feedback2.out, damp )
 feedbackMix3 = mix( foldedDelay3, feedback3.out, damp2 )
 feedbackMix4 = mix( foldedDelay4, feedback4.out, damp2 )
-
+ 
 // record output of mix ugens for use in next sample
 feedback1.in( feedbackMix1 ); feedback2.in( feedbackMix2 );
 feedback3.in( feedbackMix3 ); feedback4.in( feedbackMix4 );
-
+ 
 ssdLeft = ssd()
 ssdRight = ssd()
  
 left  = mix( mul( .5, add( feedbackMix1, feedbackMix3 ) ), ssdLeft.out,  damp3 )
 right = mix( mul( .5, add( feedbackMix2, feedbackMix4 ) ), ssdRight.out, damp3 )
-
+ 
 // record left and right output to use in next sample
 ssdLeft.in( left )
 ssdRight.in( right )

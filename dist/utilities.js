@@ -53,6 +53,7 @@ var utilities = {
     return this;
   },
   playGraph: function playGraph(graph, debug) {
+    utilities.clear();
     if (debug === undefined) debug = false;
 
     isStereo = Array.isArray(graph);

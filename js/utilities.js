@@ -52,6 +52,7 @@ let utilities = {
   },
   
   playGraph( graph, debug ) {
+    utilities.clear()
     if( debug === undefined ) debug = false
           
     isStereo = Array.isArray( graph )

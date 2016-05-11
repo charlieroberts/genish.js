@@ -28,7 +28,7 @@ module.exports = function () {
       });
 
       if (hasUgens) {
-        // memoize
+        // store in variable for future reference
         out = '  let ' + this.name + ' = (';
       } else {
         out = '(';
