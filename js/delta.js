@@ -4,29 +4,13 @@ let gen     = require( './gen.js' ),
     history = require( './history.js' ),
     sub     = require( './sub.js' )
 
-let proto = {
-  basename:'delta',
-
-  gen() {
-    let inputs = gen.getInputs( this ),
-        n1     = history()
-    
-    n1.in( inputs[0] ).gen()
-
-    return sub( inputs[0], n1.out ).gen()
-  }
-
-}
-
 module.exports = ( in1 ) => {
-  let ugen = Object.create( proto )
+  let n1 = history()
+    
+  n1.in( in1 )
 
-  Object.assign( ugen, { 
-    uid:        gen.getUID(),
-    inputs:     [ in1 ],
-  })
-  
-  ugen.name = `${ugen.basename}${ugen.uid}`
+  let ugen = sub( in1, n1.out )
+  ugen.name = 'delta'+gen.getUID()
 
   return ugen
 }

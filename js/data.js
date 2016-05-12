@@ -10,10 +10,9 @@ let proto = {
   gen() {
     let idx
     if( gen.memo[ this.name ] === undefined ) {
-      console.log( 'gen data' )
       let ugen = this
       gen.requestMemory( this.memory ) //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
-      console.log( 'MEMORY', this.memory, this.buffer.length )
+      //console.log( 'MEMORY', this.memory, this.buffer.length )
       idx = this.memory.values.idx
       gen.memory.set( this.buffer, idx )
 
@@ -21,7 +20,6 @@ let proto = {
       //return 'gen.memory' + this.name + '.buffer'
       gen.memo[ this.name ] = idx
     }else{
-      console.log( 'MEMO?' )
       idx = gen.memo[ this.name ]
     }
     return idx
@@ -53,7 +51,7 @@ module.exports = ( x, y=1, properties ) => {
       buffer[ i ] = x[ i ]
     }
   }else if( typeof x === 'string' ) {
-    buffer = { length: y || 44100 }
+    buffer = { length: y > 1 ? y : gen.samplerate * 60 }
     shouldLoad = true
   }else if( x instanceof Float32Array ) {
     buffer = x
@@ -71,18 +69,18 @@ module.exports = ( x, y=1, properties ) => {
       return ugen
     },
   }
+
   ugen.memory = {
     values: { length:ugen.dim, index:null }
   }
 
   gen.name = 'data'+gen.getUID()
-  //gen.data[ ugen.name ] = ugen
 
   if( shouldLoad ) {
     let promise = utilities.loadSample( x, ugen )
     promise.then( ( _buffer )=> { 
+      ugen.memory.values.length = _buffer.length     
       ugen.onload() 
-      ugen.memory.length = _buffer.length
     })
   }
   

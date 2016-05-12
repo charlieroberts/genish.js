@@ -48,9 +48,8 @@ _delay = delay( add( impulse, feedback.out ), div( 44100, frequency ) )
 decayed = mul( _delay, t60( mul( decay, frequency ) ) )
  
 // damp feedback
-damped = feedback.in(
-  mix( decayed, feedback.out, damp )
-)
+damped = mix( decayed, feedback.out, damp )
+feedback.in( damped )
  
 callback = play( mul( damped, .25 ) )
  
@@ -61,7 +60,7 @@ clock = {
   timeout:null,
   run() {
     callback.frequency = Math.floor( 220 + Math.random() * 440 )
-    count.value = 0 // trigger envelope
+    callback.memory[ count.memory.value.idx ] = 0 // trigger envelope by reseting counter
     clock.timeout = setTimeout( clock.run, clock.rate )
   }
 }

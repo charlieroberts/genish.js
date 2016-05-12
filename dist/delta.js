@@ -1,31 +1,16 @@
 'use strict';
 
-var _gen = require('./gen.js'),
+var gen = require('./gen.js'),
     history = require('./history.js'),
     sub = require('./sub.js');
 
-var proto = {
-  basename: 'delta',
-
-  gen: function gen() {
-    var inputs = _gen.getInputs(this),
-        n1 = history();
-
-    n1.in(inputs[0]).gen();
-
-    return sub(inputs[0], n1.out).gen();
-  }
-};
-
 module.exports = function (in1) {
-  var ugen = Object.create(proto);
+  var n1 = history();
 
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [in1]
-  });
+  n1.in(in1);
 
-  ugen.name = '' + ugen.basename + ugen.uid;
+  var ugen = sub(in1, n1.out);
+  ugen.name = 'delta' + gen.getUID();
 
   return ugen;
 };

@@ -4,28 +4,11 @@ let gen     = require( './gen.js' ),
     lt      = require( './lt.js' ),
     phasor  = require( './phasor.js' )
 
-let proto = {
-  basename:'train',
+module.exports = ( frequency=440, pulsewidth=.5 ) => {
+  let graph = lt( accum( div( frequency, 44100 ) ), .5 )
 
-  gen() {
-    let inputs = gen.getInputs( this ),
-        graph = lt( accum( div( inputs[0], 44100 ) ), inputs[1] )
-    
-    return graph.gen()
-  }
+  graph.name = `train${gen.getUID()}`
 
-}
-
-module.exports = ( period=440, pulsewidth=.5 ) => {
-  let ugen = Object.create( proto )
-
-  Object.assign( ugen, { 
-    uid:        gen.getUID(),
-    inputs:     [ period, pulsewidth ],
-  })
-  
-  ugen.name = `${ugen.basename}${ugen.uid}`
-
-  return ugen
+  return graph
 }
 

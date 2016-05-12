@@ -10,10 +10,9 @@ var proto = {
   gen: function gen() {
     var idx = void 0;
     if (_gen.memo[this.name] === undefined) {
-      console.log('gen data');
       var ugen = this;
       _gen.requestMemory(this.memory); //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
-      console.log('MEMORY', this.memory, this.buffer.length);
+      //console.log( 'MEMORY', this.memory, this.buffer.length )
       idx = this.memory.values.idx;
       _gen.memory.set(this.buffer, idx);
 
@@ -21,7 +20,6 @@ var proto = {
       //return 'gen.memory' + this.name + '.buffer'
       _gen.memo[this.name] = idx;
     } else {
-      console.log('MEMO?');
       idx = _gen.memo[this.name];
     }
     return idx;
@@ -59,7 +57,7 @@ module.exports = function (x) {
       buffer[_i] = x[_i];
     }
   } else if (typeof x === 'string') {
-    buffer = { length: y || 44100 };
+    buffer = { length: y > 1 ? y : _gen.samplerate * 60 };
     shouldLoad = true;
   } else if (x instanceof Float32Array) {
     buffer = x;
@@ -77,18 +75,18 @@ module.exports = function (x) {
       return ugen;
     }
   };
+
   ugen.memory = {
     values: { length: ugen.dim, index: null }
   };
 
   _gen.name = 'data' + _gen.getUID();
-  //gen.data[ ugen.name ] = ugen
 
   if (shouldLoad) {
     var promise = utilities.loadSample(x, ugen);
     promise.then(function (_buffer) {
+      ugen.memory.values.length = _buffer.length;
       ugen.onload();
-      ugen.memory.length = _buffer.length;
     });
   }
 

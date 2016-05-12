@@ -74,7 +74,7 @@ module.exports = function (incr) {
     uid: _gen.getUID(),
     inputs: [incr, reset],
     memory: {
-      value: { length: 1, index: null }
+      value: { length: 1, idx: null }
     }
   }, defaults);
 

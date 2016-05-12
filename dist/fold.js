@@ -12,6 +12,8 @@ var proto = {
 
     out = this.createCallback(inputs[0], this.min, this.max);
 
+    _gen.memo[this.name] = this.name + '_value';
+
     return [this.name + '_value', out];
   },
   createCallback: function createCallback(v, lo, hi) {

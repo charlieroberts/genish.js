@@ -1,32 +1,16 @@
 'use strict';
 
-var _gen = require('./gen.js'),
+var gen = require('./gen.js'),
     lt = require('./lt.js'),
     phasor = require('./phasor.js');
 
-var proto = {
-  basename: 'train',
-
-  gen: function gen() {
-    var inputs = _gen.getInputs(this),
-        graph = lt(accum(div(inputs[0], 44100)), inputs[1]);
-
-    return graph.gen();
-  }
-};
-
 module.exports = function () {
-  var period = arguments.length <= 0 || arguments[0] === undefined ? 440 : arguments[0];
+  var frequency = arguments.length <= 0 || arguments[0] === undefined ? 440 : arguments[0];
   var pulsewidth = arguments.length <= 1 || arguments[1] === undefined ? .5 : arguments[1];
 
-  var ugen = Object.create(proto);
+  var graph = lt(accum(div(frequency, 44100)), .5);
 
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [period, pulsewidth]
-  });
+  graph.name = 'train' + gen.getUID();
 
-  ugen.name = '' + ugen.basename + ugen.uid;
-
-  return ugen;
+  return graph;
 };

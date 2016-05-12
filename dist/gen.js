@@ -63,18 +63,27 @@ var gen = module.exports = {
   memoryCallbacks: [],
 
   getMemoryLength: function getMemoryLength(ugen) {
-    if (isNaN(ugen) && ugen.marked === undefined) {
-      if (ugen.memory !== undefined) {
-        var memory = ugen.memory;
-        for (var indexName in memory) {
-          var request = memory[indexName];
-          gen.memoryLength += request.length;
-          console.log('ugen:', ugen.name, 'request:', request.length, 'total:', gen.memoryLength);
-        }
-      }
-      ugen.marked = true;
 
-      if (Array.isArray(ugen.inputs)) ugen.inputs.forEach(gen.getMemoryLength);
+    function getMemoryForChannel(ugen) {
+      if (isNaN(ugen) && ugen.marked === undefined) {
+        if (ugen.memory !== undefined) {
+          var memory = ugen.memory;
+          for (var indexName in memory) {
+            var request = memory[indexName];
+            gen.memoryLength += request.length;
+            console.log('ugen:', ugen.name, 'request:', request.length, 'total:', gen.memoryLength);
+          }
+        }
+        ugen.marked = true;
+
+        if (Array.isArray(ugen.inputs)) ugen.inputs.forEach(getMemoryForChannel);
+      }
+    }
+
+    if (Array.isArray(ugen)) {
+      ugen.forEach(getMemoryForChannel);
+    } else {
+      getMemoryForChannel(ugen);
     }
   },
   requestMemory: function requestMemory(memorySpec, cb) {

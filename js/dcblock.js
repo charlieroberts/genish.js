@@ -7,34 +7,15 @@ let gen     = require( './gen.js' ),
     mul     = require( './mul.js' ),
     memo    = require( './memo.js' )
 
-let proto = {
-  basename:'dcblock',
-
-  gen() {
-    let inputs = gen.getInputs( this ),
-        x1     = history(),
-        y1     = history(),
-        filter
-
-    //History x1, y1; y = in1 - x1 + y1*0.9997; x1 = in1; y1 = y; out1 = y;
-    filter = memo( add( sub( inputs[0], x1.out ), mul( y1.out, .9997 ) ) )
-    x1.in( inputs[0] ).gen()
-    y1.in( filter ).gen()
-
-    return filter.name
-  }
-
-}
-
 module.exports = ( in1 ) => {
-  let ugen = Object.create( proto )
+  let x1 = history(),
+      y1 = history(),
+      filter
 
-  Object.assign( ugen, { 
-    uid:        gen.getUID(),
-    inputs:     [ in1 ],
-  })
-  
-  ugen.name = `${ugen.basename}${ugen.uid}`
+  //History x1, y1; y = in1 - x1 + y1*0.9997; x1 = in1; y1 = y; out1 = y;
+  filter = memo( add( sub( in1, x1.out ), mul( y1.out, .9997 ) ) )
+  x1.in( in1 )
+  y1.in( filter )
 
-  return ugen
+  return filter
 }

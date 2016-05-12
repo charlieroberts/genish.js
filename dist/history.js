@@ -7,6 +7,7 @@ module.exports = function () {
 
   var ugen = {
     inputs: [in1],
+    memory: { value: { length: 1, idx: null } },
 
     in: function _in(v) {
       if (_gen.histories.has(v)) {
@@ -19,11 +20,14 @@ module.exports = function () {
         gen: function gen() {
           var inputs = _gen.getInputs(ugen);
 
-          if (_gen.data[ugen.name] === undefined) {
-            _gen.data[ugen.name] = in1;
+          if (ugen.memory.value.idx === null) {
+            _gen.requestMemory(ugen.memory);
+            _gen.memory[ugen.memory.value.idx] = in1;
           }
 
-          _gen.addToEndBlock('gen.data.' + ugen.name + ' = ' + inputs[0]);
+          var idx = ugen.memory.value.idx;
+
+          _gen.addToEndBlock('memory[ ' + idx + ' ] = ' + inputs[0]);
 
           // return ugen that is being recorded instead of ssd.
           // this effectively makes a call to ssd.record() transparent to the graph.
@@ -31,7 +35,8 @@ module.exports = function () {
           return inputs[0];
         },
 
-        name: ugen.name
+        name: ugen.name,
+        memory: ugen.memory
       };
 
       this.inputs[0] = v;
@@ -44,14 +49,22 @@ module.exports = function () {
 
     out: {
       gen: function gen() {
-        if (_gen.data[ugen.name] === undefined) _gen.data[ugen.name] = parseFloat(in1);
-        return 'gen.data.' + ugen.name;
+        if (ugen.memory.value.idx === null) {
+          _gen.requestMemory(ugen.memory);
+          _gen.memory[ugen.memory.value.idx] = parseFloat(in1);
+        }
+        var idx = ugen.memory.value.idx;
+
+        return 'memory[ ' + idx + ' ] ';
       }
     },
 
     uid: _gen.getUID()
   };
 
+  ugen.out.memory = ugen.memory;
+
   ugen.name = 'history' + ugen.uid;
+
   return ugen;
 };

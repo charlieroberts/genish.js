@@ -70,7 +70,7 @@ module.exports = ( incr, reset=0, properties ) => {
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
     memory: {
-      value: { length:1, index:null }
+      value: { length:1, idx:null }
     }
   },
   defaults )

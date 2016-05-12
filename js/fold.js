@@ -12,6 +12,8 @@ let proto = {
 
     out = this.createCallback( inputs[0], this.min, this.max ) 
 
+    gen.memo[ this.name ] = this.name + '_value'
+
     return [ this.name + '_value', out ]
   },
 
