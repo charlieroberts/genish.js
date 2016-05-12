@@ -24,14 +24,14 @@ let proto = {
 }
 
 module.exports = ( in1, slideUp = 1, slideDown = 1 ) => {
-  let ugen = Object.create( proto )
 
-  Object.assign( ugen, { 
-    uid:        gen.getUID(),
-    inputs:     [ in1, slideUp, slideDown ],
-  })
+  let y1 = history(),
+      filter
+
+  filter = memo( add( y1.out, div( sub( in1, y1.out ), slideUp ) ) )
+  y1.in( filter )
   
-  ugen.name = `${ugen.basename}${ugen.uid}`
+  //filter.name = 'slide'+gen.getUID()
 
-  return ugen
+  return filter
 }
