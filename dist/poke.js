@@ -8,16 +8,18 @@ var proto = {
   basename: 'poke',
 
   gen: function gen() {
-    var dataName = 'gen.data.' + this.dataName + '.buffer',
+    var dataName = 'memory',
         inputs = _gen.getInputs(this),
         idx = void 0,
         out = void 0,
         wrapped = void 0;
 
+    idx = this.data.gen();
+    //gen.requestMemory( this.memory )
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
     //gen.functionBody += wrapped[1]
-    _gen.functionBody += '  ' + dataName + '[' + inputs[1] + '] = ' + inputs[0] + '\n\n';
+    _gen.functionBody += '  ' + dataName + '[ ' + idx + ' + ' + inputs[1] + '] = ' + inputs[0] + '\n\n';
   }
 };
 module.exports = function (data, value, index, properties) {

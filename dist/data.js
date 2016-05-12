@@ -13,7 +13,7 @@ var proto = {
       console.log('gen data');
       var ugen = this;
       _gen.requestMemory(this.memory); //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
-      //console.log( 'MEMORY', this.memory, this.buffer )
+      console.log('MEMORY', this.memory, this.buffer.length);
       idx = this.memory.values.idx;
       _gen.memory.set(this.buffer, idx);
 

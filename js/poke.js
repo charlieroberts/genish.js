@@ -8,14 +8,16 @@ let proto = {
   basename:'poke',
 
   gen() {
-    let dataName = 'gen.data.' + this.dataName + '.buffer',
+    let dataName = 'memory',
         inputs = gen.getInputs( this ),
         idx, out, wrapped
-
+    
+    idx = this.data.gen()
+    //gen.requestMemory( this.memory )
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
     //gen.functionBody += wrapped[1]
-    gen.functionBody += `  ${dataName}[${inputs[1]}] = ${inputs[0]}\n\n`
+    gen.functionBody += `  ${dataName}[ ${idx} + ${inputs[1]}] = ${inputs[0]}\n\n`
   }
 }
 module.exports = ( data, value, index, properties ) => {
