@@ -6,12 +6,13 @@
  *
  */
 
-module.exports = {
+let gen = module.exports = {
 
   accum:0,
   getUID() { return this.accum++ },
   debug:false,
   samplerate: 44100, // change on audiocontext creation
+  globals:{},
   
   /* closures
    *
@@ -24,6 +25,7 @@ module.exports = {
   parameters:[],
   endBlock: new Set(),
   histories: new Map(),
+  memoryIndex: 0,
 
   memo: {},
 
@@ -39,7 +41,61 @@ module.exports = {
   addToEndBlock( v ) {
     this.endBlock.add( '  ' + v )
   },
+
+  memoryLength : 0,
+
+  //requestMemory( amount ) {
+  //  let idx = this.memorySize 
+    
+  //  let promise = new Promise()
+  //  promise.amount = amount
+
+  //  this.memoryPromises.push( promise )
+
+  //  return promise
+  //},
+
+  memoryCallbacks: [],
   
+  getMemoryLength( ugen ) {
+    if( isNaN( ugen ) && ugen.marked === undefined ) {
+      if(  ugen.memory !== undefined ) {
+        let memory = ugen.memory
+        for( let indexName in memory ) {
+          let request = memory[ indexName ]
+          gen.memoryLength += request.length
+          console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
+        }
+      }
+      ugen.marked = true
+     
+      if( Array.isArray( ugen.inputs ) ) ugen.inputs.forEach( gen.getMemoryLength )
+    }   
+  },
+  
+  requestMemory( memorySpec, cb ) {
+    for( let key in memorySpec ) {
+      let request = memorySpec[ key ]
+
+      if( request.global !== undefined ) { 
+        if( gen.sharedMemory[ key ] !== undefined ) {
+          request.idx = gen.sharedMemory[ key ]
+        }else{
+          gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
+          gen.memoryIndex += request.length
+        }
+      } else {
+        request.idx = gen.memoryIndex
+        gen.memoryIndex += request.length
+      }
+    }
+    if( typeof cb === 'function' ) {
+      gen.memoryCallbacks.push( cb )
+    }
+  },
+
+  sharedMemory:{},
+
   /* createCallback
    *
    * param ugen - Head of graph to be codegen'd
@@ -59,14 +115,26 @@ module.exports = {
         callback, 
         channel1, channel2
     
-    //this.data = {} 
     this.memo = {}
     this.endBlock.clear()
     this.closures.clear()
+    this.globals = {}
     
     this.parameters.length = 0
+    
+    this.memoryLength = 0
+    this.memoryCallbacks.length = 0
+    this.getMemoryLength( ugen )
+    console.log( 'MEMORY LENGTH', this.memoryLength )
+    this.memory = new Float32Array( this.memoryLength )
 
-    this.functionBody = "  'use strict';\n\n"
+    this.memoryCallbacks.forEach( v => {
+      console.log( 'callback', v.toString() )
+      v()
+    })
+    this.memoryIndex = 0
+
+    this.functionBody = "  'use strict';\n  let memory = gen.memory;\n\n"
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -131,7 +199,8 @@ module.exports = {
     
     callback.data = this.data
     callback.out  = []
-    
+    callback.memory = this.memory
+
     this.histories.clear()
 
     return callback

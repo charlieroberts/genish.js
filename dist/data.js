@@ -5,19 +5,42 @@ var _gen = require('./gen.js'),
 
 var proto = {
   basename: 'data',
+  globals: {},
 
   gen: function gen() {
-    _gen.data[this.name] = this;
-    return 'gen.data.' + this.name + '.buffer';
+    var idx = void 0;
+    if (_gen.memo[this.name] === undefined) {
+      console.log('gen data');
+      var ugen = this;
+      _gen.requestMemory(this.memory); //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
+      //console.log( 'MEMORY', this.memory, this.buffer )
+      idx = this.memory.values.idx;
+      _gen.memory.set(this.buffer, idx);
+
+      //gen.data[ this.name ] = this
+      //return 'gen.memory' + this.name + '.buffer'
+      _gen.memo[this.name] = idx;
+    } else {
+      console.log('MEMO?');
+      idx = _gen.memo[this.name];
+    }
+    return idx;
   }
 };
 
 module.exports = function (x) {
   var y = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+  var properties = arguments[2];
 
   var ugen = void 0,
       buffer = void 0,
       shouldLoad = false;
+
+  if (properties !== undefined && properties.global !== undefined) {
+    if (_gen.globals[properties.global]) {
+      return _gen.globals[properties.global];
+    }
+  }
 
   if (typeof x === 'number') {
     if (y !== 1) {
@@ -36,16 +59,16 @@ module.exports = function (x) {
       buffer[_i] = x[_i];
     }
   } else if (typeof x === 'string') {
-    buffer = [0];
+    buffer = { length: y || 44100 };
     shouldLoad = true;
-  } else {
+  } else if (x instanceof Float32Array) {
     buffer = x;
   }
 
   ugen = {
     buffer: buffer,
     name: proto.basename + _gen.getUID(),
-    dim: y === 1 ? buffer.length : x,
+    dim: buffer.length,
     channels: 1,
     gen: proto.gen,
     onload: null,
@@ -54,14 +77,23 @@ module.exports = function (x) {
       return ugen;
     }
   };
+  ugen.memory = {
+    values: { length: ugen.dim, index: null }
+  };
 
+  _gen.name = 'data' + _gen.getUID();
   //gen.data[ ugen.name ] = ugen
 
   if (shouldLoad) {
     var promise = utilities.loadSample(x, ugen);
-    promise.then(function () {
+    promise.then(function (_buffer) {
       ugen.onload();
+      ugen.memory.length = _buffer.length;
     });
+  }
+
+  if (properties !== undefined && properties.global !== undefined) {
+    _gen.globals[properties.global] = ugen;
   }
 
   return ugen;

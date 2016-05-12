@@ -9,7 +9,10 @@ let proto = {
     let code,
         inputs = gen.getInputs( this ),
         genName = 'gen.' + this.name,
-        functionBody = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3] )
+        functionBody
+       
+    gen.requestMemory( this.memory )
+    functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], `memory[${this.memory.value.idx}]`  )
 
     gen.closures.add({ [ this.name ]: this }) 
 
@@ -18,7 +21,7 @@ let proto = {
     return [ this.name + '_value', functionBody ]
   },
 
-  callback( _name, _incr, _min, _max, _reset ) {
+  callback( _name, _incr, _min, _max, _reset, valueRef ) {
     let diff = this.max - this.min,
         out = '',
         wrap = ''
@@ -30,24 +33,24 @@ let proto = {
      * 3: all others: if( x >= this.max ) y = this.max -x
      *
      */
-
+    
     // must check for reset before storing value for output
     if( !(typeof this.inputs[3] === 'number' && this.inputs[3] < 1) ) { 
-      out += `  if( ${_reset} >= 1 ) ${_name}.value = ${_min}\n`
+      out += `  if( ${_reset} >= 1 ) ${valueRef} = ${_min}\n`
     }
 
-    out += `  let ${this.name}_value = ${_name}.value;\n  ${_name}.value += ${_incr}\n` // store output value before accumulating  
+    out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
     if( this.min === 0 && this.max === 1 ) { 
-      wrap =  `  ${_name}.value = ${_name}.value - (${_name}.value | 0)\n\n`
+      wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
     } else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
-      wrap =  `  ${_name}.value = ${_name}.value & (${this.max} - 1)\n\n`
+      wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
     } else if( typeof this.max === 'number' && this.max !== Infinity &&  typeof this.min === 'number' ) {
-      wrap = `  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
+      wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
     }else if( this.max !== Infinity ) {
       wrap = 
-`  if( ${_name}.value >= ${_max} ) ${_name}.value -= ${_max} - ${_min}
-  else if( ${_name}.value < ${_min} ) ${_name}.value += ${_max} - ${_min}\n\n`
+`  if( ${valueRef} >= ${_max} ) ${valueRef} -= ${_max} - ${_min}
+  else if( ${valueRef} < ${_min} ) ${valueRef} += ${_max} - ${_min}\n\n`
     }else{
       out += '\n'
     }
@@ -70,6 +73,9 @@ module.exports = ( incr=1, min=0, max=Infinity, reset=0, properties ) => {
     value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, min, max, reset ],
+    memory: {
+      value: { length:1, idx: null },
+    }
   },
   defaults )
   

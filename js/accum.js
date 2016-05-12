@@ -9,7 +9,10 @@ let proto = {
     let code,
         inputs = gen.getInputs( this ),
         genName = 'gen.' + this.name,
-        functionBody = this.callback( genName, inputs[0], inputs[1] )
+        functionBody
+
+    gen.requestMemory( this.memory )
+    functionBody = this.callback( genName, inputs[0], inputs[1], `memory[${this.memory.value.idx}]` )
 
     gen.closures.add({ [ this.name ]: this }) 
 
@@ -18,7 +21,7 @@ let proto = {
     return [ this.name + '_value', functionBody ]
   },
 
-  callback( _name, _incr, _reset ) {
+  callback( _name, _incr, _reset, valueRef ) {
     let diff = this.max - this.min,
         out = '',
         wrap
@@ -33,17 +36,17 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
-      out += '  if( '+_reset+'>=1 ) '+_name+'.value = ' + this.min + '\n'
+      out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n`
     }
 
-    out += `  let ${this.name}_value = ${_name}.value;\n  ${_name}.value += ${_incr}\n` // store output value before accumulating  
+    out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
     if( this.min === 0 && this.max === 1 ) { 
-      wrap =  `  ${_name}.value = ${_name}.value - (${_name}.value | 0)\n\n`
+      wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
     } else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
-      wrap =  `  ${_name}.value = ${_name}.value & (${this.max} - 1)\n\n`
+      wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
     } else {
-      wrap = `  if( ${_name}.value >= ${this.max} ) ${_name}.value -= ${diff}\n\n`
+      wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
     }
 
     out = out + wrap
@@ -66,9 +69,12 @@ module.exports = ( incr, reset=0, properties ) => {
     value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
+    memory: {
+      value: { length:1, index:null }
+    }
   },
   defaults )
-
+  
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

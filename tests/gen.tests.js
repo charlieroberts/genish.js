@@ -622,26 +622,27 @@ describe( 'cycle', ()=> {
 })
 // 0 (+1) 1 (+2) 3 (+3) 6 
 describe( 'history', ()=> {
-  it( 'should return 7 after recording an accum with an increment of 1 + history for three samples', ()=> {
+  it( 'should return 7 after recording an accum with an increment of 1 + history for four samples', ()=> {
     let answer = 7,
         h1 = history(),
-        h1input = h1.in( accum( add(1, h1.out ), 0, {min:0, max:10} ) ),
-        out = gen.createCallback( h1input ),
-        result = []
+        h1input = accum( add(1, h1.out ), 0, {min:0, max:10} ), out, result = []
     
+    h1.in( h1input )
+    out = gen.createCallback( h1input )
+
     for( let i = 0; i < 5; i++ ) result[i] = out()
     assert.equal( result[4], answer )
   })
 })
 
 describe( 'delta', ()=> {
-  it( 'should return 0 or .1 when tracking accum(.1) for first 11 samples, -.9 for 12th (after accum wraps)' , ()=> {
-    let answer = [0,.1,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
+  it( 'should return 0 or .1 when tracking accum(.1) for first 11 samples, -.9 for 11th (after accum wraps)' , ()=> {
+    let answer = [0,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
         d1 = delta( accum(.1) ),
         out = gen.createCallback( d1 ), 
         result = []
 
-    for( let i = 0; i < 12; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
+    for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
 
     assert.deepEqual( result, answer )
   })
@@ -676,40 +677,5 @@ describe( 'dcblock', ()=>{
     outputMin = Math.min.apply( null, storage )
 
     assert( outputMax <=1.1 && outputMin >= -1.1 )
-  })
-})
-
-describe( 'complex', ()=> {
-  it( 'should add 5 and 2, multiply that by -7, and calculate the absolute value (49)', ()=> {
-    let answer = 49,
-        graph  = abs( mul( add(5,2), -7 ) ),
-        out    = gen.createCallback( graph ),
-        result = out()
-
-    assert.equal( result, answer )
-  })
-
-  it( 'should create a sine wave', ()=> {
-    let frequency = input(),
-        phasor    = accum( mul( frequency, 1/44100 ) ),
-        oscgraph  = sin( mul( phasor, Math.PI * 2 ) ), 
-        osc       = gen.createCallback( oscgraph ),
-        answer = [
-          0,
-          0.3353173459027643,
-          0.6318084552474613,
-          0.8551427630053461,
-          0.9794604955306667,
-          0.9903669614948382,
-          0.8865993063730001,
-          0.6801727377709197,
-          0.3949892902309387,
-          0.06407021998071323,
-       ],
-       result = []
-    
-    for( let i = 0; i < 10; i++ ) result[i] = osc(2400) 
-    
-    assert.deepEqual( result, answer )
   })
 })

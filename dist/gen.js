@@ -8,7 +8,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-module.exports = {
+var gen = module.exports = {
 
   accum: 0,
   getUID: function getUID() {
@@ -17,6 +17,7 @@ module.exports = {
 
   debug: false,
   samplerate: 44100, // change on audiocontext creation
+  globals: {},
 
   /* closures
    *
@@ -29,6 +30,7 @@ module.exports = {
   parameters: [],
   endBlock: new Set(),
   histories: new Map(),
+  memoryIndex: 0,
 
   memo: {},
 
@@ -44,6 +46,60 @@ module.exports = {
     this.endBlock.add('  ' + v);
   },
 
+
+  memoryLength: 0,
+
+  //requestMemory( amount ) {
+  //  let idx = this.memorySize
+
+  //  let promise = new Promise()
+  //  promise.amount = amount
+
+  //  this.memoryPromises.push( promise )
+
+  //  return promise
+  //},
+
+  memoryCallbacks: [],
+
+  getMemoryLength: function getMemoryLength(ugen) {
+    if (isNaN(ugen) && ugen.marked === undefined) {
+      if (ugen.memory !== undefined) {
+        var memory = ugen.memory;
+        for (var indexName in memory) {
+          var request = memory[indexName];
+          gen.memoryLength += request.length;
+          console.log('ugen:', ugen.name, 'request:', request.length, 'total:', gen.memoryLength);
+        }
+      }
+      ugen.marked = true;
+
+      if (Array.isArray(ugen.inputs)) ugen.inputs.forEach(gen.getMemoryLength);
+    }
+  },
+  requestMemory: function requestMemory(memorySpec, cb) {
+    for (var key in memorySpec) {
+      var request = memorySpec[key];
+
+      if (request.global !== undefined) {
+        if (gen.sharedMemory[key] !== undefined) {
+          request.idx = gen.sharedMemory[key];
+        } else {
+          gen.sharedMemory[key] = request.idx = gen.memoryIndex;
+          gen.memoryIndex += request.length;
+        }
+      } else {
+        request.idx = gen.memoryIndex;
+        gen.memoryIndex += request.length;
+      }
+    }
+    if (typeof cb === 'function') {
+      gen.memoryCallbacks.push(cb);
+    }
+  },
+
+
+  sharedMemory: {},
 
   /* createCallback
    *
@@ -67,14 +123,26 @@ module.exports = {
         channel1 = void 0,
         channel2 = void 0;
 
-    //this.data = {}
     this.memo = {};
     this.endBlock.clear();
     this.closures.clear();
+    this.globals = {};
 
     this.parameters.length = 0;
 
-    this.functionBody = "  'use strict';\n\n";
+    this.memoryLength = 0;
+    this.memoryCallbacks.length = 0;
+    this.getMemoryLength(ugen);
+    console.log('MEMORY LENGTH', this.memoryLength);
+    this.memory = new Float32Array(this.memoryLength);
+
+    this.memoryCallbacks.forEach(function (v) {
+      console.log('callback', v.toString());
+      v();
+    });
+    this.memoryIndex = 0;
+
+    this.functionBody = "  'use strict';\n  let memory = gen.memory;\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -162,6 +230,7 @@ module.exports = {
 
     callback.data = this.data;
     callback.out = [];
+    callback.memory = this.memory;
 
     this.histories.clear();
 

@@ -9,42 +9,24 @@ let gen  = require( './gen.js' ),
 
 let proto = {
   basename:'cycle',
-  table:null,
 
-  gen() {
-    let inputs = gen.getInputs( this ), out
-    
-    out = peek( proto.table, phasor( inputs[0] ) ).gen()
-    
-    gen.memo[ this.name ] = out[0]
-    
-    return out
-  },
+  initTable() {    
+    let buffer = new Float32Array( 1024 )
 
-  initTable() {
-    this.table = data( 1024 )
-
-    for( let i = 0, l = this.table.buffer.length; i < l; i++ ) {
-      this.table.buffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
+    for( let i = 0, l = buffer.length; i < l; i++ ) {
+      buffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
     }
+
+    gen.globals.table = data( buffer )
   }
 
 }
 
 module.exports = ( frequency=1, reset=0 ) => {
-  let ugen = Object.create( proto )
-
-  if( proto.table === null ) proto.initTable() 
-
-  Object.assign( ugen, { 
-    frequency,
-    reset,
-    table:      proto.table,
-    uid:        gen.getUID(),
-    inputs:     [ frequency, reset ],
-  })
+  if( gen.globals.table === undefined ) proto.initTable() 
   
-  ugen.name = `${ugen.basename}${ugen.uid}`
+  let ugen = peek( gen.globals.table, phasor( frequency, reset ))
+  ugen.name = 'cycle' + gen.getUID()
 
   return ugen
 }

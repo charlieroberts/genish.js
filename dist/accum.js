@@ -11,7 +11,10 @@ var proto = {
     var code = void 0,
         inputs = _gen.getInputs(this),
         genName = 'gen.' + this.name,
-        functionBody = this.callback(genName, inputs[0], inputs[1]);
+        functionBody = void 0;
+
+    _gen.requestMemory(this.memory);
+    functionBody = this.callback(genName, inputs[0], inputs[1], 'memory[' + this.memory.value.idx + ']');
 
     _gen.closures.add(_defineProperty({}, this.name, this));
 
@@ -19,7 +22,7 @@ var proto = {
 
     return [this.name + '_value', functionBody];
   },
-  callback: function callback(_name, _incr, _reset) {
+  callback: function callback(_name, _incr, _reset, valueRef) {
     var diff = this.max - this.min,
         out = '',
         wrap = void 0;
@@ -34,17 +37,17 @@ var proto = {
 
     // must check for reset before storing value for output
     if (!(typeof this.inputs[1] === 'number' && this.inputs[1] < 1)) {
-      out += '  if( ' + _reset + '>=1 ) ' + _name + '.value = ' + this.min + '\n';
+      out += '  if( ' + _reset + ' >=1 ) ' + valueRef + ' = ' + this.min + '\n';
     }
 
-    out += '  let ' + this.name + '_value = ' + _name + '.value;\n  ' + _name + '.value += ' + _incr + '\n'; // store output value before accumulating 
+    out += '  let ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
 
     if (this.min === 0 && this.max === 1) {
-      wrap = '  ' + _name + '.value = ' + _name + '.value - (' + _name + '.value | 0)\n\n';
+      wrap = '  ' + valueRef + ' = ' + valueRef + ' - (' + valueRef + ' | 0)\n\n';
     } else if (this.min === 0 && (Math.log2(this.max) | 0) === Math.log2(this.max)) {
-      wrap = '  ' + _name + '.value = ' + _name + '.value & (' + this.max + ' - 1)\n\n';
+      wrap = '  ' + valueRef + ' = ' + valueRef + ' & (' + this.max + ' - 1)\n\n';
     } else {
-      wrap = '  if( ' + _name + '.value >= ' + this.max + ' ) ' + _name + '.value -= ' + diff + '\n\n';
+      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n\n';
     }
 
     out = out + wrap;
@@ -69,7 +72,10 @@ module.exports = function (incr) {
     max: defaults.max,
     value: defaults.initialValue,
     uid: _gen.getUID(),
-    inputs: [incr, reset]
+    inputs: [incr, reset],
+    memory: {
+      value: { length: 1, index: null }
+    }
   }, defaults);
 
   ugen.name = '' + ugen.basename + ugen.uid;
