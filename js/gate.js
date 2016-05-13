@@ -6,28 +6,33 @@ let proto = {
   basename:'gate',
 
   gen() {
-    let inputs = gen.getInputs( this ), out, data ='gen.data.' + this.name
+    let inputs = gen.getInputs( this ), out
     
+    gen.requestMemory( this.memory )
+// ${data}.outputs[ ${data}.lastInput ] = 0    
+    let data = 'memory[ ' + this.memory.lastInput.idx + ' ]'
     out =
 
 ` let ${this.name}_index = ${inputs[1]}
-  if( ${this.name}_index != ${data}.lastInput ) {
-    ${data}.outputs[ ${data}.lastInput ] = 0
-    ${data}.lastInput = ${inputs[1]}
+  if( ${this.name}_index != ${data} ) {
+    memory[ ${data} ] = 0 
+    ${data} = ${inputs[1]}
   }
-  ${data}.outputs[ ${inputs[1]} ] = ${inputs[0]} 
+  memory[ ${this.memory.lastInput.idx + 1 } + ${inputs[1]} ] = ${inputs[0]} 
 `
+  //${data}.outputs[ ${inputs[1]} ] = ${inputs[0]} 
 
     gen.memo[ this.name ] = `gen.data.${this.name}`
 
-    return [ `gen.data.${this.name}`, ' ' + out ]
+    return [ ``, ' ' + out ]
   },
 
   childgen() {
-    if( gen.memo[ this.parent.name ] === undefined ) {
+    //if( gen.memo[ this.parent.name ] === undefined ) {
       gen.getInputs( this )
-    }
-    return `gen.data.${this.parent.name}.outputs[ ${this.index} ]`
+      gen.requestMemory( this.memory )
+    //}
+    return `memory[ ${this.memory.value.idx} ]`
   }
 }
 
@@ -42,7 +47,7 @@ module.exports = ( control, in1, properties ) => {
     uid:     gen.getUID(),
     inputs:  [ in1, control ],
     memory: {
-      value: { length:1, idx:null }
+      lastInput: { length:1, idx:null }
     }
   },
   defaults )
@@ -56,7 +61,10 @@ module.exports = ( control, in1, properties ) => {
       index:i,
       gen: proto.childgen,
       parent:ugen,
-      inputs: [ ugen ]
+      inputs: [ ugen ],
+      memory: {
+        value: { length:1, idx:null }
+      }
     })
     gen.data[ ugen.name ].outputs[ i ] = 0
   }

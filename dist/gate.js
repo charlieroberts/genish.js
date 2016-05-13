@@ -9,20 +9,24 @@ var proto = {
 
   gen: function gen() {
     var inputs = _gen.getInputs(this),
-        out = void 0,
-        data = 'gen.data.' + this.name;
+        out = void 0;
 
-    out = ' let ' + this.name + '_index = ' + inputs[1] + '\n  if( ' + this.name + '_index != ' + data + '.lastInput ) {\n    ' + data + '.outputs[ ' + data + '.lastInput ] = 0\n    ' + data + '.lastInput = ' + inputs[1] + '\n  }\n  ' + data + '.outputs[ ' + inputs[1] + ' ] = ' + inputs[0] + ' \n';
+    _gen.requestMemory(this.memory);
+    // ${data}.outputs[ ${data}.lastInput ] = 0   
+    var data = 'memory[ ' + this.memory.lastInput.idx + ' ]';
+    out = ' let ' + this.name + '_index = ' + inputs[1] + '\n  if( ' + this.name + '_index != ' + data + ' ) {\n    memory[ ' + data + ' ] = 0 \n    ' + data + ' = ' + inputs[1] + '\n  }\n  memory[ ' + (this.memory.lastInput.idx + 1) + ' + ' + inputs[1] + ' ] = ' + inputs[0] + ' \n';
+    //${data}.outputs[ ${inputs[1]} ] = ${inputs[0]}
 
     _gen.memo[this.name] = 'gen.data.' + this.name;
 
-    return ['gen.data.' + this.name, ' ' + out];
+    return ['', ' ' + out];
   },
   childgen: function childgen() {
-    if (_gen.memo[this.parent.name] === undefined) {
-      _gen.getInputs(this);
-    }
-    return 'gen.data.' + this.parent.name + '.outputs[ ' + this.index + ' ]';
+    //if( gen.memo[ this.parent.name ] === undefined ) {
+    _gen.getInputs(this);
+    _gen.requestMemory(this.memory);
+    //}
+    return 'memory[ ' + this.memory.value.idx + ' ]';
   }
 };
 
@@ -37,7 +41,7 @@ module.exports = function (control, in1, properties) {
     uid: _gen.getUID(),
     inputs: [in1, control],
     memory: {
-      value: { length: 1, idx: null }
+      lastInput: { length: 1, idx: null }
     }
   }, defaults);
 
@@ -50,7 +54,10 @@ module.exports = function (control, in1, properties) {
       index: i,
       gen: proto.childgen,
       parent: ugen,
-      inputs: [ugen]
+      inputs: [ugen],
+      memory: {
+        value: { length: 1, idx: null }
+      }
     });
     _gen.data[ugen.name].outputs[i] = 0;
   }
