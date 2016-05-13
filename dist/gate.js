@@ -35,7 +35,10 @@ module.exports = function (control, in1, properties) {
   Object.assign(ugen, {
     outputs: [],
     uid: _gen.getUID(),
-    inputs: [in1, control]
+    inputs: [in1, control],
+    memory: {
+      value: { length: 1, idx: null }
+    }
   }, defaults);
 
   ugen.name = '' + ugen.basename + ugen.uid;

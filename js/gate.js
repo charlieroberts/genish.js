@@ -41,6 +41,9 @@ module.exports = ( control, in1, properties ) => {
     outputs: [],
     uid:     gen.getUID(),
     inputs:  [ in1, control ],
+    memory: {
+      value: { length:1, idx:null }
+    }
   },
   defaults )
   

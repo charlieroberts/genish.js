@@ -12,7 +12,6 @@ var utilities = {
     this.callback = function () {
       return 0;
     };
-    console.log(this.clear.callbacks);
     this.clear.callbacks.forEach(function (v) {
       return v();
     });

@@ -412,10 +412,10 @@ gate
 **outputs** *string* : An array of outputs that can be used as inputs to other ugens.
 
 ```js
-inputSignal = mul( phasor(330, .1) )
+inputSignal = mul( phasor(330), .1 )
 controlSignal = gt( phasor(2), .5 )
 
-g = gate( gt( controlSignal, inputSignal, { count:4 })
+g = gate( controlSignal, inputSignal, { count:4 })
 
 gen.createCallback([ g.outputs[0], g.outputs[1] ]) 
 ```

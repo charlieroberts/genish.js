@@ -60,7 +60,7 @@ let gen = module.exports = {
   getMemoryLength( ugen ) {
 
     function getMemoryForChannel( ugen ) {
-      if( isNaN( ugen ) && ugen.marked === undefined ) {
+      if( ugen !== undefined && isNaN( ugen ) && ugen.marked === undefined ) {
         if( ugen.memory !== undefined ) {
           let memory = ugen.memory
           for( let indexName in memory ) {
@@ -134,16 +134,15 @@ let gen = module.exports = {
     this.memoryLength = 0
     this.memoryCallbacks.length = 0
     this.getMemoryLength( ugen )
-    console.log( 'MEMORY LENGTH', this.memoryLength )
+
     this.memory = new Float32Array( this.memoryLength )
 
     this.memoryCallbacks.forEach( v => {
-      console.log( 'callback', v.toString() )
       v()
     })
     this.memoryIndex = 0
 
-    this.functionBody = "  'use strict';\n  let memory = gen.memory;\n\n"
+    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n"
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
