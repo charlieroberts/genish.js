@@ -1,31 +1,16 @@
 'use strict';
 
-var _gen = require('./gen.js'),
+var gen = require('./gen.js'),
     add = require('./add.js'),
     mul = require('./mul.js'),
-    sub = require('./sub.js');
-
-var proto = {
-  basename: 'mix',
-
-  gen: function gen() {
-    _gen.memo[this.name] = add(mul(this.inputs[0], sub(1, this.inputs[2])), mul(this.inputs[1], this.inputs[2])).gen();
-
-    return _gen.memo[this.name];
-  }
-};
+    sub = require('./sub.js'),
+    memo = require('./memo.js');
 
 module.exports = function (in1, in2) {
-  var t = arguments.length <= 2 || arguments[2] === undefined ? .5 : arguments[2];
+    var t = arguments.length <= 2 || arguments[2] === undefined ? .5 : arguments[2];
 
-  var ugen = Object.create(proto);
+    var ugen = memo(add(mul(in1, sub(1, t)), mul(in2, t)));
+    ugen.name = 'mix' + gen.getUID();
 
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [in1, in2, t]
-  });
-
-  ugen.name = '' + ugen.basename + ugen.uid;
-
-  return ugen;
+    return ugen;
 };

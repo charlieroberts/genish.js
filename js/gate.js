@@ -4,12 +4,16 @@ let gen = require( './gen.js' )
 
 let proto = {
   basename:'gate',
-
+  controlString:null, // insert into output codegen for determining indexing
   gen() {
     let inputs = gen.getInputs( this ), out
     
     gen.requestMemory( this.memory )
-    let data = 'memory[ ' + this.memory.lastInput.idx + ' ]'
+    
+    let lastInputMemoryIdx = 'memory[ ' + this.memory.lastInput.idx + ' ]',
+        outputMemoryStartIdx = this.memory.lastInput.idx + 1,
+        inputSignal = inputs[0],
+        controlSignal = inputs[1]
     
     /* 
      * we check to see if the current control inputs equals our last input
@@ -21,33 +25,35 @@ let proto = {
     
     out =
 
-` let ${this.name}_index = ${inputs[1]}
-  if( ${this.name}_index != ${data} ) {
-    memory[ ${data} + ${this.memory.lastInput.idx + 1}  ] = 0 
-    ${data} = ${inputs[1]}
+` if( ${controlSignal} !== ${lastInputMemoryIdx} ) {
+    memory[ ${lastInputMemoryIdx} + ${outputMemoryStartIdx}  ] = 0 
+    ${lastInputMemoryIdx} = ${controlSignal}
   }
-  memory[ ${this.memory.lastInput.idx + 1 } + ${inputs[1]} ] = ${inputs[0]} 
+  memory[ ${outputMemoryStartIdx} + ${controlSignal} ] = ${inputSignal}
 
 `
+    this.controlString = inputs[1]
+    this.initialized = true
 
-    gen.memo[ this.name ] = `${this.name}`
+    gen.memo[ this.name ] = this.name
 
-    return [ ``, ' ' + out ]
+    this.outputs.forEach( v => v.gen() )
+
+    return [ null, ' ' + out ]
   },
 
   childgen() {
-    if( gen.memo[ this.parent.name ] === undefined ) {
-      gen.getInputs( this )
+    if( this.parent.initialized === false ) {
+      gen.getInputs( this ) // parent gate is only input of a gate output, should only be gen'd once.
     }
-    
+
     if( gen.memo[ this.name ] === undefined ) {
-      console.log( 'GATE OUT: ', this.name, ' REQUESTING MEMORY' )
       gen.requestMemory( this.memory )
 
       gen.memo[ this.name ] = `memory[ ${this.memory.value.idx} ]`
     }
-
-    return `memory[ ${this.memory.value.idx} ]`
+    
+    return  `memory[ ${this.memory.value.idx} ]`
   }
 }
 
@@ -63,7 +69,8 @@ module.exports = ( control, in1, properties ) => {
     inputs:  [ in1, control ],
     memory: {
       lastInput: { length:1, idx:null }
-    }
+    },
+    initialized:false
   },
   defaults )
   
@@ -78,6 +85,7 @@ module.exports = ( control, in1, properties ) => {
       memory: {
         value: { length:1, idx:null }
       },
+      initialized:false,
       name: `${ugen.name}_out${gen.getUID()}`
     })
   }

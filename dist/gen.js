@@ -71,7 +71,7 @@ var gen = module.exports = {
           for (var indexName in memory) {
             var request = memory[indexName];
             gen.memoryLength += request.length;
-            console.log('ugen:', ugen.name, 'request:', request.length, 'total:', gen.memoryLength);
+            //console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
           }
         }
         ugen.marked = true;
@@ -127,7 +127,7 @@ var gen = module.exports = {
   createCallback: function createCallback(ugen) {
     var debug = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-    var isStereo = Array.isArray(ugen),
+    var isStereo = Array.isArray(ugen) && ugen.length > 1,
         callback = void 0,
         channel1 = void 0,
         channel2 = void 0;

@@ -66,7 +66,7 @@ let gen = module.exports = {
           for( let indexName in memory ) {
             let request = memory[ indexName ]
             gen.memoryLength += request.length
-            console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
+            //console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
           }
         }
         ugen.marked = true
@@ -120,7 +120,7 @@ let gen = module.exports = {
    */
   
   createCallback( ugen, debug = false ) {
-    let isStereo = Array.isArray( ugen ),
+    let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
     
