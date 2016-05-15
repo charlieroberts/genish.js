@@ -155,6 +155,8 @@ var gen = module.exports = {
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
     for (var i = 0; i < 1 + isStereo; i++) {
+      if (typeof ugen[i] === 'number') continue;
+
       var channel = isStereo ? ugen[i].gen() : ugen.gen(),
           body = '';
 

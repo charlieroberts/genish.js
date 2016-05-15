@@ -35,7 +35,7 @@ module.exports = ( in1, time=256, properties ) => {
     poke( delaydata, in1, writeIdx ),
   ]
 
-  ugen.name = `${ugen.basename}${ugen.uid}`
+  ugen.name = `${ugen.basename}${gen.getUID()}`
 
   return ugen
 }

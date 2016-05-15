@@ -37,7 +37,7 @@ module.exports = function (in1) {
 
   ugen.inputs = [peek(delaydata, readIdx, { mode: 'samples', interp: defaults.interp }), poke(delaydata, in1, writeIdx)];
 
-  ugen.name = '' + ugen.basename + ugen.uid;
+  ugen.name = '' + ugen.basename + _gen.getUID();
 
   return ugen;
 };

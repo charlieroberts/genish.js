@@ -14,8 +14,12 @@ let proto = {
       gen.requestMemory( this.memory ) //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
       //console.log( 'MEMORY', this.memory, this.buffer.length )
       idx = this.memory.values.idx
-      gen.memory.set( this.buffer, idx )
-
+      try {
+        gen.memory.set( this.buffer, idx )
+      }catch( e ) {
+        console.log( 'error with request. asking for ' + this.buffer.length +'. current index: ' + gen.memoryIndex + ' of ' + gen.memory.length )
+        throw e
+      }
       //gen.data[ this.name ] = this
       //return 'gen.memory' + this.name + '.buffer'
       gen.memo[ this.name ] = idx

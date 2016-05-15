@@ -8,6 +8,7 @@ module.exports = function () {
   var ugen = {
     inputs: [in1],
     memory: { value: { length: 1, idx: null } },
+    recorder: null,
 
     in: function _in(v) {
       if (_gen.histories.has(v)) {
@@ -32,16 +33,18 @@ module.exports = function () {
           // return ugen that is being recorded instead of ssd.
           // this effectively makes a call to ssd.record() transparent to the graph.
           // recording is triggered by prior call to gen.addToEndBlock.
+          _gen.histories.set(v, obj);
+
           return inputs[0];
         },
 
-        name: ugen.name,
+        name: ugen.name + '_in' + _gen.getUID(),
         memory: ugen.memory
       };
 
       this.inputs[0] = v;
 
-      _gen.histories.set(v, obj);
+      ugen.recorder = obj;
 
       return obj;
     },
@@ -50,6 +53,9 @@ module.exports = function () {
     out: {
       gen: function gen() {
         if (ugen.memory.value.idx === null) {
+          if (_gen.histories.get(ugen.inputs[0]) === undefined) {
+            _gen.histories.set(ugen.inputs[0], ugen.recorder);
+          }
           _gen.requestMemory(ugen.memory);
           _gen.memory[ugen.memory.value.idx] = parseFloat(in1);
         }
@@ -65,6 +71,8 @@ module.exports = function () {
   ugen.out.memory = ugen.memory;
 
   ugen.name = 'history' + ugen.uid;
+  ugen.out.name = ugen.name + '_out';
+  ugen.in._name = ugen.name = '_in';
 
   return ugen;
 };
