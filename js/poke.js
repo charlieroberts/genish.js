@@ -13,6 +13,7 @@ let proto = {
         idx, out, wrapped
     
     idx = this.data.gen()
+
     //gen.requestMemory( this.memory )
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
@@ -34,8 +35,11 @@ module.exports = ( data, value, index, properties ) => {
     inputs:     [ value, index ],
   },
   defaults )
-  
+
+
   ugen.name = ugen.basename + ugen.uid
+  
+  gen.histories.set( ugen.name, ugen )
 
   return ugen
 }

@@ -15,6 +15,7 @@ var proto = {
         wrapped = void 0;
 
     idx = this.data.gen();
+
     //gen.requestMemory( this.memory )
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
@@ -37,6 +38,8 @@ module.exports = function (data, value, index, properties) {
   }, defaults);
 
   ugen.name = ugen.basename + ugen.uid;
+
+  _gen.histories.set(ugen.name, ugen);
 
   return ugen;
 };

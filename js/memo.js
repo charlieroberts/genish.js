@@ -17,12 +17,12 @@ let proto = {
   } 
 }
 
-module.exports = in1 => {
+module.exports = (in1,memoName) => {
   let memo = Object.create( proto )
   
   memo.inputs = [ in1 ]
   memo.id   = gen.getUID()
-  memo.name = `${memo.basename}${memo.id}`
+  memo.name = memoName !== undefined ? memoName + '_' + gen.getUID() : `${memo.basename}${memo.id}`
 
   return memo
 }

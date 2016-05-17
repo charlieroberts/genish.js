@@ -76,14 +76,14 @@ h1 {
 
       <select>
         <option>intro & instructions</option>
-        <option>stereo + gui</option>
         <option>thereminish - mouse interaction</option>
+        <option>FM feedback -> band-limited saw</option> 
         <option>biquad filter</option>
         <option>slicing the amen break</option>
         <option>one delay line</option>
+        <option>comb filter w/ feedback</option>
         <option>garden of earthly delays</option>
-        <option>karplus strong</option>>
-       
+        <option>karplus strong</option>
       </select>
 
       <span id='reference'><a href='../docs/index.html'>reference</a>
@@ -96,7 +96,17 @@ h1 {
 
   <script> 
     let select = document.querySelector( 'select' ),
-        files = ['intro.js','stereoGUI.js','thereminish.js', 'biquad.js', 'slicingAndDicing.js', 'oneDelayLine.js','gardenOfDelays.js', 'karplusStrong.js']
+        files = [
+          'intro.js',
+          'thereminish.js',
+          'bandlimitedFM.js',
+          'biquad.js',
+          'slicingAndDicing.js', 
+          'oneDelayLine.js',
+          'combfilter.js',
+          'gardenOfDelays.js', 
+          'karplusStrong.js'
+        ]
 
     select.onchange = function( e ) {
       loadexample( files[ select.selectedIndex ] )

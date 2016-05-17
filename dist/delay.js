@@ -35,7 +35,9 @@ module.exports = function (in1) {
   writeIdx = accum(1, 0, { max: defaults.size }); // initialValue:Math.floor(this.time) })
   readIdx = wrap(sub(writeIdx, time), 0, defaults.size);
 
-  ugen.inputs = [peek(delaydata, readIdx, { mode: 'samples', interp: defaults.interp }), poke(delaydata, in1, writeIdx)];
+  ugen.inputs = [peek(delaydata, readIdx, { mode: 'samples', interp: defaults.interp })];
+
+  ugen.output = poke(delaydata, in1, writeIdx);
 
   ugen.name = '' + ugen.basename + _gen.getUID();
 

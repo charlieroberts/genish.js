@@ -85,6 +85,8 @@ var gen = module.exports = {
     } else {
       getMemoryForChannel(ugen);
     }
+
+    this.histories.forEach(getMemoryForChannel);
   },
   requestMemory: function requestMemory(memorySpec, cb) {
     for (var key in memorySpec) {

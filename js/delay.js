@@ -31,9 +31,10 @@ module.exports = ( in1, time=256, properties ) => {
   readIdx  = wrap( sub( writeIdx, time ), 0, defaults.size )
 
   ugen.inputs =[
-    peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp }),
-    poke( delaydata, in1, writeIdx ),
+    peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp })
   ]
+
+  ugen.output = poke( delaydata, in1, writeIdx )
 
   ugen.name = `${ugen.basename}${gen.getUID()}`
 

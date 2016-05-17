@@ -80,6 +80,8 @@ let gen = module.exports = {
     }else{
       getMemoryForChannel( ugen )
     }
+
+    this.histories.forEach( getMemoryForChannel )
   },
   
   requestMemory( memorySpec, cb ) {

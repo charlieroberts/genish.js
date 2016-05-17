@@ -17,12 +17,12 @@ var proto = {
   }
 };
 
-module.exports = function (in1) {
+module.exports = function (in1, memoName) {
   var memo = Object.create(proto);
 
   memo.inputs = [in1];
   memo.id = _gen.getUID();
-  memo.name = '' + memo.basename + memo.id;
+  memo.name = memoName !== undefined ? memoName + '_' + _gen.getUID() : '' + memo.basename + memo.id;
 
   return memo;
 };

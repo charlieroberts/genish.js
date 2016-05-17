@@ -72,7 +72,8 @@ var library = {
   switch: require('./switch.js'),
   mstosamps: require('./mstosamps.js'), // TODO: needs test,
   selector: require('./selector.js'),
-  utilities: require('./utilities.js')
+  utilities: require('./utilities.js'),
+  pow: require('./pow.js')
 };
 
 library.gen.lib = library;
