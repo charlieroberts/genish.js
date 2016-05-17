@@ -26,7 +26,7 @@ combFilter = function( _input, combLength, damping=.5*.4, feedbackCoeff=.84 ) {
  
   return out
 }
-
+ 
 // constructor for schroeder allpass filters
 allPass = function( _input, length=500, feedback=.5 ) {
   let index  = counter( 1,0,length ),
@@ -38,7 +38,7 @@ allPass = function( _input, length=500, feedback=.5 ) {
  
   return out
 }
-
+ 
 // tuning settings for schroeder / moorer model
 tuning = {
   combCount:		8,
@@ -51,16 +51,16 @@ tuning = {
   scaleRoom: 		0.28,
   offsetRoom: 	    0.7,
 }
-
+ 
 combs = []
-
+ 
 amenData = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
   // parameters for external manipulation (via gui)
   let wet = param( 'wet',.55 ), dry = param( 'dry',.5 ), 
       roomSize = param( 'roomSize',.84 ), damping = param( 'damping', .5 )
   
   amenSignal = peek( amenData, accum( 1,0, { max:amenData.buffer.length } ), { interp:'none', mode:'samples' } )
-
+ 
   attenuatedAmen = memo( mul( amenSignal, tuning.fixedGain ) )
   
   // create comb filters in parallel...
