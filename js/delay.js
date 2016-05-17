@@ -18,23 +18,44 @@ let proto = {
   },
 }
 
-module.exports = ( in1, time=256, properties ) => {
+module.exports = ( in1, time=256, ...tapsAndProperties ) => {
   let ugen = Object.create( proto ),
       defaults = { size: 512, feedback:0, interp:'linear' },
-      writeIdx, readIdx, delaydata
+      writeIdx, readIdx, delaydata, properties, tapTimes = [ time ], taps
+  
+  console.log( tapsAndProperties )
+
+  if( Array.isArray( tapsAndProperties ) ) {
+    properties = tapsAndProperties[ tapsAndProperties.length - 1 ]
+    if( tapsAndProperties.length > 1 ) {
+      for( let i = 0; i < tapsAndProperties.length - 1; i++ ){
+        tapTimes.push( tapsAndProperties[ i ] )
+      }
+    }
+  }
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 
   delaydata = data( defaults.size )
+  
+  ugen.inputs = []
 
   writeIdx = accum( 1, 0, { max:defaults.size }) // initialValue:Math.floor(this.time) }) 
-  readIdx  = wrap( sub( writeIdx, time ), 0, defaults.size )
+  //readIdx  = wrap( sub( writeIdx, time ), 0, defaults.size )
+  for( let i = 0; i < tapTimes.length; i++ ) {
+    ugen.inputs[ i ] = peek( delaydata, wrap( sub( writeIdx, tapTimes[i] ), 0, defaults.size ),{ mode:'samples', interp:defaults.interp })
+  }
+  
+  if( ugen.inputs.length > 1 )
+    ugen.inputs = [ add( ...ugen.inputs ) ]
 
-  ugen.inputs =[
-    peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp })
-  ]
+  //ugen.inputs =[
+  //  peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp })
+  //]
 
-  ugen.output = poke( delaydata, in1, writeIdx )
+  ugen.outputs = ugen.inputs // ugn, Ugh, UGH!
+
+  poke( delaydata, in1, writeIdx )
 
   ugen.name = `${ugen.basename}${gen.getUID()}`
 

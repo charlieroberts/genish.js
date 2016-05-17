@@ -24,7 +24,7 @@ var utilities = {
     return this;
   },
   createScriptProcessor: function createScriptProcessor() {
-    this.node = this.ctx.createScriptProcessor(256, 0, 2), this.clearFunction = function () {
+    this.node = this.ctx.createScriptProcessor(1024, 0, 2), this.clearFunction = function () {
       return 0;
     }, this.callback = this.clearFunction;
 
