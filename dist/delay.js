@@ -1,7 +1,5 @@
 'use strict';
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 var _gen = require('./gen.js'),
     data = require('./data.js'),
     poke = require('./poke.js'),
@@ -53,19 +51,13 @@ module.exports = function (in1) {
 
   ugen.inputs = [];
 
-  writeIdx = accum(1, 0, { max: defaults.size }); // initialValue:Math.floor(this.time) })
-  //readIdx  = wrap( sub( writeIdx, time ), 0, defaults.size )
+  writeIdx = accum(1, 0, { max: defaults.size });
+
   for (var _i = 0; _i < tapTimes.length; _i++) {
     ugen.inputs[_i] = peek(delaydata, wrap(sub(writeIdx, tapTimes[_i]), 0, defaults.size), { mode: 'samples', interp: defaults.interp });
   }
 
-  if (ugen.inputs.length > 1) ugen.inputs = [add.apply(undefined, _toConsumableArray(ugen.inputs))];
-
-  //ugen.inputs =[
-  //  peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp })
-  //]
-
-  ugen.outputs = ugen.inputs; // ugn, Ugh, UGH!
+  ugen.outputs = ugen.inputs; // ugn, Ugh, UGH! but i guess it works.
 
   poke(delaydata, in1, writeIdx);
 

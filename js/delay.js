@@ -40,20 +40,13 @@ module.exports = ( in1, time=256, ...tapsAndProperties ) => {
   
   ugen.inputs = []
 
-  writeIdx = accum( 1, 0, { max:defaults.size }) // initialValue:Math.floor(this.time) }) 
-  //readIdx  = wrap( sub( writeIdx, time ), 0, defaults.size )
+  writeIdx = accum( 1, 0, { max:defaults.size }) 
+  
   for( let i = 0; i < tapTimes.length; i++ ) {
     ugen.inputs[ i ] = peek( delaydata, wrap( sub( writeIdx, tapTimes[i] ), 0, defaults.size ),{ mode:'samples', interp:defaults.interp })
   }
   
-  if( ugen.inputs.length > 1 )
-    ugen.inputs = [ add( ...ugen.inputs ) ]
-
-  //ugen.inputs =[
-  //  peek( delaydata, readIdx, { mode:'samples', interp:defaults.interp })
-  //]
-
-  ugen.outputs = ugen.inputs // ugn, Ugh, UGH!
+  ugen.outputs = ugen.inputs // ugn, Ugh, UGH! but i guess it works.
 
   poke( delaydata, in1, writeIdx )
 
