@@ -26,6 +26,7 @@ var gen = module.exports = {
    */
 
   closures: new Set(),
+  params: new Set(),
 
   parameters: [],
   endBlock: new Set(),
@@ -137,6 +138,7 @@ var gen = module.exports = {
     this.memo = {};
     this.endBlock.clear();
     this.closures.clear();
+    this.params.clear();
     this.globals = {};
 
     this.parameters.length = 0;
@@ -236,6 +238,48 @@ var gen = module.exports = {
       } finally {
         if (_didIteratorError) {
           throw _iteratorError;
+        }
+      }
+    }
+
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      var _loop = function _loop() {
+        var dict = _step2.value;
+
+        var name = Object.keys(dict)[0],
+            ugen = dict[name];
+
+        console.log("PARAM", name);
+
+        Object.defineProperty(callback, name, {
+          get: function get() {
+            return ugen.value;
+          },
+          set: function set(v) {
+            ugen.value = v;
+          }
+        });
+        //callback[ name ] = value
+      };
+
+      for (var _iterator2 = this.params.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        _loop();
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
         }
       }
     }

@@ -6,8 +6,15 @@ var _gen = require('./gen.js');
 
 var proto = {
   gen: function gen() {
-    _gen.closures.add(_defineProperty({}, this.name, this.value));
-    return 'gen.' + this.name;
+    _gen.requestMemory(this.memory);
+
+    _gen.params.add(_defineProperty({}, this.name, this));
+
+    this.value = this.initialValue;
+
+    _gen.memo[this.name] = 'memory[' + this.memory.value.idx + ']';
+
+    return _gen.memo[this.name];
   }
 };
 
@@ -15,7 +22,25 @@ module.exports = function (propName, value) {
   var ugen = Object.create(proto);
 
   ugen.name = propName;
-  ugen.value = value;
+
+  ugen.initialValue = value;
+
+  Object.defineProperty(ugen, 'value', {
+    get: function get() {
+      if (this.memory.value.idx !== null) {
+        return _gen.memory[this.memory.value.idx];
+      }
+    },
+    set: function set(v) {
+      if (this.memory.value.idx !== null) {
+        _gen.memory[this.memory.value.idx] = v;
+      }
+    }
+  });
+
+  ugen.memory = {
+    value: { length: 1, idx: null }
+  };
 
   return ugen;
 };

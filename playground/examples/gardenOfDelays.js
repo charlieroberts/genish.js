@@ -21,7 +21,7 @@ feedback4 = ssd()
 damp     = param( 'damping', .5 )
 damp2    = param( 'damping2', .5 )
 damp3    = param( 'damping3', .5 )
-delayTime= param( 'delayTime', 4096 )
+delayTime= param( 'delayTime', 556 )
 gateCtrl = param( 'feedbackRouter', 0 )
  
 // read through audiofile sample by sample
@@ -84,7 +84,7 @@ gui = new dat.GUI({ width:400 })
 gui.add( cb, 'damping',   0, 1 )
 gui.add( cb, 'damping2',  0, 1 )
 gui.add( cb, 'damping3',  0, 1 )
-gui.add( cb, 'delayTime', 128, 22050 )
+gui.add( cb, 'delayTime', 64, 4096 )
 gui.add( cb, 'feedbackRouter', 0,3 ).step(1)
   
 })

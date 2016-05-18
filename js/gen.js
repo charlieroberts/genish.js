@@ -20,7 +20,8 @@ let gen = module.exports = {
    * XXX Should probably be renamed callbackProperties or something similar... closures are no longer used.
    */
 
-  closures:new Set(),
+  closures: new Set(),
+  params:   new Set(),
 
   parameters:[],
   endBlock: new Set(),
@@ -129,6 +130,7 @@ let gen = module.exports = {
     this.memo = {}
     this.endBlock.clear()
     this.closures.clear()
+    this.params.clear()
     this.globals = {}
     
     this.parameters.length = 0
@@ -209,7 +211,20 @@ let gen = module.exports = {
 
       callback[ name ] = value
     }
-    
+
+    for( let dict of this.params.values() ) {
+      let name = Object.keys( dict )[0],
+          ugen = dict[ name ]
+      
+      console.log( "PARAM", name )
+      
+      Object.defineProperty( callback, name, {
+        get() { return ugen.value },
+        set(v){ ugen.value = v }
+      })
+      //callback[ name ] = value
+    }
+
     callback.data = this.data
     callback.out  = []
     callback.memory = this.memory
