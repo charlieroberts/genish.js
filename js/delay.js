@@ -23,8 +23,6 @@ module.exports = ( in1, time=256, ...tapsAndProperties ) => {
       defaults = { size: 512, feedback:0, interp:'linear' },
       writeIdx, readIdx, delaydata, properties, tapTimes = [ time ], taps
   
-  console.log( tapsAndProperties )
-
   if( Array.isArray( tapsAndProperties ) ) {
     properties = tapsAndProperties[ tapsAndProperties.length - 1 ]
     if( tapsAndProperties.length > 1 ) {

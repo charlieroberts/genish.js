@@ -152,7 +152,7 @@ var gen = module.exports = {
     });
     this.memoryIndex = 0;
 
-    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
+    this.functionBody = "  'use strict'\n  let memory = gen.memory,\n  pow=gen.pow\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -187,7 +187,7 @@ var gen = module.exports = {
     }
 
     this.histories.forEach(function (value) {
-      value.gen();
+      if (value !== null) value.gen();
     });
 
     var returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]';

@@ -144,7 +144,7 @@ let gen = module.exports = {
     })
     this.memoryIndex = 0
 
-    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n"
+    this.functionBody = "  'use strict'\n  let memory = gen.memory,\n  pow=gen.pow\n\n"
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -175,9 +175,10 @@ let gen = module.exports = {
 
       this.functionBody += body.join('\n')
     }
-
+    
     this.histories.forEach( value => {
-      value.gen()      
+      if( value !== null )
+        value.gen()      
     })
 
     let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'

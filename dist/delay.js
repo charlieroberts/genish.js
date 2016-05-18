@@ -34,8 +34,6 @@ module.exports = function (in1) {
       tapTimes = [time],
       taps = void 0;
 
-  console.log(tapsAndProperties);
-
   if (Array.isArray(tapsAndProperties)) {
     properties = tapsAndProperties[tapsAndProperties.length - 1];
     if (tapsAndProperties.length > 1) {
