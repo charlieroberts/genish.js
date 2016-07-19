@@ -20,6 +20,7 @@ let tests = {
   ifVsWrap:           require( './gen.benchmarks.accumMethods.js' ),
   boolToNumber:       require( './gen.benchmarks.boolToNumber.js' ),
   objectsVsValues:    require( './gen.benchmarks.objectsVsValuesAsCallbackProperties.js' ),
+  pow:                require( './gen.benchmarks.pow.js' )
 }
 
 for( let i = 2; i < process.argv.length; i++ ) {

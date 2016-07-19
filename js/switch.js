@@ -7,6 +7,8 @@ let proto = {
 
   gen() {
     let inputs = gen.getInputs( this ), out
+
+    if( inputs[1] === inputs[2] ) return inputs[1] // if both potential outputs are the same just return one of them
     
     out = `  let ${this.name}_out = ${inputs[0]} === 1 ? ${inputs[1]} : ${inputs[2]}\n\n`
 
@@ -19,7 +21,6 @@ let proto = {
 
 module.exports = ( control, in1 = 1, in2 = 0 ) => {
   let ugen = Object.create( proto )
-
   Object.assign( ugen, {
     uid:     gen.getUID(),
     inputs:  [ control, in1, in2 ],

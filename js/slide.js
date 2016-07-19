@@ -5,13 +5,18 @@ let gen     = require( './gen.js' ),
     sub     = require( './sub.js' ),
     add     = require( './add.js' ),
     mul     = require( './mul.js' ),
-    memo    = require( './memo.js' )
+    memo    = require( './memo.js' ),
+    _switch = require( './switch.js' )
 
 module.exports = ( in1, slideUp = 1, slideDown = 1 ) => {
-  let y1 = history(),
-      filter
+  let y1 = history(0),
+      filter, slideAmount
 
-  filter = memo( add( y1.out, div( sub( in1, y1.out ), slideUp ) ) )
+  //y (n) = y (n-1) + ((x (n) - y (n-1))/slide) 
+  slideAmount = _switch( gt(in1,y1.out), slideUp, slideDown )
+
+  filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
+
   y1.in( filter )
 
   return filter

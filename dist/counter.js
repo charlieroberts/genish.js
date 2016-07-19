@@ -13,27 +13,21 @@ var proto = {
         genName = 'gen.' + this.name,
         functionBody = void 0;
 
-    _gen.requestMemory(this.memory);
-    functionBody = this.callback(genName, inputs[0], inputs[1], inputs[2], inputs[3], 'memory[' + this.memory.value.idx + ']');
+    if (this.memory.value.idx === null) _gen.requestMemory(this.memory);
+    functionBody = this.callback(genName, inputs[0], inputs[1], inputs[2], inputs[3], 'memory[' + this.memory.value.idx + ']', 'memory[' + this.memory.wrap.idx + ']');
 
     _gen.closures.add(_defineProperty({}, this.name, this));
 
     _gen.memo[this.name] = this.name + '_value';
 
+    if (_gen.memo[this.wrap.name] === undefined) this.wrap.gen();
+
     return [this.name + '_value', functionBody];
   },
-  callback: function callback(_name, _incr, _min, _max, _reset, valueRef) {
+  callback: function callback(_name, _incr, _min, _max, _reset, valueRef, wrapRef) {
     var diff = this.max - this.min,
         out = '',
         wrap = '';
-
-    /* three different methods of wrapping, third is most expensive:
-     *
-     * 1: range {0,1}: y = x - (x | 0)
-     * 2: log2(this.max) == integer: y = x & (this.max - 1)
-     * 3: all others: if( x >= this.max ) y = this.max -x
-     *
-     */
 
     // must check for reset before storing value for output
     if (!(typeof this.inputs[3] === 'number' && this.inputs[3] < 1)) {
@@ -42,14 +36,10 @@ var proto = {
 
     out += '  let ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
 
-    if (this.min === 0 && this.max === 1) {
-      wrap = '  ' + valueRef + ' = ' + valueRef + ' - (' + valueRef + ' | 0)\n\n';
-    } else if (this.min === 0 && (Math.log2(this.max) | 0) === Math.log2(this.max)) {
-      wrap = '  ' + valueRef + ' = ' + valueRef + ' & (' + this.max + ' - 1)\n\n';
-    } else if (typeof this.max === 'number' && this.max !== Infinity && typeof this.min === 'number') {
-      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n\n';
+    if (typeof this.max === 'number' && this.max !== Infinity && typeof this.min === 'number') {
+      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' ) {\n    ' + valueRef + ' -= ' + diff + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else if (this.max !== Infinity) {
-      wrap = '  if( ' + valueRef + ' >= ' + _max + ' ) ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n  else if( ' + valueRef + ' < ' + _min + ' ) ' + valueRef + ' += ' + _max + ' - ' + _min + '\n\n';
+      wrap = '  if( ' + valueRef + ' >= ' + _max + ' ) {\n    ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else if( ' + valueRef + ' < ' + _min + ' ) {\n    ' + valueRef + ' += ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else {
       out += '\n';
     }
@@ -79,10 +69,36 @@ module.exports = function () {
     uid: _gen.getUID(),
     inputs: [incr, min, max, reset],
     memory: {
-      value: { length: 1, idx: null }
+      value: { length: 1, idx: null },
+      wrap: { length: 1, idx: null }
+    },
+    wrap: {
+      gen: function gen() {
+        if (ugen.memory.wrap.idx === null) {
+          _gen.requestMemory(ugen.memory);
+        }
+        _gen.getInputs(this);
+        _gen.memo[this.name] = 'memory[ ' + ugen.memory.wrap.idx + ' ]';
+        return 'memory[ ' + ugen.memory.wrap.idx + ' ]';
+      }
     }
   }, defaults);
 
+  Object.defineProperty(ugen, 'value', {
+    get: function get() {
+      if (this.memory.value.idx !== null) {
+        return _gen.memory[this.memory.value.idx];
+      }
+    },
+    set: function set(v) {
+      if (this.memory.value.idx !== null) {
+        _gen.memory[this.memory.value.idx] = v;
+      }
+    }
+  });
+
+  ugen.wrap.inputs = [ugen];
   ugen.name = '' + ugen.basename + ugen.uid;
+  ugen.wrap.name = ugen.name + '_wrap';
   return ugen;
 };

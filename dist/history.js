@@ -74,5 +74,18 @@ module.exports = function () {
   ugen.out.name = ugen.name + '_out';
   ugen.in._name = ugen.name = '_in';
 
+  Object.defineProperty(ugen, 'value', {
+    get: function get() {
+      if (this.memory.value.idx !== null) {
+        return _gen.memory[this.memory.value.idx];
+      }
+    },
+    set: function set(v) {
+      if (this.memory.value.idx !== null) {
+        _gen.memory[this.memory.value.idx] = v;
+      }
+    }
+  });
+
   return ugen;
 };

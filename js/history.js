@@ -71,5 +71,18 @@ module.exports = ( in1=0 ) => {
   ugen.out.name = ugen.name + '_out'
   ugen.in._name  = ugen.name = '_in'
 
+  Object.defineProperty( ugen, 'value', {
+    get() {
+      if( this.memory.value.idx !== null ) {
+        return gen.memory[ this.memory.value.idx ]
+      }
+    },
+    set( v ) {
+      if( this.memory.value.idx !== null ) {
+        gen.memory[ this.memory.value.idx ] = v 
+      }
+    }
+  })
+
   return ugen
 }

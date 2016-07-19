@@ -6,7 +6,9 @@
  *
  */
 
-let gen = module.exports = {
+let MemoryHelper = require( 'memory-helper' )
+
+let gen = {
 
   accum:0,
   getUID() { return this.accum++ },
@@ -127,7 +129,7 @@ let gen = module.exports = {
         callback, 
         channel1, channel2
     
-    this.memo = {}
+    this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
     this.params.clear()
@@ -146,7 +148,7 @@ let gen = module.exports = {
     })
     this.memoryIndex = 0
 
-    this.functionBody = "  'use strict'\n  let memory = gen.memory,\n  pow=gen.pow\n\n"
+    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -269,3 +271,5 @@ let gen = module.exports = {
     return inputs
   }
 }
+
+module.exports = gen

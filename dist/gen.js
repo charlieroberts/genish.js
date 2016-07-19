@@ -8,7 +8,9 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var gen = module.exports = {
+var MemoryHelper = require('memory-helper');
+
+var gen = {
 
   accum: 0,
   getUID: function getUID() {
@@ -154,7 +156,7 @@ var gen = module.exports = {
     });
     this.memoryIndex = 0;
 
-    this.functionBody = "  'use strict'\n  let memory = gen.memory,\n  pow=gen.pow\n\n";
+    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -335,3 +337,5 @@ var gen = module.exports = {
     return inputs;
   }
 };
+
+module.exports = gen;

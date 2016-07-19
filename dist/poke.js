@@ -20,7 +20,7 @@ var proto = {
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
     //gen.functionBody += wrapped[1]
-    _gen.functionBody += '  ' + dataName + '[ ' + idx + ' + ' + inputs[1] + ' ] = ' + inputs[0] + '\n\n';
+    _gen.functionBody += '  ' + dataName + '[ ' + idx + ' + ' + inputs[1] + ' ] = ' + inputs[0] + '\n';
   }
 };
 module.exports = function (data, value, index, properties) {

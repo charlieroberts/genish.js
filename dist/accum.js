@@ -25,7 +25,7 @@ var proto = {
   callback: function callback(_name, _incr, _reset, valueRef) {
     var diff = this.max - this.min,
         out = '',
-        wrap = void 0;
+        wrap = '';
 
     /* three different methods of wrapping, third is most expensive:
      *
@@ -37,18 +37,20 @@ var proto = {
 
     // must check for reset before storing value for output
     if (!(typeof this.inputs[1] === 'number' && this.inputs[1] < 1)) {
-      out += '  if( ' + _reset + ' >=1 ) ' + valueRef + ' = ' + this.min + '\n';
+      out += '  if( ' + _reset + ' >=1 ) ' + valueRef + ' = ' + this.min + '\n\n';
     }
 
     out += '  let ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
 
-    if (this.min === 0 && this.max === 1) {
-      wrap = '  ' + valueRef + ' = ' + valueRef + ' - (' + valueRef + ' | 0)\n\n';
-    } else if (this.min === 0 && (Math.log2(this.max) | 0) === Math.log2(this.max)) {
-      wrap = '  ' + valueRef + ' = ' + valueRef + ' & (' + this.max + ' - 1)\n\n';
-    } else {
-      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n\n';
-    }
+    wrap = '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
+    wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
+    //if( this.min === 0 && this.max === 1 ) {
+    //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
+    //} else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
+    //  wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
+    //} else if( this.max !== Infinity ){
+    //  wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
+    //}
 
     out = out + wrap;
 
