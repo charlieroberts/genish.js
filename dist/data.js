@@ -15,10 +15,10 @@ var proto = {
       //console.log( 'MEMORY', this.memory, this.buffer.length )
       idx = this.memory.values.idx;
       try {
-        _gen.memory.set(this.buffer, idx);
+        _gen.memory.heap.set(this.buffer, idx);
       } catch (e) {
-        console.log('error with request. asking for ' + this.buffer.length + '. current index: ' + _gen.memoryIndex + ' of ' + _gen.memory.length);
-        throw e;
+        console.log(e);
+        throw Error('error with request. asking for ' + this.buffer.length + '. current index: ' + _gen.memoryIndex + ' of ' + _gen.memory.heap.length);
       }
       //gen.data[ this.name ] = this
       //return 'gen.memory' + this.name + '.buffer'

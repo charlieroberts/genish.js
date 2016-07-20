@@ -91,21 +91,26 @@ let gen = {
     for( let key in memorySpec ) {
       let request = memorySpec[ key ]
 
-      if( request.global !== undefined ) { 
-        if( gen.sharedMemory[ key ] !== undefined ) {
-          request.idx = gen.sharedMemory[ key ]
-        }else{
-          gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
-          gen.memoryIndex += request.length
-        }
-      } else {
-        request.idx = gen.memoryIndex
-        gen.memoryIndex += request.length
-      }
+      request.idx = gen.memory.alloc( request.length )
+    
+
+    //  if( request.global !== undefined ) { 
+    //    if( gen.sharedMemory[ key ] !== undefined ) {
+    //      request.idx = gen.sharedMemory[ key ]
+    //    }else{
+    //      gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
+    //      gen.memoryIndex += request.length
+    //    }
+    //  } else {
+    //    request.idx = gen.memoryIndex
+    //    gen.memoryIndex += request.length
+    //  }
+    //}
+    //if( typeof cb === 'function' ) {
+    //  gen.memoryCallbacks.push( cb )
     }
-    if( typeof cb === 'function' ) {
-      gen.memoryCallbacks.push( cb )
-    }
+    
+
   },
 
   sharedMemory:{},
@@ -124,11 +129,17 @@ let gen = {
    * ... the generated function will have a signature of ( abs, p0 ).
    */
   
-  createCallback( ugen, debug = false ) {
+  createCallback( ugen, mem, debug = false ) {
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
+
+    if( typeof mem === 'number' ) {
+      mem = MemoryHelper.create( mem )
+    }
     
+    //console.log( 'cb memory:', mem )
+    this.memory = mem
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -137,16 +148,16 @@ let gen = {
     
     this.parameters.length = 0
     
-    this.memoryLength = 0
-    this.memoryCallbacks.length = 0
-    this.getMemoryLength( ugen )
+    //this.memoryLength = 0
+    //this.memoryCallbacks.length = 0
+    //this.getMemoryLength( ugen )
 
-    this.memory = new Float32Array( this.memoryLength )
+    //this.memory = new Float32Array( this.memoryLength )
 
-    this.memoryCallbacks.forEach( v => {
-      v()
-    })
-    this.memoryIndex = 0
+    //this.memoryCallbacks.forEach( v => {
+    //  v()
+    //})
+    //this.memoryIndex = 0
 
     this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
 
@@ -229,7 +240,9 @@ let gen = {
 
     callback.data = this.data
     callback.out  = []
-    callback.memory = this.memory
+
+    if( MemoryHelper.isPrototypeOf( this.memory ) ) 
+      callback.memory = this.memory.heap
 
     this.histories.clear()
 

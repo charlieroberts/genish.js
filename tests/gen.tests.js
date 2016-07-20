@@ -241,15 +241,14 @@ describe( 'monops', ()=> {
     let answer = .001,
         x = history( 1 ),
         graph = x.in( mul( x.out, t60(10) ) ),
-        out   = gen.createCallback( graph ),
+        out   = gen.createCallback( graph, 4096 ),
         result = 1
-    
+
     for( let i = 0 ; i < 10; i++ ) result = out()
 
     result = parseFloat( result.toFixed( 4 ) )
 
     assert.equal( result, answer )
-
   })
 
   it( 'should convert midi value 69 to 440 (hz, default tuning)', ()=> {
@@ -391,7 +390,7 @@ describe( 'gate', ()=> {
         c = counter(),
         g = gate( c,c, {count:4} ),
         graph = add( mul(g.outputs[0],g.outputs[0]), mul(g.outputs[1],g.outputs[1]), mul(g.outputs[2],g.outputs[2]), mul(g.outputs[3],g.outputs[3] ) ),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 512 ),
         result = []
 
     result.push( out() ); result.push( out() ); result.push( out() ); result.push( out() );
@@ -404,7 +403,7 @@ describe( 'gate', ()=> {
 describe( 'sah', ()=> {
   it( 'should return the same value until told to sample', ()=> {
     let graph = sah( noise(), peek( data([1,0,1,0]), accum(1,0,{ max:4 }), {interp:'none', mode:'samples'} ) ),
-        out   = gen.createCallback( graph ),
+        out   = gen.createCallback( graph, 512 ),
 
         result = []
 
@@ -462,7 +461,7 @@ describe( 'accum', ()=>{
   it( 'should ramp to .5 with an increment of .1 after five executions', ()=> {
     let answer = .5,
         graph  = accum(.1),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 16 ),
         result = 0
     
     for( let i = 0; i < 5; i++ ) out()
@@ -487,7 +486,7 @@ describe( 'accum', ()=>{
   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
     let answer = .0,
         graph  = accum( .1, input() ),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 16 ),
         result = 0
 
     out(); out(); out();
@@ -505,7 +504,7 @@ describe( 'wrap', () => {
         storage = [],
         acc = accum( .5, 0, 0, 100 ),
         graph = wrap( acc, 0, max ),
-        out = gen.createCallback( graph ),
+        out = gen.createCallback( graph, 512 ),
         result
 
     for( let i = 0; i < 20; i++ ) storage[ i ] = out()
@@ -532,7 +531,7 @@ describe( 'clamp', () => {
   it( 'should not let samples outside the range of -1..1', ()=> {
     let graph = clamp( mul( cycle(440), 10 ), -1, 1 ),
         storage = [],
-        out = gen.createCallback( graph )
+        out = gen.createCallback( graph, 2048 )
 
     for( let i = 0; i < 200; i++ ) storage[i] = out()
 
@@ -558,7 +557,7 @@ describe( 'phasor', ()=>{
   it( 'should ramp to .5 with an frequency of 4410 after five executions', ()=> {
     let answer = .5,
         graph  = phasor( 4410 ),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 512 ),
         result = 0
     
     for( let i = 0; i < 5; i++ ) out()
@@ -573,7 +572,7 @@ describe( 'rate', ()=>{
   it( 'should cause a phasor with an frequency of 4410 to ramp to .25 after five executions instead of .5', ()=> {
     let answer = .25,
         graph  = rate( phasor( 4410 ), .5 ),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 512 ),
         result = 0
     
     for( let i = 0; i < 5; i++ ) out()
@@ -589,7 +588,7 @@ describe( 'data + peek', ()=>{
     let answer = 49,
         d = data( [0,0,49] ),
         p = peek( d, 2, { mode:'samples' }),
-        out = gen.createCallback( p  ),
+        out = gen.createCallback( p, 16  ),
         result
     
     result = out()
@@ -605,7 +604,7 @@ describe( 'data + peek', ()=>{
     _d[2] = 49
     d = data( _d )
     p = peek( d, .00390625, { mode:'phase', interp:'none' } ) //.00390625 is phase for index[2] if 512 data length
-    out = gen.createCallback( p )
+    out = gen.createCallback( p, 2048 )
     
     result = out()
     
@@ -617,7 +616,7 @@ describe( 'cycle', ()=> {
   it( 'should be at 0 after five outputs at 11025 hz', ()=> {
     let answer = 0,
         c = cycle( 11025 ),
-        out = gen.createCallback( c ),
+        out = gen.createCallback( c, 2048 ),
         result = []
 
     for( let i = 0; i < 5; i++ ) result[i] = out()
@@ -627,7 +626,7 @@ describe( 'cycle', ()=> {
   it( 'should generate values in the range {-1,1} over 2000 samples', ()=> {
     let storage = [],
         c = cycle( 440 ),
-        out = gen.createCallback( c ),
+        out = gen.createCallback( c,2048 ),
         outputMin, outputMax
 
     for( let i = 0; i < 2000; i++ ) storage[i] = out()
@@ -647,7 +646,7 @@ describe( 'history', ()=> {
         h1input = accum( add(1, h1.out ), 0, {min:0, max:10} ), out, result = []
     
     h1.in( h1input )
-    out = gen.createCallback( h1input )
+    out = gen.createCallback( h1input, 8 )
 
     for( let i = 0; i < 5; i++ ) result[i] = out()
     assert.equal( result[4], answer )
@@ -658,7 +657,7 @@ describe( 'delta', ()=> {
   it( 'should return 0 or .1 when tracking accum(.1) for first 11 samples, -.9 for 11th (after accum wraps)' , ()=> {
     let answer = [0,.1,.1,.1,.1,.1,.1,.1,.1,.1,-.9],
         d1 = delta( accum(.1) ),
-        out = gen.createCallback( d1 ), 
+        out = gen.createCallback( d1, 8 ), 
         result = []
 
     for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
@@ -684,7 +683,7 @@ describe( 'dcblock', ()=>{
   it( 'should filter offset of .5 to make signal range {-1,1} after >20000 samples', ()=> {
     let storage = [],
         graph  = dcblock( add( .5, cycle( 440 ) ) ),
-        out    = gen.createCallback( graph ),
+        out    = gen.createCallback( graph, 2048 ),
         outputMax, outputMin
 
     // let filter run for a bit

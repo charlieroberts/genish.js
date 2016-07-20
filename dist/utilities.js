@@ -52,12 +52,14 @@ var utilities = {
     return this;
   },
   playGraph: function playGraph(graph, debug) {
+    var mem = arguments.length <= 2 || arguments[2] === undefined ? 44100 * 10 : arguments[2];
+
     utilities.clear();
     if (debug === undefined) debug = false;
 
     isStereo = Array.isArray(graph);
 
-    utilities.callback = gen.createCallback(graph, debug);
+    utilities.callback = gen.createCallback(graph, mem, debug);
 
     if (utilities.console) utilities.console.setValue(utilities.callback.toString());
 

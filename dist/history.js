@@ -23,7 +23,7 @@ module.exports = function () {
 
           if (ugen.memory.value.idx === null) {
             _gen.requestMemory(ugen.memory);
-            _gen.memory[ugen.memory.value.idx] = in1;
+            _gen.memory.heap[ugen.memory.value.idx] = in1;
           }
 
           var idx = ugen.memory.value.idx;
@@ -57,7 +57,7 @@ module.exports = function () {
             _gen.histories.set(ugen.inputs[0], ugen.recorder);
           }
           _gen.requestMemory(ugen.memory);
-          _gen.memory[ugen.memory.value.idx] = parseFloat(in1);
+          _gen.memory.heap[ugen.memory.value.idx] = parseFloat(in1);
         }
         var idx = ugen.memory.value.idx;
 
@@ -77,12 +77,12 @@ module.exports = function () {
   Object.defineProperty(ugen, 'value', {
     get: function get() {
       if (this.memory.value.idx !== null) {
-        return _gen.memory[this.memory.value.idx];
+        return _gen.memory.heap[this.memory.value.idx];
       }
     },
     set: function set(v) {
       if (this.memory.value.idx !== null) {
-        _gen.memory[this.memory.value.idx] = v;
+        _gen.memory.heap[this.memory.value.idx] = v;
       }
     }
   });

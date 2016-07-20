@@ -28,12 +28,12 @@ module.exports = function (propName, value) {
   Object.defineProperty(ugen, 'value', {
     get: function get() {
       if (this.memory.value.idx !== null) {
-        return _gen.memory[this.memory.value.idx];
+        return _gen.memory.heap[this.memory.value.idx];
       }
     },
     set: function set(v) {
       if (this.memory.value.idx !== null) {
-        _gen.memory[this.memory.value.idx] = v;
+        _gen.memory.heap[this.memory.value.idx] = v;
       }
     }
   });

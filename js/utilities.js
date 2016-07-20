@@ -50,13 +50,13 @@ let utilities = {
     return this
   },
   
-  playGraph( graph, debug ) {
+  playGraph( graph, debug, mem=44100*10 ) {
     utilities.clear()
     if( debug === undefined ) debug = false
           
     isStereo = Array.isArray( graph )
 
-    utilities.callback = gen.createCallback( graph, debug )
+    utilities.callback = gen.createCallback( graph, mem, debug )
     
     if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
 

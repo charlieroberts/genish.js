@@ -13,7 +13,7 @@ let proto = {
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ 'exp' ]: Math.exp })
 
-      out = `  let ${this.name } = gen.exp( -6.907755278921 / ${inputs[0]} )\n\n`
+      out = `  let ${this.name} = gen.exp( -6.907755278921 / ${inputs[0]} )\n\n`
      
       gen.memo[ this.name ] = out
       

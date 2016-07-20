@@ -26,12 +26,12 @@ module.exports = ( propName, value ) => {
   Object.defineProperty( ugen, 'value', {
     get() {
       if( this.memory.value.idx !== null ) {
-        return gen.memory[ this.memory.value.idx ]
+        return gen.memory.heap[ this.memory.value.idx ]
       }
     },
     set( v ) {
       if( this.memory.value.idx !== null ) {
-        gen.memory[ this.memory.value.idx ] = v 
+        gen.memory.heap[ this.memory.value.idx ] = v 
       }
     }
   })

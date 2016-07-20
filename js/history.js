@@ -21,7 +21,7 @@ module.exports = ( in1=0 ) => {
 
           if( ugen.memory.value.idx === null ) {
             gen.requestMemory( ugen.memory )
-            gen.memory[ ugen.memory.value.idx ] = in1
+            gen.memory.heap[ ugen.memory.value.idx ] = in1
           }
 
           let idx = ugen.memory.value.idx
@@ -54,7 +54,7 @@ module.exports = ( in1=0 ) => {
             gen.histories.set( ugen.inputs[0], ugen.recorder )
           }
           gen.requestMemory( ugen.memory )
-          gen.memory[ ugen.memory.value.idx ] = parseFloat( in1 )
+          gen.memory.heap[ ugen.memory.value.idx ] = parseFloat( in1 )
         }
         let idx = ugen.memory.value.idx
          
@@ -74,12 +74,12 @@ module.exports = ( in1=0 ) => {
   Object.defineProperty( ugen, 'value', {
     get() {
       if( this.memory.value.idx !== null ) {
-        return gen.memory[ this.memory.value.idx ]
+        return gen.memory.heap[ this.memory.value.idx ]
       }
     },
     set( v ) {
       if( this.memory.value.idx !== null ) {
-        gen.memory[ this.memory.value.idx ] = v 
+        gen.memory.heap[ this.memory.value.idx ] = v 
       }
     }
   })

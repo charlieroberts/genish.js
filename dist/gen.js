@@ -95,20 +95,22 @@ var gen = {
     for (var key in memorySpec) {
       var request = memorySpec[key];
 
-      if (request.global !== undefined) {
-        if (gen.sharedMemory[key] !== undefined) {
-          request.idx = gen.sharedMemory[key];
-        } else {
-          gen.sharedMemory[key] = request.idx = gen.memoryIndex;
-          gen.memoryIndex += request.length;
-        }
-      } else {
-        request.idx = gen.memoryIndex;
-        gen.memoryIndex += request.length;
-      }
-    }
-    if (typeof cb === 'function') {
-      gen.memoryCallbacks.push(cb);
+      request.idx = gen.memory.alloc(request.length);
+
+      //  if( request.global !== undefined ) {
+      //    if( gen.sharedMemory[ key ] !== undefined ) {
+      //      request.idx = gen.sharedMemory[ key ]
+      //    }else{
+      //      gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
+      //      gen.memoryIndex += request.length
+      //    }
+      //  } else {
+      //    request.idx = gen.memoryIndex
+      //    gen.memoryIndex += request.length
+      //  }
+      //}
+      //if( typeof cb === 'function' ) {
+      //  gen.memoryCallbacks.push( cb )
     }
   },
 
@@ -129,14 +131,20 @@ var gen = {
    * ... the generated function will have a signature of ( abs, p0 ).
    */
 
-  createCallback: function createCallback(ugen) {
-    var debug = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  createCallback: function createCallback(ugen, mem) {
+    var debug = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
     var isStereo = Array.isArray(ugen) && ugen.length > 1,
         callback = void 0,
         channel1 = void 0,
         channel2 = void 0;
 
+    if (typeof mem === 'number') {
+      mem = MemoryHelper.create(mem);
+    }
+
+    //console.log( 'cb memory:', mem )
+    this.memory = mem;
     this.memo = {};
     this.endBlock.clear();
     this.closures.clear();
@@ -145,16 +153,16 @@ var gen = {
 
     this.parameters.length = 0;
 
-    this.memoryLength = 0;
-    this.memoryCallbacks.length = 0;
-    this.getMemoryLength(ugen);
+    //this.memoryLength = 0
+    //this.memoryCallbacks.length = 0
+    //this.getMemoryLength( ugen )
 
-    this.memory = new Float32Array(this.memoryLength);
+    //this.memory = new Float32Array( this.memoryLength )
 
-    this.memoryCallbacks.forEach(function (v) {
-      v();
-    });
-    this.memoryIndex = 0;
+    //this.memoryCallbacks.forEach( v => {
+    //  v()
+    //})
+    //this.memoryIndex = 0
 
     this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
 
@@ -288,7 +296,8 @@ var gen = {
 
     callback.data = this.data;
     callback.out = [];
-    callback.memory = this.memory;
+
+    if (MemoryHelper.isPrototypeOf(this.memory)) callback.memory = this.memory.heap;
 
     this.histories.clear();
 
