@@ -139,7 +139,7 @@ var gen = {
         channel1 = void 0,
         channel2 = void 0;
 
-    if (typeof mem === 'number') {
+    if (typeof mem === 'number' || mem === undefined) {
       mem = MemoryHelper.create(mem);
     }
 
@@ -262,8 +262,6 @@ var gen = {
 
         var name = Object.keys(dict)[0],
             ugen = dict[name];
-
-        console.log("PARAM", name);
 
         Object.defineProperty(callback, name, {
           get: function get() {

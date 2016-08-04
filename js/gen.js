@@ -134,7 +134,7 @@ let gen = {
         callback, 
         channel1, channel2
 
-    if( typeof mem === 'number' ) {
+    if( typeof mem === 'number' || mem === undefined ) {
       mem = MemoryHelper.create( mem )
     }
     
@@ -211,7 +211,7 @@ let gen = {
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
-    let buildString = `return function gen( ${this.parameters.join(',')} ){ \n${this.functionBody}\n}`
+    let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
 
@@ -228,8 +228,6 @@ let gen = {
     for( let dict of this.params.values() ) {
       let name = Object.keys( dict )[0],
           ugen = dict[ name ]
-      
-      console.log( "PARAM", name )
       
       Object.defineProperty( callback, name, {
         get() { return ugen.value },

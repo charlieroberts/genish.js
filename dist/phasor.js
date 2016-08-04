@@ -8,8 +8,9 @@ var gen = require('./gen.js'),
 module.exports = function () {
   var frequency = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
   var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+  var props = arguments[2];
 
-  var ugen = accum(mul(frequency, 1 / gen.samplerate), reset);
+  var ugen = typeof frequency === 'number' ? accum(frequency / gen.samplerate, reset, props) : accum(mul(frequency, 1 / gen.samplerate), reset, props);
 
   ugen.name = proto.basename + gen.getUID();
 
