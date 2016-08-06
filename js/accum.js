@@ -13,7 +13,7 @@ let proto = {
 
     gen.requestMemory( this.memory )
 
-    gen.memory[ this.memory.value.idx ] = this.min
+    gen.memory.heap[ this.memory.value.idx ] = this.min
 
     functionBody = this.callback( genName, inputs[0], inputs[1], `memory[${this.memory.value.idx}]` )
 
@@ -45,7 +45,7 @@ let proto = {
     out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
     if( this.max !== Infinity )  wrap += `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n`
-    if( this.min !== -Infinity ) wrap += `  if( ${valueRef} < ${this.min} ) ${valueRef} += ${diff}\n\n`
+    if( this.min !== -Infinity ) wrap += `  if( ${valueRef} < ${this.min}  ) ${valueRef} += ${diff}\n\n`
 
     //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`

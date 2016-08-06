@@ -6,7 +6,11 @@ let gen  = require( './gen.js' ),
     proto = { basename:'phasor' }
 
 module.exports = ( frequency=1, reset=0, props ) => {
-  let ugen = typeof frequency === 'number' ? accum( frequency / gen.samplerate, reset, props ) :  accum( mul( frequency, 1/gen.samplerate ), reset, props )
+  if( props === undefined ) props = { min: -1 }
+
+  let range = (props.max || 1 ) - props.min
+
+  let ugen = typeof frequency === 'number' ? accum( (frequency * range) / gen.samplerate, reset, props ) :  accum( mul( frequency, 1/gen.samplerate/(1/range) ), reset, props )
 
   ugen.name = proto.basename + gen.getUID()
 

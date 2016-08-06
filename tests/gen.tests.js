@@ -554,30 +554,30 @@ describe( 'mix', () => {
 })
 
 describe( 'phasor', ()=>{
-  it( 'should ramp to .5 with an frequency of 4410 after five executions', ()=> {
-    let answer = .5,
+  it( 'should ramp to 0 with an frequency of 4410 after five executions', ()=> {
+    let answer = 0,
         graph  = phasor( 4410 ),
         out    = gen.createCallback( graph, 512 ),
         result = 0
     
     for( let i = 0; i < 5; i++ ) out()
     
-    result = out()
+    result = out().toFixed( 2 )
     
     assert.equal( result, answer )
   })
 })
 
 describe( 'rate', ()=>{
-  it( 'should cause a phasor with an frequency of 4410 to ramp to .25 after five executions instead of .5', ()=> {
-    let answer = .25,
+  it( 'should cause a phasor with an frequency of 4410 to ramp to -.5 after five executions instead of 0', ()=> {
+    let answer = -.5,
         graph  = rate( phasor( 4410 ), .5 ),
         out    = gen.createCallback( graph, 512 ),
         result = 0
     
     for( let i = 0; i < 5; i++ ) out()
     
-    result = out()
+    result = out().toFixed( 2 )
     
     assert.equal( result, answer )
   })

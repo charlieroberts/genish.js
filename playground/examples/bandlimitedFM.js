@@ -16,7 +16,11 @@ low-pass filter effect; here that effect is controlled via GUI.
 */
 
 // create some notes to play w/ a little portamento
-frequencies = peek( data([220,330,440,660,880]), phasor( param('speed',.5) ), {interp:'none'})
+frequencies = peek( 
+  data([220,330,440,660,880]), 
+  phasor( param('speed',.5), 0, { min:0 } ), 
+  { interp:'none', min:0 } 
+)
 slideFreqs = slide( frequencies, 1000 )
  
 // expose our feedback scaling factor for control
@@ -30,7 +34,7 @@ w = memo( div( slideFreqs, gen.samplerate ) )
  
 // create scaling factor
 n = sub( -.5, w )
-scaling = mul( mul(13,pseudoFilter), pow( n, 5 ) )
+scaling = mul( mul( 13, pseudoFilter ), pow( n, 5 ) )
  
 // calculate dc offset and normalization factors
 DC = sub( .376, mul( w, .752 ) )
@@ -59,7 +63,7 @@ thisSample = memo(
 lastSample.in( thisSample )
  
 // offset and normalize
-out = add( mul( 2.5, thisSample), mul(-1.5, lastSample.out) )
+out = add( mul( 2.5, thisSample), mul( -1.5, lastSample.out ) )
 out = add( out, DC )
 out = mul( out, norm )
 cb  = play( mul( out,.15 ) )

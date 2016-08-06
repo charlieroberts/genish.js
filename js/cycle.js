@@ -25,7 +25,7 @@ let proto = {
 module.exports = ( frequency=1, reset=0 ) => {
   if( gen.globals.table === undefined ) proto.initTable() 
   
-  let ugen = peek( gen.globals.table, phasor( frequency, reset ))
+  let ugen = peek( gen.globals.table, phasor( frequency, reset, { min:0 } ))
   ugen.name = 'cycle' + gen.getUID()
 
   return ugen

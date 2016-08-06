@@ -27,7 +27,7 @@ module.exports = function () {
 
   if (gen.globals.table === undefined) proto.initTable();
 
-  var ugen = peek(gen.globals.table, phasor(frequency, reset));
+  var ugen = peek(gen.globals.table, phasor(frequency, reset, { min: 0 }));
   ugen.name = 'cycle' + gen.getUID();
 
   return ugen;

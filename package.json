@@ -32,7 +32,9 @@
     "audio",
     "gen~",
     "max/msp",
-    "javascript"
+    "javascript",
+    "synthesis",
+    "DSP"
   ],
   "author": "Charlie Roberts <charlie@charlie-roberts.com> (http://www.charlie-roberts.com/)",
   "license": "MIT",

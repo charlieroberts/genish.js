@@ -10,7 +10,11 @@ module.exports = function () {
   var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
   var props = arguments[2];
 
-  var ugen = typeof frequency === 'number' ? accum(frequency / gen.samplerate, reset, props) : accum(mul(frequency, 1 / gen.samplerate), reset, props);
+  if (props === undefined) props = { min: -1 };
+
+  var range = (props.max || 1) - props.min;
+
+  var ugen = typeof frequency === 'number' ? accum(frequency * range / gen.samplerate, reset, props) : accum(mul(frequency, 1 / gen.samplerate / (1 / range)), reset, props);
 
   ugen.name = proto.basename + gen.getUID();
 

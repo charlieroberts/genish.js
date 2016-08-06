@@ -78,7 +78,7 @@ play(
 ************************************/
 
 lfo = mul( cycle(4), .5 )
-ramp = mul( phasor(.1), 200 )
+ramp = mul( phasor(.1, 0, { min:0 }), 200 )
 rampedLFO = mul( lfo, ramp )
  
 osc = cycle( add( 440, rampedLFO ) )
@@ -128,7 +128,7 @@ play( mul( out, .05 ) )
 d = data( [440,880,220,330] )
  
 // interpolate through data set over ten seocnds 
-freq = peek( d, phasor(.1) )
+freq = peek( d, phasor(.1, 0, { min:0 }) )
  
 out = mul( cycle( freq ), .1 )
  
@@ -141,10 +141,10 @@ play( out )
 d = data( [220,330,440,880] )
  
 // create a ramp from 0-4 over 10 seconds
-acceleration = mul( phasor(.1), 4 )
+acceleration = mul( phasor(.1, 0, { min:0 }), 4 )
  
 // accelerate looking through our graph; don't use interpolation
-freq = peek( d, phasor( acceleration ), { interp:'none' } ) 
+freq = peek( d, phasor( acceleration, 0, {min:0} ), { interp:'none' } ) 
  
 out = mul( cycle( freq ), .1 )
  
@@ -168,7 +168,7 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
     .99995
   )
   
-  play( peek( d, phasor( noisesig ) ) )
+  play( peek( d, phasor( noisesig, 0, { min: 0 } ) ) )
 })
 
 /***********************************************
@@ -179,10 +179,10 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
 frequencies = data( [220,330,440,880] )
  
 // get non-interpolating signal for frequency
-freqSignal = peek( frequencies, phasor( .5 ), { interp:'none' } ) 
+freqSignal = peek( frequencies, phasor( .5, 0, { min:0 } ), { interp:'none' } ) 
  
 // create a decay envelope
-envelope = sub( 1, phasor(2) )
+envelope = sub( 1, phasor( 2, 0, { min:0 }) )
  
 // multiply sine osc by envelope
 notes = mul( cycle( freqSignal ), envelope )
