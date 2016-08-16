@@ -45,6 +45,8 @@ module.exports = function (in1) {
 
   if (properties !== undefined) Object.assign(defaults, properties);
 
+  if (defaults.size < time) defaults.size = time;
+
   delaydata = data(defaults.size);
 
   ugen.inputs = [];

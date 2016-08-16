@@ -72,7 +72,13 @@ let library = {
   mstosamps:require( './mstosamps.js' ), // TODO: needs test,
   selector: require( './selector.js' ),
   utilities:require( './utilities.js' ),
-  pow:      require( './pow.js' )
+  pow:      require( './pow.js' ),
+  attack:   require( './attack.js' ),
+  decay:    require( './decay.js' ),
+  windows:  require( './windows.js' ),
+  env:      require( './env.js' ),
+  ad:       require( './ad.js'  ),
+  conditional: require( './conditional.js' )
 }
 
 library.gen.lib = library

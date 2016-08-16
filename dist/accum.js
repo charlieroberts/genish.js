@@ -46,7 +46,7 @@ var proto = {
     out += '  let ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
 
     if (this.max !== Infinity) wrap += '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
-    if (this.min !== -Infinity) wrap += '  if( ' + valueRef + ' < ' + this.min + '  ) ' + valueRef + ' += ' + diff + '\n\n';
+    if (this.min !== -Infinity) wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
 
     //if( this.min === 0 && this.max === 1 ) {
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`

@@ -19,7 +19,10 @@ var gen = {
 
   debug: false,
   samplerate: 44100, // change on audiocontext creation
-  globals: {},
+  shouldLocalize: false,
+  globals: {
+    windows: {}
+  },
 
   /* closures
    *
@@ -149,7 +152,7 @@ var gen = {
     this.endBlock.clear();
     this.closures.clear();
     this.params.clear();
-    this.globals = {};
+    this.globals = { windows: {} };
 
     this.parameters.length = 0;
 
@@ -311,37 +314,49 @@ var gen = {
    *
    */
   getInputs: function getInputs(ugen) {
-    var _this = this;
+    return ugen.inputs.map(gen.getInput);
+  },
+  getInput: function getInput(input) {
+    var isObject = (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object',
+        processedInput = void 0;
 
-    var inputs = ugen.inputs.map(function (input) {
-      var isObject = (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object',
-          processedInput = void 0;
-
-      if (isObject) {
-        // if input is a ugen...
-        if (_this.memo[input.name]) {
-          // if it has been memoized...
-          processedInput = _this.memo[input.name];
-        } else {
-          // if not memoized generate code
-          var code = input.gen();
-          if (Array.isArray(code)) {
-            _this.functionBody += code[1];
-            //console.log( 'after GEN' , this.functionBody )
-            processedInput = code[0];
-          } else {
-            processedInput = code;
-          }
-        }
+    if (isObject) {
+      // if input is a ugen...
+      if (gen.memo[input.name]) {
+        // if it has been memoized...
+        processedInput = gen.memo[input.name];
       } else {
-        // it input is a number
-        processedInput = input;
+        // if not memoized generate code 
+        var code = input.gen();
+
+        if (Array.isArray(code)) {
+          if (!gen.shouldLocalize) {
+            gen.functionBody += code[1];
+          } else {
+            gen.codeName = code[0];
+            gen.localizedCode.push(code[1]);
+          }
+          //console.log( 'after GEN' , this.functionBody )
+          processedInput = code[0];
+        } else {
+          processedInput = code;
+        }
       }
+    } else {
+      // it input is a number
+      processedInput = input;
+    }
 
-      return processedInput;
-    });
+    return processedInput;
+  },
+  startLocalize: function startLocalize() {
+    this.localizedCode = [];
+    this.shouldLocalize = true;
+  },
+  endLocalize: function endLocalize() {
+    this.shouldLocalize = false;
 
-    return inputs;
+    return [this.codeName, this.localizedCode.slice(0)];
   }
 };
 

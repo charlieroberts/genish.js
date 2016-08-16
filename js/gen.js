@@ -14,7 +14,10 @@ let gen = {
   getUID() { return this.accum++ },
   debug:false,
   samplerate: 44100, // change on audiocontext creation
-  globals:{},
+  shouldLocalize: false,
+  globals:{
+    windows: {},
+  },
   
   /* closures
    *
@@ -44,7 +47,7 @@ let gen = {
   addToEndBlock( v ) {
     this.endBlock.add( '  ' + v )
   },
-
+  
   memoryLength : 0,
 
   //requestMemory( amount ) {
@@ -144,7 +147,7 @@ let gen = {
     this.endBlock.clear()
     this.closures.clear()
     this.params.clear()
-    this.globals = {}
+    this.globals = { windows:{} }
     
     this.parameters.length = 0
     
@@ -255,32 +258,48 @@ let gen = {
    *
    */
   getInputs( ugen ) {
-    let inputs = ugen.inputs.map( input => {
-      let isObject = typeof input === 'object',
-          processedInput
+    return ugen.inputs.map( gen.getInput ) 
+  },
 
-      if( isObject ) { // if input is a ugen... 
-        if( this.memo[ input.name ] ) { // if it has been memoized...
-          processedInput = this.memo[ input.name ]
-        }else{ // if not memoized generate code
-          let code = input.gen()
-          if( Array.isArray( code ) ) {
-            this.functionBody += code[1]
-            //console.log( 'after GEN' , this.functionBody )
-            processedInput = code[0]
+  getInput( input ) {
+    let isObject = typeof input === 'object',
+        processedInput
+
+    if( isObject ) { // if input is a ugen... 
+      if( gen.memo[ input.name ] ) { // if it has been memoized...
+        processedInput = gen.memo[ input.name ]
+      }else{ // if not memoized generate code  
+        let code = input.gen()
+
+        if( Array.isArray( code ) ) {
+          if( !gen.shouldLocalize ) {
+            gen.functionBody += code[1]
           }else{
-            processedInput = code
+            gen.codeName = code[0]
+            gen.localizedCode.push( code[1] )
           }
+          //console.log( 'after GEN' , this.functionBody )
+          processedInput = code[0]
+        }else{
+          processedInput = code
         }
-      }else{ // it input is a number
-        processedInput = input
       }
+    }else{ // it input is a number
+      processedInput = input
+    }
 
-      return processedInput
-    })
+    return processedInput
+  },
 
-    return inputs
-  }
+  startLocalize() {
+    this.localizedCode = []
+    this.shouldLocalize = true
+  },
+  endLocalize() {
+    this.shouldLocalize = false
+
+    return [ this.codeName, this.localizedCode.slice(0) ]
+  },
 }
 
 module.exports = gen

@@ -16,7 +16,7 @@ var proto = {
     } else {
       out += inputs[0] > inputs[1] ? 1 : 0;
     }
-    out += '\n';
+    out += '\n\n';
 
     _gen.memo[this.name] = this.name;
 

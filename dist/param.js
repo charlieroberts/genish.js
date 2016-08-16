@@ -21,9 +21,13 @@ var proto = {
 module.exports = function (propName, value) {
   var ugen = Object.create(proto);
 
-  ugen.name = propName;
-
-  ugen.initialValue = value;
+  if (typeof propName !== 'string') {
+    ugen.name = 'param' + _gen.getUID();
+    ugen.initialValue = propName;
+  } else {
+    ugen.name = propName;
+    ugen.initialValue = value;
+  }
 
   Object.defineProperty(ugen, 'value', {
     get: function get() {

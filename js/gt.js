@@ -16,7 +16,7 @@ let proto = {
     } else {
       out += inputs[0] > inputs[1] ? 1 : 0 
     }
-    out += '\n'
+    out += '\n\n'
 
     gen.memo[ this.name ] = this.name
 

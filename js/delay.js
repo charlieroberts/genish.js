@@ -34,6 +34,8 @@ module.exports = ( in1, time=256, ...tapsAndProperties ) => {
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 
+  if( defaults.size < time ) defaults.size = time
+
   delaydata = data( defaults.size )
   
   ugen.inputs = []
