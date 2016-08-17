@@ -16,7 +16,7 @@ let proto = {
   } 
 }
 
-module.exports = ( propName, value ) => {
+module.exports = ( propName=0, value=0 ) => {
   let ugen = Object.create( proto )
   
   if( typeof propName !== 'string' ) {

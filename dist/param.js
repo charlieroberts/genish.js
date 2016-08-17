@@ -18,7 +18,10 @@ var proto = {
   }
 };
 
-module.exports = function (propName, value) {
+module.exports = function () {
+  var propName = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+  var value = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+
   var ugen = Object.create(proto);
 
   if (typeof propName !== 'string') {

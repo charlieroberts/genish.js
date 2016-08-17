@@ -78,8 +78,7 @@ let library = {
   windows:  require( './windows.js' ),
   env:      require( './env.js' ),
   ad:       require( './ad.js'  ),
-  conditional: require( './conditional.js' ),
-  ifelseif: require( './ifelseif.js' ),
+  ifelse:   require( './ifelseif.js' ),
   bang:     require( './bang.js' )
 }
 

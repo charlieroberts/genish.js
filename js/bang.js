@@ -17,14 +17,17 @@ let proto = {
   } 
 }
 
-module.exports = ( max = 1, min = 0 ) => {
-  let ugen = Object.create( proto )
+module.exports = ( _props ) => {
+  let ugen = Object.create( proto ),
+      props = Object.assign({}, { min:0, max:1 }, _props )
+
   ugen.name = 'bang' + gen.getUID()
-  ugen.min = min
-  ugen.max = max
+
+  ugen.min = props.min
+  ugen.max = props.max
 
   ugen.trigger = () => {
-    gen.memory.heap[ ugen.memory.value.idx ] = max 
+    gen.memory.heap[ ugen.memory.value.idx ] = ugen.max 
   }
 
   ugen.memory = {

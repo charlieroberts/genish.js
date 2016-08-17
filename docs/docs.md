@@ -162,6 +162,62 @@ poke
 
 Poke writes values to a index on a `data` object.
 
+# Control
+
+bang
+----
+
+The bang ugen continuously outputs a minimum value (default 0) until its `trigger()` method is called. After triggering, the ugen will output its maximum value (default 1) for a single sample before resetting and returning to outputting its minimum. The bang ugen can be used, for example, to easily re-trigger an envelope interactively, or to reset a counter/accum ugen.
+
+####Properties#####
+###bang.min###
+*number* (default 0) The 'resting state' of the bang ugen.
+###bang.max###
+*number* (default 1) The instantaneous state after triggering the bang ugen. This state will only last for one sample after triggering.
+
+####Methods####
+###bang.trigger###
+Change the state from the min property of the bang ugen to the max property for one sample.
+
+input
+----
+
+genish.js creates optimized audio callback functions; the `input` ugen creates a argument to a genish callback function that can be manipulated. For example, if we wanted a sine oscillator that let us control its frequency and amplitude, we could use:
+
+```javascript
+frequency = input()
+gain = input()
+
+osc = mul( cycle( frequency ), gain )
+
+callback = gen.createCallback( osc )
+
+// one sample of output with a 440 Hz frequency, .5 gain
+callback( 440, .5 )
+
+// another sample using 220 Hz frequency, .25 gain
+callback( 220, .25 )
+```
+
+param
+----
+**value** &nbsp; *number* &nbsp; The initial value for the param ugen.
+
+The `param` ugen exposes a single number for interactive control via assignment to its `value` property. In the example below, the frequency of a sine oscillator is controlled via a `param` ugen:
+
+```javascript
+pattern = [ 440, 660, 880, 1100 ]
+idx = 0
+frequency = param( pattern[ idx ] )
+ 
+play( cycle( frequency ) )
+ 
+// change frequency every 100ms (approximately, setInterval is not sample accurate) 
+intrvl = setInterval( ()=> { 
+  frequency.value = pattern[ idx++ % pattern.length ] 
+}, 100 )
+```
+
 # Feedback
 
 delay
@@ -420,6 +476,56 @@ g = gate( controlSignal, inputSignal, { count:4 })
 gen.createCallback([ g.outputs[0], g.outputs[1] ]) 
 ```
 
+ifelse
+----
+**control** &nbsp; *ugen or number* &nbsp; When `control` === 1, output `a`; else output `b`.  
+**a** &nbsp; *ugen or number* &nbsp; Signal that is available to output.  
+**b** &nbsp; *ugen or number* &nbsp; Signal that is available to ouput.
+
+`ifelse` can be called in two ways. In the first, it is functionally identical to the `switch` ugen: if a given control input is true, the second input to `ifelse` is outputted. Otherwise, the third input is outputted.
+
+The other option is to pass an array of conditional / output pairs. These will be used to create an appropriate if/else block in the final callback. If there is a single final output with no accompanying condition, this will be the end `else` of the control structure. For example:
+
+```javascript
+
+ie = ifelse([
+  lt( 0,1 ), 440,
+  gt( 1,.5 ), 880,
+  1200
+])
+
+gen.createCallback( ie )
+// ...outputs a function with the following control block (in pseudocode):
+
+let ifelse_0
+if( 0 < 1 ) {
+  ifelse_0 = 440
+}else if( 1 > .5 ) {
+  ifelse_0 = 880
+}else{
+  ifelse_0 = 1200
+}
+```
+
+Most importantly (and as implied by the pseudocode) we can use `ifelse` to create DSP that only runs under certain conditions. For example, given the following in the genish.js playground:
+
+```javascript
+osc = phasor( .5 )
+  
+play(
+  ifelse([
+    lt( osc, -.5 ), cycle( 220 ),
+    lt( osc, 0 )  , phasor( 330 ),
+    lt( osc, .5 ) , train( 440 ),
+    cycle(550)   
+  ])
+)
+```
+
+... we are only running two oscillators at any given time, our control phasor and whatever is held in the current executign block of our `ifelse` ugen. 
+
+
+
 selector
 ----
 **control** &nbsp; *ugen or number* &nbsp; Determines which input signal is passed to the ugen's output.  
@@ -430,10 +536,10 @@ Selector is basically the same as `switch()` but allows you to have an arbitrary
 switch
 ----
 **control** &nbsp; *ugen or number* &nbsp; When `control` === 1, output `a`; else output `b`.  
-**a** &nbsp; *integer* &nbsp; Signal that is available to output.  
-**b** &nbsp; *integer* &nbsp; Signal that is available to ouput.
+**a** &nbsp; *ugen or number* &nbsp; Signal that is available to output.  
+**b** &nbsp; *ugen or number* &nbsp; Signal that is available to ouput.
 
-A control input determines which of two additional inputs is passed to the output.  
+A control input determines which of two additional inputs is passed to the output. Note that in the genish.js playground this is globally referred to as the `ternary` ugen, so as not to conflict with JavaScript's `switch` control structure.  
 
 # Waveforms
 

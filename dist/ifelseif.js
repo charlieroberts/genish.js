@@ -73,8 +73,14 @@ var proto = {
   }
 };
 
-module.exports = function (conditions) {
-  var ugen = Object.create(proto);
+module.exports = function () {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  var ugen = Object.create(proto),
+      conditions = Array.isArray(args[0]) ? args[0] : args;
+
   Object.assign(ugen, {
     uid: _gen.getUID(),
     inputs: [conditions]

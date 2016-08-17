@@ -58,7 +58,8 @@ let assert = require('assert'),
     gtp     = genlib.gtp,
     ternary = genlib.switch,
     gate    = genlib.gate,
-    counter = genlib.counter
+    counter = genlib.counter,
+    bang    = genlib.bang
 
 //gen.debug = true
 
@@ -298,6 +299,23 @@ describe( 'binops', ()=> {
     assert.equal( result, answer )
   })
   
+})
+
+describe( 'bang', ()=> {
+ it( 'should return 1 after triggering, zero at all other times', ()=> {
+    let answer = [0,1,0],
+        b = bang(),
+        out = gen.createCallback( b ),
+        result = []
+
+    result.push( out() )
+    b.trigger()
+    result.push( out() )
+    result.push( out() )
+
+    assert.deepEqual( result, answer )
+
+ })
 })
 
 describe( 'compare', ()=> {

@@ -13,17 +13,17 @@ var proto = {
   }
 };
 
-module.exports = function () {
-  var max = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-  var min = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+module.exports = function (_props) {
+  var ugen = Object.create(proto),
+      props = Object.assign({}, { min: 0, max: 1 }, _props);
 
-  var ugen = Object.create(proto);
   ugen.name = 'bang' + _gen.getUID();
-  ugen.min = min;
-  ugen.max = max;
+
+  ugen.min = props.min;
+  ugen.max = props.max;
 
   ugen.trigger = function () {
-    _gen.memory.heap[ugen.memory.value.idx] = max;
+    _gen.memory.heap[ugen.memory.value.idx] = ugen.max;
   };
 
   ugen.memory = {

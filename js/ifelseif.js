@@ -77,8 +77,10 @@ ${output}
   }
 }
 
-module.exports = ( conditions  ) => {
-  let ugen = Object.create( proto )
+module.exports = ( ...args  ) => {
+  let ugen = Object.create( proto ),
+      conditions = Array.isArray( args[0] ) ? args[0] : args
+
   Object.assign( ugen, {
     uid:     gen.getUID(),
     inputs:  [ conditions ],
