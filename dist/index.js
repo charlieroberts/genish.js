@@ -79,7 +79,8 @@ var library = {
   windows: require('./windows.js'),
   env: require('./env.js'),
   ad: require('./ad.js'),
-  conditional: require('./conditional.js')
+  conditional: require('./conditional.js'),
+  ifelseif: require('./ifelseif.js')
 };
 
 library.gen.lib = library;
