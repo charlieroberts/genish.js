@@ -6,7 +6,8 @@ var gen = require('./gen.js'),
     data = require('./data.js'),
     peek = require('./peek.js'),
     accum = require('./accum.js'),
-    conditional = require('./conditional');
+    ifelseif = require('./ifelseif.js'),
+    lt = require('./lt.js');
 
 module.exports = function () {
   var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
@@ -41,7 +42,7 @@ module.exports = function () {
     gen.globals.windows['t60decay'][decayTime] = decayData = data(decayBuffer);
   }
 
-  out = conditional(lt(phase, attackTime), peek(attackData, div(phase, attackTime)), peek(decayData, ltp(accum(1 / decayTime, 0, { max: Infinity }), 1)));
+  out = ifelseif([lt(phase, attackTime), peek(attackData, div(phase, attackTime)), lt(phase, attackTime + decayTime), peek(decayData, accum(1 / decayTime, 0, { max: Infinity })), 0]);
 
-  return gtp(out, 0);
+  return out;
 };

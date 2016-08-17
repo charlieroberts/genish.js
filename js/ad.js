@@ -1,12 +1,13 @@
 'use strict'
 
-let gen     = require( './gen.js' ),
-    mul     = require( './mul.js' ),
-    sub     = require( './sub.js' ),
-    data    = require( './data.js' ),
-    peek    = require( './peek.js' ),
-    accum   = require( './accum.js' ),
-    conditional = require( './conditional' )
+let gen      = require( './gen.js' ),
+    mul      = require( './mul.js' ),
+    sub      = require( './sub.js' ),
+    data     = require( './data.js' ),
+    peek     = require( './peek.js' ),
+    accum    = require( './accum.js' ),
+    ifelseif = require( './ifelseif.js' ),
+    lt       = require( './lt.js' )
 
 module.exports = ( attackTime = 44100, decayTime = 44100 ) => {
   let phase = accum( 1, 0, { max: Infinity }),
@@ -35,11 +36,11 @@ module.exports = ( attackTime = 44100, decayTime = 44100 ) => {
     gen.globals.windows[ 't60decay' ][ decayTime ] = decayData = data( decayBuffer )
   }
 
-  out = conditional( 
-    lt( phase, attackTime ), 
-    peek( attackData, div( phase, attackTime ) ), 
-    peek( decayData, ltp( accum( 1/decayTime,0,{max:Infinity}), 1) ) 
-  )
+  out = ifelseif([ 
+    lt( phase, attackTime ), peek( attackData, div( phase, attackTime ) ), 
+    lt( phase, attackTime + decayTime ), peek( decayData, accum( 1/decayTime,0,{max:Infinity}) ),
+    0
+  ])
 
-  return gtp( out,0 )
+  return out 
 }

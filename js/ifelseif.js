@@ -29,7 +29,7 @@ let proto = {
           preblock = isEndBlock ? conditionals[ i ] : conditionals[ i+1 ],
           block, blockName, output
 
-      if( typeof cond === 'number' ){
+      if( typeof preblock === 'number' ){
         block = preblock
         blockName = null
       }else{

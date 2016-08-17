@@ -31,7 +31,7 @@ var proto = {
           blockName = void 0,
           output = void 0;
 
-      if (typeof cond === 'number') {
+      if (typeof preblock === 'number') {
         block = preblock;
         blockName = null;
       } else {
