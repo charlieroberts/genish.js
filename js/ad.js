@@ -6,9 +6,9 @@ let gen     = require( './gen.js' ),
     data    = require( './data.js' ),
     peek    = require( './peek.js' ),
     accum   = require( './accum.js' ),
-    ternary = require( './switch.js' )
+    conditional = require( './conditional' )
 
-module.exports = ( attackTime = 22050, decayTime = 22050 ) => {
+module.exports = ( attackTime = 44100, decayTime = 44100 ) => {
   let phase = accum( 1, 0, { max: Infinity }),
       attackBuffer = new Float32Array( attackTime ),
       decayBuffer  = new Float32Array( decayTime ),
@@ -18,10 +18,8 @@ module.exports = ( attackTime = 22050, decayTime = 22050 ) => {
   if( gen.globals.windows[ 't60decay' ]  === undefined ) gen.globals.windows[ 't60decay' ] = {}
   
   if( gen.globals.windows[ 't60attack' ][ attackTime ] === undefined ) {
-    let lastValue = 1, t60Time = Math.exp( -6.907755278921 / attackTime )
     for( let i = 0; i < attackTime; i++ ) {
-      attackBuffer[ i ] = 1 - lastValue
-      lastValue *= t60Time
+      attackBuffer[ i ] = Math.exp( i/attackTime, 5 )
     }
 
     gen.globals.windows[ 't60attack' ][ attackTime ] = attackData = data( attackBuffer )
@@ -37,7 +35,11 @@ module.exports = ( attackTime = 22050, decayTime = 22050 ) => {
     gen.globals.windows[ 't60decay' ][ decayTime ] = decayData = data( decayBuffer )
   }
 
-  out = ternary( lt( phase, attackTime ), peek( attackData, div( phase, attackTime ) ), peek( decayData, div( sub( phase, attackTime ), decayTime ) ) )
+  out = conditional( 
+    lt( phase, attackTime ), 
+    peek( attackData, div( phase, attackTime ) ), 
+    peek( decayData, ltp( accum( 1/decayTime,0,{max:Infinity}), 1) ) 
+  )
 
-  return out
+  return gtp( out,0 )
 }

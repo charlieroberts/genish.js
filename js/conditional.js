@@ -7,7 +7,7 @@ let proto = {
 
   gen() {
     let cond = gen.getInput( this.inputs[0] ),
-        block1, block2, block1Name, block2Name, cond1, cond2
+        block1, block2, block1Name, block2Name, cond1, cond2, out
 
     if( typeof this.inputs[1] === 'number' ) {
       block1 = this.inputs[1]
@@ -57,17 +57,16 @@ let proto = {
       `${block2}    ${this.name}_out = ${block2Name}`
 
 
-    let out = `  let ${this.name}_out 
+    out = 
+`  let ${this.name}_out 
   if( ${cond} ) {
 ${cond1}
   }else{
 ${cond2} 
-  }`
+  }
+`
 
     gen.memo[ this.name ] = `${this.name}_out`
-
-    // IMPORTANT!
-    gen.shouldLocalize = false
 
     return [ `${this.name}_out`, out ]
   }

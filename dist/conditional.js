@@ -12,7 +12,8 @@ var proto = {
         block1Name = void 0,
         block2Name = void 0,
         cond1 = void 0,
-        cond2 = void 0;
+        cond2 = void 0,
+        out = void 0;
 
     if (typeof this.inputs[1] === 'number') {
       block1 = this.inputs[1];
@@ -57,12 +58,9 @@ var proto = {
 
     cond2 = block2Name === null ? '  ' + this.name + '_out = ' + block2 : block2 + '    ' + this.name + '_out = ' + block2Name;
 
-    var out = '  let ' + this.name + '_out \n  if( ' + cond + ' ) {\n' + cond1 + '\n  }else{\n' + cond2 + ' \n  }';
+    out = '  let ' + this.name + '_out \n  if( ' + cond + ' ) {\n' + cond1 + '\n  }else{\n' + cond2 + ' \n  }\n';
 
     _gen.memo[this.name] = this.name + '_out';
-
-    // IMPORTANT!
-    _gen.shouldLocalize = false;
 
     return [this.name + '_out', out];
   }
