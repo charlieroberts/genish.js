@@ -79,7 +79,8 @@ let library = {
   env:      require( './env.js' ),
   ad:       require( './ad.js'  ),
   conditional: require( './conditional.js' ),
-  ifelseif: require( './ifelseif.js' )
+  ifelseif: require( './ifelseif.js' ),
+  bang:     require( './bang.js' )
 }
 
 library.gen.lib = library
