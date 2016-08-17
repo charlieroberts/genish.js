@@ -20,9 +20,15 @@ let proto = {
       ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + this.data.buffer.length }, 
       ${this.name}_index = ${this.name}_phase | 0,\n`
 
-    next = lengthIsLog2 ? 
+    //next = lengthIsLog2 ? 
+    if( this.boundmode === 'wrap' ) {
+      next = lengthIsLog2 ?
       `( ${this.name}_index + 1 ) & (${this.data.buffer.length} - 1)` :
       `${this.name}_index + 1 >= ${this.data.buffer.length} ? ${this.name}_index + 1 - ${this.data.buffer.length} : ${this.name}_index + 1`
+    }else if( this.boundmode === 'clamp' ) {
+      next = 
+      `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
+    }
 
     if( this.interp === 'linear' ) {      
     functionBody += `      ${this.name}_frac  = ${this.name}_phase - ${this.name}_index,
@@ -42,7 +48,7 @@ let proto = {
 
 module.exports = ( data, index, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { channels:1, mode:'phase', interp:'linear' } 
+      defaults = { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' } 
   
   if( properties !== undefined ) Object.assign( defaults, properties )
 

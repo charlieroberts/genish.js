@@ -22,7 +22,12 @@ var proto = {
     //${this.name}_index = ${this.name}_phase | 0,\n`
     functionBody = '  let ' + this.name + '_dataIdx  = ' + idx + ', \n      ' + this.name + '_phase = ' + (this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + this.data.buffer.length) + ', \n      ' + this.name + '_index = ' + this.name + '_phase | 0,\n';
 
-    next = lengthIsLog2 ? '( ' + this.name + '_index + 1 ) & (' + this.data.buffer.length + ' - 1)' : this.name + '_index + 1 >= ' + this.data.buffer.length + ' ? ' + this.name + '_index + 1 - ' + this.data.buffer.length + ' : ' + this.name + '_index + 1';
+    //next = lengthIsLog2 ?
+    if (this.boundmode === 'wrap') {
+      next = lengthIsLog2 ? '( ' + this.name + '_index + 1 ) & (' + this.data.buffer.length + ' - 1)' : this.name + '_index + 1 >= ' + this.data.buffer.length + ' ? ' + this.name + '_index + 1 - ' + this.data.buffer.length + ' : ' + this.name + '_index + 1';
+    } else if (this.boundmode === 'clamp') {
+      next = this.name + '_index + 1 >= ' + (this.data.buffer.length - 1) + ' ? ' + (this.data.buffer.length - 1) + ' : ' + this.name + '_index + 1';
+    }
 
     if (this.interp === 'linear') {
       functionBody += '      ' + this.name + '_frac  = ' + this.name + '_phase - ' + this.name + '_index,\n      ' + this.name + '_base  = memory[ ' + this.name + '_dataIdx +  ' + this.name + '_index ],\n      ' + this.name + '_next  = ' + next + ',     \n      ' + this.name + '_out   = ' + this.name + '_base + ' + this.name + '_frac * ( memory[ ' + this.name + '_dataIdx + ' + this.name + '_next ] - ' + this.name + '_base )\n\n';
@@ -38,7 +43,7 @@ var proto = {
 
 module.exports = function (data, index, properties) {
   var ugen = Object.create(proto),
-      defaults = { channels: 1, mode: 'phase', interp: 'linear' };
+      defaults = { channels: 1, mode: 'phase', interp: 'linear', boundmode: 'wrap' };
 
   if (properties !== undefined) Object.assign(defaults, properties);
 
