@@ -3,13 +3,13 @@
 var _gen = require('./gen.js');
 
 var proto = {
-  basename: 'and',
+  basename: 'eq',
 
   gen: function gen() {
     var inputs = _gen.getInputs(this),
         out = void 0;
 
-    out = '  let ' + this.name + ' = ' + inputs[0] + ' !== 0 && ' + inputs[1] + ' !== 0 | 0\n\n';
+    out = in1 === in2 ? 1 : '  let ' + this.name + ' = ' + inputs[0] + ' === ' + inputs[1] + ' | 0\n\n';
 
     _gen.memo[this.name] = '' + this.name;
 

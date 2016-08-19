@@ -3,12 +3,12 @@
 let gen = require( './gen.js' )
 
 let proto = {
-  basename:'and',
+  basename:'eq',
 
   gen() {
     let inputs = gen.getInputs( this ), out
 
-    out = `  let ${this.name} = ${inputs[0]} !== 0 && ${inputs[1]} !== 0 | 0\n\n`
+    out = in1 === in2 ? 1 : `  let ${this.name} = ${inputs[0]} === ${inputs[1]} | 0\n\n`
 
     gen.memo[ this.name ] = `${this.name}`
 

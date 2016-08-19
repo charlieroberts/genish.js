@@ -7,7 +7,7 @@ let gen      = require( './gen.js' ),
     data     = require( './data.js' ),
     peek     = require( './peek.js' ),
     accum    = require( './accum.js' ),
-    ifelsef = require( './ifelseif.js' ),
+    ifelse   = require( './ifelseif.js' ),
     lt       = require( './lt.js' ),
     bang     = require( './bang.js' ),
     env      = require( './env.js' ),
@@ -18,30 +18,30 @@ module.exports = ( _props ) => {
       phase = accum( 1, envTrigger, { max: Infinity, shouldWrap:false }),
       shouldSustain = param( 1 ),
       defaults = {
-         shape:'Exponential',
-         alpha:5,
-         attackTime:44,
-         decayTime:gen.samplerate / 2,
-         sustainTime:gen.samplerate,
+         shape: 'exponential',
+         alpha: 5,
+         attackTime: 44,
+         decayTime: gen.samplerate / 2,
+         sustainTime: gen.samplerate,
          releaseTime: gen.samplerate,
-         sustainLevel: .7,
+         sustainLevel: .6,
          triggerRelease: false,
       },
       props = Object.assign({}, defaults, _props ),
       bufferData, decayData, out, buffer, sustainCondition, releaseAccum, releaseCondition
 
   // slightly more efficient to use existing phase accumulator for linear envelopes
-  if( props.shape === 'linear' ) {
-    out = ifelse( 
-      lt( phase, props.attackTime ), memo( div( phase, props.attackTime ) ),
-      lt( phase, props.attackTime + props.decayTime ), sub( 1, mul( div( sub( phase, props.attackTime ), props.decayTime ), 1-props.sustainLevel ) ),
-      lt( phase, props.attackTime + props.decayTime + props.sustainTime ), 
-        props.sustainLevel,
-      lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ), 
-        sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime ), props.releaseTime ), props.sustainLevel) ),
-      0
-    )
-  } else {     
+  //if( props.shape === 'linear' ) {
+  //  out = ifelse( 
+  //    lt( phase, props.attackTime ), memo( div( phase, props.attackTime ) ),
+  //    lt( phase, props.attackTime + props.decayTime ), sub( 1, mul( div( sub( phase, props.attackTime ), props.decayTime ), 1-props.sustainLevel ) ),
+  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime ), 
+  //      props.sustainLevel,
+  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ), 
+  //      sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime ), props.releaseTime ), props.sustainLevel) ),
+  //    0
+  //  )
+  //} else {     
     bufferData = env( 1024, { type:props.shape, alpha:props.alpha } )
     
     sustainCondition = props.triggerRelease 
@@ -80,7 +80,7 @@ module.exports = ( _props ) => {
 
       0
     )
-  }
+  //}
    
   out.trigger = ()=> {
     shouldSustain.value = 1
