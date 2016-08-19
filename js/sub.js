@@ -55,7 +55,7 @@ module.exports = ( ...args ) => {
 
       returnValue = hasUgens ? [ this.name, out ] : out
       
-      //if( hasUgens ) gen.memo[ this.name ] = this.name
+      if( hasUgens ) gen.memo[ this.name ] = this.name
 
       return returnValue
     }

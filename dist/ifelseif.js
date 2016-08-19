@@ -14,7 +14,7 @@
 var _gen = require('./gen.js');
 
 var proto = {
-  basename: 'ifelseif',
+  basename: 'ifelse',
 
   gen: function gen() {
     //let cond = gen.getInput( this.inputs[0] ),

@@ -50,5 +50,13 @@ module.exports = {
 
   Triangular( length, index ) {
     return 2 / length * (length / 2 - Math.abs(index - (length - 1) / 2))
+  },
+
+  Exponential( length, index, alpha ) {
+    return Math.pow( index/length, alpha )
+  },
+
+  Linear( length, index ) {
+    return index/length
   }
 }

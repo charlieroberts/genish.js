@@ -41,5 +41,11 @@ module.exports = {
   },
   Triangular: function Triangular(length, index) {
     return 2 / length * (length / 2 - Math.abs(index - (length - 1) / 2));
+  },
+  Exponential: function Exponential(length, index, alpha) {
+    return Math.pow(index / length, alpha);
+  },
+  Linear: function Linear(length, index) {
+    return index / length;
   }
 };

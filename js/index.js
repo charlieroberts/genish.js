@@ -78,8 +78,10 @@ let library = {
   windows:  require( './windows.js' ),
   env:      require( './env.js' ),
   ad:       require( './ad.js'  ),
+  adsr:     require( './adsr.js' ),
   ifelse:   require( './ifelseif.js' ),
-  bang:     require( './bang.js' )
+  bang:     require( './bang.js' ),
+  and:      require( './and.js' )
 }
 
 library.gen.lib = library

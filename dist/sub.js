@@ -62,7 +62,7 @@ module.exports = function () {
 
       returnValue = hasUgens ? [this.name, out] : out;
 
-      //if( hasUgens ) gen.memo[ this.name ] = this.name
+      if (hasUgens) _gen.memo[this.name] = this.name;
 
       return returnValue;
     }

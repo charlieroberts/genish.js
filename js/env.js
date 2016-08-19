@@ -26,7 +26,7 @@ module.exports = ( length = 11025, properties ) => {
     gen.globals.windows[ props.type ][ props.bufferLength ] = data( buffer )
   }
 
-  let ugen = peek( gen.globals.windows[ props.type ][ props.bufferLength ], phasor( frequency, 0, { min:0 } ))
+  let ugen = gen.globals.windows[ props.type ][ props.bufferLength ] //peek( gen.globals.windows[ props.type ][ props.bufferLength ], phasor( frequency, 0, { min:0 } ))
   ugen.name = 'env' + gen.getUID()
 
   return ugen
