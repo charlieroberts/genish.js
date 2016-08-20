@@ -58,7 +58,9 @@ let library = {
   noise:    require( './noise.js' ),
   not:      require( './not.js' ),
   gt:       require( './gt.js' ),
+  gte:      require( './gte.js' ),
   lt:       require( './lt.js' ), 
+  lte:      require( './lte.js' ), 
   bool:     require( './bool.js' ),
   gate:     require( './gate.js' ),
   train:    require( './train.js' ),
@@ -66,8 +68,8 @@ let library = {
   in:       require( './in.js' ),
   t60:      require( './t60.js'),
   mtof:     require( './mtof.js'),
-  ltp:      require( './ltp.js'),       // TODO: test
-  gtp:      require( './gtp.js'),       // TODO: test
+  ltp:      require( './ltp.js'),        // TODO: test
+  gtp:      require( './gtp.js'),        // TODO: test
   switch:   require( './switch.js' ),
   mstosamps:require( './mstosamps.js' ), // TODO: needs test,
   selector: require( './selector.js' ),
