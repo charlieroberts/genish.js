@@ -13,7 +13,7 @@ let proto = {
 
     gen.requestMemory( this.memory )
 
-    gen.memory.heap[ this.memory.value.idx ] = this.min
+    gen.memory.heap[ this.memory.value.idx ] = this.initialValue
 
     functionBody = this.callback( genName, inputs[0], inputs[1], `memory[${this.memory.value.idx}]` )
 
@@ -39,7 +39,7 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
-      out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n\n` 
+      out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.initialValue}\n\n` 
     }
 
     out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
@@ -72,6 +72,7 @@ module.exports = ( incr, reset=0, properties ) => {
   Object.assign( ugen, { 
     min: defaults.min, 
     max: defaults.max,
+    initial: defaults.initialValue,
     value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
