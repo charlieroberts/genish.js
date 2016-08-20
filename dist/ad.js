@@ -19,7 +19,7 @@ module.exports = function () {
 
   var _bang = bang(),
       phase = accum(1, _bang, { max: Infinity, shouldWrap: false }),
-      props = Object.assign({}, { shape: 'Exponential', alpha: 5 }, _props),
+      props = Object.assign({}, { shape: 'exponential', alpha: 5 }, _props),
       bufferData = void 0,
       decayData = void 0,
       out = void 0,

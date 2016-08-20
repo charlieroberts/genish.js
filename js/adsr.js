@@ -13,18 +13,13 @@ let gen      = require( './gen.js' ),
     env      = require( './env.js' ),
     param    = require( './param.js' )
 
-module.exports = ( _props ) => {
+module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
       phase = accum( 1, envTrigger, { max: Infinity, shouldWrap:false }),
       shouldSustain = param( 1 ),
       defaults = {
          shape: 'exponential',
          alpha: 5,
-         attackTime: 44,
-         decayTime: gen.samplerate / 2,
-         sustainTime: gen.samplerate,
-         releaseTime: gen.samplerate,
-         sustainLevel: .6,
          triggerRelease: false,
       },
       props = Object.assign({}, defaults, _props ),
@@ -46,35 +41,35 @@ module.exports = ( _props ) => {
     
     sustainCondition = props.triggerRelease 
       ? shouldSustain
-      : lt( phase, props.attackTime + props.decayTime + props.sustainTime )
+      : lt( phase, attackTime + decayTime + sustainTime )
 
     releaseAccum = props.triggerRelease
-      ? gtp( sub( props.sustainLevel, accum( props.sustainLevel / props.releaseTime , 0, { shouldWrap:false }) ), 0 )
-      : sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime), props.releaseTime ), props.sustainLevel ) ), 
+      ? gtp( sub( sustainLevel, accum( sustainLevel / releaseTime , 0, { shouldWrap:false }) ), 0 )
+      : sub( sustainLevel, mul( div( sub( phase, attackTime + decayTime + sustainTime), releaseTime ), sustainLevel ) ), 
 
     releaseCondition = props.triggerRelease
       ? not( shouldSustain )
-      : lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime )
+      : lt( phase, attackTime + decayTime + sustainTime + releaseTime )
 
     out = ifelse(
       // attack 
-      lt( phase, props.attackTime ), 
-      peek( bufferData, div( phase, props.attackTime ), { boundmode:'clamp' } ), 
+      lt( phase,  attackTime ), 
+      peek( bufferData, div( phase,  attackTime ), { boundmode:'clamp' } ), 
 
       // decay
-      lt( phase, props.attackTime + props.decayTime ), 
-      peek( bufferData, sub( 1, mul( div( sub( phase, props.attackTime ), props.decayTime ), 1-props.sustainLevel ) ), { boundmode:'clamp' }),
+      lt( phase,  attackTime +  decayTime ), 
+      peek( bufferData, sub( 1, mul( div( sub( phase,  attackTime ),  decayTime ), sub( 1,  sustainLevel ) ) ), { boundmode:'clamp' }),
 
       // sustain
       sustainCondition,
-      peek( bufferData, props.sustainLevel ),
+      peek( bufferData,  sustainLevel ),
 
       // release
-      releaseCondition, //lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ),
+      releaseCondition, //lt( phase,  attackTime +  decayTime +  sustainTime +  releaseTime ),
       peek( 
         bufferData,
         releaseAccum, 
-        //sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime), props.releaseTime ), props.sustainLevel ) ), 
+        //sub(  sustainLevel, mul( div( sub( phase,  attackTime +  decayTime +  sustainTime),  releaseTime ),  sustainLevel ) ), 
         { boundmode:'clamp' }
       ),
 

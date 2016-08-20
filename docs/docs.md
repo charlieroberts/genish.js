@@ -218,6 +218,93 @@ intrvl = setInterval( ()=> {
 }, 100 )
 ```
 
+# Envelopes
+
+ad
+----
+**attackTime** &nbsp;  *ugen* or *number* &nbsp; Attack time measured in samples, defaults to 44100. 
+**decayTime** &nbsp;  *ugen* or *number* &nbsp; Decay time measured in samples, defaults to 44100.
+
+####Properties####
+###ad.shape###
+*string* (default 'exponental') determines the shape of the attack / decay.
+###ad.alpha###
+*number* (default 5) An extra number used to determine windowing. In the case of 'exponential' envelopes, this determines the amount of curvature in the envelope. For 'linear' envelopes this number has no effect.
+
+Creates an envelope with an attack and a decay stage, both measured in samples.
+
+####Methods####
+###ad.trigger###
+Re-trigger the envelope.
+
+```javascript
+myenv = ad( 44, 88200 )
+
+play( 
+  mul( myenv, cycle( 330 ) ) 
+)
+
+// wait some time for decay and then run to re-trigger
+myenv.trigger()
+```
+
+adsr
+----
+**attackTime** &nbsp;  *ugen* or *number* &nbsp; Attack time measured in samples, defaults to `gen.samplerate / 1000` (one ms). 
+**decayTime** &nbsp;  *ugen* or *number* &nbsp; Decay time measured in samples, defaults to `gen.samplerate / 2` (half a second).
+**sustainTime** &nbsp; *ugen* or *number* &nbsp; Sustain time measured in samples, defaults to `gen.samplerate` (one second).
+**sustainLevel** &nbsp; *ugen* or *number* &nbsp; Each stage of the envelope is controlled via a wavetable; the sustainLevel property dictates at one point in the wavetable the envelope rests before releasing. Thus, a value of .5 does not mean that the output of the envelope during sustain will be .5 (unless enveloping for the adsr is linear)... it will instead depend on the type enveloping used. Default is .6.
+**releaseTime** &nbsp; *ugen* or *number* &nbsp; Release time measured in samples, defaults to `gen.samplerate` (one second).
+
+####Properties####
+###adsr.shape###
+*string* (default 'exponental') determines the shape of the attack / decay / release.
+###adsr.alpha###
+*number* (default 5) An extra number used to determine windowing. In the case of 'exponential' envelopes, this determines the amount of curvature in the envelope. For 'linear' envelopes this number has no effect.
+###adsr.triggerRelease###
+*boolean* (default false) This property determines if the envelope waits for a `release()` message before terminating the sustain segment and advancing to the release segment. By setting this value to `1`, you can easily script release of the envelope to depend on user interaction. When `releaseTrigger` is true, the `sustainTime` input has no effect on envelope.
+
+Creates an envelope with attack, decay, sustatin and release stages, with each duration measured in samples. Envelopes can automatically advance through their entirety (default behavior) or can stop at the sustain stage and what for a command to advance by setting the `triggerRelease` property to a value of `1`. 
+
+####Methods####
+###adsr.trigger###
+Re-trigger the envelope.
+###adsr.release###
+Move from the sustain stage to the release stage of the envelope. This method only has effect if the `triggerRelease` property to set to `true` on instantiation. Note that calling this method will not skip attack or decay stages... if called during the attack or decay stage the envelope will simply bypass the sustain stage and continue straight to the release after the decay is completed. 
+
+```javascript
+myenv = adsr( 44, 22050, 22050, .6, 44100, { releaseTrigger:true })
+
+play( 
+  mul( myenv, cycle( 330 ) ) 
+)
+
+// wait until sustain and then run next line to release
+myenv.release()
+
+// re-trigger
+myenv.retrigger()
+```
+
+t60
+----
+**a** &nbsp;  *ugen*  Number of samples to fade 1 by 60 dB.
+
+`t60` provides a multiplier that, when applied to a signal every sample, fades it by 60db (at which point it is effectively inaudible). Although the example below shows `t60` in action, it would actually be much more efficient to calculate t60 once since the time used (88200) is static. 
+
+```javascript
+lastsample = ssd(1)
+
+// update fade with previous output * t60
+// we could also use: Math.exp( -6.907755278921 / 88200 ) instead of t60( 88200 )
+fade = mul( lastsample.out, t60( 88200 ) )
+
+// record current value of fade
+lastsample.in( fade )
+
+play( mul( lastsample.out, cycle( 330 ) ) ) 
+```
+
 # Feedback
 
 delay
@@ -305,7 +392,7 @@ not
 ----
 **a** &nbsp;  *ugen* or *number* Input signal
  
-Converts signals to either 0 or 1. If the input signal does not equal 0 then output a 0; if input == 0 then output 1.
+An input of 0 returns 1 while all other values return 0.
 
 ```javascript
 y = x !== 0 ? 0 : 1
@@ -315,11 +402,18 @@ bool
 ----
 **a** &nbsp;  *ugen* or *number* Input signal
  
-Converts signals to either 0 or 1. If the input signal does not equal 0 then output is 1; if input == 0 then output 0.
+Converts signals to either 0 or 1. If the input signal does not equal 0 then output is 1; if input == 0 then output 0. Roughly equivalent to the following pseudocode:
 
 ```javascript
 y = x !== 0 ? 1 : 0
 ```
+
+and
+----
+**a** &nbsp;  *ugen* or *number* Input signal
+**b** &nbsp;  *ugen* or *number* Input signal
+
+Returns 1 if both inputs do not equal 0. 
 
 # Numeric 
 
@@ -391,6 +485,13 @@ atan
 Calculates the arctangent of the input in radians using Javascript's `Math.tan()` function
 
 # Comparison
+
+eq
+----
+**a** &nbsp;  *ugen* or *number* Input signal
+**b** &nbsp;  *ugen* or *number* Input signal
+
+Returns 1 if two inputs are equal, otherwise returns 0.
 
 max
 ----
@@ -484,15 +585,15 @@ ifelse
 
 `ifelse` can be called in two ways. In the first, it is functionally identical to the `switch` ugen: if a given control input is true, the second input to `ifelse` is outputted. Otherwise, the third input is outputted.
 
-The other option is to pass an array of conditional / output pairs. These will be used to create an appropriate if/else block in the final callback. If there is a single final output with no accompanying condition, this will be the end `else` of the control structure. For example:
+The other option is to pass multiple conditional / output pairs. These will be used to create an appropriate if/else block in the final callback. If there is a single final output with no accompanying condition, this will be the end `else` of the control structure. For example:
 
 ```javascript
 
-ie = ifelse([
+ie = ifelse(
   lt( 0,1 ), 440,
   gt( 1,.5 ), 880,
   1200
-])
+)
 
 gen.createCallback( ie )
 // ...outputs a function with the following control block (in pseudocode):
@@ -513,18 +614,16 @@ Most importantly (and as implied by the pseudocode) we can use `ifelse` to creat
 osc = phasor( .5 )
   
 play(
-  ifelse([
+  ifelse(
     lt( osc, -.5 ), cycle( 220 ),
     lt( osc, 0 )  , phasor( 330 ),
     lt( osc, .5 ) , train( 440 ),
     cycle(550)   
-  ])
+  )
 )
 ```
 
-... we are only running two oscillators at any given time, our control phasor and whatever is held in the current executign block of our `ifelse` ugen. 
-
-
+... we are only running two oscillators at any given time, our control phasor and whatever is held in the current executing block of our `ifelse` ugen. 
 
 selector
 ----
