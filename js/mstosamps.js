@@ -11,7 +11,7 @@ let proto = {
         returnValue
 
     if( isNaN( inputs[0] ) ) {
-      out = `  let ${this.name } = ${gen.samplerate} / 1000 * ${inputs[0]} \n\n`
+      out = `  var ${this.name } = ${gen.samplerate} / 1000 * ${inputs[0]} \n\n`
      
       gen.memo[ this.name ] = out
       

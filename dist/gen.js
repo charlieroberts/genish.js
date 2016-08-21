@@ -167,7 +167,7 @@ var gen = {
     //})
     //this.memoryIndex = 0
 
-    this.functionBody = "  'use strict'\n  let memory = gen.memory\n\n";
+    this.functionBody = "  'use strict'\n  var memory = gen.memory\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )

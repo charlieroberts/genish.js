@@ -22,7 +22,7 @@ module.exports = ( ...args ) => {
       this.inputs.forEach( value => { if( isNaN( value ) ) hasUgens = true })
       
       if( hasUgens ) { // store in variable for future reference
-        out = '  let ' + this.name + ' = ('
+        out = '  var ' + this.name + ' = ('
       }else{
         out = '('
       }

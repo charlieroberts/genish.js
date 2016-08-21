@@ -8,7 +8,7 @@ let proto = {
   gen() {
     let inputs = gen.getInputs( this ), out
 
-    out = `  let ${this.name} = ${inputs[0]} !== 0 && ${inputs[1]} !== 0 | 0\n\n`
+    out = `  var ${this.name} = ${inputs[0]} !== 0 && ${inputs[1]} !== 0 | 0\n\n`
 
     gen.memo[ this.name ] = `${this.name}`
 

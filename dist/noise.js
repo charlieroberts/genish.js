@@ -10,7 +10,7 @@ var proto = {
 
     _gen.closures.add({ 'noise': Math.random });
 
-    out = '  let ' + this.name + ' = gen.noise()\n';
+    out = '  var ' + this.name + ' = gen.noise()\n';
 
     _gen.memo[this.name] = this.name;
 

@@ -11,7 +11,7 @@ var proto = {
 
     if (inputs[1] === inputs[2]) return inputs[1]; // if both potential outputs are the same just return one of them
 
-    out = '  let ' + this.name + '_out = ' + inputs[0] + ' === 1 ? ' + inputs[1] + ' : ' + inputs[2] + '\n\n';
+    out = '  var ' + this.name + '_out = ' + inputs[0] + ' === 1 ? ' + inputs[1] + ' : ' + inputs[2] + '\n\n';
 
     _gen.memo[this.name] = this.name + '_out';
 

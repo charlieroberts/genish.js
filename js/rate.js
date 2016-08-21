@@ -22,7 +22,7 @@ let proto = {
     gen.closures.add({ [ this.name ]: this }) 
 
     out = 
-` let ${this.name}_diff = ${inputs[0]} - ${genName}.lastSample
+` var ${this.name}_diff = ${inputs[0]} - ${genName}.lastSample
   if( ${this.name}_diff < -.5 ) ${this.name}_diff += 1
   ${genName}.phase += ${this.name}_diff * ${inputs[1]}
   if( ${genName}.phase > 1 ) ${genName}.phase -= 1

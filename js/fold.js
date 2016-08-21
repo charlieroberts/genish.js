@@ -19,7 +19,7 @@ let proto = {
 
   createCallback( v, lo, hi ) {
     let out =
-` let ${this.name}_value = ${v},
+` var ${this.name}_value = ${v},
       ${this.name}_range = ${hi} - ${lo},
       ${this.name}_numWraps = 0
 

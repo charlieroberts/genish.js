@@ -15,7 +15,7 @@ var proto = {
     if (isNaN(inputs[0])) {
       _gen.closures.add(_defineProperty({}, 'exp', Math.exp));
 
-      out = '  let ' + this.name + ' = gen.exp( -6.907755278921 / ' + inputs[0] + ' )\n\n';
+      out = '  var ' + this.name + ' = gen.exp( -6.907755278921 / ' + inputs[0] + ' )\n\n';
 
       _gen.memo[this.name] = out;
 

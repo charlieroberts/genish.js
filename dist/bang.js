@@ -6,7 +6,7 @@ var proto = {
   gen: function gen() {
     _gen.requestMemory(this.memory);
 
-    var out = '  let ' + this.name + ' = memory[' + this.memory.value.idx + ']\n  if( ' + this.name + ' === 1 ) memory[' + this.memory.value.idx + '] = 0      \n      \n';
+    var out = '  var ' + this.name + ' = memory[' + this.memory.value.idx + ']\n  if( ' + this.name + ' === 1 ) memory[' + this.memory.value.idx + '] = 0      \n      \n';
     _gen.memo[this.name] = this.name;
 
     return [this.name, out];

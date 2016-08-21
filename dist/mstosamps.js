@@ -11,7 +11,7 @@ var proto = {
         returnValue = void 0;
 
     if (isNaN(inputs[0])) {
-      out = '  let ' + this.name + ' = ' + _gen.samplerate + ' / 1000 * ' + inputs[0] + ' \n\n';
+      out = '  var ' + this.name + ' = ' + _gen.samplerate + ' / 1000 * ' + inputs[0] + ' \n\n';
 
       _gen.memo[this.name] = out;
 

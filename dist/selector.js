@@ -15,11 +15,11 @@ var proto = {
         returnValue = inputs[1];
         break;
       case 3:
-        out = '  let ' + this.name + '_out = ' + inputs[0] + ' === 1 ? ' + inputs[1] + ' : ' + inputs[2] + '\n\n';
+        out = '  var ' + this.name + '_out = ' + inputs[0] + ' === 1 ? ' + inputs[1] + ' : ' + inputs[2] + '\n\n';
         returnValue = [this.name + '_out', out];
         break;
       default:
-        out = ' let ' + this.name + '_out = 0\n  switch( ' + inputs[0] + ' + 1 ) {\n';
+        out = ' var ' + this.name + '_out = 0\n  switch( ' + inputs[0] + ' + 1 ) {\n';
 
         for (var i = 1; i < inputs.length; i++) {
           out += '    case ' + i + ': ' + this.name + '_out = ' + inputs[i] + '; break;\n';

@@ -42,7 +42,7 @@ let proto = {
       out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.initialValue}\n\n` 
     }
 
-    out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
+    out += `  var ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
     if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n`
     if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( ${valueRef} < ${this.min} ) ${valueRef} += ${diff}\n\n`

@@ -12,7 +12,7 @@ let proto = {
     gen.data[ this.name + '_control' ] = 0
 
     out = 
-` let ${this.name} = gen.data.${this.name}_control,
+` var ${this.name} = gen.data.${this.name}_control,
       ${this.name}_trigger = ${inputs[1]} > ${inputs[2]} ? 1 : 0
 
   if( ${this.name}_trigger !== ${this.name}  ) {

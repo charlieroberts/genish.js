@@ -33,7 +33,7 @@ let proto = {
       out += `  if( ${_reset} >= 1 ) ${valueRef} = ${_min}\n`
     }
 
-    out += `  let ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
+    out += `  var ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
     if( typeof this.max === 'number' && this.max !== Infinity &&  typeof this.min === 'number' ) {
       wrap = 

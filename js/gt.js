@@ -9,7 +9,7 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
     
-    out = `  let ${this.name} = `  
+    out = `  var ${this.name} = `  
 
     if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
       out += `( ${inputs[0]} > ${inputs[1]} | 0 )`

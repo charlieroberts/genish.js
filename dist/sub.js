@@ -29,7 +29,7 @@ module.exports = function () {
 
       if (hasUgens) {
         // store in variable for future reference
-        out = '  let ' + this.name + ' = (';
+        out = '  var ' + this.name + ' = (';
       } else {
         out = '(';
       }

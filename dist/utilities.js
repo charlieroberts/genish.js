@@ -22,6 +22,25 @@ var utilities = {
     this.ctx = new AC();
     gen.samplerate = this.ctx.sampleRate;
 
+    var start = function start() {
+      if (typeof AC !== 'undefined') {
+        if (document && document.documentElement && 'ontouchstart' in document.documentElement) {
+          window.removeEventListener('touchstart', start);
+
+          if ('ontouchstart' in document.documentElement) {
+            // required to start audio under iOS 6
+            var mySource = utilities.ctx.createBufferSource();
+            mySource.connect(utilities.ctx.destination);
+            mySource.noteOn(0);
+          }
+        }
+      }
+    };
+
+    if (document && document.documentElement && 'ontouchstart' in document.documentElement) {
+      window.addEventListener('touchstart', start);
+    }
+
     return this;
   },
   createScriptProcessor: function createScriptProcessor() {

@@ -58,7 +58,7 @@ let proto = {
 
 
     out = 
-`  let ${this.name}_out 
+`  var ${this.name}_out 
   if( ${cond} ) {
 ${cond1}
   }else{

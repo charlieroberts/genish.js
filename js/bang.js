@@ -7,7 +7,7 @@ let proto = {
     gen.requestMemory( this.memory )
     
     let out = 
-`  let ${this.name} = memory[${this.memory.value.idx}]
+`  var ${this.name} = memory[${this.memory.value.idx}]
   if( ${this.name} === 1 ) memory[${this.memory.value.idx}] = 0      
       
 `

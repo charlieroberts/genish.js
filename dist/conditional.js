@@ -58,7 +58,7 @@ var proto = {
 
     cond2 = block2Name === null ? '  ' + this.name + '_out = ' + block2 : block2 + '    ' + this.name + '_out = ' + block2Name;
 
-    out = '  let ' + this.name + '_out \n  if( ' + cond + ' ) {\n' + cond1 + '\n  }else{\n' + cond2 + ' \n  }\n';
+    out = '  var ' + this.name + '_out \n  if( ' + cond + ' ) {\n' + cond1 + '\n  }else{\n' + cond2 + ' \n  }\n';
 
     _gen.memo[this.name] = this.name + '_out';
 

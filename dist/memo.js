@@ -9,7 +9,7 @@ var proto = {
     var out = void 0,
         inputs = _gen.getInputs(this);
 
-    out = '  let ' + this.name + ' = ' + inputs[0] + '\n';
+    out = '  var ' + this.name + ' = ' + inputs[0] + '\n';
 
     _gen.memo[this.name] = this.name;
 
