@@ -15,7 +15,8 @@ let utilities = {
   },
 
   createContext() {
-    this.ctx = new ( AudioContext || webkitAudioContext )()
+    let AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
+    this.ctx = new AC()
     gen.samplerate = this.ctx.sampleRate
 
     return this

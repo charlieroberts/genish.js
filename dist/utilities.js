@@ -18,7 +18,8 @@ var utilities = {
     this.clear.callbacks.length = 0;
   },
   createContext: function createContext() {
-    this.ctx = new (AudioContext || webkitAudioContext)();
+    var AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext;
+    this.ctx = new AC();
     gen.samplerate = this.ctx.sampleRate;
 
     return this;
