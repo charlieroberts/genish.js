@@ -14,11 +14,11 @@ var proto = {
   }
 };
 
-module.exports = function () {
+module.exports = function (name) {
   var input = Object.create(proto);
 
   input.id = _gen.getUID();
-  input.name = '' + input.basename + input.id;
+  input.name = name !== undefined ? name : '' + input.basename + input.id;
 
   return input;
 };

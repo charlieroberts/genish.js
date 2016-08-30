@@ -14,11 +14,11 @@ let proto = {
   } 
 }
 
-module.exports = () => {
+module.exports = ( name ) => {
   let input = Object.create( proto )
 
   input.id   = gen.getUID()
-  input.name = `${input.basename}${input.id}`
+  input.name = name !== undefined ? name : `${input.basename}${input.id}`
 
   return input
 }
