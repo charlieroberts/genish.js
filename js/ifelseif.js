@@ -54,7 +54,7 @@ let proto = {
         `${block}    ${this.name}_out = ${blockName}`
 
       if( i === 0 ) {
-        out += `  if( ${cond} ) {
+        out += `  if( ${cond} === 1 ) {
 ${output}
   } else`
       }else if( isEndBlock ) {
@@ -64,7 +64,7 @@ ${output}
         if( i + 2 === conditionals.length || i === conditionals.length - 1 ) {
           out += `{\n  ${output}\n  }\n`
         }else{
-          out += ` if( ${cond} ) {
+          out += ` if( ${cond} === 1 ) {
 ${output}
   } else `
         }

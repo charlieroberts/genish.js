@@ -219,6 +219,7 @@ let gen = {
     if( this.debug || debug ) console.log( buildString ) 
 
     callback = new Function( buildString )()
+
     
     // assign properties to named function
     for( let dict of this.closures.values() ) {
@@ -233,6 +234,7 @@ let gen = {
           ugen = dict[ name ]
       
       Object.defineProperty( callback, name, {
+        configurable: true,
         get() { return ugen.value },
         set(v){ ugen.value = v }
       })
@@ -240,10 +242,11 @@ let gen = {
     }
 
     callback.data = this.data
-    callback.out  = []
+    callback.out  = new Float32Array( 2 )
+    callback.parameters = this.parameters.slice( 0 )
 
-    if( MemoryHelper.isPrototypeOf( this.memory ) ) 
-      callback.memory = this.memory.heap
+    //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
+    callback.memory = this.memory.heap
 
     this.histories.clear()
 

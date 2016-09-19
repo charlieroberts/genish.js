@@ -13,6 +13,11 @@ let library = {
     }
 
     Object.assign( destination, library )
+
+    library.in = destination.input
+    library.history = destination.ssd
+    library.switch = destination.ternary
+
     destination.clip = library.clamp
   },
 
@@ -75,15 +80,16 @@ let library = {
   selector: require( './selector.js' ),
   utilities:require( './utilities.js' ),
   pow:      require( './pow.js' ),
-  attack:   require( './attack.js' ),
-  decay:    require( './decay.js' ),
+  //attack:   require( './attack.js' ),
+  //decay:    require( './decay.js' ),
   windows:  require( './windows.js' ),
   env:      require( './env.js' ),
   ad:       require( './ad.js'  ),
   adsr:     require( './adsr.js' ),
   ifelse:   require( './ifelseif.js' ),
   bang:     require( './bang.js' ),
-  and:      require( './and.js' )
+  and:      require( './and.js' ),
+  pan:      require( './pan.js' )
 }
 
 library.gen.lib = library

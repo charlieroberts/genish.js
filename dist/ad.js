@@ -7,10 +7,11 @@ var gen = require('./gen.js'),
     data = require('./data.js'),
     peek = require('./peek.js'),
     accum = require('./accum.js'),
-    ifelsef = require('./ifelseif.js'),
+    ifelse = require('./ifelseif.js'),
     lt = require('./lt.js'),
     bang = require('./bang.js'),
-    env = require('./env.js');
+    env = require('./env.js'),
+    add = require('./add.js');
 
 module.exports = function () {
   var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
@@ -25,12 +26,13 @@ module.exports = function () {
       out = void 0,
       buffer = void 0;
 
+  //console.log( 'attack time:', attackTime, 'decay time:', decayTime )
   // slightly more efficient to use existing phase accumulator for linear envelopes
   if (props.shape === 'linear') {
-    out = ifelse(lt(phase, attackTime), memo(div(phase, attackTime)), lt(phase, attackTime + decayTime), sub(1, div(sub(phase, attackTime), decayTime)), 0);
+    out = ifelse(lt(phase, attackTime), memo(div(phase, attackTime)), lt(phase, add(attackTime, decayTime)), sub(1, div(sub(phase, attackTime), decayTime)), 0);
   } else {
     bufferData = env(1024, { type: props.shape, alpha: props.alpha });
-    out = ifelse(lt(phase, attackTime), peek(bufferData, div(phase, attackTime), { boundmode: 'clamp' }), lt(phase, attackTime + decayTime), peek(bufferData, sub(1, div(sub(phase, attackTime), decayTime)), { boundmode: 'clamp' }), 0);
+    out = ifelse(lt(phase, attackTime), peek(bufferData, div(phase, attackTime), { boundmode: 'clamp' }), lt(phase, add(attackTime, decayTime)), peek(bufferData, sub(1, div(sub(phase, attackTime), decayTime)), { boundmode: 'clamp' }), 0);
   }
 
   out.trigger = _bang.trigger;

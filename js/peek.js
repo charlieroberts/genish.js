@@ -17,7 +17,7 @@ let proto = {
     //console.log( "LENGTH IS LOG2", lengthIsLog2, this.data.buffer.length )
 //${this.name}_index = ${this.name}_phase | 0,\n`
     functionBody = `  var ${this.name}_dataIdx  = ${idx}, 
-      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + this.data.buffer.length }, 
+      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + (this.data.buffer.length - 1) }, 
       ${this.name}_index = ${this.name}_phase | 0,\n`
 
     //next = lengthIsLog2 ? 

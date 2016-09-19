@@ -267,6 +267,7 @@ var gen = {
             ugen = dict[name];
 
         Object.defineProperty(callback, name, {
+          configurable: true,
           get: function get() {
             return ugen.value;
           },
@@ -296,9 +297,11 @@ var gen = {
     }
 
     callback.data = this.data;
-    callback.out = [];
+    callback.out = new Float32Array(2);
+    callback.parameters = this.parameters.slice(0);
 
-    if (MemoryHelper.isPrototypeOf(this.memory)) callback.memory = this.memory.heap;
+    //if( MemoryHelper.isPrototypeOf( this.memory ) )
+    callback.memory = this.memory.heap;
 
     this.histories.clear();
 
