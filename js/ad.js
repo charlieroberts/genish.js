@@ -15,7 +15,7 @@ let gen      = require( './gen.js' ),
 
 module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   let _bang = bang(),
-      phase = accum( 1, _bang, { max: Infinity, shouldWrap:false }),
+      phase = accum( 1, _bang, { max: Infinity, shouldWrap:false, initialValue:Infinity }),
       props = Object.assign({}, { shape:'exponential', alpha:5 }, _props ),
       bufferData, decayData, out, buffer
 
