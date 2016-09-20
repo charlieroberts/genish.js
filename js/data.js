@@ -75,7 +75,7 @@ module.exports = ( x, y=1, properties ) => {
   }
 
   ugen.memory = {
-    values: { length:ugen.dim, index:null }
+    values: { length:ugen.dim, idx:null }
   }
 
   gen.name = 'data'+gen.getUID()

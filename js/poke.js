@@ -18,7 +18,15 @@ let proto = {
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
     //gen.functionBody += wrapped[1]
-    gen.functionBody += `  ${dataName}[ ${idx} + ${inputs[1]} ] = ${inputs[0]}\n`
+    let outputStr = this.inputs[1] === 0 ?
+      `  ${dataName}[ ${idx} ] = ${inputs[0]}\n` :
+      `  ${dataName}[ ${idx} + ${inputs[1]} ] = ${inputs[0]}\n`
+
+    if( this.inline === undefined ) {
+      gen.functionBody += outputStr
+    }else{
+      return [ this.inline, outputStr ]
+    }
   }
 }
 module.exports = ( data, value, index, properties ) => {

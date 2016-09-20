@@ -82,7 +82,7 @@ module.exports = function (x) {
   };
 
   ugen.memory = {
-    values: { length: ugen.dim, index: null }
+    values: { length: ugen.dim, idx: null }
   };
 
   _gen.name = 'data' + _gen.getUID();

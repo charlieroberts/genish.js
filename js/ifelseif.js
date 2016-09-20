@@ -51,11 +51,11 @@ let proto = {
 
       output = blockName === null ? 
         `  ${this.name}_out = ${block}` :
-        `${block}    ${this.name}_out = ${blockName}`
+        `${block}  ${this.name}_out = ${blockName}`
 
       if( i === 0 ) {
         out += `  if( ${cond} === 1 ) {
-${output}
+  ${output}
   } else`
       }else if( isEndBlock ) {
         out += `{\n  ${output}\n  }\n`

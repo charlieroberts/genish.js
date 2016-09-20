@@ -51,10 +51,10 @@ var proto = {
         }
       }
 
-      output = blockName === null ? '  ' + this.name + '_out = ' + block : block + '    ' + this.name + '_out = ' + blockName;
+      output = blockName === null ? '  ' + this.name + '_out = ' + block : block + '  ' + this.name + '_out = ' + blockName;
 
       if (i === 0) {
-        out += '  if( ' + cond + ' === 1 ) {\n' + output + '\n  } else';
+        out += '  if( ' + cond + ' === 1 ) {\n  ' + output + '\n  } else';
       } else if (isEndBlock) {
         out += '{\n  ' + output + '\n  }\n';
       } else {

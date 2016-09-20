@@ -89,7 +89,8 @@ let library = {
   ifelse:   require( './ifelseif.js' ),
   bang:     require( './bang.js' ),
   and:      require( './and.js' ),
-  pan:      require( './pan.js' )
+  pan:      require( './pan.js' ),
+  eq:       require( './eq.js' )
 }
 
 library.gen.lib = library
