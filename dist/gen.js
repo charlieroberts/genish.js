@@ -321,7 +321,6 @@ var gen = {
     } else {
       if ((typeof graph === 'undefined' ? 'undefined' : _typeof(graph)) === 'object') {
         if (graph.memory !== undefined) {
-          console.log(graph.memory);
           for (var memoryKey in graph.memory) {
             this.memory.free(graph.memory[memoryKey].idx);
           }

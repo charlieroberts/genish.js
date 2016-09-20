@@ -91,7 +91,8 @@ var library = {
   bang: require('./bang.js'),
   and: require('./and.js'),
   pan: require('./pan.js'),
-  eq: require('./eq.js')
+  eq: require('./eq.js'),
+  neq: require('./neq.js')
 };
 
 library.gen.lib = library;

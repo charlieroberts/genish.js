@@ -238,7 +238,6 @@ let gen = {
     } else {
       if( typeof graph === 'object' ) {
         if( graph.memory !== undefined ) {
-          console.log( graph.memory )
           for( let memoryKey in graph.memory ) {
             this.memory.free( graph.memory[ memoryKey ].idx )
           }

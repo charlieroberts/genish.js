@@ -21,7 +21,7 @@ let proto = {
     //    block1, block2, block1Name, block2Name, cond1, cond2, out
 
     let conditionals = this.inputs[0],
-        out = `\n  var ${this.name}_out\n` 
+        out = `  var ${this.name}_out\n` 
 
     for( let i = 0; i < conditionals.length; i+= 2 ) {
       let isEndBlock = i === conditionals.length - 1,
@@ -55,10 +55,10 @@ let proto = {
 
       if( i === 0 ) {
         out += `  if( ${cond} === 1 ) {
-  ${output}
+${output}
   } else`
       }else if( isEndBlock ) {
-        out += `{\n  ${output}\n  }\n`
+        out += `{\n${output}\n  }\n`
       }else {
 
         if( i + 2 === conditionals.length || i === conditionals.length - 1 ) {

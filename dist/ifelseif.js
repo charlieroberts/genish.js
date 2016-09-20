@@ -21,7 +21,7 @@ var proto = {
     //    block1, block2, block1Name, block2Name, cond1, cond2, out
 
     var conditionals = this.inputs[0],
-        out = '\n  var ' + this.name + '_out\n';
+        out = '  var ' + this.name + '_out\n';
 
     for (var i = 0; i < conditionals.length; i += 2) {
       var isEndBlock = i === conditionals.length - 1,
@@ -54,9 +54,9 @@ var proto = {
       output = blockName === null ? '  ' + this.name + '_out = ' + block : block + '  ' + this.name + '_out = ' + blockName;
 
       if (i === 0) {
-        out += '  if( ' + cond + ' === 1 ) {\n  ' + output + '\n  } else';
+        out += '  if( ' + cond + ' === 1 ) {\n' + output + '\n  } else';
       } else if (isEndBlock) {
-        out += '{\n  ' + output + '\n  }\n';
+        out += '{\n' + output + '\n  }\n';
       } else {
 
         if (i + 2 === conditionals.length || i === conditionals.length - 1) {
