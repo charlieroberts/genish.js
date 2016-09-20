@@ -19,8 +19,8 @@ var proto = {
       bufferR[i] = sqrtTwoOverTwo * (Math.cos(pan) + Math.sin(pan));
     }
 
-    gen.globals.panL = data(bufferL);
-    gen.globals.panR = data(bufferR);
+    gen.globals.panL = data(bufferL, 1, { immutable: true });
+    gen.globals.panR = data(bufferR, 1, { immutable: true });
   }
 };
 

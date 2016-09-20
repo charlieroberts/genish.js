@@ -17,7 +17,7 @@ let proto = {
       buffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
     }
 
-    gen.globals.cycle = data( buffer )
+    gen.globals.cycle = data( buffer, 1, { immutable:true } )
   }
 
 }

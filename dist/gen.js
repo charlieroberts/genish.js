@@ -36,7 +36,6 @@ var gen = {
   parameters: [],
   endBlock: new Set(),
   histories: new Map(),
-  memoryIndex: 0,
 
   memo: {},
 
@@ -51,74 +50,16 @@ var gen = {
   addToEndBlock: function addToEndBlock(v) {
     this.endBlock.add('  ' + v);
   },
+  requestMemory: function requestMemory(memorySpec) {
+    var immutable = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-
-  memoryLength: 0,
-
-  //requestMemory( amount ) {
-  //  let idx = this.memorySize
-
-  //  let promise = new Promise()
-  //  promise.amount = amount
-
-  //  this.memoryPromises.push( promise )
-
-  //  return promise
-  //},
-
-  memoryCallbacks: [],
-
-  getMemoryLength: function getMemoryLength(ugen) {
-
-    function getMemoryForChannel(ugen) {
-      if (ugen !== undefined && isNaN(ugen) && ugen.marked === undefined) {
-        if (ugen.memory !== undefined) {
-          var memory = ugen.memory;
-          for (var indexName in memory) {
-            var request = memory[indexName];
-            gen.memoryLength += request.length;
-            //console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
-          }
-        }
-        ugen.marked = true;
-
-        if (Array.isArray(ugen.inputs)) ugen.inputs.forEach(getMemoryForChannel);
-      }
-    }
-
-    if (Array.isArray(ugen)) {
-      ugen.forEach(getMemoryForChannel);
-    } else {
-      getMemoryForChannel(ugen);
-    }
-
-    this.histories.forEach(getMemoryForChannel);
-  },
-  requestMemory: function requestMemory(memorySpec, cb) {
     for (var key in memorySpec) {
       var request = memorySpec[key];
 
-      request.idx = gen.memory.alloc(request.length);
-
-      //  if( request.global !== undefined ) {
-      //    if( gen.sharedMemory[ key ] !== undefined ) {
-      //      request.idx = gen.sharedMemory[ key ]
-      //    }else{
-      //      gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
-      //      gen.memoryIndex += request.length
-      //    }
-      //  } else {
-      //    request.idx = gen.memoryIndex
-      //    gen.memoryIndex += request.length
-      //  }
-      //}
-      //if( typeof cb === 'function' ) {
-      //  gen.memoryCallbacks.push( cb )
+      request.idx = gen.memory.alloc(request.length, immutable);
     }
   },
 
-
-  sharedMemory: {},
 
   /* createCallback
    *
@@ -155,17 +96,6 @@ var gen = {
     this.globals = { windows: {} };
 
     this.parameters.length = 0;
-
-    //this.memoryLength = 0
-    //this.memoryCallbacks.length = 0
-    //this.getMemoryLength( ugen )
-
-    //this.memory = new Float32Array( this.memoryLength )
-
-    //this.memoryCallbacks.forEach( v => {
-    //  v()
-    //})
-    //this.memoryIndex = 0
 
     this.functionBody = "  'use strict'\n  var memory = gen.memory\n\n";
 
@@ -360,6 +290,70 @@ var gen = {
     this.shouldLocalize = false;
 
     return [this.codeName, this.localizedCode.slice(0)];
+  },
+  free: function free(graph) {
+    if (Array.isArray(graph)) {
+      // stereo ugen
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = graph[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var channel = _step3.value;
+
+          this.free(channel);
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+    } else {
+      if ((typeof graph === 'undefined' ? 'undefined' : _typeof(graph)) === 'object') {
+        if (graph.memory !== undefined) {
+          console.log(graph.memory);
+          for (var memoryKey in graph.memory) {
+            this.memory.free(graph.memory[memoryKey].idx);
+          }
+        }
+        if (Array.isArray(graph.inputs)) {
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = graph.inputs[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var ugen = _step4.value;
+
+              this.free(ugen);
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 };
 

@@ -11,8 +11,7 @@ var proto = {
     var idx = void 0;
     if (_gen.memo[this.name] === undefined) {
       var ugen = this;
-      _gen.requestMemory(this.memory); //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
-      //console.log( 'MEMORY', this.memory, this.buffer.length )
+      _gen.requestMemory(this.memory, this.immutable);
       idx = this.memory.values.idx;
       try {
         _gen.memory.heap.set(this.buffer, idx);
@@ -77,7 +76,9 @@ module.exports = function (x) {
     then: function then(fnc) {
       ugen.onload = fnc;
       return ugen;
-    }
+    },
+
+    immutable: properties !== undefined && properties.immutable === true ? true : false
   };
 
   ugen.memory = {

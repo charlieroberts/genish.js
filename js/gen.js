@@ -31,7 +31,6 @@ let gen = {
   parameters:[],
   endBlock: new Set(),
   histories: new Map(),
-  memoryIndex: 0,
 
   memo: {},
 
@@ -48,75 +47,13 @@ let gen = {
     this.endBlock.add( '  ' + v )
   },
   
-  memoryLength : 0,
-
-  //requestMemory( amount ) {
-  //  let idx = this.memorySize 
-    
-  //  let promise = new Promise()
-  //  promise.amount = amount
-
-  //  this.memoryPromises.push( promise )
-
-  //  return promise
-  //},
-
-  memoryCallbacks: [],
-  
-  getMemoryLength( ugen ) {
-
-    function getMemoryForChannel( ugen ) {
-      if( ugen !== undefined && isNaN( ugen ) && ugen.marked === undefined ) {
-        if( ugen.memory !== undefined ) {
-          let memory = ugen.memory
-          for( let indexName in memory ) {
-            let request = memory[ indexName ]
-            gen.memoryLength += request.length
-            //console.log( 'ugen:',ugen.name, 'request:',request.length, 'total:', gen.memoryLength )
-          }
-        }
-        ugen.marked = true
-
-        if( Array.isArray( ugen.inputs ) ) ugen.inputs.forEach( getMemoryForChannel )
-      } 
-    }  
-
-    if( Array.isArray( ugen ) ) {
-      ugen.forEach( getMemoryForChannel )
-    }else{
-      getMemoryForChannel( ugen )
-    }
-
-    this.histories.forEach( getMemoryForChannel )
-  },
-  
-  requestMemory( memorySpec, cb ) {
+  requestMemory( memorySpec, immutable=false ) {
     for( let key in memorySpec ) {
       let request = memorySpec[ key ]
 
-      request.idx = gen.memory.alloc( request.length )
-    
-
-    //  if( request.global !== undefined ) { 
-    //    if( gen.sharedMemory[ key ] !== undefined ) {
-    //      request.idx = gen.sharedMemory[ key ]
-    //    }else{
-    //      gen.sharedMemory[ key ] = request.idx = gen.memoryIndex
-    //      gen.memoryIndex += request.length
-    //    }
-    //  } else {
-    //    request.idx = gen.memoryIndex
-    //    gen.memoryIndex += request.length
-    //  }
-    //}
-    //if( typeof cb === 'function' ) {
-    //  gen.memoryCallbacks.push( cb )
+      request.idx = gen.memory.alloc( request.length, immutable )
     }
-    
-
   },
-
-  sharedMemory:{},
 
   /* createCallback
    *
@@ -151,17 +88,6 @@ let gen = {
     
     this.parameters.length = 0
     
-    //this.memoryLength = 0
-    //this.memoryCallbacks.length = 0
-    //this.getMemoryLength( ugen )
-
-    //this.memory = new Float32Array( this.memoryLength )
-
-    //this.memoryCallbacks.forEach( v => {
-    //  v()
-    //})
-    //this.memoryIndex = 0
-
     this.functionBody = "  'use strict'\n  var memory = gen.memory\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
@@ -303,6 +229,28 @@ let gen = {
 
     return [ this.codeName, this.localizedCode.slice(0) ]
   },
+
+  free( graph ) {
+    if( Array.isArray( graph ) ) { // stereo ugen
+      for( let channel of graph ) {
+        this.free( channel )
+      }
+    } else {
+      if( typeof graph === 'object' ) {
+        if( graph.memory !== undefined ) {
+          console.log( graph.memory )
+          for( let memoryKey in graph.memory ) {
+            this.memory.free( graph.memory[ memoryKey ].idx )
+          }
+        }
+        if( Array.isArray( graph.inputs ) ) {
+          for( let ugen of graph.inputs ) {
+            this.free( ugen )
+          }
+        }
+      }
+    }
+  }
 }
 
 module.exports = gen

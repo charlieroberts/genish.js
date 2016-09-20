@@ -11,8 +11,7 @@ let proto = {
     let idx
     if( gen.memo[ this.name ] === undefined ) {
       let ugen = this
-      gen.requestMemory( this.memory ) //, ()=> {  console.log("CALLED", ugen); gen.memory.set( ugen.buffer, idx ) } )
-      //console.log( 'MEMORY', this.memory, this.buffer.length )
+      gen.requestMemory( this.memory, this.immutable ) 
       idx = this.memory.values.idx
       try {
         gen.memory.heap.set( this.buffer, idx )
@@ -72,6 +71,7 @@ module.exports = ( x, y=1, properties ) => {
       ugen.onload = fnc
       return ugen
     },
+    immutable: properties !== undefined && properties.immutable === true ? true : false
   }
 
   ugen.memory = {
