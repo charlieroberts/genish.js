@@ -27,25 +27,39 @@ module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   // slightly more efficient to use existing phase accumulator for linear envelopes
   if( props.shape === 'linear' ) {
     out = ifelse( 
-      and( gte( phase, 0), lt( phase, attackTime )), memo( div( phase, attackTime ) ),
-      lt( phase, add( attackTime, decayTime ) ), sub( 1, div( sub( phase, attackTime ), decayTime ) ), 
-      poke( completeFlag, 1, 0, { inline:0 })
+      and( gte( phase, 0), lt( phase, attackTime )),
+      memo( div( phase, attackTime ) ),
+
+      and( gte( phase, 0),  lt( phase, add( attackTime, decayTime ) ) ),
+      sub( 1, div( sub( phase, attackTime ), decayTime ) ),
       
+      neq( phase, -Infinity),
+      poke( completeFlag, 1, 0, { inline:0 }),
+
+      0 
     )
   } else {     
-    bufferData = env( 1024, { type:props.shape, alpha:props.alpha } )
+    bufferData = env( 1024, { type:props.shape, alpha:props.alpha })
     out = ifelse( 
-      lt( phase, attackTime ), 
-        peek( bufferData, div( phase, attackTime ), { boundmode:'clamp' } ), 
-      lt( phase, add( attackTime, decayTime ) ), 
-        peek( bufferData, sub( 1, div( sub( phase, attackTime ), decayTime ) ), { boundmode:'clamp' }), 
-      poke( completeFlag, 1, 0, { inline:0 })
+      and( gte( phase, 0), lt( phase, attackTime )), 
+      peek( bufferData, div( phase, attackTime ), { boundmode:'clamp' } ), 
+
+      and( gte(phase,0), lt( phase, add( attackTime, decayTime ) ) ), 
+      peek( bufferData, sub( 1, div( sub( phase, attackTime ), decayTime ) ), { boundmode:'clamp' }),
+
+      neq( phase, -Infinity),
+      poke( completeFlag, 1, 0, { inline:0 }),
+
+      0
     )
   }
 
   out.isComplete = ()=> gen.memory.heap[ completeFlag.memory.values.idx ]
 
-  out.trigger = _bang.trigger
+  out.trigger = ()=> {
+    gen.memory.heap[ completeFlag.memory.values.idx ] = 0
+    _bang.trigger()
+  }
 
   return out 
 }

@@ -17,17 +17,17 @@ let proto = {
   basename:'ifelse',
 
   gen() {
-    //let cond = gen.getInput( this.inputs[0] ),
-    //    block1, block2, block1Name, block2Name, cond1, cond2, out
-
     let conditionals = this.inputs[0],
-        out = `  var ${this.name}_out\n` 
+        defaultValue = conditionals[ conditionals.length - 1],
+        out = `  var ${this.name}_out = ${defaultValue}\n` 
 
-    for( let i = 0; i < conditionals.length; i+= 2 ) {
-      let isEndBlock = i === conditionals.length - 1,
-          cond  = !isEndBlock ? gen.getInput( conditionals[ i ] ) : null,
-          preblock = isEndBlock ? conditionals[ i ] : conditionals[ i+1 ],
+    for( let i = 0; i < conditionals.length - 2; i+= 2 ) {
+      let isEndBlock = i === conditionals.length - 3,
+          cond  = gen.getInput( conditionals[ i ] ),
+          preblock = conditionals[ i+1 ],
           block, blockName, output
+
+      //console.log( 'pb', preblock )
 
       if( typeof preblock === 'number' ){
         block = preblock
@@ -40,6 +40,7 @@ let proto = {
           gen.getInput( preblock  )
 
           block = gen.endLocalize()
+          console.log( 'block', block )
           blockName = block[0]
           block = block[ 1 ].join('')
           block = '  ' + block.replace( /\n/gi, '\n  ' )
@@ -52,23 +53,31 @@ let proto = {
       output = blockName === null ? 
         `  ${this.name}_out = ${block}` :
         `${block}  ${this.name}_out = ${blockName}`
-
-      if( i === 0 ) {
-        out += `  if( ${cond} === 1 ) {
+      
+      if( i===0 ) out += ' '
+      out += 
+` if( ${cond} === 1 ) {
 ${output}
-  } else`
+  }`
+
+if( !isEndBlock ) {
+  out += ` else`
+}
+/*         
+ else`
       }else if( isEndBlock ) {
-        out += `{\n${output}\n  }\n`
+        out += `{\n  ${output}\n  }\n`
       }else {
 
-        if( i + 2 === conditionals.length || i === conditionals.length - 1 ) {
-          out += `{\n  ${output}\n  }\n`
-        }else{
-          out += ` if( ${cond} === 1 ) {
+        //if( i + 2 === conditionals.length || i === conditionals.length - 1 ) {
+        //  out += `{\n  ${output}\n  }\n`
+        //}else{
+          out += 
+` if( ${cond} === 1 ) {
 ${output}
   } else `
-        }
-      }
+        //}
+      }*/
     }
 
     gen.memo[ this.name ] = `${this.name}_out`
