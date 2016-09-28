@@ -42,7 +42,6 @@ var proto = {
           _gen.getInput(preblock);
 
           block = _gen.endLocalize();
-          console.log('block', block);
           blockName = block[0];
           block = block[1].join('');
           block = '  ' + block.replace(/\n/gi, '\n  ');
@@ -59,6 +58,8 @@ var proto = {
 
       if (!isEndBlock) {
         out += ' else';
+      } else {
+        out += '\n';
       }
       /*         
        else`

@@ -197,7 +197,13 @@ let gen = {
     if( isObject ) { // if input is a ugen... 
       if( gen.memo[ input.name ] ) { // if it has been memoized...
         processedInput = gen.memo[ input.name ]
+      }else if( Array.isArray( input ) ) {
+        gen.getInput( input[0] )
+        gen.getInput( input[0] )
       }else{ // if not memoized generate code  
+        if( typeof input.gen !== 'function' ) {
+          console.log( 'no gen found:', input, input.gen )
+        }
         let code = input.gen()
 
         if( Array.isArray( code ) ) {

@@ -16,6 +16,8 @@ let proto = {
 
     //console.log( "LENGTH IS LOG2", lengthIsLog2, this.data.buffer.length )
 //${this.name}_index = ${this.name}_phase | 0,\n`
+    if( this.mode !== 'simple' ) {
+
     functionBody = `  var ${this.name}_dataIdx  = ${idx}, 
       ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + (this.data.buffer.length - 1) }, 
       ${this.name}_index = ${this.name}_phase | 0,\n`
@@ -39,7 +41,13 @@ let proto = {
     }else{
       functionBody += `      ${this.name}_out = memory[ ${this.name}_dataIdx + ${this.name}_index ]\n\n`
     }
-    
+
+    } else { // mode is simple
+      functionBody = `memory[ ${idx} + ${ inputs[0] } ]`
+      
+      return functionBody
+    }
+
     gen.memo[ this.name ] = this.name + '_out'
 
     return [ this.name+'_out', functionBody ]

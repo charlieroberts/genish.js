@@ -1,7 +1,9 @@
 'use strict'
 
 let gen  = require('./gen.js'),
-    utilities = require( './utilities.js' )
+  utilities = require( './utilities.js' ),
+  peek = require('./peek.js'),
+  poke = require('./poke.js')
 
 let proto = {
   basename:'data',
@@ -88,8 +90,22 @@ module.exports = ( x, y=1, properties ) => {
     })
   }
   
-  if( properties !== undefined && properties.global !== undefined ) {
-    gen.globals[ properties.global ] = ugen
+  if( properties !== undefined ) {
+    if( properties.global !== undefined ) {
+      gen.globals[ properties.global ] = ugen
+    }
+    if( properties.meta === true ) {
+      for( let i = 0, length = ugen.buffer.length; i < length; i++ ) {
+        Object.defineProperty( ugen, i, {
+          get () {
+            return peek( ugen, i, { mode:'simple', interp:'none' } )
+          },
+          set( v ) {
+            return poke( ugen, v, i )
+          }
+        })
+      }
+    }
   }
 
   return ugen

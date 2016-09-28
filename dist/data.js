@@ -1,7 +1,9 @@
 'use strict';
 
 var _gen = require('./gen.js'),
-    utilities = require('./utilities.js');
+    utilities = require('./utilities.js'),
+    peek = require('./peek.js'),
+    poke = require('./poke.js');
 
 var proto = {
   basename: 'data',
@@ -95,8 +97,26 @@ module.exports = function (x) {
     });
   }
 
-  if (properties !== undefined && properties.global !== undefined) {
-    _gen.globals[properties.global] = ugen;
+  if (properties !== undefined) {
+    if (properties.global !== undefined) {
+      _gen.globals[properties.global] = ugen;
+    }
+    if (properties.meta === true) {
+      var _loop = function _loop(length, _i2) {
+        Object.defineProperty(ugen, _i2, {
+          get: function get() {
+            return peek(ugen, _i2, { mode: 'simple', interp: 'none' });
+          },
+          set: function set(v) {
+            return poke(ugen, v, _i2);
+          }
+        });
+      };
+
+      for (var _i2 = 0, length = ugen.buffer.length; _i2 < length; _i2++) {
+        _loop(length, _i2);
+      }
+    }
   }
 
   return ugen;

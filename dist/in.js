@@ -19,6 +19,18 @@ module.exports = function (name) {
 
   input.id = _gen.getUID();
   input.name = name !== undefined ? name : '' + input.basename + input.id;
+  input[0] = {
+    gen: function gen() {
+      if (!_gen.parameters.includes(input.name)) _gen.parameters.push(input.name);
+      return input.name + '[0]';
+    }
+  };
+  input[1] = {
+    gen: function gen() {
+      if (!_gen.parameters.includes(input.name)) _gen.parameters.push(input.name);
+      return input.name + '[1]';
+    }
+  };
 
   return input;
 };

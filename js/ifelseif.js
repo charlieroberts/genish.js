@@ -40,7 +40,6 @@ let proto = {
           gen.getInput( preblock  )
 
           block = gen.endLocalize()
-          console.log( 'block', block )
           blockName = block[0]
           block = block[ 1 ].join('')
           block = '  ' + block.replace( /\n/gi, '\n  ' )
@@ -62,6 +61,8 @@ ${output}
 
 if( !isEndBlock ) {
   out += ` else`
+}else{
+  out += `\n`
 }
 /*         
  else`
