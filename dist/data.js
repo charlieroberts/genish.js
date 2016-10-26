@@ -62,7 +62,7 @@ module.exports = function (x) {
       buffer[_i] = x[_i];
     }
   } else if (typeof x === 'string') {
-    buffer = { length: y > 1 ? y : _gen.samplerate * 60 };
+    buffer = { length: y > 1 ? y : _gen.samplerate * 60 }; // XXX what???
     shouldLoad = true;
   } else if (x instanceof Float32Array) {
     buffer = x;
@@ -71,7 +71,7 @@ module.exports = function (x) {
   ugen = {
     buffer: buffer,
     name: proto.basename + _gen.getUID(),
-    dim: buffer.length,
+    dim: buffer.length, // XXX how do we dynamically allocate this?
     channels: 1,
     gen: proto.gen,
     onload: null,
@@ -80,7 +80,14 @@ module.exports = function (x) {
       return ugen;
     },
 
-    immutable: properties !== undefined && properties.immutable === true ? true : false
+    immutable: properties !== undefined && properties.immutable === true ? true : false,
+    load: function load(filename) {
+      var promise = utilities.loadSample(filename, ugen);
+      promise.then(function (_buffer) {
+        ugen.memory.values.length = ugen.dim = _buffer.length;
+        ugen.onload();
+      });
+    }
   };
 
   ugen.memory = {
@@ -89,13 +96,7 @@ module.exports = function (x) {
 
   _gen.name = 'data' + _gen.getUID();
 
-  if (shouldLoad) {
-    var promise = utilities.loadSample(x, ugen);
-    promise.then(function (_buffer) {
-      ugen.memory.values.length = _buffer.length;
-      ugen.onload();
-    });
-  }
+  if (shouldLoad) ugen.load(x);
 
   if (properties !== undefined) {
     if (properties.global !== undefined) {

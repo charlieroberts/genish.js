@@ -37,7 +37,7 @@ let proto = {
           // used to place all code dependencies in appropriate blocks
           gen.startLocalize()
 
-          gen.getInput( preblock  )
+          gen.getInput( preblock )
 
           block = gen.endLocalize()
           blockName = block[0]

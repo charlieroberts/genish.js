@@ -2,15 +2,15 @@
 
 let gen     = require( './gen.js' ),
     history = require( './history.js' ),
-    mul     = require( './mul.js' )
+    mul     = require( './mul.js' ),
+    t60     = require( './t60.js' )
 
 module.exports = ( decayTime = 44100 ) => {
-  let ssd = history ( 1 ),
-      t60 = Math.exp( -6.907755278921 / decayTime )
+  let ssd = history ( 1 )
 
-  ssd.in( mul( ssd.out, t60 ) )
+  ssd.in( mul( ssd.out, t60( decayTime ) ) )
 
-  ssd.out.run = ()=> {
+  ssd.out.trigger = ()=> {
     ssd.value = 1
   }
 

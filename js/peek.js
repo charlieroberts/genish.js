@@ -30,14 +30,23 @@ let proto = {
     }else if( this.boundmode === 'clamp' ) {
       next = 
       `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
+    }else{
+       next = 
+      `${this.name}_index + 1`     
     }
 
     if( this.interp === 'linear' ) {      
     functionBody += `      ${this.name}_frac  = ${this.name}_phase - ${this.name}_index,
       ${this.name}_base  = memory[ ${this.name}_dataIdx +  ${this.name}_index ],
-      ${this.name}_next  = ${next},     
+      ${this.name}_next  = ${next},`
+      
+      if( this.boundmode === 'ignore' ) {
+        functionBody += `
+      ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
+      }else{
+        functionBody += `
       ${this.name}_out   = ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
-
+      }
     }else{
       functionBody += `      ${this.name}_out = memory[ ${this.name}_dataIdx + ${this.name}_index ]\n\n`
     }

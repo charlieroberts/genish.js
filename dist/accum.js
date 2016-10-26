@@ -77,13 +77,21 @@ module.exports = function (incr) {
     min: defaults.min,
     max: defaults.max,
     initial: defaults.initialValue,
-    value: defaults.initialValue,
     uid: _gen.getUID(),
     inputs: [incr, reset],
     memory: {
       value: { length: 1, idx: null }
     }
   }, defaults);
+
+  Object.defineProperty(ugen, 'value', {
+    get: function get() {
+      return _gen.memory.heap[this.memory.value.idx];
+    },
+    set: function set(v) {
+      _gen.memory.heap[this.memory.value.idx] = v;
+    }
+  });
 
   ugen.name = '' + ugen.basename + ugen.uid;
 

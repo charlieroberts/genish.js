@@ -73,7 +73,6 @@ module.exports = ( incr, reset=0, properties ) => {
     min: defaults.min, 
     max: defaults.max,
     initial: defaults.initialValue,
-    value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
     memory: {
@@ -81,7 +80,12 @@ module.exports = ( incr, reset=0, properties ) => {
     }
   },
   defaults )
-  
+
+  Object.defineProperty( ugen, 'value', {
+    get() { return gen.memory.heap[ this.memory.value.idx ] },
+    set(v) { gen.memory.heap[ this.memory.value.idx ] = v }
+  })
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

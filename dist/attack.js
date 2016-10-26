@@ -13,7 +13,7 @@ module.exports = function () {
 
     ssd.in(mul(ssd.out, t60));
 
-    ssd.out.run = function () {
+    ssd.out.trigger = function () {
         ssd.value = 1;
     };
 

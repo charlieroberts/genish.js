@@ -11,7 +11,7 @@ module.exports = ( decayTime = 44100 ) => {
 
   ssd.in( mul( ssd.out, t60 ) )
 
-  ssd.out.run = ()=> {
+  ssd.out.trigger = ()=> {
     ssd.value = 1
   }
 

@@ -56,7 +56,7 @@ module.exports = ( x, y=1, properties ) => {
       buffer[ i ] = x[ i ]
     }
   }else if( typeof x === 'string' ) {
-    buffer = { length: y > 1 ? y : gen.samplerate * 60 }
+    buffer = { length: y > 1 ? y : gen.samplerate * 60 } // XXX what???
     shouldLoad = true
   }else if( x instanceof Float32Array ) {
     buffer = x
@@ -65,7 +65,7 @@ module.exports = ( x, y=1, properties ) => {
   ugen = { 
     buffer,
     name: proto.basename + gen.getUID(),
-    dim:  buffer.length,
+    dim:  buffer.length, // XXX how do we dynamically allocate this?
     channels : 1,
     gen:  proto.gen,
     onload: null,
@@ -73,22 +73,23 @@ module.exports = ( x, y=1, properties ) => {
       ugen.onload = fnc
       return ugen
     },
-    immutable: properties !== undefined && properties.immutable === true ? true : false
+    immutable: properties !== undefined && properties.immutable === true ? true : false,
+    load( filename ) {
+      let promise = utilities.loadSample( filename, ugen )
+      promise.then( ( _buffer )=> { 
+        ugen.memory.values.length = ugen.dim = _buffer.length     
+        ugen.onload() 
+      })
+    },
   }
 
   ugen.memory = {
     values: { length:ugen.dim, idx:null }
   }
 
-  gen.name = 'data'+gen.getUID()
+  gen.name = 'data' + gen.getUID()
 
-  if( shouldLoad ) {
-    let promise = utilities.loadSample( x, ugen )
-    promise.then( ( _buffer )=> { 
-      ugen.memory.values.length = _buffer.length     
-      ugen.onload() 
-    })
-  }
+  if( shouldLoad ) ugen.load( x )
   
   if( properties !== undefined ) {
     if( properties.global !== undefined ) {

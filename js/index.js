@@ -14,6 +14,11 @@ let library = {
 
     Object.assign( destination, library )
 
+    Object.defineProperty( library, 'samplerate', {
+      get() { return library.gen.samplerate },
+      set(v) {}
+    })
+
     library.in = destination.input
     library.history = destination.ssd
     library.switch = destination.ternary
@@ -80,8 +85,8 @@ let library = {
   selector: require( './selector.js' ),
   utilities:require( './utilities.js' ),
   pow:      require( './pow.js' ),
-  //attack:   require( './attack.js' ),
-  //decay:    require( './decay.js' ),
+  attack:   require( './attack.js' ),
+  decay:    require( './decay.js' ),
   windows:  require( './windows.js' ),
   env:      require( './env.js' ),
   ad:       require( './ad.js'  ),

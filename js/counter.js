@@ -12,7 +12,7 @@ let proto = {
         functionBody
        
     if( this.memory.value.idx === null ) gen.requestMemory( this.memory )
-    functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
+    functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], inputs[4],  `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
 
     gen.closures.add({ [ this.name ]: this }) 
 
@@ -23,7 +23,7 @@ let proto = {
     return [ this.name + '_value', functionBody ]
   },
 
-  callback( _name, _incr, _min, _max, _reset, valueRef, wrapRef ) {
+  callback( _name, _incr, _min, _max, _reset, loops, valueRef, wrapRef ) {
     let diff = this.max - this.min,
         out = '',
         wrap = ''
@@ -35,20 +35,20 @@ let proto = {
 
     out += `  var ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     
-    if( typeof this.max === 'number' && this.max !== Infinity &&  typeof this.min === 'number' ) {
+    if( typeof this.max === 'number' && this.max !== Infinity && typeof this.min !== 'number' ) {
       wrap = 
-`  if( ${valueRef} >= ${this.max} ) {
+`  if( ${valueRef} >= ${this.max} && ${loops} ) {
     ${valueRef} -= ${diff}
     ${wrapRef} = 1
   }else{
     ${wrapRef} = 0
   }\n`
-    }else if( this.max !== Infinity ) {
+    }else if( this.max !== Infinity && this.min !== Infinity ) {
       wrap = 
-`  if( ${valueRef} >= ${_max} ) {
+`  if( ${valueRef} >= ${_max} && ${loops} ) {
     ${valueRef} -= ${_max} - ${_min}
     ${wrapRef} = 1
-  }else if( ${valueRef} < ${_min} ) {
+  }else if( ${valueRef} < ${_min} && ${loops} ) {
     ${valueRef} += ${_max} - ${_min}
     ${wrapRef} = 1
   }else{
@@ -64,9 +64,9 @@ let proto = {
   }
 }
 
-module.exports = ( incr=1, min=0, max=Infinity, reset=0, properties ) => {
+module.exports = ( incr=1, min=0, max=Infinity, reset=0, loops=1,  properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { initialValue: 0 }
+      defaults = { initialValue: 0, shouldWrap:true }
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 
@@ -75,7 +75,7 @@ module.exports = ( incr=1, min=0, max=Infinity, reset=0, properties ) => {
     max:    max,
     value:  defaults.initialValue,
     uid:    gen.getUID(),
-    inputs: [ incr, min, max, reset ],
+    inputs: [ incr, min, max, reset, loops ],
     memory: {
       value: { length:1, idx: null },
       wrap:  { length:1, idx: null } 
