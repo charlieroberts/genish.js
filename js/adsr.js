@@ -12,7 +12,9 @@ let gen      = require( './gen.js' ),
     bang     = require( './bang.js' ),
     env      = require( './env.js' ),
     param    = require( './param.js' ),
-    add      = require( './add.js' )
+    add      = require( './add.js' ),
+    gtp      = require( './gtp.js' ),
+    not      = require( './not.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
@@ -45,7 +47,7 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
       : lt( phase, add( attackTime, decayTime, sustainTime ) )
 
     releaseAccum = props.triggerRelease
-      ? gtp( sub( sustainLevel, accum( sustainLevel / releaseTime , 0, { shouldWrap:false }) ), 0 )
+      ? gtp( sub( sustainLevel, accum( div( sustainLevel, releaseTime ) , 0, { shouldWrap:false }) ), 0 )
       : sub( sustainLevel, mul( div( sub( phase, add( attackTime, decayTime, sustainTime ) ), releaseTime ), sustainLevel ) ), 
 
     releaseCondition = props.triggerRelease

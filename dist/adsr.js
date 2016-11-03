@@ -12,7 +12,9 @@ var gen = require('./gen.js'),
     bang = require('./bang.js'),
     env = require('./env.js'),
     param = require('./param.js'),
-    add = require('./add.js');
+    add = require('./add.js'),
+    gtp = require('./gtp.js'),
+    not = require('./not.js');
 
 module.exports = function () {
   var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44 : arguments[0];
@@ -55,7 +57,7 @@ module.exports = function () {
 
   sustainCondition = props.triggerRelease ? shouldSustain : lt(phase, add(attackTime, decayTime, sustainTime));
 
-  releaseAccum = props.triggerRelease ? gtp(sub(sustainLevel, accum(sustainLevel / releaseTime, 0, { shouldWrap: false })), 0) : sub(sustainLevel, mul(div(sub(phase, add(attackTime, decayTime, sustainTime)), releaseTime), sustainLevel)), releaseCondition = props.triggerRelease ? not(shouldSustain) : lt(phase, add(attackTime, decayTime, sustainTime, releaseTime));
+  releaseAccum = props.triggerRelease ? gtp(sub(sustainLevel, accum(div(sustainLevel, releaseTime), 0, { shouldWrap: false })), 0) : sub(sustainLevel, mul(div(sub(phase, add(attackTime, decayTime, sustainTime)), releaseTime), sustainLevel)), releaseCondition = props.triggerRelease ? not(shouldSustain) : lt(phase, add(attackTime, decayTime, sustainTime, releaseTime));
 
   out = ifelse(
   // attack
