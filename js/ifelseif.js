@@ -18,8 +18,10 @@ let proto = {
 
   gen() {
     let conditionals = this.inputs[0],
-        defaultValue = conditionals[ conditionals.length - 1],
+        defaultValue = gen.getInput( conditionals[ conditionals.length - 1] ),
         out = `  var ${this.name}_out = ${defaultValue}\n` 
+
+    //console.log( 'defaultValue:', defaultValue )
 
     for( let i = 0; i < conditionals.length - 2; i+= 2 ) {
       let isEndBlock = i === conditionals.length - 3,

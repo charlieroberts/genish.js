@@ -11,7 +11,8 @@ let gen      = require( './gen.js' ),
     lt       = require( './lt.js' ),
     bang     = require( './bang.js' ),
     env      = require( './env.js' ),
-    param    = require( './param.js' )
+    param    = require( './param.js' ),
+    add      = require( './add.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
@@ -41,23 +42,23 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
     
     sustainCondition = props.triggerRelease 
       ? shouldSustain
-      : lt( phase, attackTime + decayTime + sustainTime )
+      : lt( phase, add( attackTime, decayTime, sustainTime ) )
 
     releaseAccum = props.triggerRelease
       ? gtp( sub( sustainLevel, accum( sustainLevel / releaseTime , 0, { shouldWrap:false }) ), 0 )
-      : sub( sustainLevel, mul( div( sub( phase, attackTime + decayTime + sustainTime), releaseTime ), sustainLevel ) ), 
+      : sub( sustainLevel, mul( div( sub( phase, add( attackTime, decayTime, sustainTime ) ), releaseTime ), sustainLevel ) ), 
 
     releaseCondition = props.triggerRelease
       ? not( shouldSustain )
-      : lt( phase, attackTime + decayTime + sustainTime + releaseTime )
+      : lt( phase, add( attackTime, decayTime, sustainTime, releaseTime ) )
 
     out = ifelse(
       // attack 
       lt( phase,  attackTime ), 
-      peek( bufferData, div( phase,  attackTime ), { boundmode:'clamp' } ), 
+      peek( bufferData, div( phase, attackTime ), { boundmode:'clamp' } ), 
 
       // decay
-      lt( phase,  attackTime +  decayTime ), 
+      lt( phase, add( attackTime, decayTime ) ), 
       peek( bufferData, sub( 1, mul( div( sub( phase,  attackTime ),  decayTime ), sub( 1,  sustainLevel ) ) ), { boundmode:'clamp' }),
 
       // sustain

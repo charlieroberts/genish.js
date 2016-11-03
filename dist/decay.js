@@ -6,15 +6,17 @@ var gen = require('./gen.js'),
     t60 = require('./t60.js');
 
 module.exports = function () {
-  var decayTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
+    var decayTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
+    var props = arguments[1];
 
-  var ssd = history(1);
+    var properties = Object.assign({}, { initValue: 1 }, props),
+        ssd = history(properties.initValue);
 
-  ssd.in(mul(ssd.out, t60(decayTime)));
+    ssd.in(mul(ssd.out, t60(decayTime)));
 
-  ssd.out.trigger = function () {
-    ssd.value = 1;
-  };
+    ssd.out.trigger = function () {
+        ssd.value = 1;
+    };
 
-  return ssd.out;
+    return ssd.out;
 };

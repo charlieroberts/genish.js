@@ -6,6 +6,8 @@ var gen = require('./gen.js'),
     add = require('./add.js'),
     mul = require('./mul.js'),
     memo = require('./memo.js'),
+    gt = require('./gt.js'),
+    div = require('./div.js'),
     _switch = require('./switch.js');
 
 module.exports = function (in1) {

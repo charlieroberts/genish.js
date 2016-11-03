@@ -13,7 +13,10 @@ let gen      = require( './gen.js' ),
     env      = require( './env.js' ),
     add      = require( './add.js' ),
     poke     = require( './poke.js' ),
-    neq       = require( './neq.js' )
+    neq      = require( './neq.js' ),
+    and      = require( './and.js' ),
+    gte      = require( './gte.js' ),
+    memo     = require( './memo.js' )
 
 module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   let _bang = bang(),

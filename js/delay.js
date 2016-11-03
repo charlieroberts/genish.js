@@ -3,6 +3,8 @@
 let gen  = require( './gen.js'  ),
     data = require( './data.js' ),
     poke = require( './poke.js' ),
+    peek = require( './peek.js' ),
+    sub  = require( './sub.js'  ),
     wrap = require( './wrap.js' ),
     accum= require( './accum.js')
 

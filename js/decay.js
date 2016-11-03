@@ -5,8 +5,9 @@ let gen     = require( './gen.js' ),
     mul     = require( './mul.js' ),
     t60     = require( './t60.js' )
 
-module.exports = ( decayTime = 44100 ) => {
-  let ssd = history ( 1 )
+module.exports = ( decayTime = 44100, props ) => {
+  let properties = Object.assign({}, { initValue:1 }, props ),
+      ssd = history ( properties.initValue )
 
   ssd.in( mul( ssd.out, t60( decayTime ) ) )
 

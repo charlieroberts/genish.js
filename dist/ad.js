@@ -13,7 +13,10 @@ var gen = require('./gen.js'),
     env = require('./env.js'),
     add = require('./add.js'),
     poke = require('./poke.js'),
-    neq = require('./neq.js');
+    neq = require('./neq.js'),
+    and = require('./and.js'),
+    gte = require('./gte.js'),
+    memo = require('./memo.js');
 
 module.exports = function () {
   var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
