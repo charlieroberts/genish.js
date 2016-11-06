@@ -43,8 +43,13 @@ var proto = {
       out += '  if( ' + _reset + ' >=1 ) ' + valueRef + ' = ' + this.min + '\n\n';
     }
 
-    out += '  var ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
+    out += '  var ' + this.name + '_value = ' + valueRef + ';\n';
 
+    if (this.shouldWrap === false && this.shouldClamp === true) {
+      out += '  if( ' + valueRef + ' < ' + this.max + ' ) ' + valueRef + ' += ' + _incr + '\n';
+    } else {
+      out += '  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating
+    }
     if (this.max !== Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
     if (this.min !== -Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
 
@@ -67,7 +72,7 @@ module.exports = function (incr) {
   var properties = arguments[2];
 
   var ugen = Object.create(proto),
-      defaults = { min: 0, max: 1, shouldWrap: true };
+      defaults = { min: 0, max: 1, shouldWrap: true, shouldClamp: false };
 
   if (properties !== undefined) Object.assign(defaults, properties);
 
