@@ -77,6 +77,7 @@ var gen = {
 
   createCallback: function createCallback(ugen, mem) {
     var debug = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+    var shouldInlineMemory = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
 
     var isStereo = Array.isArray(ugen) && ugen.length > 1,
         callback = void 0,
@@ -97,7 +98,8 @@ var gen = {
 
     this.parameters.length = 0;
 
-    this.functionBody = "  'use strict'\n  var memory = gen.memory\n\n";
+    this.functionBody = "  'use strict'\n";
+    if (shouldInlineMemory === false) this.functionBody += "  var memory = gen.memory\n\n";
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -150,6 +152,10 @@ var gen = {
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
+    //
+    if (shouldInlineMemory === true) {
+      this.parameters.push('memory');
+    }
     var buildString = 'return function gen( ' + this.parameters.join(',') + ' ){ \n' + this.functionBody + '\n}';
 
     if (this.debug || debug) console.log(buildString);

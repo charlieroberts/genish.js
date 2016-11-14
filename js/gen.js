@@ -69,7 +69,7 @@ let gen = {
    * ... the generated function will have a signature of ( abs, p0 ).
    */
   
-  createCallback( ugen, mem, debug = false ) {
+  createCallback( ugen, mem, debug = false, shouldInlineMemory=false ) {
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -88,7 +88,8 @@ let gen = {
     
     this.parameters.length = 0
     
-    this.functionBody = "  'use strict'\n  var memory = gen.memory\n\n";
+    this.functionBody = "  'use strict'\n"
+    if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -140,7 +141,10 @@ let gen = {
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
-    this.parameters.push( 'memory' )
+    //
+    if( shouldInlineMemory === true ) {
+      this.parameters.push( 'memory' )
+    }
     let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
@@ -173,7 +177,7 @@ let gen = {
     callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
-    //callback.memory = this.memory.heap
+    callback.memory = this.memory.heap
 
     this.histories.clear()
 
