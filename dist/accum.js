@@ -50,6 +50,7 @@ var proto = {
     } else {
       out += '  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating
     }
+
     if (this.max !== Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
     if (this.min !== -Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
 

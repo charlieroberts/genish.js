@@ -260,7 +260,7 @@ var gen = {
         processedInput = gen.memo[input.name];
       } else if (Array.isArray(input)) {
         gen.getInput(input[0]);
-        gen.getInput(input[0]);
+        gen.getInput(input[1]);
       } else {
         // if not memoized generate code 
         if (typeof input.gen !== 'function') {

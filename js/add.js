@@ -2,7 +2,7 @@
 
 let gen = require('./gen.js')
 
-module.exports = (...args) => {
+module.exports = ( ...args ) => {
   let add = {
     id:     gen.getUID(),
     inputs: args,

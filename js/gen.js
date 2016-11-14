@@ -140,6 +140,7 @@ let gen = {
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
+    this.parameters.push( 'memory' )
     let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
@@ -172,7 +173,7 @@ let gen = {
     callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
-    callback.memory = this.memory.heap
+    //callback.memory = this.memory.heap
 
     this.histories.clear()
 
@@ -199,13 +200,13 @@ let gen = {
         processedInput = gen.memo[ input.name ]
       }else if( Array.isArray( input ) ) {
         gen.getInput( input[0] )
-        gen.getInput( input[0] )
+        gen.getInput( input[1] )
       }else{ // if not memoized generate code  
         if( typeof input.gen !== 'function' ) {
           console.log( 'no gen found:', input, input.gen )
         }
         let code = input.gen()
-
+        
         if( Array.isArray( code ) ) {
           if( !gen.shouldLocalize ) {
             gen.functionBody += code[1]
