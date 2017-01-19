@@ -1,5 +1,31 @@
 'use strict'
 
+/**
+ * Data objects serve as containers for storing numbers; these numbers can be read using calls to `peek()` and the data object can be written to using calls to `poke()`.
+ *
+ * The constructor can be called with three different argumensts. If a
+ * *dataArray* is passed as the first argument, this array becomes the data
+ * object's underlying data source. If a *dataLength* integer is passed, a
+ * Float32Array is created using the provided length. If a *audioFileToLoad*
+ * string is passed, the data object attempts to load the file at the provided
+ * URL and generates a JavaScript Promise that used with the `then()` method.
+ *
+ * When the `data` constructor is called passing in the path of a file to
+ * load, a JavaScript Promise is created that will be resovled when the
+ * audiofile has been loaded. `then()` provides a callback function to be
+ * executed when resolution is complete. You can use this to delay starting
+ * playback of a graph until all data dependencies have been loaded.
+ *
+ * @name data
+ * @function
+ * @param {Array|Integer|String} value
+ * @memberof module:buffer
+ * @example
+  audiofile = data( 'myaudiofile.wav' ).then( ()=> {
+    out = gen.createCallback( peek( audiofile, phasor(.1) ) )
+  })
+*/
+
 let gen  = require('./gen.js'),
   utilities = require( './utilities.js' ),
   peek = require('./peek.js'),
@@ -13,7 +39,7 @@ let proto = {
     let idx
     if( gen.memo[ this.name ] === undefined ) {
       let ugen = this
-      gen.requestMemory( this.memory, this.immutable ) 
+      gen.requestMemory( this.memory, this.immutable )
       idx = this.memory.values.idx
       try {
         gen.memory.heap.set( this.buffer, idx )
@@ -33,7 +59,7 @@ let proto = {
 
 module.exports = ( x, y=1, properties ) => {
   let ugen, buffer, shouldLoad = false
-  
+
   if( properties !== undefined && properties.global !== undefined ) {
     if( gen.globals[ properties.global ] ) {
       return gen.globals[ properties.global ]
@@ -61,14 +87,24 @@ module.exports = ( x, y=1, properties ) => {
   }else if( x instanceof Float32Array ) {
     buffer = x
   }
-  
-  ugen = { 
+
+  ugen = {
     buffer,
     name: proto.basename + gen.getUID(),
     dim:  buffer.length, // XXX how do we dynamically allocate this?
     channels : 1,
     gen:  proto.gen,
     onload: null,
+
+    /**
+     * Add a callback when the data is loaded
+     *
+     * @name then
+     * @function
+     * @param {callback}
+     * @return {ugen} the ugen itself
+     * @memberof data
+     */
     then( fnc ) {
       ugen.onload = fnc
       return ugen
@@ -76,9 +112,9 @@ module.exports = ( x, y=1, properties ) => {
     immutable: properties !== undefined && properties.immutable === true ? true : false,
     load( filename ) {
       let promise = utilities.loadSample( filename, ugen )
-      promise.then( ( _buffer )=> { 
-        ugen.memory.values.length = ugen.dim = _buffer.length     
-        ugen.onload() 
+      promise.then( ( _buffer )=> {
+        ugen.memory.values.length = ugen.dim = _buffer.length
+        ugen.onload()
       })
     },
   }
@@ -90,7 +126,7 @@ module.exports = ( x, y=1, properties ) => {
   gen.name = 'data' + gen.getUID()
 
   if( shouldLoad ) ugen.load( x )
-  
+
   if( properties !== undefined ) {
     if( properties.global !== undefined ) {
       gen.globals[ properties.global ] = ugen

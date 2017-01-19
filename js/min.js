@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Returns whichever value is lesser.
+ *
+ * @name eq
+ * @function
+ * @param {(ugen|number)} a - one element to compare
+ * @param {(ugen|number)} b - other element to compare
+ * @return {ugen}
+ * @memberof module:comparison
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +28,7 @@ let proto = {
     } else {
       out = Math.min( parseFloat( inputs[0] ), parseFloat( inputs[1] ) )
     }
-    
+
     return out
   }
 }

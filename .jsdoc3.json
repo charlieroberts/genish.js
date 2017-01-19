@@ -1,0 +1,30 @@
+{
+  "source": {
+    "include": ["README.md", "js/"]
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": false
+    },
+    "cleverLinks": true,
+    "monospaceLinks": true,
+    "systemName": "genish.js",
+    "systemSummary": "gen~ in js",
+    "footer": "genish.js",
+    "copyright": "MIT License",
+    "navType": "vertical",
+    "inlineNav": true,
+    "theme": "spacelab",
+    "linenums": true,
+    "collapseSymbols": false,
+    "inverseNav": false,
+    "showTableOfContents": true
+  },
+  "opts": {
+    "destination": "./docs/api/",
+    "recurse": true,
+    "verbose": true,
+    "template": "./node_modules/postman-jsdoc-theme"
+  },
+  "plugins": ["plugins/markdown"]
+}

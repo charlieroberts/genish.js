@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * Envelope
+ * FIXME: Add documentation
+ *
+ * @name env
+ * @function
+ * @param {(ugen|number)} [length=11025]
+ * @param {Object} [props = { type: 'Triangular', bufferLength: 1024, alpha: 0.15 }]
+ * @return {ugen}
+ * @memberof module:buffer
+ */
+
 let gen     = require( './gen' ),
     windows = require( './windows' ),
     data    = require( './data' ),

@@ -1,5 +1,18 @@
 'use strict'
 
+/**
+ * Adds an unlimited number of signals (numbers or ugens)
+ * @name add
+ * @function
+ * @param {(...number|...ugen)} args
+ * @return ugen
+ * @example
+    out = gen.createCallback( add(1,2) )
+    // creates function body out = ( 3 )
+    out() // 3
+ * @memberof module:arithmetic
+ */
+
 let gen = require('./gen.js')
 
 module.exports = (...args) => {
@@ -25,18 +38,18 @@ module.exports = (...args) => {
           numCount++
         }
       })
-      
+
       if( alreadyFullSummed ) out = ''
 
       if( numCount > 0 ) {
         out += adderAtEnd || alreadyFullSummed ? sum : ' + ' + sum
       }
-      
+
       if( !alreadyFullSummed ) out += ')'
 
       return out
     }
   }
-  
+
   return add
 }

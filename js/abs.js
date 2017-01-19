@@ -1,5 +1,15 @@
 'use strict'
 
+/**
+ * Find the absolute value of a signal using `Math.abs`
+ *
+ * @name abs
+ * @function
+ * @param {(number|ugen)} signal
+ * @return ugen
+ * @memberof module:arithmetic
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +27,7 @@ let proto = {
     } else {
       out = Math.abs( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }

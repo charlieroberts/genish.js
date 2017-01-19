@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * Raises a base to an exponent using `Math.pow` function
+ * FIXME: @example
+ *
+ * @name pow
+ * @function
+ * @memberof module:arithmetic
+ * @param {ugen|number} base
+ * @param {ugen|number} exp
+ * @return ugen
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -8,11 +20,11 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-    
+
     if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
       gen.closures.add({ 'pow': Math.pow })
 
-      out = `gen.pow( ${inputs[0]}, ${inputs[1]} )` 
+      out = `gen.pow( ${inputs[0]}, ${inputs[1]} )`
 
     } else {
       if( typeof inputs[0] === 'string' && inputs[0][0] === '(' ) {
@@ -24,7 +36,7 @@ let proto = {
 
       out = Math.pow( parseFloat( inputs[0] ), parseFloat( inputs[1]) )
     }
-    
+
     return out
   }
 }

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ad - Postman Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-envelope.ad.html">ad</a></li></ul><h3>Modules</h3><ul><li><a href="module-arithmetic.html">arithmetic</a><ul class='methods'><li data-type='method'><a href="module-arithmetic.html#.add">add</a></li><li data-type='method'><a href="module-arithmetic.html#.div">div</a></li><li data-type='method'><a href="module-arithmetic.html#.mod">mod</a></li><li data-type='method'><a href="module-arithmetic.html#.mul">mul</a></li><li data-type='method'><a href="module-arithmetic.html#.sub">sub</a></li></ul></li><li><a href="module-buffer.html">buffer</a><ul class='methods'><li data-type='method'><a href="module-buffer.html#.cycle">cycle</a></li><li data-type='method'><a href="module-buffer.html#.data">data</a></li><li data-type='method'><a href="module-buffer.html#.peek">peek</a></li><li data-type='method'><a href="module-buffer.html#.poke">poke</a></li></ul></li><li><a href="module-control.html">control</a><ul class='methods'><li data-type='method'><a href="module-control.html#.bang">bang</a></li><li data-type='method'><a href="module-control.html#.input">input</a></li><li data-type='method'><a href="module-control.html#.param">param</a></li></ul></li><li><a href="module-envelope.html">envelope</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ad</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="module-arithmetic.html">arithmetic</a><a href="module-buffer.html">~buffer</a><a href="module-control.html">~control</a><a href="module-envelope.html">~envelope</a>.</span>
+        
+        ad
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="ad"><span class="type-signature"></span>new ad<span class="signature">(attackTime, decayTime, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Creates an envelope with an attack and a decay stage, both measured in samples.</p>
+<h4>Properties</h4><ul>
+<li><code>shape</code> <em>string</em> ('linear' or 'exponential', default 'exponental') determines the shape of the attack / decay.</li>
+<li><code>alpha</code> <em>number</em> (default 5) An extra number used to determine windowing. In the case of 'exponential' envelopes, this determines the amount of curvature in the envelope. For 'linear' envelopes this number has no effect.</li>
+</ul>
+<h4>Methods</h4><ul>
+<li><code>trigger</code>: Re-trigger the envelope.</li>
+<li><code>isComplete</code>: test if the envelope is completed</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attackTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Attack time measured in samples, defaults to 44100.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>decayTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Decay time measured in samples, defaults to 44100.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { shape: 'exponential', alpha: 5 }
+                
+                </td>
+            
+
+            <td class="description last"><p>the initial property values</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>myenv = ad( 44, 88200 )
+play(
+  mul( myenv, cycle( 330 ) )
+)
+// wait some time for decay and then run to re-trigger
+myenv.trigger()</code></pre>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated at Thu Jan 19 2017 02:06:17 GMT+0100 (CET)
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * Returns 1 if two inputs are NOT equal, otherwise returns 0.
+ * FIXME: @example
+ *
+ * @name neq
+ * @function
+ * @param {(ugen|number)} a - one element to compare
+ * @param {(ugen|number)} b - other element to compare
+ * @return {ugen}
+ * @memberof module:comparison
+ */
+
 let gen = require( './gen.js' )
 
 let proto = {
@@ -23,7 +35,7 @@ module.exports = ( in1, in2 ) => {
     uid:     gen.getUID(),
     inputs:  [ in1, in2 ],
   })
-  
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Decay
+ * FIXME: add documentation
+ * @name decay
+ * @function
+ * @param {(ugen|number)} [decayType = 44100]
+ * @param {Object} [props = { initValue: 1}]
+ * @return {ugen}
+ * @memberof module:envelope
+ */
+
 let gen     = require( './gen.js' ),
     history = require( './history.js' ),
     mul     = require( './mul.js' ),
@@ -15,5 +26,5 @@ module.exports = ( decayTime = 44100, props ) => {
     ssd.value = 1
   }
 
-  return ssd.out 
+  return ssd.out
 }

@@ -19,10 +19,13 @@
     "gulp-buffer": "^0.0.2",
     "gulp-mocha": "^2.2.0",
     "memory-helper": "^1.0.0",
+    "postman-jsdoc-theme": "0.0.2",
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha tests/gen.tests.js"
+    "test": "mocha tests/gen.tests.js",
+    "api": "jsdoc2md js/*.js > docs/API.md",
+    "docs": "jsdoc -c .jsdoc3.json"
   },
   "repository": {
     "type": "git",
@@ -41,5 +44,6 @@
   "bugs": {
     "url": "https://github.com/charlieroberts/genish.js/issues"
   },
-  "homepage": "https://github.com/charlieroberts/genish.js#readme"
+  "homepage": "https://github.com/charlieroberts/genish.js#readme",
+  "standard": false
 }

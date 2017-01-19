@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Calculates the arcsine of the input (interpreted as radians) using
+ * Javascript's `Math.asin()` function
+ *
+ * @name asin
+ * @function
+ * @param {(ugen|number)} radians
+ * @return {ugen}
+ * @memberof module:trigonometry
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -8,16 +19,16 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-    
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'asin': Math.asin })
 
-      out = `gen.asin( ${inputs[0]} )` 
+      out = `gen.asin( ${inputs[0]} )`
 
     } else {
       out = Math.asin( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }

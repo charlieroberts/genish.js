@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Cycle creates a sine oscillator running at a provided frequency. The
+ * oscillator runs via an interpolated wavetable lookup.
+ *
+ * @name cycle
+ * @function
+ * @param {ugen|number} frequency
+ * @return ugen
+ * @memberof module:waveform
+ */
+
 let gen  = require( './gen.js' ),
     accum= require( './phasor.js' ),
     data = require( './data.js' ),
@@ -10,7 +21,7 @@ let gen  = require( './gen.js' ),
 let proto = {
   basename:'cycle',
 
-  initTable() {    
+  initTable() {
     let buffer = new Float32Array( 1024 )
 
     for( let i = 0, l = buffer.length; i < l; i++ ) {
@@ -23,8 +34,8 @@ let proto = {
 }
 
 module.exports = ( frequency=1, reset=0 ) => {
-  if( gen.globals.cycle === undefined ) proto.initTable() 
-  
+  if( gen.globals.cycle === undefined ) proto.initTable()
+
   let ugen = peek( gen.globals.cycle, phasor( frequency, reset, { min:0 } ))
   ugen.name = 'cycle' + gen.getUID()
 

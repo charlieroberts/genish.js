@@ -1,5 +1,18 @@
 'use strict'
 
+/**
+ * Convert midi note numbers to frequency
+ * FIXME: Write documentation
+ * FIXME: @memberof ??
+ * FIXME: @example
+ *
+ * @name mtof
+ * @function
+ * @param {(ugen|number)} midi - the note midi number
+ * @param {Object} [props = { tuning: 440 }]
+ * @return {ugen} an ugen that outputs the frequency
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +30,7 @@ let proto = {
     } else {
       out = this.tuning * Math.exp( .057762265 * ( inputs[0] - 69) )
     }
-    
+
     return out
   }
 }
@@ -25,12 +38,12 @@ let proto = {
 module.exports = ( x, props ) => {
   let ugen = Object.create( proto ),
       defaults = { tuning:440 }
-  
+
   if( props !== undefined ) Object.assign( props.defaults )
 
   Object.assign( ugen, defaults )
   ugen.inputs = [ x ]
-  
+
 
   return ugen
 }

@@ -1,5 +1,14 @@
 'use strict'
 
+/**
+ * Rounds input up to nearest integer using Javascript's `Math.ceil()` function
+ * @name ceil
+ * @function
+ * @param {(ugen|number)} value
+ * @return {ugen}
+ * @memberof module:numeric
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +26,7 @@ let proto = {
     } else {
       out = Math.ceil( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }

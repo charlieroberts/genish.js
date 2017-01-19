@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * Convert time in microseconds to samples
+ * FIXME: write documentation
+ *
+ * @name mstosamps
+ * @function
+ * @param {(ugen|number)} time - Time in milliseconds
+ * @return {ugen}
+ * FIXME: @memberof ??
+ * FIXME: @example
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -12,15 +24,15 @@ let proto = {
 
     if( isNaN( inputs[0] ) ) {
       out = `  var ${this.name } = ${gen.samplerate} / 1000 * ${inputs[0]} \n\n`
-     
+
       gen.memo[ this.name ] = out
-      
+
       returnValue = [ this.name, out ]
     } else {
       out = gen.samplerate / 1000 * this.inputs[0]
 
       returnValue = out
-    }    
+    }
 
     return returnValue
   }

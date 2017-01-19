@@ -1,5 +1,18 @@
 'use strict'
 
+/**
+ * Wrap constricts an input `a` to a particular range. Given a range of {0,1}
+ * and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,0,.1,.2}.
+ * FIXME: @example
+ *
+ * @name clamp
+ * @function
+ * @param {(ugen|number)} a - Input signal to wrap.
+ * @param {(ugen|number)} min - Signal or number that sets minimum of range to wrap input to.
+ * @param {(ugen|number)} max - Signal or number that sets maximum of range to wrap input to.
+ * @memberof module:range
+ */
+
 let gen  = require('./gen.js'),
     floor= require('./floor.js'),
     sub  = require('./sub.js'),
@@ -16,8 +29,8 @@ let proto = {
 
     //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
     //const long numWraps = long((v-lo)/range) - (v < lo);
-    //return v - range * double(numWraps);   
-    
+    //return v - range * double(numWraps);
+
     if( this.min === 0 ) {
       diff = max
     }else if ( isNaN( max ) || isNaN( min ) ) {
@@ -40,13 +53,13 @@ let proto = {
 module.exports = ( in1, min=0, max=1 ) => {
   let ugen = Object.create( proto )
 
-  Object.assign( ugen, { 
-    min, 
+  Object.assign( ugen, {
+    min,
     max,
     uid:    gen.getUID(),
     inputs: [ in1, min, max ],
   })
-  
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

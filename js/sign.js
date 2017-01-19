@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Returns 1 for positive input and -1 for negative input. Zero returns itself.
+ * Uses JavaScript's `Math.sign()` function.
+ *
+ * @name sign
+ * @function
+ * @param {(ugen|number)} value
+ * @return {ugen}
+ * @memberof module:numeric
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +28,7 @@ let proto = {
     } else {
       out = Math.sign( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }

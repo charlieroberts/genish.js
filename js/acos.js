@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Calculates the arccosine of the input (interpreted as radians) using
+ * Javascript's `Math.acos()` function
+ *
+ * @name acos
+ * @function
+ * @param {(ugen|number)} radians
+ * @return {ugen}
+ * @memberof module:trigonometry
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -8,16 +19,16 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-    
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'acos': Math.acos })
 
-      out = `gen.acos( ${inputs[0]} )` 
+      out = `gen.acos( ${inputs[0]} )`
 
     } else {
       out = Math.acos( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }
