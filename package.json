@@ -24,7 +24,6 @@
   },
   "scripts": {
     "test": "mocha tests/gen.tests.js",
-    "api": "jsdoc2md js/*.js > docs/API.md",
     "docs": "jsdoc -c .jsdoc3.json"
   },
   "repository": {

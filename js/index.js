@@ -5,6 +5,7 @@
 /** @module control */
 /** @module envelope */
 /** @module feedback */
+/** @module trigonometry */
 /** @module filter */
 /** @module integrator */
 /** @module logic */
