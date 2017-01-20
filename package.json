@@ -22,7 +22,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha tests/gen.tests.js"
+    "test": "mocha test/*.js"
   },
   "repository": {
     "type": "git",
@@ -41,5 +41,6 @@
   "bugs": {
     "url": "https://github.com/charlieroberts/genish.js/issues"
   },
-  "homepage": "https://github.com/charlieroberts/genish.js#readme"
+  "homepage": "https://github.com/charlieroberts/genish.js#readme",
+  "standard": false
 }
