@@ -2,11 +2,10 @@
 
 /**
  * Raises a base to an exponent using `Math.pow` function
- * FIXME: @example
  *
+ * __Category:__ arithmetic
  * @name pow
  * @function
- * @memberof module:arithmetic
  * @param {ugen|number} base
  * @param {ugen|number} exp
  * @return ugen

@@ -4,12 +4,12 @@
  * Memo
  * FIXME: Write documentation
  *
+ * __Category:__
  * @name memo
  * @function
  * @param {ugen} input
  * @param {String} name
  * @return {ugen}
- * FIXME: @moduleof ?
  */
 
 let gen = require('./gen.js')

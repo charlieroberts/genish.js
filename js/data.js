@@ -16,10 +16,10 @@
  * executed when resolution is complete. You can use this to delay starting
  * playback of a graph until all data dependencies have been loaded.
  *
+ * __Category:__ buffer
  * @name data
  * @function
  * @param {Array|Integer|String} value
- * @memberof module:buffer
  * @example
   audiofile = data( 'myaudiofile.wav' ).then( ()=> {
     out = gen.createCallback( peek( audiofile, phasor(.1) ) )

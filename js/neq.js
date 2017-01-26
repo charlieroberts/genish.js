@@ -2,14 +2,13 @@
 
 /**
  * Returns 1 if two inputs are NOT equal, otherwise returns 0.
- * FIXME: @example
  *
+ * __Category:__ comparison
  * @name neq
  * @function
  * @param {(ugen|number)} a - one element to compare
  * @param {(ugen|number)} b - other element to compare
  * @return {ugen}
- * @memberof module:comparison
  */
 
 let gen = require( './gen.js' )

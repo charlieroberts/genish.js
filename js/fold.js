@@ -4,12 +4,12 @@
  * Fold constricts an input `a` to a particular range. Given a range of {0,1}
  * and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,1,.9,.8}.
  *
+ * __Category:__ range
  * @name fold
  * @function
  * @param {(ugen|number)} a - Input signal to fold.
  * @param {(ugen|number)} min - Signal or number that sets minimum of range to fold input to.
  * @param {(ugen|number)} max - Signal or number that sets maximum of range to fold input to.
- * @memberof module:range
  */
 
 let gen  = require('./gen.js')

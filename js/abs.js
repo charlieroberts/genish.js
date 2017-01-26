@@ -3,11 +3,11 @@
 /**
  * Find the absolute value of a signal using `Math.abs`
  *
+ * __Category:__ arithmetic
  * @name abs
  * @function
  * @param {(number|ugen)} signal
  * @return ugen
- * @memberof module:arithmetic
  */
 
 let gen  = require('./gen.js')

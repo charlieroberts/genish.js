@@ -2,10 +2,8 @@
 
 /**
  * Sample and hold
- * FIXME: Write documentation
- * FIXME: @moduleof module:???
- * FIXME: @example
  *
+ * __Category__: ?
  * @name sah
  * @function
  * @param {(ugen|number)} input

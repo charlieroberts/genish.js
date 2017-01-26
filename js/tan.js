@@ -4,11 +4,11 @@
  * Calculates the tangent of the input (interpreted as radians) using
  * Javascript's `Math.tan()` function
  *
+ * __Category:__ trigonometry
  * @name tan
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 
 let gen  = require('./gen.js')

@@ -3,9 +3,9 @@
 /**
  * Divides ugen or number *a* by ugen or number *b*.
  *
+ * __Category:__ arithmetic
  * @name div
  * @function
- * @memberof module:arithmetic
  * @param {ugen|number} a
  * @param {ugen|number} b
  * @return ugen

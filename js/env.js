@@ -4,12 +4,12 @@
  * Envelope
  * FIXME: Add documentation
  *
+ * __Category:__ buffer
  * @name env
  * @function
  * @param {(ugen|number)} [length=11025]
  * @param {Object} [props = { type: 'Triangular', bufferLength: 1024, alpha: 0.15 }]
  * @return {ugen}
- * @memberof module:buffer
  */
 
 let gen     = require( './gen' ),

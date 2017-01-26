@@ -20,7 +20,6 @@
  *   - **ugen** &nbsp;  *object* &nbsp; A genish.js unit generator.
  *
  * @name gen
- * @namespace
  *
  * @example
  * out = gen.createCallback( add(5,3) )

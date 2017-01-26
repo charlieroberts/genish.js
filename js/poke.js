@@ -2,14 +2,13 @@
 
 /**
  * Poke writes values to a index on a `data` object.
- * FIXME: @example
  *
+ * __Category:__ buffer
  * @name poke
  * @function
  * @param {data} data A `data` ugen to read values from.
  * @param {Number} value -The number to write to the ugen's `data` property.
  * @param {Integer} index - The index to write to
- * @memberof module:buffer
 */
 
 let gen  = require('./gen.js'),

@@ -9,6 +9,7 @@
  * #### Properties
  * - `outputs` *string* : An array of outputs that can be used as inputs to other ugens.
  *
+ * __Category:__ routing
  * @name gate
  * @function
  * @param {(ugen|number)} control - Selects the output index that the input signal travels through.
@@ -20,7 +21,6 @@
  * controlSignal = gt( phasor(2), .5 )
  * g = gate( controlSignal, inputSignal, { count:4 })
  * gen.createCallback([ g.outputs[0], g.outputs[1] ])
- * @memberof module:routing
  */
 
 let gen = require( './gen.js' )

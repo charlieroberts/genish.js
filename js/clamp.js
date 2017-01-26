@@ -5,12 +5,13 @@
  * maximum, the maximum is returned. If input `b` is less than the minimum, the
  * minimum is returned.
  *
+ *
+ * __Category:__ range
  * @name clamp
  * @function
  * @param {(ugen|number)} a - Input signal to clamp.
  * @param {(ugen|number)} min - Signal or number that sets minimum of range to clamp input to.
  * @param {(ugen|number)} max - Signal or number that sets maximum of range to clamp input to.
- * @memberof module:range
  */
 
 let gen  = require('./gen.js'),

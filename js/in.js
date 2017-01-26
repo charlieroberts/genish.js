@@ -6,6 +6,7 @@
  * example, if we wanted a sine oscillator that let us control its frequency and
  * amplitude, we could use:
  *
+ * __Category:__ control
  * @name input
  * @function
  * @example
@@ -17,7 +18,6 @@
  * callback( 440, .5 )
  * // another sample using 220 Hz frequency, .25 gain
  * callback( 220, .25 )
- * @memberof module:control
  */
 
 let gen = require('./gen.js')

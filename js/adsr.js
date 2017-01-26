@@ -16,6 +16,7 @@
  * - `trigger`: Re-trigger the envelope.
  * - `release`: Move from the sustain stage to the release stage of the envelope. This method only has effect if the `triggerRelease` property to set to `true` on instantiation. Note that calling this method will not skip attack or decay stages... if called during the attack or decay stage the envelope will simply bypass the sustain stage and continue straight to the release after the decay is completed.
  *
+ * __Category:__ envelope
  * @name adsr
  * @function
  * @param {ugen|number} [attackTime] Attack time measured in samples, defaults to `gen.samplerate / 1000` (one ms).
@@ -32,7 +33,6 @@
  * myenv.release()
  * // re-trigger
  * myenv.retrigger()
- * @memberof module:envelope
  */
 
 let gen      = require( './gen.js' ),

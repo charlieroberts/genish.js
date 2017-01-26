@@ -3,12 +3,12 @@
 /**
  * Returns 1 if `a` is greater than `b`, otherwise returns 0
  *
+ * __Category:__ comparison
  * @name gt
  * @function
  * @param {(ugen|number)} a - one element to compare
  * @param {(ugen|number)} b - other element to compare
  * @return {ugen}
- * @memberof module:comparison
  */
 
 let gen  = require('./gen.js')

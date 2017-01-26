@@ -4,12 +4,12 @@
  * Wrap constricts an input `a` to a particular range. Given a range of {0,1}
  * and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,0,.1,.2}.
  *
+ * __Category:__ range
  * @name wrap
  * @function
  * @param {(ugen|number)} a - Input signal to wrap.
  * @param {(ugen|number)} min - Signal or number that sets minimum of range to wrap input to.
  * @param {(ugen|number)} max - Signal or number that sets maximum of range to wrap input to.
- * @memberof module:range
  */
 
 let gen  = require('./gen.js'),

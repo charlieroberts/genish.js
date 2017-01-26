@@ -4,11 +4,11 @@
  * Calculates the arctangent of the input (interpreted as radians) using
  * Javascript's `Math.atan()` function
  *
+ * __Category:__ trigonometry
  * @name atan
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 
 let gen  = require('./gen.js')

@@ -17,6 +17,7 @@
  * #### Methods
  * - `in` **ugen** &nbsp;  *ugen* &nbsp; A genish.js unit generator (or graph) to be recorded.
  *
+ * __Category:__ feedback
  * @name history
  * @alias ssd
  * @function
@@ -30,7 +31,6 @@
  * // record the output of the echo and our feedback using a call to feedback.in()
  * mixer = feedback.in( mix( echo, feedback.out, .925 ) )
  * gen.createCallback( mixer )
- * @memberof module:feedback
  */
 
 let gen  = require('./gen.js')

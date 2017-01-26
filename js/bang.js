@@ -15,11 +15,11 @@
  * - `trigger`: Change the state from the min property of the bang ugen to the
  * max property for one sample.
  *
+ * __Category:__ control
  * @name bang
  * @function
  * @param {Object} [properties = { min: 0, max: 1 }] - optional properties object
  * @return {ugen}
- * @memberof module:control
  */
 
 let gen = require('./gen.js')

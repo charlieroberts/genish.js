@@ -16,6 +16,7 @@
  * to create DSP that only runs under certain conditions. For example,
  * given the following in the genish.js playground:
  *
+ * __Category:__ routing
  * @name ifelse
  * @function
  * @param {(ugen|number)} control - When `control` === 1, output `a`; else output `b`.
@@ -53,7 +54,6 @@
  * // ... we are only running two oscillators at any given time,
  * // our control phasor and whatever is held in the current executing block
  * // of our `ifelse` ugen.
- * @memberof module:routing
  */
 
 /*

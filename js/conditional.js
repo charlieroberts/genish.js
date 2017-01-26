@@ -4,13 +4,13 @@
  * Conditional
  * FIXME: write function and parameters description
  *
+ * __Category:__ routing
  * @name conditional
  * @param {(ugen|number)} control
  * @param {(ugen|number)} a
  * @param {(ugen|number)} b
  * @return {ugen}
  * @function
- * @memberof module:routing
  */
 
 let gen = require( './gen.js' )

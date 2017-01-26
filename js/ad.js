@@ -11,6 +11,7 @@
  * - `trigger`: Re-trigger the envelope.
  * - `isComplete`: test if the envelope is completed
  *
+ * __Category:__ envelope
  * @name ad
  * @function
  * @param {(ugen|number)} attackTime - Attack time measured in samples, defaults to 44100.
@@ -24,8 +25,6 @@
  * )
  * // wait some time for decay and then run to re-trigger
  * myenv.trigger()
- *
- * @memberof module:envelope
  */
 
 let gen      = require( './gen.js' ),

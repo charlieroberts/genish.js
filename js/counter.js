@@ -8,7 +8,7 @@
  * `accum` are fixed values, while they can be specified with signals in
  * `counter`, enabling mix/max to change over time.
  *
-
+ * __Category:__ integrator
  * @name counter
  * @function
  * @param {(ugen|number)} [increment = 1] - The amount to increase the counter's internal value by on each sample
@@ -16,7 +16,6 @@
  * @param {(ugen|number)} [max = 0] - The maximum value of the accumulator
  * @param {(ugen|number)} [reset = 0] - When `reset` has a value of 1, the counter will reset its internal value to 0.
  * @param {Object} [props = {}] - An optional dictionary containing a `max` value that the `accum` increments to before wrapping, and a `min` value that the `accum` wraps to after reaching/passing its max. An `initialValue` for the `accum` can also be provided; if it is not given the initial value is assumed to be the same as its `min`.
- * @memberof module:integrator
  */
 
 let gen  = require('./gen.js')

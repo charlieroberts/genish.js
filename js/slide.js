@@ -6,14 +6,13 @@
  * discrete events; for example, sliding from one note frequency to the next.
  * The second argument to `slide` determines the length, in samples, of
  * transitions.
- * FIXME: @example
  *
+ * __Category:__ filter
  * @name slide
  * @function
  * @param {ugen} signal
  * @param {integer} length - Length of slide in samples.
  * @return {ugen}
- * @memberof module:filter
  */
 
 let gen     = require( './gen.js' ),

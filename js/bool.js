@@ -5,13 +5,13 @@
  * output is 1; if input == 0 then output 0. Roughly equivalent to the following
  * pseudocode:
  *
+ * __Category:__ logic
  * @name bool
  * @function
  * @param {(ugen|Number)} signal - the input signal
  * @return {ugen}
  * @example
  * y = x !== 0 ? 1 : 0
- * @memberof module:logic
  */
 
 let gen = require( './gen.js' )

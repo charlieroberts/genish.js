@@ -1,12 +1,10 @@
 'use strict'
 
-/**
+/*
  * Utilities
  * FIXME: write documentation (maybe is private)
- * FIXME: @example
  *
  * @name utilities
- * @namespace
  */
 
 let gen = require( './gen.js' ),

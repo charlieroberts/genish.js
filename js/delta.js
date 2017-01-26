@@ -4,11 +4,11 @@
  * Delta
  * FIXME: Add documentation
  *
+ * __Category:__ delay
  * @name delta
  * @function
  * @param {(ugen|number)} input
  * @return {ugen}
- * @memberof module:delay
  */
 
 let gen     = require( './gen.js' ),

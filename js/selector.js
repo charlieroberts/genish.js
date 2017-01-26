@@ -4,12 +4,12 @@
  * Selector is basically the same as `switch()` but allows you to have an
  * arbitrary number of inputs to choose between.
  *
+ * __Category:__ routing
  * @name selector
  * @function
  * @param {(ugen|number)} control -  Determines which input signal is passed to the ugen's output.
  * @param {(...ugen|...number)} inputs - After the `control` input, an arbitrary number of inputs can be passed to the selector constructor.
  * @return {ugen}
- * @memberof module:routing
  */
 
 let gen = require( './gen.js' )

@@ -7,6 +7,7 @@
  * efficient. Additionally, the `min` and `max` properties of `accum` are fixed
  * values, while they can be specified with signals in `counter`.
  *
+ * __Category:__ integrator
  * @name accum
  * @function
  * @param {(ugen|number)} [increment = 1] - The amount to increase the accumulator's
@@ -18,7 +19,6 @@
  * and a `min` value that the `accum` wraps to after reaching/passing its max.
  * An `initialValue` for the `accum` can also be provided; if it is not given
  * the initial value is assumed to be the same as its `min`.
- * @memberof module:integrator
  */
 
 let gen  = require('./gen.js')

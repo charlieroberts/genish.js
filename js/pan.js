@@ -3,11 +3,9 @@
 // FIXME: properties are not used
 
 /**
- * Pan
- * FIXME: Write documentation
- * FIXME: @memberof ??
- * FIXME: @example
+ * Pan two signals
  *
+ * __Category:__ utility
  * @name pan
  * @function
  * @param {(ugen|number)} left - The left input signal

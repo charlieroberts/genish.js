@@ -6,6 +6,7 @@
  * example below shows `t60` in action, it would actually be much more efficient
  * to calculate t60 once since the time used (88200) is static.
  *
+ * __Category:__ envelope
  * @name t60
  * @function
  * @param {ugen} fadeTime - The time (in samples) to fade 1 by 60 dB.
@@ -17,7 +18,6 @@
  * // record current value of fade
  * lastsample.in( fade )
  * play( mul( lastsample.out, cycle( 330 ) ) )
- * @memberof module:envelope
  */
 
 let gen  = require('./gen.js')

@@ -2,6 +2,8 @@
 
 /**
  * Adds an unlimited number of signals (numbers or ugens)
+ *
+ * __Category:__ arithmetic
  * @name add
  * @function
  * @param {(...number|...ugen)} args
@@ -10,7 +12,6 @@
     out = gen.createCallback( add(1,2) )
     // creates function body out = ( 3 )
     out() // 3
- * @memberof module:arithmetic
  */
 
 let gen = require('./gen.js')

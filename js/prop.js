@@ -1,15 +1,13 @@
 'use strict'
 
 /**
- * Prop
- * FIXME: Write documentation
- * FIXME: @moduleof module:???
- * FIXME: @example
+ * Set a property of a ugen
  *
+ * __Category:__ utilities
  * @name prop
  * @function
  * @param {String} propName
- * @param {FIXME} value
+ * @param {Object} value
  * @return {ugen}
  */
 

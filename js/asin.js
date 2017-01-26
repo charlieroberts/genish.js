@@ -4,11 +4,11 @@
  * Calculates the arcsine of the input (interpreted as radians) using
  * Javascript's `Math.asin()` function
  *
+ * __Category:__ trigonometry
  * @name asin
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 
 let gen  = require('./gen.js')

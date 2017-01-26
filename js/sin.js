@@ -4,11 +4,11 @@
  * Calculates the sine of the input (interepreted as radians) using Javascript's
  * `Math.sin()` function
  *
+ * __Category:__ trigonometry
  * @name sin
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 let gen  = require('./gen.js')
 

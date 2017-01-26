@@ -5,6 +5,7 @@
  * assignment to its `value` property. In the example below, the frequency of a
  * sine oscillator is controlled via a `param` ugen:
  *
+ * __Category:__ control
  * @name param
  * @function
  * @param {Number} value - The initial value for the param ugen.
@@ -18,7 +19,6 @@
  * intrvl = setInterval( ()=> {
  *   frequency.value = pattern[ idx++ % pattern.length ]
  * }, 100 )
- * @memberof module:control
  */
 
 let gen = require('./gen.js')

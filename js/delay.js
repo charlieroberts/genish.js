@@ -7,12 +7,12 @@
  * - `size` *number* (default 512) determines the length of the delay line.
  * - `interp` *interp* (default 'linear') Set the interpolation used to access non-integer indices in the delay line. Currently can be 'linear' or 'none'.
  *
+ * __Category:__ feedback
  * @name delay
  * @function
  * @param {(ugen|number)} in - The signal to be delayed.
  * @param {Number} delayTime - The amount of time to delay the incoming signal.
  * @param {Object} properties - A dictionary of properties to assign to the ugen; see below.
- * @memberof module:feedback
  */
 
 let gen  = require( './gen.js'  ),

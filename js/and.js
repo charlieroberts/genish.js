@@ -2,12 +2,13 @@
 
 /**
  * Returns 1 if both inputs do not equal 0.
+ *
+ * __Category:__ logic
  * @name and
  * @function
  * @param {(ugen|Number)} a - input signal
  * @param {(ugen|Number)} b - input signal
  * @return {ugen}
- * @memberof module:logic
  */
 
 let gen = require( './gen.js' )

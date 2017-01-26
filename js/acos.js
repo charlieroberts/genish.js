@@ -4,11 +4,11 @@
  * Calculates the arccosine of the input (interpreted as radians) using
  * Javascript's `Math.acos()` function
  *
+ * __Category:__ trigonometry
  * @name acos
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 
 let gen  = require('./gen.js')

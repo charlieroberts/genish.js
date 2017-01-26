@@ -6,13 +6,13 @@
  * the `ternary` ugen, so as not to conflict with JavaScript's `switch` control
  * structure.
  *
+ * __Category:__ routing
  * @name switch
  * @function
  * @param {(ugen|number)} control - When `control` === 1, output `a`; else output `b`.
  * @param {(ugen|number)} a -  Signal that is available to output.
  * @param {(ugen|number)} b - Signal that is available to ouput.
  * @return {ugen}
- * @memberof module:routing
  */
 
 let gen = require( './gen.js' )

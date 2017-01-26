@@ -1,13 +1,13 @@
 'use strict'
 
 /**
- * Subtract
+ * Subtract. It accepts a variable number of signals.
  *
+ * __Category:__ arithmetic
  * @name sub
  * @function
  * @param {(...number|...ugen)} args
  * @return ugen
- * @memberof module:arithmetic
  * @example
  * out = gen.createCallback( sub( abs(.1),1,2 ) )
  * // creates function body out = ( .1 - 3 )

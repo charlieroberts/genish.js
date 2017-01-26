@@ -12,14 +12,16 @@
  * - `mode` {String}: determines how indexing is performed. Options are 'phase' and 'samples'.
  * - `interp` {string}: determines what interpolation is used when performing
  * the lookup. Options are 'linear' and 'none'
+ * - `boundmode` {string}: determines what to do when the buffer ends. Options
+ * are `wrap`, `clam` or `ignore`
  *
+ * __Category:__ buffer
  * @name peek
  * @function
  * @param {data} data - the `data` ugen to read values from
  * @param {Integer} index - the index to be read
- * @param {Object} [properties = { mode: 'phase', interp: 'linear'}] - initial
- * properties object
- * @memberof module:buffer
+ * @param {Object} [properties = { mode: 'phase', interp: 'linear', boundmode: 'wrap'}] - initial
+ * properties object.
  * @example
  * // create a sliding, interpolated frequency signal running between four values
  * d = data( [440,880,220,1320] )

@@ -3,12 +3,13 @@
 /**
  * Decay
  * FIXME: add documentation
+ *
+ * __Category:__ envelope
  * @name decay
  * @function
  * @param {(ugen|number)} [decayType = 44100]
  * @param {Object} [props = { initValue: 1}]
  * @return {ugen}
- * @memberof module:envelope
  */
 
 let gen     = require( './gen.js' ),

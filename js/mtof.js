@@ -2,10 +2,8 @@
 
 /**
  * Convert midi note numbers to frequency
- * FIXME: Write documentation
- * FIXME: @memberof ??
- * FIXME: @example
  *
+ * __Category:__ utilities
  * @name mtof
  * @function
  * @param {(ugen|number)} midi - the note midi number

@@ -2,14 +2,12 @@
 
 /**
  * Convert time in microseconds to samples
- * FIXME: write documentation
  *
+ * __Category:__ utilities
  * @name mstosamps
  * @function
  * @param {(ugen|number)} time - Time in milliseconds
  * @return {ugen}
- * FIXME: @memberof ??
- * FIXME: @example
  */
 
 let gen  = require('./gen.js')

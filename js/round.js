@@ -3,11 +3,11 @@
 /**
  * Rounds input up or down to nearest integer using Javascript's `Math.round()` function
  *
+ * __Category:__ numeric
  * @name round
  * @function
  * @param {(ugen|number)} a
  * @return {ugen}
- * @memberof module:numeric
  */
 
 let gen  = require('./gen.js')

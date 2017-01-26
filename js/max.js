@@ -3,12 +3,12 @@
 /**
  * Returns whichever value is greater.
  *
+ * __Category:__ comparison
  * @name max
  * @function
  * @param {(ugen|number)} a - one element to compare
  * @param {(ugen|number)} b - other element to compare
  * @return {ugen}
- * @memberof module:comparison
  */
 
 let gen  = require('./gen.js')

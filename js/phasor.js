@@ -7,13 +7,13 @@
  * the increment `1/gen.samplerate * frequency` and the desired min/max
  * properties.
  *
+ * __Category:__ waveform
  * @name phasor
  * @function
  * @param {ugen|number} [frequency = 1]
  * @param {ugen|number} [reset = 0]
  * @param {Object} [props = { max: 1, min: -1 }]
  * @return ugen
- * @memberof module:waveform
  */
 
 let gen  = require( './gen.js' ),

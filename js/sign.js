@@ -4,11 +4,11 @@
  * Returns 1 for positive input and -1 for negative input. Zero returns itself.
  * Uses JavaScript's `Math.sign()` function.
  *
+ * __Category:__ numeric
  * @name sign
  * @function
  * @param {(ugen|number)} value
  * @return {ugen}
- * @memberof module:numeric
  */
 
 let gen  = require('./gen.js')

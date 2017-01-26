@@ -1,15 +1,13 @@
 'use strict'
 
-/**
+/*
  * Windows
  * FIXME: write documentation
- * FIXME: @example
  *
  * adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
  * starting at line 1427
  * taken 8/15/16
  * @name windows
- * @namespace
  */
 
 module.exports = {

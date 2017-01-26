@@ -2,15 +2,14 @@
 
 /**
  * Mix two signals `a` and `b`
- * FIXME: Write documentation
  *
+ * __Category:__
  * @name mix
  * @function
- * @param {(ugen|number)} a
- * @param {(ugen|number)} b
- * @param {(ugen|number)} [t = 0.5]
+ * @param {(ugen|number)} a - one signal to mix
+ * @param {(ugen|number)} b - other signal to mix
+ * @param {(ugen|number)} [t = 0.5] the relative amount between both
  * @return {ugen}
- * FIXME: @moduleof ??
  */
 
 let gen = require('./gen.js'),

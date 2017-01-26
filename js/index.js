@@ -1,18 +1,4 @@
 'use strict'
-// Module definitions (required for jsdoc):
-/** @module arithmetic */
-/** @module buffer */
-/** @module control */
-/** @module envelope */
-/** @module feedback */
-/** @module trigonometry */
-/** @module filter */
-/** @module integrator */
-/** @module logic */
-/** @module comparison */
-/** @module range */
-/** @module routing */
-/** @module waveform */
 
 let library = {
   export( destination ) {

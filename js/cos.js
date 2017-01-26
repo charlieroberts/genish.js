@@ -4,11 +4,11 @@
  * Calculates the cosine of the input (interpreted as radians) using
  * Javascript's `Math.cos()` function
  *
+ * __Category:__ trigonometry
  * @name cos
  * @function
  * @param {(ugen|number)} radians
  * @return {ugen}
- * @memberof module:trigonometry
  */
 
 let gen  = require('./gen.js')

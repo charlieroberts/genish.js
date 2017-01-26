@@ -1,10 +1,10 @@
 'use strict'
 
 /**
+ * Rate
  * FIXME: Write documentation
- * FIXME: @moduleof module:???
- * FIXME: @example
  *
+ * __Category__: utilities
  * @name rate
  * @function
  * @param {(ugen|number)} input

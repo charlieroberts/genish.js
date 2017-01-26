@@ -3,11 +3,11 @@
 /**
  * `dcblock` remove DC offset from an input signal using a one-pole high-pass filter.
  *
+ * __Category:__ filter
  * @name dcblock
  * @function
  * @param {ugen} signal
  * @return {ugen}
- * @memberof module:filter
 */
 
 let gen     = require( './gen.js' ),

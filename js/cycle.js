@@ -4,11 +4,11 @@
  * Cycle creates a sine oscillator running at a provided frequency. The
  * oscillator runs via an interpolated wavetable lookup.
  *
+ * __Category:__ waveform
  * @name cycle
  * @function
  * @param {ugen|number} frequency
  * @return ugen
- * @memberof module:waveform
  */
 
 let gen  = require( './gen.js' ),

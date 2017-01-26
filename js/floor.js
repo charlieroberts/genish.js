@@ -3,11 +3,11 @@
 /**
  * Rounds input down to nearest integer by performing a bitwise or with 0.
  *
+ * __Category:__ numeric
  * @name floor
  * @function
  * @param {(ugen|number)} a
  * @return {ugen}
- * @memberof module:numeric
  * @example
  * out = gen.createCallback( round( in() ) )
  * // creates function body: out = ( in1 | 0 )

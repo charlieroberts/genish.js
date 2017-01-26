@@ -3,9 +3,9 @@
 /**
  * Multiples two number or ugens together.
  *
+ * __Category:__ arithmetic
  * @name mul
  * @function
- * @memberof module:arithmetic
  * @param {ugen|number} a
  * @param {ugen|number} b
  * @return ugen
