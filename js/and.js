@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Returns 1 if both inputs do not equal 0.
+ *
+ * __Category:__ logic
+ * @name and
+ * @function
+ * @param {(ugen|Number)} a - input signal
+ * @param {(ugen|Number)} b - input signal
+ * @return {ugen}
+ */
+
 let gen = require( './gen.js' )
 
 let proto = {
@@ -23,7 +34,7 @@ module.exports = ( in1, in2 ) => {
     uid:     gen.getUID(),
     inputs:  [ in1, in2 ],
   })
-  
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

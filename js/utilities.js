@@ -1,5 +1,12 @@
 'use strict'
 
+/*
+ * Utilities
+ * FIXME: write documentation (maybe is private)
+ *
+ * @name utilities
+ */
+
 let gen = require( './gen.js' ),
     data = require( './data.js' )
 
@@ -68,15 +75,15 @@ let utilities = {
 
     return this
   },
-  
+
   playGraph( graph, debug, mem=44100*10 ) {
     utilities.clear()
     if( debug === undefined ) debug = false
-          
+
     isStereo = Array.isArray( graph )
 
     utilities.callback = gen.createCallback( graph, mem, debug )
-    
+
     if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
 
     return utilities.callback
@@ -85,8 +92,8 @@ let utilities = {
   loadSample( soundFilePath, data ) {
     let req = new XMLHttpRequest()
     req.open( 'GET', soundFilePath, true )
-    req.responseType = 'arraybuffer' 
-    
+    req.responseType = 'arraybuffer'
+
     let promise = new Promise( (resolve,reject) => {
       req.onload = function() {
         var audioData = req.response

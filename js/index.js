@@ -27,7 +27,6 @@ let library = {
   },
 
   gen:      require( './gen.js' ),
-  
   abs:      require( './abs.js' ),
   round:    require( './round.js' ),
   param:    require( './param.js' ),
@@ -42,7 +41,7 @@ let library = {
   tan:      require( './tan.js' ),
   asin:     require( './asin.js' ),
   acos:     require( './acos.js' ),
-  atan:     require( './atan.js' ),  
+  atan:     require( './atan.js' ),
   phasor:   require( './phasor.js' ),
   data:     require( './data.js' ),
   peek:     require( './peek.js' ),
@@ -69,8 +68,8 @@ let library = {
   not:      require( './not.js' ),
   gt:       require( './gt.js' ),
   gte:      require( './gte.js' ),
-  lt:       require( './lt.js' ), 
-  lte:      require( './lte.js' ), 
+  lt:       require( './lt.js' ),
+  lte:      require( './lte.js' ),
   bool:     require( './bool.js' ),
   gate:     require( './gate.js' ),
   train:    require( './train.js' ),

@@ -1,5 +1,20 @@
 'use strict'
 
+/**
+ * Multiples two number or ugens together.
+ *
+ * __Category:__ arithmetic
+ * @name mul
+ * @function
+ * @param {ugen|number} a
+ * @param {ugen|number} b
+ * @return ugen
+ * @example
+ * out = gen.createCallback( mul( cos(0), 5 ) )
+ * // creates function body out = ( gen.cos(0) * 5 )
+ * out() // 5
+ */
+
 let gen = require('./gen.js')
 
 module.exports = ( x,y ) => {
@@ -14,7 +29,7 @@ module.exports = ( x,y ) => {
       if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
         out =  `(${inputs[0]} * ${inputs[1]})`
       }else{
-        out = parseFloat( inputs[0] ) * parseFloat( inputs[1] ) 
+        out = parseFloat( inputs[0] ) * parseFloat( inputs[1] )
       }
 
       return out

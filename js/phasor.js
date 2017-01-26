@@ -1,5 +1,21 @@
 'use strict'
 
+/**
+ * A phasor accumulates phase, as determined by its frequency, and wraps between
+ * 0 and 1. This creates a sawtooth wave, but with a dc offset of 1 (no negative
+ * numbers). If a range of {-1,1} is needed you can use an `accum()` object with
+ * the increment `1/gen.samplerate * frequency` and the desired min/max
+ * properties.
+ *
+ * __Category:__ waveform
+ * @name phasor
+ * @function
+ * @param {ugen|number} [frequency = 1]
+ * @param {ugen|number} [reset = 0]
+ * @param {Object} [props = { max: 1, min: -1 }]
+ * @return ugen
+ */
+
 let gen  = require( './gen.js' ),
     accum= require( './accum.js' ),
     mul  = require( './mul.js' ),

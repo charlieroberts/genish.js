@@ -1,5 +1,18 @@
 'use strict'
 
+/**
+ * Conditional
+ * FIXME: write function and parameters description
+ *
+ * __Category:__ routing
+ * @name conditional
+ * @param {(ugen|number)} control
+ * @param {(ugen|number)} a
+ * @param {(ugen|number)} b
+ * @return {ugen}
+ * @function
+ */
+
 let gen = require( './gen.js' )
 
 let proto = {
@@ -48,21 +61,21 @@ let proto = {
       }
     }
 
-    cond1 = block1Name === null ? 
+    cond1 = block1Name === null ?
       `  ${this.name}_out = ${block1}` :
       `${block1}    ${this.name}_out = ${block1Name}`
 
-    cond2 = block2Name === null ? 
+    cond2 = block2Name === null ?
       `  ${this.name}_out = ${block2}` :
       `${block2}    ${this.name}_out = ${block2Name}`
 
 
-    out = 
-`  var ${this.name}_out 
+    out =
+`  var ${this.name}_out
   if( ${cond} ) {
 ${cond1}
   }else{
-${cond2} 
+${cond2}
   }
 `
 
@@ -78,7 +91,7 @@ module.exports = ( control, in1 = 1, in2 = 0 ) => {
     uid:     gen.getUID(),
     inputs:  [ control, in1, in2 ],
   })
-  
+
   ugen.name = `${ugen.basename}${ugen.uid}`
 
   return ugen

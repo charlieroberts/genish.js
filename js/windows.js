@@ -1,14 +1,18 @@
 'use strict'
 
 /*
+ * Windows
+ * FIXME: write documentation
+ *
  * adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
  * starting at line 1427
  * taken 8/15/16
-*/ 
+ * @name windows
+ */
 
-module.exports = { 
+module.exports = {
   bartlett( length, index ) {
-    return 2 / (length - 1) * ((length - 1) / 2 - Math.abs(index - (length - 1) / 2)) 
+    return 2 / (length - 1) * ((length - 1) / 2 - Math.abs(index - (length - 1) / 2))
   },
 
   bartlettHann( length, index ) {

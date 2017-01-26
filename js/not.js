@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * An input of 0 returns 1 while all other values return 0.
+ *
+ * __Category:__ logic
+ * @name not
+ * @function
+ * @param {(ugen|number)} signal - the input signal
+ * @return {ugen}
+ * @example
+ * y = x !== 0 ? 0 : 1
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -14,7 +26,7 @@ let proto = {
     } else {
       out = !inputs[0] === 0 ? 1 : 0
     }
-    
+
     return out
   }
 }

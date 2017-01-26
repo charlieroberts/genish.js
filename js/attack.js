@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Attack
+ * FIXME: write documentation
+ *
+ * __Category:__ envelope
+ * @name attack
+ * @function
+ * @param {ugen} [attackTime = 44100] - The time (in samples) to fade 1 by 60 dB.
+ * @see t60
+ */
+
 let gen     = require( './gen.js' ),
     history = require( './history.js' ),
     mul     = require( './mul.js' ),

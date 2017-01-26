@@ -1,0 +1,12460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Global - Postman Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#abs">abs</a></li><li><a href="global.html#accum">accum</a></li><li><a href="global.html#acos">acos</a></li><li><a href="global.html#ad">ad</a></li><li><a href="global.html#add">add</a></li><li><a href="global.html#adsr">adsr</a></li><li><a href="global.html#and">and</a></li><li><a href="global.html#asin">asin</a></li><li><a href="global.html#atan">atan</a></li><li><a href="global.html#attack">attack</a></li><li><a href="global.html#bang">bang</a></li><li><a href="global.html#bool">bool</a></li><li><a href="global.html#ceil">ceil</a></li><li><a href="global.html#clamp">clamp</a></li><li><a href="global.html#conditional">conditional</a></li><li><a href="global.html#cos">cos</a></li><li><a href="global.html#counter">counter</a></li><li><a href="global.html#cycle">cycle</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#dcblock">dcblock</a></li><li><a href="global.html#decay">decay</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#delta">delta</a></li><li><a href="global.html#div">div</a></li><li><a href="global.html#env">env</a></li><li><a href="global.html#eq">eq</a></li><li><a href="global.html#floor">floor</a></li><li><a href="global.html#fold">fold</a></li><li><a href="global.html#gate">gate</a></li><li><a href="global.html#gen">gen</a></li><li><a href="global.html#gt">gt</a></li><li><a href="global.html#gte">gte</a></li><li><a href="global.html#gtp">gtp</a></li><li><a href="global.html#history">history</a></li><li><a href="global.html#ifelse">ifelse</a></li><li><a href="global.html#input">input</a></li><li><a href="global.html#lt">lt</a></li><li><a href="global.html#lte">lte</a></li><li><a href="global.html#ltp">ltp</a></li><li><a href="global.html#max">max</a></li><li><a href="global.html#memo">memo</a></li><li><a href="global.html#mix">mix</a></li><li><a href="global.html#mod">mod</a></li><li><a href="global.html#mstosamps">mstosamps</a></li><li><a href="global.html#mtof">mtof</a></li><li><a href="global.html#mul">mul</a></li><li><a href="global.html#neq">neq</a></li><li><a href="global.html#noise">noise</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#pan">pan</a></li><li><a href="global.html#param">param</a></li><li><a href="global.html#peek">peek</a></li><li><a href="global.html#phasor">phasor</a></li><li><a href="global.html#poke">poke</a></li><li><a href="global.html#pow">pow</a></li><li><a href="global.html#prop">prop</a></li><li><a href="global.html#rate">rate</a></li><li><a href="global.html#round">round</a></li><li><a href="global.html#sah">sah</a></li><li><a href="global.html#selector">selector</a></li><li><a href="global.html#sign">sign</a></li><li><a href="global.html#sin">sin</a></li><li><a href="global.html#slide">slide</a></li><li><a href="global.html#sub">sub</a></li><li><a href="global.html#switch">switch</a></li><li><a href="global.html#t60">t60</a></li><li><a href="global.html#tan">tan</a></li><li><a href="global.html#train">train</a></li><li><a href="global.html#wrap">wrap</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Global</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="gen"><span class="type-signature"></span>gen<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>low-level code generation for unit generators</p>
+<h4>Properties</h4><ul>
+<li><code>accum</code> <em>integer*</em><br> A number that is incremeneted everytime a ugen is created in order to provide a unique id.</li>
+<li><code>debug</code> <em>boolean</em><br> When this flag is set, all callbacks generated will be logged to the console.</li>
+<li><code>closures</code> <em>Set</em><br> Currently inappropriately named, this property contains key/value pairs which assign properties to the named, generated functions. These properties can the be called as methods or accessed more generally from within the generated callback.</li>
+<li><code>histories</code> <em>Map</em><br> Stores references to all single-sample delays, so that they can record their input at the end of generated callback functions.</li>
+<li><code>memo</code> <em>object</em><br> Once a ugen has generated it's associated output string, that string is placed in this object, assigned to key equalling the ugens unique id. Before asking any ugen to generate code, genish will check to see if there is already a memoized version stored in this object; if so, that will be used.</li>
+<li><code>data</code> <em>object</em><br> A general storage area that is accessible from within generated callbacks.</li>
+</ul>
+<h4>Methods</h4><ul>
+<li><code>createCallback</code>: This will codegen a callback function for the ugen passed as the first argument. If that ugen is dependent on other ugens, these in turn will also be asked to codegen until the entire graph is contained within the output callback function. If the debug flag is set then the function body will be printed to the console.<ul>
+<li><strong>graph</strong> &nbsp;  <em>object</em> or <em>array</em> &nbsp; A genish.js unit generator to be compiled. If an array of two ugens is passed, the resulting function will output a stereo signal.</li>
+<li><strong>debug</strong> &nbsp;  <em>boolean</em> &nbsp; When set, print the string representation of the generated function to the console.</li>
+</ul>
+</li>
+<li><code>getInputs</code> This method looks at the argument ugen and, assuming it has dependencies, calls their codegen methods so that their code is added to the final output function. It is only used internally during calls to <code>gen.createCallback()</code>. The basic codegen process is calling <code>getInputs</code> recursively until the entire graph has been resolved.<ul>
+<li><strong>ugen</strong> &nbsp;  <em>object</em> &nbsp; A genish.js unit generator.</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( add(5,3) )
+out() // 8
+out = gen.createCallback( [ accum(.1), accum(.2) ] )
+out() // [  0,  0 ]
+out() // [ .1, .2 ]
+out() // [ .2, .4 ]
+out() // [ .3, .6 ] etc...</code></pre>
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="abs"><span class="type-signature"></span>abs<span class="signature">(signal)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Find the absolute value of a signal using <code>Math.abs</code></p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="accum"><span class="type-signature"></span>accum<span class="signature">(increment<span class="signature-attributes">opt</span>, reset<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>accum</code> is used to increment a stored value between a provided range that
+defaults to {0,1}. If the accumulator values passes its maximum, it wraps.
+<code>accum()</code> is very similar to the <code>counter</code> ugen, but is slightly more
+efficient. Additionally, the <code>min</code> and <code>max</code> properties of <code>accum</code> are fixed
+values, while they can be specified with signals in <code>counter</code>.</p>
+<p><strong>Category:</strong> integrator</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>increment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>The amount to increase the accumulator's
+internal value by on each sample</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>When <code>reset</code> has a value of 1, the
+accumulator will reset its internal value to 0.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"><p>An optional dictionary containing a <code>max</code>
+value that the <code>accum</code> increments to before wrapping,
+and a <code>min</code> value that the <code>accum</code> wraps to after reaching/passing its max.
+An <code>initialValue</code> for the <code>accum</code> can also be provided; if it is not given
+the initial value is assumed to be the same as its <code>min</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="acos"><span class="type-signature"></span>acos<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the arccosine of the input (interpreted as radians) using
+Javascript's <code>Math.acos()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ad"><span class="type-signature"></span>ad<span class="signature">(attackTime, decayTime, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Creates an envelope with an attack and a decay stage, both measured in samples.</p>
+<h4>Properties</h4><ul>
+<li><code>shape</code> <em>string</em> ('linear' or 'exponential', default 'exponental') determines the shape of the attack / decay.</li>
+<li><code>alpha</code> <em>number</em> (default 5) An extra number used to determine windowing. In the case of 'exponential' envelopes, this determines the amount of curvature in the envelope. For 'linear' envelopes this number has no effect.</li>
+</ul>
+<h4>Methods</h4><ul>
+<li><code>trigger</code>: Re-trigger the envelope.</li>
+<li><code>isComplete</code>: test if the envelope is completed</li>
+</ul>
+<p><strong>Category:</strong> envelope</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attackTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Attack time measured in samples, defaults to 44100.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>decayTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Decay time measured in samples, defaults to 44100.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { shape: 'exponential', alpha: 5 }
+                
+                </td>
+            
+
+            <td class="description last"><p>the initial property values</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>myenv = ad( 44, 88200 )
+play(
+  mul( myenv, cycle( 330 ) )
+)
+// wait some time for decay and then run to re-trigger
+myenv.trigger()</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(args)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Adds an unlimited number of signals (numbers or ugens)</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( add(1,2) )
+    // creates function body out = ( 3 )
+    out() // 3</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="adsr"><span class="type-signature"></span>adsr<span class="signature">(attackTime<span class="signature-attributes">opt</span>, decayTime<span class="signature-attributes">opt</span>, sustainTime<span class="signature-attributes">opt</span>, sustainLevel<span class="signature-attributes">opt</span>, releaseTime<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Creates an envelope with attack, decay, sustatin and release stages, with
+each duration measured in samples. Envelopes can automatically advance
+through their entirety (default behavior) or can stop at the sustain stage
+and what for a command to advance by setting the <code>triggerRelease</code> property to
+a value of <code>1</code>.</p>
+<h4>Properties</h4><ul>
+<li><code>shape</code> <em>string</em> (default 'exponental') determines the shape of the attack / decay / release.</li>
+<li><code>alpha</code> <em>number</em> (default 5) An extra number used to determine windowing. In the case of 'exponential' envelopes, this determines the amount of curvature in the envelope. For 'linear' envelopes this number has no effect.</li>
+<li><code>triggerRelease</code> <em>boolean</em> (default false) This property determines if the envelope waits for a <code>release()</code> message before terminating the sustain segment and advancing to the release segment. By setting this value to <code>1</code>, you can easily script release of the envelope to depend on user interaction. When <code>releaseTrigger</code> is true, the <code>sustainTime</code> input has no effect on envelope.</li>
+</ul>
+<h4>Methods</h4><ul>
+<li><code>trigger</code>: Re-trigger the envelope.</li>
+<li><code>release</code>: Move from the sustain stage to the release stage of the envelope. This method only has effect if the <code>triggerRelease</code> property to set to <code>true</code> on instantiation. Note that calling this method will not skip attack or decay stages... if called during the attack or decay stage the envelope will simply bypass the sustain stage and continue straight to the release after the decay is completed.</li>
+</ul>
+<p><strong>Category:</strong> envelope</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attackTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Attack time measured in samples, defaults to <code>gen.samplerate / 1000</code> (one ms).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>decayTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Decay time measured in samples, defaults to <code>gen.samplerate / 2</code> (half a second).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sustainTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Sustain time measured in samples, defaults to <code>gen.samplerate</code> (one second).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sustainLevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Each stage of the envelope is controlled via a wavetable; the sustainLevel property dictates at one point in the wavetable the envelope rests before releasing. Thus, a value of .5 does not mean that the output of the envelope during sustain will be .5 (unless enveloping for the adsr is linear)... it will instead depend on the type enveloping used. Default is .6.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>releaseTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Release time measured in samples, defaults to <code>gen.samplerate</code> (one second).</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>myenv = adsr( 44, 22050, 22050, .6, 44100, { releaseTrigger:true })
+play(
+  mul( myenv, cycle( 330 ) )
+)
+// wait until sustain and then run next line to release
+myenv.release()
+// re-trigger
+myenv.retrigger()</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="and"><span class="type-signature"></span>and<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if both inputs do not equal 0.</p>
+<p><strong>Category:</strong> logic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>input signal</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>input signal</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="asin"><span class="type-signature"></span>asin<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the arcsine of the input (interpreted as radians) using
+Javascript's <code>Math.asin()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="atan"><span class="type-signature"></span>atan<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the arctangent of the input (interpreted as radians) using
+Javascript's <code>Math.atan()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="attack"><span class="type-signature"></span>attack<span class="signature">(attackTime<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Attack
+FIXME: write documentation</p>
+<p><strong>Category:</strong> envelope</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attackTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    44100
+                
+                </td>
+            
+
+            <td class="description last"><p>The time (in samples) to fade 1 by 60 dB.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="global.html#t60">t60</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="bang"><span class="type-signature"></span>bang<span class="signature">(properties<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>The bang ugen continuously outputs a minimum value (default 0) until its
+<code>trigger()</code> method is called. After triggering, the ugen will output its
+maximum value (default 1) for a single sample before resetting and returning
+to outputting its minimum. The bang ugen can be used, for example, to easily
+re-trigger an envelope interactively, or to reset a counter/accum ugen.</p>
+<h3>Properties:</h3><ul>
+<li><code>min</code> <em>number</em> (default 0) The 'resting state' of the bang ugen.</li>
+<li><code>max</code> <em>number</em> (default 1) The instantaneous state after triggering the bang ugen. This state will only last for one sample after triggering.</li>
+</ul>
+<h3>Methods:</h3><ul>
+<li><code>trigger</code>: Change the state from the min property of the bang ugen to the
+max property for one sample.</li>
+</ul>
+<p><strong>Category:</strong> control</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { min: 0, max: 1 }
+                
+                </td>
+            
+
+            <td class="description last"><p>optional properties object</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="bool"><span class="type-signature"></span>bool<span class="signature">(signal)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Converts signals to either 0 or 1. If the input signal does not equal 0 then
+output is 1; if input == 0 then output 0. Roughly equivalent to the following
+pseudocode:</p>
+<p><strong>Category:</strong> logic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the input signal</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>y = x !== 0 ? 1 : 0</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ceil"><span class="type-signature"></span>ceil<span class="signature">(value)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Rounds input up to nearest integer using Javascript's <code>Math.ceil()</code> function</p>
+<p><strong>Category:</strong> numeric</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="clamp"><span class="type-signature"></span>clamp<span class="signature">(a, min, max)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Clamp constricts an input <code>a</code> to a particular range. If input <code>a</code> exceeds the
+maximum, the maximum is returned. If input <code>b</code> is less than the minimum, the
+minimum is returned.</p>
+<p><strong>Category:</strong> range</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Input signal to clamp.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets minimum of range to clamp input to.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets maximum of range to clamp input to.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="conditional"><span class="type-signature"></span>conditional<span class="signature">(control, a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Conditional
+FIXME: write function and parameters description</p>
+<p><strong>Category:</strong> routing</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="cos"><span class="type-signature"></span>cos<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the cosine of the input (interpreted as radians) using
+Javascript's <code>Math.cos()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="counter"><span class="type-signature"></span>counter<span class="signature">(increment<span class="signature-attributes">opt</span>, min<span class="signature-attributes">opt</span>, max<span class="signature-attributes">opt</span>, reset<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>counter()</code> is used to increment a stored value between a provided range that
+defaults to {0,1}. If the counter's interval value passes either range
+boundary, it is wrapped. <code>counter()</code> is very similar to the <code>accum</code> ugen, but
+is slightly less efficient. Additionally, the <code>min</code> and <code>max</code> properties of
+<code>accum</code> are fixed values, while they can be specified with signals in
+<code>counter</code>, enabling mix/max to change over time.</p>
+<p><strong>Category:</strong> integrator</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>increment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><p>The amount to increase the counter's internal value by on each sample</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>The minimum value of the accumulator</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>The maximum value of the accumulator</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>When <code>reset</code> has a value of 1, the counter will reset its internal value to 0.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"><p>An optional dictionary containing a <code>max</code> value that the <code>accum</code> increments to before wrapping, and a <code>min</code> value that the <code>accum</code> wraps to after reaching/passing its max. An <code>initialValue</code> for the <code>accum</code> can also be provided; if it is not given the initial value is assumed to be the same as its <code>min</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="cycle"><span class="type-signature"></span>cycle<span class="signature">(frequency)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Cycle creates a sine oscillator running at a provided frequency. The
+oscillator runs via an interpolated wavetable lookup.</p>
+<p><strong>Category:</strong> waveform</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>frequency</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="data"><span class="type-signature"></span>data<span class="signature">(value)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Data objects serve as containers for storing numbers; these numbers can be read using calls to <code>peek()</code> and the data object can be written to using calls to <code>poke()</code>.</p>
+<p>The constructor can be called with three different argumensts. If a
+<em>dataArray</em> is passed as the first argument, this array becomes the data
+object's underlying data source. If a <em>dataLength</em> integer is passed, a
+Float32Array is created using the provided length. If a <em>audioFileToLoad</em>
+string is passed, the data object attempts to load the file at the provided
+URL and generates a JavaScript Promise that used with the <code>then()</code> method.</p>
+<p>When the <code>data</code> constructor is called passing in the path of a file to
+load, a JavaScript Promise is created that will be resovled when the
+audiofile has been loaded. <code>then()</code> provides a callback function to be
+executed when resolution is complete. You can use this to delay starting
+playback of a graph until all data dependencies have been loaded.</p>
+<p><strong>Category:</strong> buffer</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Integer</span>
+|
+
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>audiofile = data( 'myaudiofile.wav' ).then( ()=> {
+    out = gen.createCallback( peek( audiofile, phasor(.1) ) )
+  })</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="dcblock"><span class="type-signature"></span>dcblock<span class="signature">(signal)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>dcblock</code> remove DC offset from an input signal using a one-pole high-pass filter.</p>
+<p><strong>Category:</strong> filter</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="decay"><span class="type-signature"></span>decay<span class="signature">(decayType<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Decay
+FIXME: add documentation</p>
+<p><strong>Category:</strong> envelope</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>decayType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    44100
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { initValue: 1}
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="delay"><span class="type-signature"></span>delay<span class="signature">(in, delayTime, properties)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Creates a delay line that delays an input signal by an argument number of
+samples.</p>
+<h4>Properties</h4><ul>
+<li><code>size</code> <em>number</em> (default 512) determines the length of the delay line.</li>
+<li><code>interp</code> <em>interp</em> (default 'linear') Set the interpolation used to access non-integer indices in the delay line. Currently can be 'linear' or 'none'.</li>
+</ul>
+<p><strong>Category:</strong> feedback</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The signal to be delayed.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delayTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The amount of time to delay the incoming signal.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A dictionary of properties to assign to the ugen; see below.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="delta"><span class="type-signature"></span>delta<span class="signature">(input)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Delta
+FIXME: Add documentation</p>
+<p><strong>Category:</strong> delay</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="div"><span class="type-signature"></span>div<span class="signature">(a, b)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Divides ugen or number <em>a</em> by ugen or number <em>b</em>.</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( div( cos(0), 2 ) )
+    // creates function body out = ( gen.cos(0) / 2 )
+    out() // .5</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="env"><span class="type-signature"></span>env<span class="signature">(length<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Envelope
+FIXME: Add documentation</p>
+<p><strong>Category:</strong> buffer</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>length</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    11025
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { type: 'Triangular', bufferLength: 1024, alpha: 0.15 }
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="eq"><span class="type-signature"></span>eq<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns whichever value is lesser.</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="eq"><span class="type-signature"></span>eq<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if two inputs are equal, otherwise returns 0.</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="floor"><span class="type-signature"></span>floor<span class="signature">(a)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Rounds input down to nearest integer by performing a bitwise or with 0.</p>
+<p><strong>Category:</strong> numeric</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( round( in() ) )
+// creates function body: out = ( in1 | 0 )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fold"><span class="type-signature"></span>fold<span class="signature">(a, min, max)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fold constricts an input <code>a</code> to a particular range. Given a range of {0,1}
+and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,1,.9,.8}.</p>
+<p><strong>Category:</strong> range</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Input signal to fold.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets minimum of range to fold input to.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets maximum of range to fold input to.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="gate"><span class="type-signature"></span>gate<span class="signature">(control, input, properties)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>gate()</code> routes signal from one of its outputs according to an input
+<em>control</em> signal, which defines an index for output. The various outputs are
+all stored in the <code>mygate.outputs</code> array. The code example to the right shows
+a signal alternating between left and right channels using the <code>gate</code> ugen.</p>
+<h4>Properties</h4><ul>
+<li><code>outputs</code> <em>string</em> : An array of outputs that can be used as inputs to other ugens.</li>
+</ul>
+<p><strong>Category:</strong> routing</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Selects the output index that the input signal travels through.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal that is passed through one of various outlets.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A dictionary of optional parameters to assign to the gate object. The main property is <code>count</code> (default value 2) which determines the number of outputs a <code>gate</code> ugen possesses.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>inputSignal = mul( phasor(330), .1 )
+controlSignal = gt( phasor(2), .5 )
+g = gate( controlSignal, inputSignal, { count:4 })
+gen.createCallback([ g.outputs[0], g.outputs[1] ])</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="gt"><span class="type-signature"></span>gt<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if <code>a</code> is greater than <code>b</code>, otherwise returns 0</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="gte"><span class="type-signature"></span>gte<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if <code>a</code> is greater or equal than <code>b</code>, otherwise returns 0</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="gtp"><span class="type-signature"></span>gtp<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns <code>a</code> if <code>a</code> is greater than <code>b</code>, otherwise returns 0</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="history"><span class="type-signature"></span>history<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>History is used to create single-sample delays and feedback. It records one
+sample at a time of a ugen passed to its <code>in()</code> method, and then outputs the
+last recorded sample via its <code>.out</code> property.</p>
+<p>Single-sample delays are one of the justifications for the existence
+of genish.js; this is an important ugen.</p>
+<p>Since <code>history</code> is a browser global variable, this function is aliased
+to <code>ssd</code></p>
+<h4>Properties</h4><ul>
+<li><code>out</code>: <em>ugen</em> The <code>out</code> property is a simple ugen that outputs the last recorded sample of the history object.</li>
+</ul>
+<h4>Methods</h4><ul>
+<li><code>in</code> <strong>ugen</strong> &nbsp;  <em>ugen</em> &nbsp; A genish.js unit generator (or graph) to be recorded.</li>
+</ul>
+<p><strong>Category:</strong> feedback</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// a randomly pitched oscillator and a delay line
+frequencyControl = sah( add( 220, mul( noise(),880 ) ), noise(), .99995 )
+osc = mul( cycle( frequencyControl ), .025 )
+feedback = ssd()
+// feed feedback into our delay by inputting the feedback.out property
+echo = delay( add( osc, feedback.out ), 11025, { size: 22050 } )
+// record the output of the echo and our feedback using a call to feedback.in()
+mixer = feedback.in( mix( echo, feedback.out, .925 ) )
+gen.createCallback( mixer )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ifelse"><span class="type-signature"></span>ifelse<span class="signature">(control, a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>ifelse</code> can be called in two ways. In the first, it is functionally
+identical to the <code>switch</code> ugen: if a given control input is true, the second
+input to <code>ifelse</code> is outputted. Otherwise, the third input is outputted.</p>
+<p>The other option is to pass multiple conditional / output pairs. These will
+be used to create an appropriate if/else block in the final callback. If
+there is a single final output with no accompanying condition, this will be
+the end <code>else</code> of the control structure. For example:</p>
+<p>Most importantly (and as implied by the pseudocode) we can use <code>ifelse</code>
+to create DSP that only runs under certain conditions. For example,
+given the following in the genish.js playground:</p>
+<p><strong>Category:</strong> routing</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>When <code>control</code> === 1, output <code>a</code>; else output <code>b</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal that is available to output.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal that is available to ouput.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>ie = ifelse(
+  lt( 0,1 ), 440,
+  gt( 1,.5 ), 880,
+  1200
+)
+gen.createCallback( ie )
+// ...outputs a function with the following control block (in pseudocode):
+let ifelse_0
+if( 0 &lt; 1 ) {
+  ifelse_0 = 440
+}else if( 1 > .5 ) {
+  ifelse_0 = 880
+}else{
+  ifelse_0 = 1200
+}</code></pre>
+
+    <pre class="prettyprint"><code>osc = phasor( .5 )
+play(
+  ifelse(
+    lt( osc, -.5 ), cycle( 220 ),
+    lt( osc, 0 )  , phasor( 330 ),
+    lt( osc, .5 ) , train( 440 ),
+    cycle(550)
+  )
+)
+// ... we are only running two oscillators at any given time,
+// our control phasor and whatever is held in the current executing block
+// of our `ifelse` ugen.</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="input"><span class="type-signature"></span>input<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>genish.js creates optimized audio callback functions; the <code>input</code> ugen
+creates a argument to a genish callback function that can be manipulated. For
+example, if we wanted a sine oscillator that let us control its frequency and
+amplitude, we could use:</p>
+<p><strong>Category:</strong> control</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>frequency = input()
+gain = input()
+osc = mul( cycle( frequency ), gain )
+callback = gen.createCallback( osc )
+// one sample of output with a 440 Hz frequency, .5 gain
+callback( 440, .5 )
+// another sample using 220 Hz frequency, .25 gain
+callback( 220, .25 )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="lt"><span class="type-signature"></span>lt<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if <code>a</code> is less than <code>b</code>, otherwise returns 0.</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="lte"><span class="type-signature"></span>lte<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if <code>a</code> is lesser or equal than <code>b</code>, otherwise returns 0</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ltp"><span class="type-signature"></span>ltp<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns <code>a</code> if <code>a</code> is lesser than <code>b</code>, otherwise returns 0</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="max"><span class="type-signature"></span>max<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns whichever value is greater.</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="memo"><span class="type-signature"></span>memo<span class="signature">(input, name)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Memo
+FIXME: Write documentation</p>
+<p><strong>Category:</strong></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="mix"><span class="type-signature"></span>mix<span class="signature">(a, b, t<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Mix two signals <code>a</code> and <code>b</code></p>
+<p><strong>Category:</strong></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>one signal to mix</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>other signal to mix</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.5
+                
+                </td>
+            
+
+            <td class="description last"><p>the relative amount between both</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="mod"><span class="type-signature"></span>mod<span class="signature">(a, b)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Divides ugen or number <em>a</em> by ugen or number <em>b</em> and returns the remainder.</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( mod( cos(0), .51 ) )
+    // creates function body out = ( gen.cos(0) % .51 )
+    out() // .49</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="mstosamps"><span class="type-signature"></span>mstosamps<span class="signature">(time)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Convert time in microseconds to samples</p>
+<p><strong>Category:</strong> utilities</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Time in milliseconds</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="mtof"><span class="type-signature"></span>mtof<span class="signature">(midi, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Convert midi note numbers to frequency</p>
+<p><strong>Category:</strong> utilities</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>midi</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the note midi number</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { tuning: 440 }
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>an ugen that outputs the frequency</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="mul"><span class="type-signature"></span>mul<span class="signature">(a, b)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Multiples two number or ugens together.</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( mul( cos(0), 5 ) )
+// creates function body out = ( gen.cos(0) * 5 )
+out() // 5</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="neq"><span class="type-signature"></span>neq<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 if two inputs are NOT equal, otherwise returns 0.</p>
+<p><strong>Category:</strong> comparison</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>one element to compare</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other element to compare</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="noise"><span class="type-signature"></span>noise<span class="signature">()</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Noise outputs a pseudo-random signal between {0,1}. The signal is generated
+via Javascript's <code>Math.random()</code> function.</p>
+<p><strong>Category:</strong> waveform</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="not"><span class="type-signature"></span>not<span class="signature">(signal)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>An input of 0 returns 1 while all other values return 0.</p>
+<p><strong>Category:</strong> logic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the input signal</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>y = x !== 0 ? 0 : 1</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="pan"><span class="type-signature"></span>pan<span class="signature">(left, right, pan)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Pan two signals</p>
+<p><strong>Category:</strong> utility</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>left</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The left input signal</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>right</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The right input signal</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pan</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="param"><span class="type-signature"></span>param<span class="signature">(value)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>The <code>param</code> ugen exposes a single number for interactive control via
+assignment to its <code>value</code> property. In the example below, the frequency of a
+sine oscillator is controlled via a <code>param</code> ugen:</p>
+<p><strong>Category:</strong> control</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The initial value for the param ugen.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>pattern = [ 440, 660, 880, 1100 ]
+idx = 0
+frequency = param( pattern[ idx ] )
+play( cycle( frequency ) )
+// change frequency every 100ms (approximately, setInterval is not sample accurate)
+intrvl = setInterval( ()=> {
+  frequency.value = pattern[ idx++ % pattern.length ]
+}, 100 )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="peek"><span class="type-signature"></span>peek<span class="signature">(data, index, properties<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Peek reads from an input data object.
+It can index the data object using on of two <em>modes</em>. If the <em>mode</em> property
+is set to <em>samples</em> than index provides an integer index to lookup in the
+data object. If the <em>mode</em> property is set to <em>phase</em> then the index should
+be a signal in the range of {0,1}.</p>
+<p>The <code>peek</code> ugen has the following properties:</p>
+<ul>
+<li><code>mode</code> {String}: determines how indexing is performed. Options are 'phase' and 'samples'.</li>
+<li><code>interp</code> {string}: determines what interpolation is used when performing
+the lookup. Options are 'linear' and 'none'</li>
+<li><code>boundmode</code> {string}: determines what to do when the buffer ends. Options
+are <code>wrap</code>, <code>clam</code> or <code>ignore</code></li>
+</ul>
+<p><strong>Category:</strong> buffer</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#data">data</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the <code>data</code> ugen to read values from</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the index to be read</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { mode: 'phase', interp: 'linear', boundmode: 'wrap'}
+                
+                </td>
+            
+
+            <td class="description last"><p>initial
+properties object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// create a sliding, interpolated frequency signal running between four values
+d = data( [440,880,220,1320] )
+p = peek( d, phasor(.1) )
+c = cycle( p ) // feed sine osc frequency with signal</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="phasor"><span class="type-signature"></span>phasor<span class="signature">(frequency<span class="signature-attributes">opt</span>, reset<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>A phasor accumulates phase, as determined by its frequency, and wraps between
+0 and 1. This creates a sawtooth wave, but with a dc offset of 1 (no negative
+numbers). If a range of {-1,1} is needed you can use an <code>accum()</code> object with
+the increment <code>1/gen.samplerate * frequency</code> and the desired min/max
+properties.</p>
+<p><strong>Category:</strong> waveform</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>frequency</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { max: 1, min: -1 }
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="poke"><span class="type-signature"></span>poke<span class="signature">(data, value, index)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Poke writes values to a index on a <code>data</code> object.</p>
+<p><strong>Category:</strong> buffer</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#data">data</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A <code>data</code> ugen to read values from.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The number to write to the ugen's <code>data</code> property.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The index to write to</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="pow"><span class="type-signature"></span>pow<span class="signature">(base, exp)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Raises a base to an exponent using <code>Math.pow</code> function</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>base</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>exp</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="prop"><span class="type-signature"></span>prop<span class="signature">(propName, value)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Set a property of a ugen</p>
+<p><strong>Category:</strong> utilities</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>propName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="rate"><span class="type-signature"></span>rate<span class="signature">(input, rate)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Rate
+FIXME: Write documentation</p>
+<p><strong>Category</strong>: utilities</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="round"><span class="type-signature"></span>round<span class="signature">(a)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Rounds input up or down to nearest integer using Javascript's <code>Math.round()</code> function</p>
+<p><strong>Category:</strong> numeric</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sah"><span class="type-signature"></span>sah<span class="signature">(input, control, threshold<span class="signature-attributes">opt</span>, props<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sample and hold</p>
+<p><strong>Category</strong>: ?</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>threshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { init: 0 }
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="selector"><span class="type-signature"></span>selector<span class="signature">(control, inputs)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Selector is basically the same as <code>switch()</code> but allows you to have an
+arbitrary number of inputs to choose between.</p>
+<p><strong>Category:</strong> routing</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Determines which input signal is passed to the ugen's output.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>inputs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>After the <code>control</code> input, an arbitrary number of inputs can be passed to the selector constructor.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sign"><span class="type-signature"></span>sign<span class="signature">(value)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns 1 for positive input and -1 for negative input. Zero returns itself.
+Uses JavaScript's <code>Math.sign()</code> function.</p>
+<p><strong>Category:</strong> numeric</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sin"><span class="type-signature"></span>sin<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the sine of the input (interepreted as radians) using Javascript's
+<code>Math.sin()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="slide"><span class="type-signature"></span>slide<span class="signature">(signal, length)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>slide</code> is a logarithmically scaled low-pass filter to smooth discontinuities
+between values. It is especially useful to make continuous transitions from
+discrete events; for example, sliding from one note frequency to the next.
+The second argument to <code>slide</code> determines the length, in samples, of
+transitions.</p>
+<p><strong>Category:</strong> filter</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>length</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Length of slide in samples.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sub"><span class="type-signature"></span>sub<span class="signature">(args)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Subtract. It accepts a variable number of signals.</p>
+<p><strong>Category:</strong> arithmetic</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>ugen</p>
+</div>
+
+
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>out = gen.createCallback( sub( abs(.1),1,2 ) )
+// creates function body out = ( .1 - 3 )
+out() // -2.9</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="switch"><span class="type-signature"></span>switch<span class="signature">(control, a, b)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>A control input determines which of two additional inputs is passed to the
+output. Note that in the genish.js playground this is globally referred to as
+the <code>ternary</code> ugen, so as not to conflict with JavaScript's <code>switch</code> control
+structure.</p>
+<p><strong>Category:</strong> routing</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>control</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>When <code>control</code> === 1, output <code>a</code>; else output <code>b</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal that is available to output.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal that is available to ouput.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="t60"><span class="type-signature"></span>t60<span class="signature">(fadeTime)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>t60</code> provides a multiplier that, when applied to a signal every sample,
+fades it by 60db (at which point it is effectively inaudible). Although the
+example below shows <code>t60</code> in action, it would actually be much more efficient
+to calculate t60 once since the time used (88200) is static.</p>
+<p><strong>Category:</strong> envelope</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fadeTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The time (in samples) to fade 1 by 60 dB.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>lastsample = ssd(1)
+// update fade with previous output * t60
+// we could also use: Math.exp( -6.907755278921 / 88200 ) instead of t60( 88200 )
+fade = mul( lastsample.out, t60( 88200 ) )
+// record current value of fade
+lastsample.in( fade )
+play( mul( lastsample.out, cycle( 330 ) ) )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="tan"><span class="type-signature"></span>tan<span class="signature">(radians)</span><span class="type-signature"> &rarr; {ugen}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Calculates the tangent of the input (interpreted as radians) using
+Javascript's <code>Math.tan()</code> function</p>
+<p><strong>Category:</strong> trigonometry</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>radians</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">ugen</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="train"><span class="type-signature"></span>train<span class="signature">(frequency, pulsewidth<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>train()</code> creates a pulse train driven by an input frequency signal and input
+pulsewidth signal. The pulse train is created using the genish expression
+displayed at right.</p>
+<p><strong>Category:</strong> waveform</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>frequency</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pulsewidth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.5
+                
+                </td>
+            
+
+            <td class="description last"><p>Pulsewidth. A pulsewidth of .5 means the oscillator will spend 50% of its time outputting 1 and 50% of its time outputting 0. A pulsewidth of .2 means the oscillator spends 20% of its time outputting 1 and 80% outputting 0.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>pulseTrain = lt( accum( div( inputFrequency, sampleRate ) ), inputPulsewidth )</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="wrap"><span class="type-signature"></span>wrap<span class="signature">(a, min, max)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Wrap constricts an input <code>a</code> to a particular range. Given a range of {0,1}
+and an input signal of {.8,.9,1,1.1,1.2}, fold will return {.8,.9,0,.1,.2}.</p>
+<p><strong>Category:</strong> range</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Input signal to wrap.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets minimum of range to wrap input to.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ugen</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Signal or number that sets maximum of range to wrap input to.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated at Thu Jan 26 2017 10:02:52 GMT+0100 (CET)
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

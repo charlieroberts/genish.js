@@ -1,5 +1,17 @@
 'use strict'
 
+/**
+ * Mix two signals `a` and `b`
+ *
+ * __Category:__
+ * @name mix
+ * @function
+ * @param {(ugen|number)} a - one signal to mix
+ * @param {(ugen|number)} b - other signal to mix
+ * @param {(ugen|number)} [t = 0.5] the relative amount between both
+ * @return {ugen}
+ */
+
 let gen = require('./gen.js'),
     add = require('./add.js'),
     mul = require('./mul.js'),

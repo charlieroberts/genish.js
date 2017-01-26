@@ -1,5 +1,16 @@
 'use strict'
 
+/**
+ * Calculates the arctangent of the input (interpreted as radians) using
+ * Javascript's `Math.atan()` function
+ *
+ * __Category:__ trigonometry
+ * @name atan
+ * @function
+ * @param {(ugen|number)} radians
+ * @return {ugen}
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -8,16 +19,16 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-    
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'atan': Math.atan })
 
-      out = `gen.atan( ${inputs[0]} )` 
+      out = `gen.atan( ${inputs[0]} )`
 
     } else {
       out = Math.atan( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }

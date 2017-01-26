@@ -1,5 +1,15 @@
 'use strict'
 
+/**
+ * Rounds input up or down to nearest integer using Javascript's `Math.round()` function
+ *
+ * __Category:__ numeric
+ * @name round
+ * @function
+ * @param {(ugen|number)} a
+ * @return {ugen}
+ */
+
 let gen  = require('./gen.js')
 
 let proto = {
@@ -17,7 +27,7 @@ let proto = {
     } else {
       out = Math.round( parseFloat( inputs[0] ) )
     }
-    
+
     return out
   }
 }
