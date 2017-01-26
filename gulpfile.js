@@ -12,19 +12,19 @@ var gulp = require('gulp'),
 gulp.task( 'js', function() {
   browserify({ debug:true, standalone:'genish' })
     .require( './js/index.js', { entry: true } )
-    .transform( babelify, { presets:['es2015'] }) 
+    .transform( babelify, { presets:['es2015'] })
     .bundle()
     .pipe( source('gen.lib.js') )
     .pipe( gulp.dest('./dist') )
     //.pipe( uglify() )
     //.pipe( gulp.dest('./dist') )
-    .pipe( 
-      notify({ 
+    .pipe(
+      notify({
         message:'Build has been completed',
         onLast:true
-      }) 
+      })
     )
-  
+
   // transpile (but don't browserify) for use with node.js tests
   return gulp.src( './js/**.js' )
     .pipe( babel({ presets:['es2015'] }) )
@@ -33,7 +33,7 @@ gulp.task( 'js', function() {
 })
 
 gulp.task( 'test', ['js'], ()=> {
-  return gulp.src('tests/gen.tests.js', {read:false})
+  return gulp.src('test/*.js', {read:false})
     .pipe( mocha({ reporter:'nyan' }) ) // spec, min, nyan, list
 })
 
