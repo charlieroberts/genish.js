@@ -1,12 +1,12 @@
 'use strict';
 
 /*
- * adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
+ * many windows here adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
  * starting at line 1427
  * taken 8/15/16
 */
 
-module.exports = {
+var windows = module.exports = {
   bartlett: function bartlett(length, index) {
     return 2 / (length - 1) * ((length - 1) / 2 - Math.abs(index - (length - 1) / 2));
   },
@@ -41,6 +41,32 @@ module.exports = {
   },
   triangular: function triangular(length, index) {
     return 2 / length * (length / 2 - Math.abs(index - (length - 1) / 2));
+  },
+
+
+  // parabola
+  welch: function welch(length, _index, ignore, shift) {
+    //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
+    var index = shift === 0 ? _index : (_index + Math.floor(shift * length)) % length;
+    var n_1_over2 = (length - 1) / 2;
+
+    return 1 - Math.pow((index - n_1_over2) / n_1_over2, 2);
+  },
+  inversewelch: function inversewelch(length, _index, ignore) {
+    var shift = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
+
+    //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
+    var index = shift === 0 ? _index : (_index + Math.floor(shift * length)) % length;
+    var n_1_over2 = (length - 1) / 2;
+
+    return Math.pow((index - n_1_over2) / n_1_over2, 2);
+  },
+  parabola: function parabola(length, index) {
+    if (index <= length / 2) {
+      return windows.inversewelch(length / 2, index) - 1;
+    } else {
+      return 1 - windows.inversewelch(length / 2, index - length / 2);
+    }
   },
   exponential: function exponential(length, index, alpha) {
     return Math.pow(index / length, alpha);

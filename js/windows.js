@@ -1,12 +1,12 @@
 'use strict'
 
 /*
- * adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
+ * many windows here adapted from https://github.com/corbanbrook/dsp.js/blob/master/dsp.js
  * starting at line 1427
  * taken 8/15/16
 */ 
 
-module.exports = { 
+const windows = module.exports = { 
   bartlett( length, index ) {
     return 2 / (length - 1) * ((length - 1) / 2 - Math.abs(index - (length - 1) / 2)) 
   },
@@ -50,6 +50,30 @@ module.exports = {
 
   triangular( length, index ) {
     return 2 / length * (length / 2 - Math.abs(index - (length - 1) / 2))
+  },
+
+  // parabola
+  welch( length, _index, ignore, shift ) {
+    //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
+    const index = shift === 0 ? _index : (_index + Math.floor( shift * length )) % length
+    const n_1_over2 = (length - 1) / 2 
+
+    return 1 - Math.pow( ( index - n_1_over2 ) / n_1_over2, 2 )
+  },
+  inversewelch( length, _index, ignore, shift=0 ) {
+    //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
+    let index = shift === 0 ? _index : (_index + Math.floor( shift * length )) % length
+    const n_1_over2 = (length - 1) / 2
+
+    return Math.pow( ( index - n_1_over2 ) / n_1_over2, 2 )
+  },
+
+  parabola( length, index ) {
+    if( index <= length / 2 ) {
+      return windows.inversewelch( length / 2, index ) - 1
+    }else{
+      return 1 - windows.inversewelch( length / 2, index - length / 2 )
+    }
   },
 
   exponential( length, index, alpha ) {

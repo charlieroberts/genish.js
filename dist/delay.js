@@ -43,6 +43,8 @@ module.exports = function (in1) {
         tapTimes.push(tapsAndProperties[i]);
       }
     }
+  } else {
+    properties = tapsAndProperties;
   }
 
   if (properties !== undefined) Object.assign(defaults, properties);

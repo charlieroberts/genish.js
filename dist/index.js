@@ -43,6 +43,7 @@ var library = {
   sin: require('./sin.js'),
   cos: require('./cos.js'),
   tan: require('./tan.js'),
+  tanh: require('./tanh.js'),
   asin: require('./asin.js'),
   acos: require('./acos.js'),
   atan: require('./atan.js'),

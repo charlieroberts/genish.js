@@ -364,7 +364,7 @@ slide
 **a** &nbsp;  *ugen*  Signal.
 **time** &nbsp; *integer* Length of slide in samples.
 
-`slide()` is a logarithmically scaled low-pass filter to smooth discontinuities between values. It is especially useful to make continuous transitions from discrete events; for example, sliding from one note frequency to the next. The second argument to `slide` determines the length, in samples, of transitions.
+`slide()` is a logarithmically scaled low-pass filter to smooth discontinuities between values. It is especially useful to make continuous transitions from discrete events; for example, sliding from one note frequency to the next. The second argument to `slide` determines the length of transitions. A value of 100 means that a transition in a signal will take 100x longer than normal; a value of 1 causes the filter to have no effect.
 
 # Integrator
 

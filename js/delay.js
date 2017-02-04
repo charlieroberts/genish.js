@@ -32,6 +32,8 @@ module.exports = ( in1, time=256, ...tapsAndProperties ) => {
         tapTimes.push( tapsAndProperties[ i ] )
       }
     }
+  }else{
+    properties = tapsAndProperties
   }
 
   if( properties !== undefined ) Object.assign( defaults, properties )

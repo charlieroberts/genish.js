@@ -7,29 +7,24 @@ var gen = require('./gen'),
     phasor = require('./phasor');
 
 module.exports = function () {
-  var length = arguments.length <= 0 || arguments[0] === undefined ? 11025 : arguments[0];
-  var properties = arguments[1];
+  var type = arguments.length <= 0 || arguments[0] === undefined ? 'triangular' : arguments[0];
+  var length = arguments.length <= 1 || arguments[1] === undefined ? 1024 : arguments[1];
+  var alpha = arguments.length <= 2 || arguments[2] === undefined ? .15 : arguments[2];
+  var shift = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
 
-  var defaults = {
-    type: 'Triangular',
-    bufferLength: 1024,
-    alpha: .15
-  },
-      frequency = length / gen.samplerate,
-      props = Object.assign({}, defaults, properties),
-      buffer = new Float32Array(props.bufferLength);
+  var buffer = new Float32Array(length);
 
-  if (gen.globals.windows[props.type] === undefined) gen.globals.windows[props.type] = {};
+  var name = type + '_' + length + '_' + shift;
+  if (typeof gen.globals.windows[name] === 'undefined') {
 
-  if (gen.globals.windows[props.type][props.bufferLength] === undefined) {
-    for (var i = 0; i < props.bufferLength; i++) {
-      buffer[i] = windows[props.type](props.bufferLength, i, props.alpha);
+    for (var i = 0; i < length; i++) {
+      buffer[i] = windows[type](length, i, alpha, shift);
     }
 
-    gen.globals.windows[props.type][props.bufferLength] = data(buffer);
+    gen.globals.windows[name] = data(buffer);
   }
 
-  var ugen = gen.globals.windows[props.type][props.bufferLength]; //peek( gen.globals.windows[ props.type ][ props.bufferLength ], phasor( frequency, 0, { min:0 } ))
+  var ugen = gen.globals.windows[name];
   ugen.name = 'env' + gen.getUID();
 
   return ugen;

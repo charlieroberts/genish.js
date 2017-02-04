@@ -24,10 +24,12 @@ var proto = {
 module.exports = function () {
   var frequency = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
   var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+  var _props = arguments[2];
 
-  if (gen.globals.cycle === undefined) proto.initTable();
+  if (typeof gen.globals.cycle === 'undefined') proto.initTable();
+  var props = Object.assign({}, { min: 0 }, _props);
 
-  var ugen = peek(gen.globals.cycle, phasor(frequency, reset, { min: 0 }));
+  var ugen = peek(gen.globals.cycle, phasor(frequency, reset, props));
   ugen.name = 'cycle' + gen.getUID();
 
   return ugen;

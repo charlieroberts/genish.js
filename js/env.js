@@ -6,27 +6,20 @@ let gen     = require( './gen' ),
     peek    = require( './peek' ),
     phasor  = require( './phasor' )
 
-module.exports = ( length = 11025, properties ) => {
-  let defaults = {
-        type: 'Triangular',
-        bufferLength: 1024,
-        alpha: .15
-      },
-      frequency = length / gen.samplerate,
-      props = Object.assign({}, defaults, properties ),
-      buffer = new Float32Array( props.bufferLength )
+module.exports = ( type='triangular', length=1024, alpha=.15, shift=0 ) => {
+  let buffer = new Float32Array( length )
 
-  if( gen.globals.windows[ props.type ] === undefined ) gen.globals.windows[ props.type ] = {}
+  let name = type + '_' + length + '_' + shift
+  if( typeof gen.globals.windows[ name ] === 'undefined' ) { 
 
-  if( gen.globals.windows[ props.type ][ props.bufferLength ] === undefined ) {
-    for( let i = 0; i < props.bufferLength; i++ ) {
-      buffer[ i ] = windows[ props.type ]( props.bufferLength, i, props.alpha )
+    for( let i = 0; i < length; i++ ) {
+      buffer[ i ] = windows[ type ]( length, i, alpha, shift )
     }
 
-    gen.globals.windows[ props.type ][ props.bufferLength ] = data( buffer )
+    gen.globals.windows[ name ] = data( buffer )
   }
 
-  let ugen = gen.globals.windows[ props.type ][ props.bufferLength ] //peek( gen.globals.windows[ props.type ][ props.bufferLength ], phasor( frequency, 0, { min:0 } ))
+  let ugen = gen.globals.windows[ name ] 
   ugen.name = 'env' + gen.getUID()
 
   return ugen

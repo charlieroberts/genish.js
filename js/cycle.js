@@ -22,10 +22,11 @@ let proto = {
 
 }
 
-module.exports = ( frequency=1, reset=0 ) => {
-  if( gen.globals.cycle === undefined ) proto.initTable() 
-  
-  let ugen = peek( gen.globals.cycle, phasor( frequency, reset, { min:0 } ))
+module.exports = ( frequency=1, reset=0, _props ) => {
+  if( typeof gen.globals.cycle === 'undefined' ) proto.initTable() 
+  const props = Object.assign({}, { min:0 }, _props )
+
+  const ugen = peek( gen.globals.cycle, phasor( frequency, reset, props ))
   ugen.name = 'cycle' + gen.getUID()
 
   return ugen

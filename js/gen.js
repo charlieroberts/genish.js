@@ -84,7 +84,7 @@ let gen = {
     this.endBlock.clear()
     this.closures.clear()
     this.params.clear()
-    this.globals = { windows:{} }
+    //this.globals = { windows:{} }
     
     this.parameters.length = 0
     
@@ -210,6 +210,7 @@ let gen = {
           console.log( 'no gen found:', input, input.gen )
         }
         let code = input.gen()
+        //if( code.indexOf( 'Object' ) > -1 ) console.log( 'bad input:', input, code )
         
         if( Array.isArray( code ) ) {
           if( !gen.shouldLocalize ) {
