@@ -30,6 +30,7 @@ let gen = {
 
   closures: new Set(),
   params:   new Set(),
+  variableNames: new Set(),
 
   parameters:[],
   endBlock: new Set(),
@@ -76,6 +77,7 @@ let gen = {
    */
   
   createCallback( ugen, mem, debug = false, shouldInlineMemory=false ) {
+    console.log("CREATE")
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -93,6 +95,7 @@ let gen = {
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
+    this.variableNames.clear()
     this.params.clear()
     //this.globals = { windows:{} }
     
@@ -110,6 +113,7 @@ let gen = {
       let channel = isStereo ? ugen[i].gen() : ugen.gen(),
           body = ''
 
+
       // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
       // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
       // just return that number (graphOutput[0]).
@@ -117,7 +121,7 @@ let gen = {
 
       // split body to inject return keyword on last line
       body = body.split('\n')
-     
+
       //if( debug ) console.log( 'functionBody length', body )
       
       // next line is to accommodate memo as graph head
@@ -128,11 +132,16 @@ let gen = {
 
       // insert return keyword
       //body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
-      body[ lastidx ] = '  memory[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[ ' + i + ' ]  = fround(' + body[ lastidx ] + ');\n\n'
 
       this.functionBody += body.join('\n')
+
     }
     
+    for( let name of this.variableNames.values() ) {
+      this.functionBody = `  var ${name} = fround(0);\n` + this.functionBody
+    } 
+    console.log( this.functionBody )
     this.histories.forEach( value => {
       if( value !== null )
         value.gen()      
@@ -165,10 +174,10 @@ let gen = {
     let buildString = 
 `return function ugen( stdlib, foreign, buffer ) {
   'use asm'
-  const sin = stdlib.Math.sin
-  const abs = stdlib.Math.abs
-  const fround = stdlib.Math.fround
-  const memory = new stdlib.Float32Array( buffer )
+  var sin = stdlib.Math.sin
+  var abs = stdlib.Math.abs
+  var fround = stdlib.Math.fround
+  var memory = new stdlib.Float32Array( buffer )
 
   function render() {
 ${ this.functionBody }
@@ -181,7 +190,6 @@ ${ this.functionBody }
 
     this.callback = new Function( buildString )
 
-    console.log( this.callback.toString() )
     this.renderCallback = this.callback()( window, null, this.arrayBuffer )
     
     // assign properties to named function

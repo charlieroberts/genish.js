@@ -9,7 +9,7 @@ let utilities = {
   ctx: null,
 
   clear() {
-    this.callback = () => 0
+    this.callback= { callback:  () => 0 }
     this.clear.callbacks.forEach( v => v() )
     this.clear.callbacks.length = 0
   },
@@ -80,7 +80,7 @@ let utilities = {
 
     utilities.callback = gen.createCallback( graph, mem, debug )
     
-    if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
+    if( utilities.console ) utilities.console.setValue( utilities.callback.callback.toString() )
 
     return utilities.callback
   },
