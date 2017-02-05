@@ -8,6 +8,8 @@
 
 let MemoryHelper = require( 'memory-helper' )
 
+let buf = new ArrayBuffer( 0x10000 )
+
 let gen = {
 
   accum:0,
@@ -18,6 +20,7 @@ let gen = {
   globals:{
     windows: {},
   },
+  arrayBuffer:null,
   
   /* closures
    *
@@ -35,6 +38,9 @@ let gen = {
   memo: {},
 
   data: {},
+
+  arrayBuffer: buf,
+  memory: MemoryHelper.create( buf ),
   
   /* export
    *
@@ -75,11 +81,15 @@ let gen = {
         channel1, channel2
 
     if( typeof mem === 'number' || mem === undefined ) {
-      mem = MemoryHelper.create( mem )
+      //this.arrayBuffer = new ArrayBuffer( 0x10000 )  
+      //mem = MemoryHelper.create( mem )
+      // create stereo output that cannot be overwritten
+      //mem.alloc( 2, true )
     }
     
     //console.log( 'cb memory:', mem )
-    this.memory = mem
+    //this.memory = mem
+    this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -88,8 +98,9 @@ let gen = {
     
     this.parameters.length = 0
     
-    this.functionBody = "  'use strict'\n"
-    if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
+    this.functionBody = '\n';
+    //this.functionBody = "  'use asm'\n"
+    //if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -116,7 +127,8 @@ let gen = {
       let lastidx = body.length - 1
 
       // insert return keyword
-      body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      //body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[' + i + ']  = ' + body[ lastidx ] + '\n'
 
       this.functionBody += body.join('\n')
     }
@@ -126,18 +138,20 @@ let gen = {
         value.gen()      
     })
 
-    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
-    
-    this.functionBody = this.functionBody.split('\n')
-
-    if( this.endBlock.size ) { 
-      this.functionBody = this.functionBody.concat( Array.from( this.endBlock ) )
-      this.functionBody.push( returnStatement )
-    }else{
-      this.functionBody.push( returnStatement )
-    }
-    // reassemble function body
-    this.functionBody = this.functionBody.join('\n')
+/*
+ *    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
+ *    
+ *    this.functionBody = this.functionBody.split('\n')
+ *
+ *    if( this.endBlock.size ) { 
+ *      this.functionBody = this.functionBody.concat( Array.from( this.endBlock ) )
+ *      this.functionBody.push( returnStatement )
+ *    }else{
+ *      this.functionBody.push( returnStatement )
+ *    }
+ *    // reassemble function body
+ *    this.functionBody = this.functionBody.join('\n')
+ */
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
@@ -145,19 +159,37 @@ let gen = {
     if( shouldInlineMemory === true ) {
       this.parameters.push( 'memory' )
     }
-    let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
-    
+    //let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+    //let buildString = `return function gen( stdlib, foreign, buffer ){ \n${ this.functionBody }\n}`
+
+    let buildString = 
+`return function ugen( stdlib, foreign, buffer ) {
+  'use asm'
+  const sin = stdlib.Math.sin
+  const abs = stdlib.Math.abs
+  const fround = stdlib.Math.fround
+  const memory = new stdlib.Float32Array( buffer )
+
+  function render() {
+${ this.functionBody }
+}
+  
+  return { callback:render }
+}`
+
     if( this.debug || debug ) console.log( buildString ) 
 
-    callback = new Function( buildString )()
+    this.callback = new Function( buildString )
 
+    console.log( this.callback.toString() )
+    this.renderCallback = this.callback()( window, null, this.arrayBuffer )
     
     // assign properties to named function
     for( let dict of this.closures.values() ) {
       let name = Object.keys( dict )[0],
           value = dict[ name ]
 
-      callback[ name ] = value
+      this.callback[ name ] = value
     }
 
     for( let dict of this.params.values() ) {
@@ -172,16 +204,16 @@ let gen = {
       //callback[ name ] = value
     }
 
-    callback.data = this.data
-    callback.out  = new Float32Array( 2 )
-    callback.parameters = this.parameters.slice( 0 )
+    this.callback.data = this.data
+    this.callback.out  = new Float32Array( 2 )
+    this.callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
-    callback.memory = this.memory.heap
+    this.callback.memory = this.memory.heap
 
     this.histories.clear()
 
-    return callback
+    return this.renderCallback//callback
   },
   
   /* getInputs

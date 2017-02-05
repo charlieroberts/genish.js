@@ -49,15 +49,18 @@ let utilities = {
       var outputBuffer = audioProcessingEvent.outputBuffer;
 
       var left = outputBuffer.getChannelData( 0 ),
-          right= outputBuffer.getChannelData( 1 )
+          right= outputBuffer.getChannelData( 1 ),
+          memory = gen.memory.heap
 
       for (var sample = 0; sample < left.length; sample++) {
+        
+        utilities.callback.callback()
+
         if( !isStereo ) {
-          left[ sample ] = right[ sample ] = utilities.callback()
+          left[ sample ] = right[ sample ] = memory[0]//utilities.callback()
         }else{
-          var out = utilities.callback()
-          left[ sample  ] = out[0]
-          right[ sample ] = out[1]
+          left[ sample  ] = memory[0]
+          right[ sample ] = memory[1]
         }
       }
     }

@@ -1,22 +1,19 @@
-'use strict';
+'use strict'
 
-var gen = require('./gen.js'),
-    history = require('./history.js'),
-    mul = require('./mul.js'),
-    t60 = require('./t60.js');
+let gen     = require( './gen.js' ),
+    history = require( './history.js' ),
+    mul     = require( './mul.js' ),
+    t60     = require( './t60.js' )
 
-module.exports = function () {
-    var decayTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
-    var props = arguments[1];
+module.exports = ( decayTime = 44100, props ) => {
+  let properties = Object.assign({}, { initValue:1 }, props ),
+      ssd = history ( properties.initValue )
 
-    var properties = Object.assign({}, { initValue: 1 }, props),
-        ssd = history(properties.initValue);
+  ssd.in( mul( ssd.out, t60( decayTime ) ) )
 
-    ssd.in(mul(ssd.out, t60(decayTime)));
+  ssd.out.trigger = ()=> {
+    ssd.value = 1
+  }
 
-    ssd.out.trigger = function () {
-        ssd.value = 1;
-    };
-
-    return ssd.out;
-};
+  return ssd.out 
+}

@@ -39,19 +39,19 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
-      out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n\n` 
+      out += `  if( ${_reset} >= fround(1) ) ${valueRef} = fround(${this.min})\n\n` 
     }
 
-    out += `  var ${this.name}_value = ${valueRef};\n`
+    out += `  var ${this.name}_value =fround(0);\n  ${this.name}_value = fround(${valueRef});\n`
     
     if( this.shouldWrap === false && this.shouldClamp === true ) {
-      out += `  if( ${valueRef} < ${this.max } ) ${valueRef} += ${_incr}\n`
+      out += `  if( ${valueRef} < fround(${this.max}) ) ${valueRef} += fround(${_incr})\n`
     }else{
-      out += `  ${valueRef} += ${_incr}\n` // store output value before accumulating  
+      out += `  ${valueRef} = ${valueRef} + fround(${_incr})\n` // store output value before accumulating  
     }
 
-    if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n`
-    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( ${valueRef} < ${this.min} ) ${valueRef} += ${diff}\n\n`
+    if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) ${valueRef} = ${valueRef} - fround(${diff})\n`
+    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) ${valueRef} = ${valueRef} +  fround(${diff})\n\n`
 
     //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`

@@ -1,30 +1,31 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen  = require('./gen.js')
 
-var proto = {
-  name: 'floor',
+let proto = {
+  name:'floor',
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
 
-    if (isNaN(inputs[0])) {
+    if( isNaN( inputs[0] ) ) {
       //gen.closures.add({ [ this.name ]: Math.floor })
 
-      out = '( ' + inputs[0] + ' | 0 )';
+      out = `( ${inputs[0]} | 0 )`
+
     } else {
-      out = inputs[0] | 0;
+      out = inputs[0] | 0
     }
-
-    return out;
+    
+    return out
   }
-};
+}
 
-module.exports = function (x) {
-  var floor = Object.create(proto);
+module.exports = x => {
+  let floor = Object.create( proto )
 
-  floor.inputs = [x];
+  floor.inputs = [ x ]
 
-  return floor;
-};
+  return floor
+}

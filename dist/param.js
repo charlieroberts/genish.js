@@ -1,53 +1,48 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  gen() {
+    gen.requestMemory( this.memory )
+    
+    gen.params.add({ [this.name]: this })
 
-var proto = {
-  gen: function gen() {
-    _gen.requestMemory(this.memory);
+    this.value = this.initialValue
 
-    _gen.params.add(_defineProperty({}, this.name, this));
+    gen.memo[ this.name ] = `memory[${this.memory.value.idx}]`
 
-    this.value = this.initialValue;
+    return gen.memo[ this.name ]
+  } 
+}
 
-    _gen.memo[this.name] = 'memory[' + this.memory.value.idx + ']';
-
-    return _gen.memo[this.name];
-  }
-};
-
-module.exports = function () {
-  var propName = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-  var value = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-
-  var ugen = Object.create(proto);
-
-  if (typeof propName !== 'string') {
-    ugen.name = 'param' + _gen.getUID();
-    ugen.initialValue = propName;
-  } else {
-    ugen.name = propName;
-    ugen.initialValue = value;
+module.exports = ( propName=0, value=0 ) => {
+  let ugen = Object.create( proto )
+  
+  if( typeof propName !== 'string' ) {
+    ugen.name = 'param' + gen.getUID()
+    ugen.initialValue = propName
+  }else{
+    ugen.name = propName
+    ugen.initialValue = value
   }
 
-  Object.defineProperty(ugen, 'value', {
-    get: function get() {
-      if (this.memory.value.idx !== null) {
-        return _gen.memory.heap[this.memory.value.idx];
+  Object.defineProperty( ugen, 'value', {
+    get() {
+      if( this.memory.value.idx !== null ) {
+        return gen.memory.heap[ this.memory.value.idx ]
       }
     },
-    set: function set(v) {
-      if (this.memory.value.idx !== null) {
-        _gen.memory.heap[this.memory.value.idx] = v;
+    set( v ) {
+      if( this.memory.value.idx !== null ) {
+        gen.memory.heap[ this.memory.value.idx ] = v 
       }
     }
-  });
+  })
 
   ugen.memory = {
-    value: { length: 1, idx: null }
-  };
+    value: { length:1, idx:null }
+  }
 
-  return ugen;
-};
+  return ugen
+}

@@ -1,71 +1,60 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js'),
-    data = require('./data.js'),
-    poke = require('./poke.js'),
-    peek = require('./peek.js'),
-    sub = require('./sub.js'),
-    wrap = require('./wrap.js'),
-    accum = require('./accum.js');
+let gen  = require( './gen.js'  ),
+    data = require( './data.js' ),
+    poke = require( './poke.js' ),
+    peek = require( './peek.js' ),
+    sub  = require( './sub.js'  ),
+    wrap = require( './wrap.js' ),
+    accum= require( './accum.js')
 
-var proto = {
-  basename: 'delay',
+let proto = {
+  basename:'delay',
 
-  gen: function gen() {
-    var inputs = _gen.getInputs(this);
+  gen() {
+    let inputs = gen.getInputs( this )
+    
+    gen.memo[ this.name ] = inputs[0]
+    
+    return inputs[0]
+  },
+}
 
-    _gen.memo[this.name] = inputs[0];
-
-    return inputs[0];
-  }
-};
-
-module.exports = function (in1) {
-  for (var _len = arguments.length, tapsAndProperties = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    tapsAndProperties[_key - 2] = arguments[_key];
-  }
-
-  var time = arguments.length <= 1 || arguments[1] === undefined ? 256 : arguments[1];
-
-  var ugen = Object.create(proto),
-      defaults = { size: 512, feedback: 0, interp: 'linear' },
-      writeIdx = void 0,
-      readIdx = void 0,
-      delaydata = void 0,
-      properties = void 0,
-      tapTimes = [time],
-      taps = void 0;
-
-  if (Array.isArray(tapsAndProperties)) {
-    properties = tapsAndProperties[tapsAndProperties.length - 1];
-    if (tapsAndProperties.length > 1) {
-      for (var i = 0; i < tapsAndProperties.length - 1; i++) {
-        tapTimes.push(tapsAndProperties[i]);
+module.exports = ( in1, time=256, ...tapsAndProperties ) => {
+  let ugen = Object.create( proto ),
+      defaults = { size: 512, feedback:0, interp:'linear' },
+      writeIdx, readIdx, delaydata, properties, tapTimes = [ time ], taps
+  
+  if( Array.isArray( tapsAndProperties ) ) {
+    properties = tapsAndProperties[ tapsAndProperties.length - 1 ]
+    if( tapsAndProperties.length > 1 ) {
+      for( let i = 0; i < tapsAndProperties.length - 1; i++ ){
+        tapTimes.push( tapsAndProperties[ i ] )
       }
     }
-  } else {
-    properties = tapsAndProperties;
+  }else{
+    properties = tapsAndProperties
   }
 
-  if (properties !== undefined) Object.assign(defaults, properties);
+  if( properties !== undefined ) Object.assign( defaults, properties )
 
-  if (defaults.size < time) defaults.size = time;
+  if( defaults.size < time ) defaults.size = time
 
-  delaydata = data(defaults.size);
+  delaydata = data( defaults.size )
+  
+  ugen.inputs = []
 
-  ugen.inputs = [];
-
-  writeIdx = accum(1, 0, { max: defaults.size });
-
-  for (var _i = 0; _i < tapTimes.length; _i++) {
-    ugen.inputs[_i] = peek(delaydata, wrap(sub(writeIdx, tapTimes[_i]), 0, defaults.size), { mode: 'samples', interp: defaults.interp });
+  writeIdx = accum( 1, 0, { max:defaults.size }) 
+  
+  for( let i = 0; i < tapTimes.length; i++ ) {
+    ugen.inputs[ i ] = peek( delaydata, wrap( sub( writeIdx, tapTimes[i] ), 0, defaults.size ),{ mode:'samples', interp:defaults.interp })
   }
+  
+  ugen.outputs = ugen.inputs // ugn, Ugh, UGH! but i guess it works.
 
-  ugen.outputs = ugen.inputs; // ugn, Ugh, UGH! but i guess it works.
+  poke( delaydata, in1, writeIdx )
 
-  poke(delaydata, in1, writeIdx);
+  ugen.name = `${ugen.basename}${gen.getUID()}`
 
-  ugen.name = '' + ugen.basename + _gen.getUID();
-
-  return ugen;
-};
+  return ugen
+}

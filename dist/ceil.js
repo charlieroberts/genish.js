@@ -1,32 +1,31 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen  = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  name:'ceil',
 
-var proto = {
-  name: 'ceil',
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+    if( isNaN( inputs[0] ) ) {
+      gen.closures.add({ [ this.name ]: Math.ceil })
 
-    if (isNaN(inputs[0])) {
-      _gen.closures.add(_defineProperty({}, this.name, Math.ceil));
+      out = `gen.ceil( ${inputs[0]} )`
 
-      out = 'gen.ceil( ' + inputs[0] + ' )';
     } else {
-      out = Math.ceil(parseFloat(inputs[0]));
+      out = Math.ceil( parseFloat( inputs[0] ) )
     }
-
-    return out;
+    
+    return out
   }
-};
+}
 
-module.exports = function (x) {
-  var ceil = Object.create(proto);
+module.exports = x => {
+  let ceil = Object.create( proto )
 
-  ceil.inputs = [x];
+  ceil.inputs = [ x ]
 
-  return ceil;
-};
+  return ceil
+}

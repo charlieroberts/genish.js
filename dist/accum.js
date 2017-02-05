@@ -1,35 +1,34 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen  = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  basename:'accum',
 
-var proto = {
-  basename: 'accum',
-
-  gen: function gen() {
-    var code = void 0,
-        inputs = _gen.getInputs(this),
+  gen() {
+    let code,
+        inputs = gen.getInputs( this ),
         genName = 'gen.' + this.name,
-        functionBody = void 0;
+        functionBody
 
-    _gen.requestMemory(this.memory);
+    gen.requestMemory( this.memory )
 
-    _gen.memory.heap[this.memory.value.idx] = this.initialValue;
+    gen.memory.heap[ this.memory.value.idx ] = this.initialValue
 
-    functionBody = this.callback(genName, inputs[0], inputs[1], 'memory[' + this.memory.value.idx + ']');
+    functionBody = this.callback( genName, inputs[0], inputs[1], `memory[${this.memory.value.idx}]` )
 
-    _gen.closures.add(_defineProperty({}, this.name, this));
+    gen.closures.add({ [ this.name ]: this }) 
 
-    _gen.memo[this.name] = this.name + '_value';
-
-    return [this.name + '_value', functionBody];
+    gen.memo[ this.name ] = this.name + '_value'
+    
+    return [ this.name + '_value', functionBody ]
   },
-  callback: function callback(_name, _incr, _reset, valueRef) {
-    var diff = this.max - this.min,
-        out = '',
-        wrap = '';
 
+  callback( _name, _incr, _reset, valueRef ) {
+    let diff = this.max - this.min,
+        out = '',
+        wrap = ''
+    
     /* three different methods of wrapping, third is most expensive:
      *
      * 1: range {0,1}: y = x - (x | 0)
@@ -39,22 +38,22 @@ var proto = {
      */
 
     // must check for reset before storing value for output
-    if (!(typeof this.inputs[1] === 'number' && this.inputs[1] < 1)) {
-      out += '  if( ' + _reset + ' >=1 ) ' + valueRef + ' = ' + this.min + '\n\n';
+    if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
+      out += `  if( ${_reset} >= fround(1) ) ${valueRef} = fround(${this.min})\n\n` 
     }
 
-    out += '  var ' + this.name + '_value = ' + valueRef + ';\n';
-
-    if (this.shouldWrap === false && this.shouldClamp === true) {
-      out += '  if( ' + valueRef + ' < ' + this.max + ' ) ' + valueRef + ' += ' + _incr + '\n';
-    } else {
-      out += '  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating
+    out += `  var ${this.name}_value =fround(0);\n  ${this.name}_value = fround(${valueRef});\n`
+    
+    if( this.shouldWrap === false && this.shouldClamp === true ) {
+      out += `  if( ${valueRef} < fround(${this.max}) ) ${valueRef} += fround(${_incr})\n`
+    }else{
+      out += `  ${valueRef} = ${valueRef} + fround(${_incr})\n` // store output value before accumulating  
     }
 
-    if (this.max !== Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
-    if (this.min !== -Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
+    if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) ${valueRef} = ${valueRef} - fround(${diff})\n`
+    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) ${valueRef} = ${valueRef} +  fround(${diff})\n\n`
 
-    //if( this.min === 0 && this.max === 1 ) {
+    //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
     //} else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
     //  wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
@@ -62,44 +61,38 @@ var proto = {
     //  wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
     //}
 
-    out = out + wrap;
+    out = out + wrap
 
-    return out;
+    return out
   }
-};
+}
 
-module.exports = function (incr) {
-  var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-  var properties = arguments[2];
+module.exports = ( incr, reset=0, properties ) => {
+  let ugen = Object.create( proto ),
+      defaults = { min:0, max:1, shouldWrap: true, shouldClamp:false }
+  
+  if( properties !== undefined ) Object.assign( defaults, properties )
 
-  var ugen = Object.create(proto),
-      defaults = { min: 0, max: 1, shouldWrap: true, shouldClamp: false };
+  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min
 
-  if (properties !== undefined) Object.assign(defaults, properties);
-
-  if (defaults.initialValue === undefined) defaults.initialValue = defaults.min;
-
-  Object.assign(ugen, {
-    min: defaults.min,
+  Object.assign( ugen, { 
+    min: defaults.min, 
     max: defaults.max,
     initial: defaults.initialValue,
-    uid: _gen.getUID(),
-    inputs: [incr, reset],
+    uid:    gen.getUID(),
+    inputs: [ incr, reset ],
     memory: {
-      value: { length: 1, idx: null }
+      value: { length:1, idx:null }
     }
-  }, defaults);
+  },
+  defaults )
 
-  Object.defineProperty(ugen, 'value', {
-    get: function get() {
-      return _gen.memory.heap[this.memory.value.idx];
-    },
-    set: function set(v) {
-      _gen.memory.heap[this.memory.value.idx] = v;
-    }
-  });
+  Object.defineProperty( ugen, 'value', {
+    get() { return gen.memory.heap[ this.memory.value.idx ] },
+    set(v) { gen.memory.heap[ this.memory.value.idx ] = v }
+  })
 
-  ugen.name = '' + ugen.basename + ugen.uid;
+  ugen.name = `${ugen.basename}${ugen.uid}`
 
-  return ugen;
-};
+  return ugen
+}

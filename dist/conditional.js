@@ -1,82 +1,85 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require( './gen.js' )
 
-var proto = {
-  basename: 'conditional',
+let proto = {
+  basename:'conditional',
 
-  gen: function gen() {
-    var cond = _gen.getInput(this.inputs[0]),
-        block1 = void 0,
-        block2 = void 0,
-        block1Name = void 0,
-        block2Name = void 0,
-        cond1 = void 0,
-        cond2 = void 0,
-        out = void 0;
+  gen() {
+    let cond = gen.getInput( this.inputs[0] ),
+        block1, block2, block1Name, block2Name, cond1, cond2, out
 
-    if (typeof this.inputs[1] === 'number') {
-      block1 = this.inputs[1];
-      block1Name = null;
-    } else {
-      if (_gen.memo[this.inputs[1].name] === undefined) {
+    if( typeof this.inputs[1] === 'number' ) {
+      block1 = this.inputs[1]
+      block1Name = null
+    }else{
+      if( gen.memo[ this.inputs[1].name ] === undefined ) {
         // used to place all code dependencies in appropriate blocks
-        _gen.startLocalize();
+        gen.startLocalize()
 
-        _gen.getInput(this.inputs[1]);
+        gen.getInput( this.inputs[1] )
 
-        var block = _gen.endLocalize();
-        block1 = block[1].join('');
-        block1 = '  ' + block1.replace(/\n/gi, '\n  ');
-        block1Name = block[0];
-      } else {
-        block1 = '';
-        block1Name = _gen.memo[this.inputs[1].name];
+        let block = gen.endLocalize()
+        block1 = block[1].join('')
+        block1 = '  ' + block1.replace( /\n/gi, '\n  ' )
+        block1Name = block[0]
+      }else{
+        block1 = ''
+        block1Name = gen.memo[ this.inputs[1].name ]
       }
     }
 
-    if (typeof this.inputs[2] === 'number') {
-      block2 = this.inputs[2];
-      block2Name = null;
-    } else {
-      if (_gen.memo[this.inputs[2].name] === undefined) {
+    if( typeof this.inputs[2] === 'number' ) {
+      block2 = this.inputs[2]
+      block2Name = null
+    }else{
+      if( gen.memo[ this.inputs[2].name ] === undefined ) {
 
-        _gen.startLocalize();
-        _gen.getInput(this.inputs[2]);
-        var _block = _gen.endLocalize();
+        gen.startLocalize()
+        gen.getInput( this.inputs[2] )
+        let block = gen.endLocalize()
 
-        block2 = _block[1].join('');
-        block2 = '  ' + block2.replace(/\n/gi, '\n  ');
-        block2Name = _block[0];
-      } else {
-        block2 = ''; //gen.memo[ this.inputs[1].name ]
-        block2Name = _gen.memo[this.inputs[2].name];
+        block2 = block[1].join('')
+        block2 = '  ' + block2.replace( /\n/gi, '\n  ' )
+        block2Name = block[0]
+      }else{
+        block2 = '' //gen.memo[ this.inputs[1].name ]
+        block2Name = gen.memo[ this.inputs[2].name ]
       }
     }
 
-    cond1 = block1Name === null ? '  ' + this.name + '_out = ' + block1 : block1 + '    ' + this.name + '_out = ' + block1Name;
+    cond1 = block1Name === null ? 
+      `  ${this.name}_out = ${block1}` :
+      `${block1}    ${this.name}_out = ${block1Name}`
 
-    cond2 = block2Name === null ? '  ' + this.name + '_out = ' + block2 : block2 + '    ' + this.name + '_out = ' + block2Name;
+    cond2 = block2Name === null ? 
+      `  ${this.name}_out = ${block2}` :
+      `${block2}    ${this.name}_out = ${block2Name}`
 
-    out = '  var ' + this.name + '_out \n  if( ' + cond + ' ) {\n' + cond1 + '\n  }else{\n' + cond2 + ' \n  }\n';
 
-    _gen.memo[this.name] = this.name + '_out';
-
-    return [this.name + '_out', out];
+    out = 
+`  var ${this.name}_out 
+  if( ${cond} ) {
+${cond1}
+  }else{
+${cond2} 
   }
-};
+`
 
-module.exports = function (control) {
-  var in1 = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-  var in2 = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+    gen.memo[ this.name ] = `${this.name}_out`
 
-  var ugen = Object.create(proto);
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [control, in1, in2]
-  });
+    return [ `${this.name}_out`, out ]
+  }
+}
 
-  ugen.name = '' + ugen.basename + ugen.uid;
+module.exports = ( control, in1 = 1, in2 = 0 ) => {
+  let ugen = Object.create( proto )
+  Object.assign( ugen, {
+    uid:     gen.getUID(),
+    inputs:  [ control, in1, in2 ],
+  })
+  
+  ugen.name = `${ugen.basename}${ugen.uid}`
 
-  return ugen;
-};
+  return ugen
+}

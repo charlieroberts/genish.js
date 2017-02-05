@@ -9,7 +9,7 @@ module.exports = ( ...args ) => {
 
     gen() {
       let inputs = gen.getInputs( this ),
-          out='(',
+          out='fround(',
           sum = 0, numCount = 0, adderAtEnd = false, alreadyFullSummed = true
 
       inputs.forEach( (v,i) => {
@@ -26,13 +26,15 @@ module.exports = ( ...args ) => {
         }
       })
       
-      if( alreadyFullSummed ) out = ''
+      //if( alreadyFullSummed ) out = ''
 
       if( numCount > 0 ) {
         out += adderAtEnd || alreadyFullSummed ? sum : ' + ' + sum
       }
       
-      if( !alreadyFullSummed ) out += ')'
+      //if( !alreadyFullSummed ) out += ')'
+
+      out += ')'
 
       return out
     }

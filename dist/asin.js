@@ -1,32 +1,33 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen  = require('./gen.js')
 
-var proto = {
-  basename: 'asin',
+let proto = {
+  basename:'asin',
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
+    
+    if( isNaN( inputs[0] ) ) {
+      gen.closures.add({ 'asin': Math.asin })
 
-    if (isNaN(inputs[0])) {
-      _gen.closures.add({ 'asin': Math.asin });
+      out = `gen.asin( ${inputs[0]} )` 
 
-      out = 'gen.asin( ' + inputs[0] + ' )';
     } else {
-      out = Math.asin(parseFloat(inputs[0]));
+      out = Math.asin( parseFloat( inputs[0] ) )
     }
-
-    return out;
+    
+    return out
   }
-};
+}
 
-module.exports = function (x) {
-  var asin = Object.create(proto);
+module.exports = x => {
+  let asin = Object.create( proto )
 
-  asin.inputs = [x];
-  asin.id = _gen.getUID();
-  asin.name = asin.basename + '{asin.id}';
+  asin.inputs = [ x ]
+  asin.id = gen.getUID()
+  asin.name = `${asin.basename}{asin.id}`
 
-  return asin;
-};
+  return asin
+}

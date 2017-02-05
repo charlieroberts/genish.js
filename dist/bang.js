@@ -1,34 +1,38 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require('./gen.js')
 
-var proto = {
-  gen: function gen() {
-    _gen.requestMemory(this.memory);
+let proto = {
+  gen() {
+    gen.requestMemory( this.memory )
+    
+    let out = 
+`  var ${this.name} = memory[${this.memory.value.idx}]
+  if( ${this.name} === 1 ) memory[${this.memory.value.idx}] = 0      
+      
+`
+    gen.memo[ this.name ] = this.name
 
-    var out = '  var ' + this.name + ' = memory[' + this.memory.value.idx + ']\n  if( ' + this.name + ' === 1 ) memory[' + this.memory.value.idx + '] = 0      \n      \n';
-    _gen.memo[this.name] = this.name;
+    return [ this.name, out ]
+  } 
+}
 
-    return [this.name, out];
+module.exports = ( _props ) => {
+  let ugen = Object.create( proto ),
+      props = Object.assign({}, { min:0, max:1 }, _props )
+
+  ugen.name = 'bang' + gen.getUID()
+
+  ugen.min = props.min
+  ugen.max = props.max
+
+  ugen.trigger = () => {
+    gen.memory.heap[ ugen.memory.value.idx ] = ugen.max 
   }
-};
-
-module.exports = function (_props) {
-  var ugen = Object.create(proto),
-      props = Object.assign({}, { min: 0, max: 1 }, _props);
-
-  ugen.name = 'bang' + _gen.getUID();
-
-  ugen.min = props.min;
-  ugen.max = props.max;
-
-  ugen.trigger = function () {
-    _gen.memory.heap[ugen.memory.value.idx] = ugen.max;
-  };
 
   ugen.memory = {
-    value: { length: 1, idx: null }
-  };
+    value: { length:1, idx:null }
+  }
 
-  return ugen;
-};
+  return ugen
+}

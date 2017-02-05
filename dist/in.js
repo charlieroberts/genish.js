@@ -1,36 +1,37 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require('./gen.js')
 
-var proto = {
-  basename: 'in',
+let proto = {
+  basename:'in',
 
-  gen: function gen() {
-    _gen.parameters.push(this.name);
+  gen() {
+    gen.parameters.push( this.name )
+    
+    gen.memo[ this.name ] = this.name
 
-    _gen.memo[this.name] = this.name;
+    return this.name
+  } 
+}
 
-    return this.name;
-  }
-};
+module.exports = ( name ) => {
+  let input = Object.create( proto )
 
-module.exports = function (name) {
-  var input = Object.create(proto);
-
-  input.id = _gen.getUID();
-  input.name = name !== undefined ? name : '' + input.basename + input.id;
+  input.id   = gen.getUID()
+  input.name = name !== undefined ? name : `${input.basename}${input.id}`
   input[0] = {
-    gen: function gen() {
-      if (!_gen.parameters.includes(input.name)) _gen.parameters.push(input.name);
-      return input.name + '[0]';
+    gen() {
+      if( ! gen.parameters.includes( input.name ) ) gen.parameters.push( input.name )
+      return input.name + '[0]'
     }
-  };
+  }
   input[1] = {
-    gen: function gen() {
-      if (!_gen.parameters.includes(input.name)) _gen.parameters.push(input.name);
-      return input.name + '[1]';
+    gen() {
+      if( ! gen.parameters.includes( input.name ) ) gen.parameters.push( input.name )
+      return input.name + '[1]'
     }
-  };
+  }
 
-  return input;
-};
+
+  return input
+}

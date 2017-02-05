@@ -1,32 +1,32 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require( './gen.js' )
 
-var proto = {
-  basename: 'bool',
+let proto = {
+  basename:'bool',
 
-  gen: function gen() {
-    var inputs = _gen.getInputs(this),
-        out = void 0;
+  gen() {
+    let inputs = gen.getInputs( this ), out
 
-    out = inputs[0] + ' === 0 ? 0 : 1';
-
+    out = `${inputs[0]} === 0 ? 0 : 1`
+    
     //gen.memo[ this.name ] = `gen.data.${this.name}`
 
     //return [ `gen.data.${this.name}`, ' ' +out ]
-    return out;
+    return out
   }
-};
+}
 
-module.exports = function (in1) {
-  var ugen = Object.create(proto);
+module.exports = ( in1 ) => {
+  let ugen = Object.create( proto )
 
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [in1]
-  });
+  Object.assign( ugen, { 
+    uid:        gen.getUID(),
+    inputs:     [ in1 ],
+  })
+  
+  ugen.name = `${ugen.basename}${ugen.uid}`
 
-  ugen.name = '' + ugen.basename + ugen.uid;
+  return ugen
+}
 
-  return ugen;
-};

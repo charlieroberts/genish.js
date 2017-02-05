@@ -1,36 +1,36 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen  = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  name:'mtof',
 
-var proto = {
-  name: 'mtof',
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+    if( isNaN( inputs[0] ) ) {
+      gen.closures.add({ [ this.name ]: Math.exp })
 
-    if (isNaN(inputs[0])) {
-      _gen.closures.add(_defineProperty({}, this.name, Math.exp));
+      out = `( ${this.tuning} * gen.exp( .057762265 * (${inputs[0]} - 69) ) )`
 
-      out = '( ' + this.tuning + ' * gen.exp( .057762265 * (' + inputs[0] + ' - 69) ) )';
     } else {
-      out = this.tuning * Math.exp(.057762265 * (inputs[0] - 69));
+      out = this.tuning * Math.exp( .057762265 * ( inputs[0] - 69) )
     }
-
-    return out;
+    
+    return out
   }
-};
+}
 
-module.exports = function (x, props) {
-  var ugen = Object.create(proto),
-      defaults = { tuning: 440 };
+module.exports = ( x, props ) => {
+  let ugen = Object.create( proto ),
+      defaults = { tuning:440 }
+  
+  if( props !== undefined ) Object.assign( props.defaults )
 
-  if (props !== undefined) Object.assign(props.defaults);
+  Object.assign( ugen, defaults )
+  ugen.inputs = [ x ]
+  
 
-  Object.assign(ugen, defaults);
-  ugen.inputs = [x];
-
-  return ugen;
-};
+  return ugen
+}

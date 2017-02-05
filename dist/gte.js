@@ -1,34 +1,34 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require('./gen.js')
 
-var proto = {
-  name: 'gte',
+let proto = {
+  name:'gte',
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
+    
+    out = `  var ${this.name} = `  
 
-    out = '  var ' + this.name + ' = ';
-
-    if (isNaN(this.inputs[0]) || isNaN(this.inputs[1])) {
-      out += '( ' + inputs[0] + ' >= ' + inputs[1] + ' | 0 )';
+    if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
+      out += `( ${inputs[0]} >= ${inputs[1]} | 0 )`
     } else {
-      out += inputs[0] >= inputs[1] ? 1 : 0;
+      out += inputs[0] >= inputs[1] ? 1 : 0 
     }
-    out += '\n\n';
+    out += '\n\n'
 
-    _gen.memo[this.name] = this.name;
+    gen.memo[ this.name ] = this.name
 
-    return [this.name, out];
+    return [this.name, out]
   }
-};
+}
 
-module.exports = function (x, y) {
-  var gt = Object.create(proto);
+module.exports = (x,y) => {
+  let gt = Object.create( proto )
 
-  gt.inputs = [x, y];
-  gt.name = 'gte' + _gen.getUID();
+  gt.inputs = [ x,y ]
+  gt.name = 'gte' + gen.getUID()
 
-  return gt;
-};
+  return gt
+}

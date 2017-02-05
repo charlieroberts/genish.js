@@ -1,41 +1,47 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen     = require( './gen.js' )
 
-var proto = {
-  basename: 'sah',
+let proto = {
+  basename:'sah',
 
-  gen: function gen() {
-    var inputs = _gen.getInputs(this),
-        out = void 0;
+  gen() {
+    let inputs = gen.getInputs( this ), out
 
-    _gen.data[this.name] = 0;
-    _gen.data[this.name + '_control'] = 0;
+    gen.data[ this.name ] = 0
+    gen.data[ this.name + '_control' ] = 0
 
-    out = ' var ' + this.name + ' = gen.data.' + this.name + '_control,\n      ' + this.name + '_trigger = ' + inputs[1] + ' > ' + inputs[2] + ' ? 1 : 0\n\n  if( ' + this.name + '_trigger !== ' + this.name + '  ) {\n    if( ' + this.name + '_trigger === 1 ) \n      gen.data.' + this.name + ' = ' + inputs[0] + '\n    gen.data.' + this.name + '_control = ' + this.name + '_trigger\n  }\n';
+    out = 
+` var ${this.name} = gen.data.${this.name}_control,
+      ${this.name}_trigger = ${inputs[1]} > ${inputs[2]} ? 1 : 0
 
-    _gen.memo[this.name] = 'gen.data.' + this.name;
-
-    return ['gen.data.' + this.name, ' ' + out];
+  if( ${this.name}_trigger !== ${this.name}  ) {
+    if( ${this.name}_trigger === 1 ) 
+      gen.data.${this.name} = ${inputs[0]}
+    gen.data.${this.name}_control = ${this.name}_trigger
   }
-};
+`
+    
+    gen.memo[ this.name ] = `gen.data.${this.name}`
 
-module.exports = function (in1, control) {
-  var threshold = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
-  var properties = arguments[3];
+    return [ `gen.data.${this.name}`, ' ' +out ]
+  }
+}
 
-  var ugen = Object.create(proto),
-      defaults = { init: 0 };
+module.exports = ( in1, control, threshold=0, properties ) => {
+  let ugen = Object.create( proto ),
+      defaults = { init:0 }
 
-  if (properties !== undefined) Object.assign(defaults, properties);
+  if( properties !== undefined ) Object.assign( defaults, properties )
 
-  Object.assign(ugen, {
+  Object.assign( ugen, { 
     lastSample: 0,
-    uid: _gen.getUID(),
-    inputs: [in1, control, threshold]
-  }, defaults);
+    uid:        gen.getUID(),
+    inputs:     [ in1, control,threshold ],
+  },
+  defaults )
+  
+  ugen.name = `${ugen.basename}${ugen.uid}`
 
-  ugen.name = '' + ugen.basename + ugen.uid;
-
-  return ugen;
-};
+  return ugen
+}

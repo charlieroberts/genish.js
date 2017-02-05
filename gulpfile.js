@@ -12,7 +12,7 @@ var gulp = require('gulp'),
 gulp.task( 'js', function() {
   browserify({ debug:true, standalone:'genish' })
     .require( './js/index.js', { entry: true } )
-    .transform( babelify, { presets:['es2015'] })
+    //.transform( babelify, { presets:['es2015'] })
     .bundle()
     .pipe( source('gen.lib.js') )
     .pipe( gulp.dest('./dist') )
@@ -27,7 +27,7 @@ gulp.task( 'js', function() {
 
   // transpile (but don't browserify) for use with node.js tests
   return gulp.src( './js/**.js' )
-    .pipe( babel({ presets:['es2015'] }) )
+    //.pipe( babel({ presets:['es2015'] }) )
     .pipe( gulp.dest('./dist' ) )
 
 })

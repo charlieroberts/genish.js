@@ -1,16 +1,14 @@
-'use strict';
+'use strict'
 
-var gen = require('./gen.js'),
+let gen = require('./gen.js'),
     add = require('./add.js'),
     mul = require('./mul.js'),
     sub = require('./sub.js'),
-    memo = require('./memo.js');
+    memo= require('./memo.js')
 
-module.exports = function (in1, in2) {
-    var t = arguments.length <= 2 || arguments[2] === undefined ? .5 : arguments[2];
+module.exports = ( in1, in2, t=.5 ) => {
+  let ugen = memo( add( mul(in1, sub(1,t ) ), mul( in2, t ) ) )
+  ugen.name = 'mix' + gen.getUID()
 
-    var ugen = memo(add(mul(in1, sub(1, t)), mul(in2, t)));
-    ugen.name = 'mix' + gen.getUID();
-
-    return ugen;
-};
+  return ugen
+}

@@ -1,21 +1,19 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  gen() {
+    gen.closures.add({ [ this.name ]: this.value }) 
+    return 'gen.' + this.name
+  } 
+}
 
-var proto = {
-  gen: function gen() {
-    _gen.closures.add(_defineProperty({}, this.name, this.value));
-    return 'gen.' + this.name;
-  }
-};
+module.exports = ( propName, value ) => {
+  let ugen = Object.create( proto )
 
-module.exports = function (propName, value) {
-  var ugen = Object.create(proto);
+  ugen.name = propName
+  ugen.value = value
 
-  ugen.name = propName;
-  ugen.value = value;
-
-  return ugen;
-};
+  return ugen
+}

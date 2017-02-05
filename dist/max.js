@@ -1,32 +1,31 @@
-'use strict';
+'use strict'
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+let gen  = require('./gen.js')
 
-var _gen = require('./gen.js');
+let proto = {
+  name:'max',
 
-var proto = {
-  name: 'max',
+  gen() {
+    let out,
+        inputs = gen.getInputs( this )
 
-  gen: function gen() {
-    var out = void 0,
-        inputs = _gen.getInputs(this);
+    if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
+      gen.closures.add({ [ this.name ]: Math.max })
 
-    if (isNaN(inputs[0]) || isNaN(inputs[1])) {
-      _gen.closures.add(_defineProperty({}, this.name, Math.max));
+      out = `gen.max( ${inputs[0]}, ${inputs[1]} )`
 
-      out = 'gen.max( ' + inputs[0] + ', ' + inputs[1] + ' )';
     } else {
-      out = Math.max(parseFloat(inputs[0]), parseFloat(inputs[1]));
+      out = Math.max( parseFloat( inputs[0] ), parseFloat( inputs[1] ) )
     }
-
-    return out;
+    
+    return out
   }
-};
+}
 
-module.exports = function (x, y) {
-  var max = Object.create(proto);
+module.exports = (x,y) => {
+  let max = Object.create( proto )
 
-  max.inputs = [x, y];
+  max.inputs = [ x,y ]
 
-  return max;
-};
+  return max
+}

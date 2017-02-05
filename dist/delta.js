@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-var gen = require('./gen.js'),
-    history = require('./history.js'),
-    sub = require('./sub.js');
+let gen     = require( './gen.js' ),
+    history = require( './history.js' ),
+    sub     = require( './sub.js' )
 
-module.exports = function (in1) {
-  var n1 = history();
+module.exports = ( in1 ) => {
+  let n1 = history()
+    
+  n1.in( in1 )
 
-  n1.in(in1);
+  let ugen = sub( in1, n1.out )
+  ugen.name = 'delta'+gen.getUID()
 
-  var ugen = sub(in1, n1.out);
-  ugen.name = 'delta' + gen.getUID();
-
-  return ugen;
-};
+  return ugen
+}

@@ -1,35 +1,32 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen = require( './gen.js' )
 
-var proto = {
-  basename: 'switch',
+let proto = {
+  basename:'switch',
 
-  gen: function gen() {
-    var inputs = _gen.getInputs(this),
-        out = void 0;
+  gen() {
+    let inputs = gen.getInputs( this ), out
 
-    if (inputs[1] === inputs[2]) return inputs[1]; // if both potential outputs are the same just return one of them
+    if( inputs[1] === inputs[2] ) return inputs[1] // if both potential outputs are the same just return one of them
+    
+    out = `  var ${this.name}_out = ${inputs[0]} === 1 ? ${inputs[1]} : ${inputs[2]}\n`
 
-    out = '  var ' + this.name + '_out = ' + inputs[0] + ' === 1 ? ' + inputs[1] + ' : ' + inputs[2] + '\n';
+    gen.memo[ this.name ] = `${this.name}_out`
 
-    _gen.memo[this.name] = this.name + '_out';
+    return [ `${this.name}_out`, out ]
+  },
 
-    return [this.name + '_out', out];
-  }
-};
+}
 
-module.exports = function (control) {
-  var in1 = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-  var in2 = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+module.exports = ( control, in1 = 1, in2 = 0 ) => {
+  let ugen = Object.create( proto )
+  Object.assign( ugen, {
+    uid:     gen.getUID(),
+    inputs:  [ control, in1, in2 ],
+  })
+  
+  ugen.name = `${ugen.basename}${ugen.uid}`
 
-  var ugen = Object.create(proto);
-  Object.assign(ugen, {
-    uid: _gen.getUID(),
-    inputs: [control, in1, in2]
-  });
-
-  ugen.name = '' + ugen.basename + ugen.uid;
-
-  return ugen;
-};
+  return ugen
+}

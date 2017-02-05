@@ -1,51 +1,53 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js'),
-    mul = require('./mul.js'),
-    wrap = require('./wrap.js');
+let gen  = require('./gen.js'),
+    mul  = require('./mul.js'),
+    wrap = require('./wrap.js')
 
-var proto = {
-  basename: 'poke',
+let proto = {
+  basename:'poke',
 
-  gen: function gen() {
-    var dataName = 'memory',
-        inputs = _gen.getInputs(this),
-        idx = void 0,
-        out = void 0,
-        wrapped = void 0;
-
-    idx = this.data.gen();
+  gen() {
+    let dataName = 'memory',
+        inputs = gen.getInputs( this ),
+        idx, out, wrapped
+    
+    idx = this.data.gen()
 
     //gen.requestMemory( this.memory )
     //wrapped = wrap( this.inputs[1], 0, this.dataLength ).gen()
     //idx = wrapped[0]
     //gen.functionBody += wrapped[1]
-    var outputStr = this.inputs[1] === 0 ? '  ' + dataName + '[ ' + idx + ' ] = ' + inputs[0] + '\n' : '  ' + dataName + '[ ' + idx + ' + ' + inputs[1] + ' ] = ' + inputs[0] + '\n';
+    let outputStr = this.inputs[1] === 0 ?
+      `  ${dataName}[ ${idx} ] = ${inputs[0]}\n` :
+      `  ${dataName}[ ${idx} + ${inputs[1]} ] = ${inputs[0]}\n`
 
-    if (this.inline === undefined) {
-      _gen.functionBody += outputStr;
-    } else {
-      return [this.inline, outputStr];
+    if( this.inline === undefined ) {
+      gen.functionBody += outputStr
+    }else{
+      return [ this.inline, outputStr ]
     }
   }
-};
-module.exports = function (data, value, index, properties) {
-  var ugen = Object.create(proto),
-      defaults = { channels: 1 };
+}
+module.exports = ( data, value, index, properties ) => {
+  let ugen = Object.create( proto ),
+      defaults = { channels:1 } 
 
-  if (properties !== undefined) Object.assign(defaults, properties);
+  if( properties !== undefined ) Object.assign( defaults, properties )
 
-  Object.assign(ugen, {
-    data: data,
-    dataName: data.name,
+  Object.assign( ugen, { 
+    data,
+    dataName:   data.name,
     dataLength: data.buffer.length,
-    uid: _gen.getUID(),
-    inputs: [value, index]
-  }, defaults);
+    uid:        gen.getUID(),
+    inputs:     [ value, index ],
+  },
+  defaults )
 
-  ugen.name = ugen.basename + ugen.uid;
 
-  _gen.histories.set(ugen.name, ugen);
+  ugen.name = ugen.basename + ugen.uid
+  
+  gen.histories.set( ugen.name, ugen )
 
-  return ugen;
-};
+  return ugen
+}

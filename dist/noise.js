@@ -1,26 +1,26 @@
-'use strict';
+'use strict'
 
-var _gen = require('./gen.js');
+let gen  = require('./gen.js')
 
-var proto = {
-  name: 'noise',
+let proto = {
+  name:'noise',
 
-  gen: function gen() {
-    var out = void 0;
+  gen() {
+    let out
 
-    _gen.closures.add({ 'noise': Math.random });
+    gen.closures.add({ 'noise' : Math.random })
 
-    out = '  var ' + this.name + ' = gen.noise()\n';
+    out = `  var ${this.name} = gen.noise()\n`
+    
+    gen.memo[ this.name ] = this.name
 
-    _gen.memo[this.name] = this.name;
-
-    return [this.name, out];
+    return [ this.name, out ]
   }
-};
+}
 
-module.exports = function (x) {
-  var noise = Object.create(proto);
-  noise.name = proto.name + _gen.getUID();
+module.exports = x => {
+  let noise = Object.create( proto )
+  noise.name = proto.name + gen.getUID()
 
-  return noise;
-};
+  return noise
+}
