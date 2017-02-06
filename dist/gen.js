@@ -77,7 +77,6 @@ let gen = {
    */
   
   createCallback( ugen, mem, debug = false, shouldInlineMemory=false ) {
-    console.log("CREATE")
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -175,6 +174,15 @@ let gen = {
 `return function ugen( stdlib, foreign, buffer ) {
   'use asm'
   var sin = stdlib.Math.sin
+  var cos = stdlib.Math.cos
+  var tan = stdlib.Math.tan
+  var min = stdlib.Math.min
+  var max = stdlib.Math.max
+  var pow = stdlib.Math.pow
+  var log = stdlib.Math.log
+  var atan = stdlib.Math.atan
+  var asin = stdlib.Math.asin
+  var acos = stdlib.Math.acos
   var abs = stdlib.Math.abs
   var fround = stdlib.Math.fround
   var memory = new stdlib.Float32Array( buffer )

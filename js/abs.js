@@ -9,10 +9,12 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
 
+    gen.variableNames.add( this.id )
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ this.name ]: Math.abs })
 
-      out = `gen.abs( ${inputs[0]} )`
+      out = [ this.id, `  ${this.id} = abs( ${inputs[0]} );\n` ]
 
     } else {
       out = Math.abs( parseFloat( inputs[0] ) )
@@ -26,6 +28,7 @@ module.exports = x => {
   let abs = Object.create( proto )
 
   abs.inputs = [ x ]
+  abs.id = abs.name + gen.getUID()
 
   return abs
 }
