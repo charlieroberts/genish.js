@@ -19,10 +19,12 @@ module.exports = ( ...args ) => {
           hasUgens = false,
           returnValue = 0
 
+      gen.variableNames.add( this.name )
+
       this.inputs.forEach( value => { if( isNaN( value ) ) hasUgens = true })
       
       if( hasUgens ) { // store in variable for future reference
-        out = '  var ' + this.name + ' = ('
+        out = '  ' + this.name + ' = fround('
       }else{
         out = '('
       }
@@ -55,7 +57,7 @@ module.exports = ( ...args ) => {
 
       returnValue = hasUgens ? [ this.name, out ] : out
       
-      if( hasUgens ) gen.memo[ this.name ] = this.name
+      //if( hasUgens ) gen.memo[ this.name ] = this.name
 
       return returnValue
     }

@@ -9,8 +9,10 @@ module.exports = ( ...args ) => {
 
     gen() {
       let inputs = gen.getInputs( this ),
-          out='(',
+          out=`  ${this.name} = fround(`,
           sum = 1, numCount = 0, mulAtEnd = false, alreadyFullSummed = true
+
+      gen.variableNames.add( this.name )
 
       inputs.forEach( (v,i) => {
         if( isNaN( v ) ) {
@@ -30,17 +32,19 @@ module.exports = ( ...args ) => {
         }
       })
       
-      if( alreadyFullSummed ) out = ''
+      //if( alreadyFullSummed ) out = ''
 
       if( numCount > 0 ) {
-        out += mulAtEnd || alreadyFullSummed ? sum : ' * ' + sum
+        out += mulAtEnd || alreadyFullSummed ? `fround(${sum})` : ` * fround(${sum})`
       }
       
-      if( !alreadyFullSummed ) out += ')'
+      //if( !alreadyFullSummed ) 
+      out += ');\n'
 
-      return out
+      return [this.name, out]
     }
   }
+  mul.name = 'mul'+mul.id
 
   return mul
 }
