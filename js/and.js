@@ -8,11 +8,11 @@ let proto = {
   gen() {
     let inputs = gen.getInputs( this ), out
 
-    out = `  var ${this.name} = (${inputs[0]} !== 0 && ${inputs[1]} !== 0) | 0\n\n`
+    gen.variableNames.add( [this.name, 'f'] )
 
-    gen.memo[ this.name ] = `${this.name}`
+    out = `  ${this.name} = ((${inputs[0]} != fround(0)) + (${inputs[1]} != fround(0) ) == fround(2) );\n\n`
 
-    return [ `${this.name}`, out ]
+    return [ this.name, out ]
   },
 
 }

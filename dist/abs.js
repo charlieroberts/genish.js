@@ -9,7 +9,7 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
 
-    gen.variableNames.add( this.id )
+    gen.variableNames.add( [this.id,'f'] )
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ this.name ]: Math.abs })

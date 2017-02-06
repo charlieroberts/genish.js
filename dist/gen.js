@@ -137,10 +137,22 @@ let gen = {
 
     }
     
-    for( let name of this.variableNames.values() ) {
-      this.functionBody = `  var ${name} = fround(0);\n` + this.functionBody
+    for( let variable of this.variableNames.values() ) {
+      const variableType = variable[1], name = variable[0]
+
+      switch( variableType ) {
+        case 'f':
+          this.functionBody = `  var ${name} = fround(0);\n` + this.functionBody
+          break;
+        case 'i':
+          this.functionBody = `  var ${name} = 0|0;\n` + this.functionBody
+          break;
+        case 'd':
+          this.functionBody = `  var ${name} = 0.0;\n` + this.functionBody
+          break;
+      }
     } 
-    console.log( this.functionBody )
+
     this.histories.forEach( value => {
       if( value !== null )
         value.gen()      

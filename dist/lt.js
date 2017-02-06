@@ -3,15 +3,16 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'lt',
+  basename:'lt',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
 
-    out = `  var ${this.name} = `  
+    gen.variableNames.add( [this.name,'i'] )
+    out = `  ${this.name} = `  
 
-    if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
+    if( isNaN( this.inputs[0] ) || isNaN( this.inputs[i] ) ) {
       out += `(( ${inputs[0]} < ${inputs[1]}) | 0  )`
     } else {
       out += inputs[0] < inputs[1] ? 1 : 0 
@@ -30,7 +31,7 @@ module.exports = (x,y) => {
   let lt = Object.create( proto )
 
   lt.inputs = [ x,y ]
-  lt.name = 'lt' + gen.getUID()
+  lt.name = lt.basename + gen.getUID()
 
   return lt
 }

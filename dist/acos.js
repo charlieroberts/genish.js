@@ -8,11 +8,13 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-    
+
+    gen.variableNames.add( [this.name,'f'] )
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'acos': Math.acos })
 
-      out = `gen.acos( ${inputs[0]} )` 
+      out = [ this.name, `  ${this.name} = acos( ${inputs[0]} );\n` ] 
 
     } else {
       out = Math.acos( parseFloat( inputs[0] ) )

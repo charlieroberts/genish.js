@@ -8,11 +8,12 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
+
+    gen.variableNames.add( [this.name, 'f'] )
     
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'sin': Math.sin })
 
-      out = `gen.sin( ${inputs[0]} )` 
+      out = [ this.name, `  ${this.name} = fround( sin( ${inputs[0]} ) );\n` ]
 
     } else {
       out = Math.sin( parseFloat( inputs[0] ) )
@@ -27,7 +28,7 @@ module.exports = x => {
 
   sin.inputs = [ x ]
   sin.id = gen.getUID()
-  sin.name = `${sin.basename}{sin.id}`
+  sin.name = `${sin.basename}${sin.id}`
 
   return sin
 }

@@ -12,7 +12,7 @@ module.exports = ( ...args ) => {
           out=`  ${this.name} = fround(`,
           sum = 1, numCount = 0, mulAtEnd = false, alreadyFullSummed = true
 
-      gen.variableNames.add( this.name )
+      gen.variableNames.add( [this.name,'f'] )
 
       inputs.forEach( (v,i) => {
         if( isNaN( v ) ) {

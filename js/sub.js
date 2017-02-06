@@ -19,7 +19,7 @@ module.exports = ( ...args ) => {
           hasUgens = false,
           returnValue = 0
 
-      gen.variableNames.add( this.name )
+      gen.variableNames.add( [this.name,'f'] )
 
       this.inputs.forEach( value => { if( isNaN( value ) ) hasUgens = true })
       
