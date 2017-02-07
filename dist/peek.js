@@ -13,47 +13,77 @@ let proto = {
     idx = inputs[1]
     lengthIsLog2 = (Math.log2( this.data.buffer.length ) | 0)  === Math.log2( this.data.buffer.length )
 
+    gen.variableNames.add([ this.name+'_phase', 'f']  )
+    gen.variableNames.add([ this.name+'_index', 'i']  )
+    gen.variableNames.add([ this.name+'_next',  'i']  )
+    gen.variableNames.add([ this.name+'_frac',  'f']  )
+    gen.variableNames.add([ this.name+'_base',  'f']  )
+    gen.variableNames.add([ this.name+'_out', 'f']  )
+
     if( this.mode !== 'simple' ) {
 
-    functionBody = `  var ${this.name}_dataIdx  = ${idx}, 
-      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + (this.data.buffer.length - 1) }, 
-      ${this.name}_index = ${this.name}_phase | 0,\n`
+      const phase = this.mode === 'samples' ? `fround(${inputs[0]})` : `fround( fround(${inputs[0]}) * fround(${this.data.buffer.length - 1}|0) )`
 
-    if( this.boundmode === 'wrap' ) {
-      next = lengthIsLog2 ?
-      `( ${this.name}_index + 1 ) & (${this.data.buffer.length} - 1)` :
-      `${this.name}_index + 1 >= ${this.data.buffer.length} ? ${this.name}_index + 1 - ${this.data.buffer.length} : ${this.name}_index + 1`
-    }else if( this.boundmode === 'clamp' ) {
-      next = 
-      `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
-    }else{
-       next = 
-      `${this.name}_index + 1`     
-    }
+      const nonLog2Next =  
+        `if( ( ${this.name}_index + 1|0 )|0 >= ${this.data.buffer.length}|0 ) {
+          ${this.name}_next = ( ${this.name}_index + 1|0 - ${this.data.buffer.length}|0 )|0
+        }else{
+          ${this.name}_next = ( ${this.name}_index + 1|0 )|0 
+        }\n\n`
 
-    if( this.interp === 'linear' ) {      
-    functionBody += `      ${this.name}_frac  = ${this.name}_phase - ${this.name}_index,
-      ${this.name}_base  = memory[ ${this.name}_dataIdx +  ${this.name}_index ],
-      ${this.name}_next  = ${next},`
-      
-      if( this.boundmode === 'ignore' ) {
-        functionBody += `
-      ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
+      const clampNext =
+        `if( (${this.name}_index + 1|0 )|0 >= (${this.data.buffer.length - 1})|0 ) {
+          ${this.name}_next = ${this.data.buffer.length - 1}|0
+        }else{
+          ${this.name}_next = ( ${this.name}_index + 1|0 )|0
+        }\n\n`
+
+
+      functionBody = 
+      `  ${this.name}_phase = ${phase} 
+  ${this.name}_index = ~~floor(+${this.name}_phase)\n`
+
+
+      if( this.boundmode === 'wrap' ) {
+        next = lengthIsLog2 ? `( ${this.name}_index + 1 )|0 & (${this.data.buffer.length} - 1)|0` : nonLog2Next
+      }else if( this.boundmode === 'clamp' ) {
+        console.log('clamp')
+        next = clampNext 
       }else{
-        functionBody += `
-      ${this.name}_out   = ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
+        next = `( ${this.name}_index + 1|0 )|0`     
       }
-    }else{
-      functionBody += `      ${this.name}_out = memory[ ${this.name}_dataIdx + ${this.name}_index ]\n\n`
-    }
 
+
+      if( this.interp === 'linear' ) {
+
+        functionBody += 
+          `${this.name}_frac  = fround(${this.name}_phase - fround(${this.name}_index))
+          ${this.name}_base  = fround( memory[ (${idx}|0 + ${this.name}_index)|0 ])
+          ${this.name}_next  = ${next}`
+
+
+      const interpolated= `${this.name}_out = fround( fround(${this.name}_base + ${this.name}_frac) * fround ( fround( memory[ (${idx}|0 + ${this.name}_next|0 )|0 ]) - ${this.name}_base ) )\n\n`
+
+        if( this.boundmode === 'ignore' ) {
+
+          functionBody += `
+          ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${idx} + ${this.name}_next ] - ${this.name}_base )\n\n`
+        }else{
+          functionBody += interpolated 
+        }
+/* END LINEAR INTERPOLATION */
+      }else{
+        if( this.boundmode === 'clamp' ) {
+          functionBody += `  ${this.name}_out = fround( memory[ ${idx} + ${this.name}_index ] )\n\n`
+        }else{
+          functionBody += `  ${this.name}_out = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2  ] )\n\n`
+        }  
+      }
+
+/* END MODE !== SIMPLE */
     } else { // mode is simple
-      functionBody = `memory[ ${idx} + ${ inputs[0] } ]`
-      
-      return functionBody
+      functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ${ inputs[0] } ) >> 2 ])\n\n`
     }
-
-    gen.memo[ this.name ] = this.name + '_out'
 
     return [ this.name+'_out', functionBody ]
   },

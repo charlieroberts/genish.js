@@ -131,7 +131,7 @@ let gen = {
 
       // insert return keyword
       //body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
-      body[ lastidx ] = '  memory[ ' + i + ' ]  = fround(' + body[ lastidx ] + ');\n\n'
+      body[ lastidx ] = '  memory[ ' + i + ' >> 2 ]  = fround(' + body[ lastidx ] + ');\n\n'
 
       this.functionBody += body.join('\n')
 
@@ -145,7 +145,7 @@ let gen = {
           this.functionBody = `  var ${name} = fround(0);\n` + this.functionBody
           break;
         case 'i':
-          this.functionBody = `  var ${name} = 0|0;\n` + this.functionBody
+          this.functionBody = `  var ${name} = 0;\n` + this.functionBody
           break;
         case 'd':
           this.functionBody = `  var ${name} = 0.0;\n` + this.functionBody

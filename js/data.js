@@ -27,6 +27,7 @@ let proto = {
     }else{
       idx = gen.memo[ this.name ]
     }
+    idx *= 4
     return idx
   },
 }

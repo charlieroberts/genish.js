@@ -12,10 +12,11 @@ let proto = {
         functionBody
 
     gen.requestMemory( this.memory )
+    this.memory.value.idx *= 4
 
     gen.memory.heap[ this.memory.value.idx ] = this.initialValue
 
-    functionBody = this.callback( genName, inputs[0], inputs[1], `memory[ ${this.memory.value.idx} ]` )
+    functionBody = this.callback( genName, inputs[0], inputs[1], `memory[ ${this.memory.value.idx} >> 2 ]` )
 
     gen.variableNames.add( [this.name + '_value','f'] )
 
@@ -53,7 +54,7 @@ let proto = {
     }
 
     if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
-    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) {${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
+    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) { ${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
 
     //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
