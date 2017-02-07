@@ -21,7 +21,7 @@ let proto = {
 
     gen.closures.add({ [ this.name ]: this }) 
 
-    gen.memo[ this.name ] = this.name + '_value'
+    //gen.memo[ this.name ] = this.name + '_value'
     
     return [ this.name + '_value', functionBody ]
   },

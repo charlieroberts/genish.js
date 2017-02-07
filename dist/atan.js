@@ -8,11 +8,12 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
+
+    gen.variableNames.add( [this.name, 'f'] )
     
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'atan': Math.atan })
 
-      out = `gen.atan( ${inputs[0]} )` 
+      out = [ this.name, `  ${this.name} = fround( atan( ${inputs[0]} ) );\n` ] 
 
     } else {
       out = Math.atan( parseFloat( inputs[0] ) )
@@ -27,7 +28,7 @@ module.exports = x => {
 
   atan.inputs = [ x ]
   atan.id = gen.getUID()
-  atan.name = `${atan.basename}{atan.id}`
+  atan.name = `${atan.basename}${atan.id}`
 
   return atan
 }

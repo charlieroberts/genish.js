@@ -12,16 +12,10 @@ let proto = {
     let code,
         inputs = gen.getInputs( this ),
         out
-
-    out =
-
-` var ${this.name} = ${inputs[0]}
-  if( ${this.name} > ${inputs[2]} ) ${this.name} = ${inputs[2]}
-  else if( ${this.name} < ${inputs[1]} ) ${this.name} = ${inputs[1]}
-`
-    out = ' ' + out
     
-    gen.memo[ this.name ] = this.name
+    gen.variableNames.add( [ this.name, 'f' ] )
+
+    out = `  ${this.name} = fround( max( min(+${inputs[0]},+${inputs[2]} ), +${inputs[1]} ) );\n` 
 
     return [ this.name, out ]
   },

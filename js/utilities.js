@@ -9,7 +9,7 @@ let utilities = {
   ctx: null,
 
   clear() {
-    this.callback= { callback:  () => 0 }
+    this.callback = () => 0 
     this.clear.callbacks.forEach( v => v() )
     this.clear.callbacks.length = 0
   },
@@ -54,7 +54,7 @@ let utilities = {
 
       for (var sample = 0; sample < left.length; sample++) {
         
-        utilities.callback.callback()
+        utilities.callback()
 
         if( !isStereo ) {
           left[ sample ] = right[ sample ] = memory[0]//utilities.callback()
@@ -80,7 +80,7 @@ let utilities = {
 
     utilities.callback = gen.createCallback( graph, mem, debug )
     
-    if( utilities.console ) utilities.console.setValue( utilities.callback.callback.toString() )
+    if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
 
     return utilities.callback
   },

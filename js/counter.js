@@ -8,52 +8,65 @@ let proto = {
   gen() {
     let code,
         inputs = gen.getInputs( this ),
-        genName = 'gen.' + this.name,
         functionBody
        
+    gen.variableNames.add( [ this.name + '_value', 'f' ] )
+
     if( this.memory.value.idx === null ) gen.requestMemory( this.memory )
-    functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], inputs[4],  `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
 
-    gen.closures.add({ [ this.name ]: this }) 
+    functionBody  = this.callback( 
+      inputs[0], 
+      inputs[1], 
+      inputs[2], 
+      inputs[3], 
+      inputs[4],  
+      `memory[${this.memory.value.idx}]`,
+      `memory[${this.memory.wrap.idx}]`
+    )
 
-    gen.memo[ this.name ] = this.name + '_value'
-   
+    gen.memo[ this.name ] = functionBody
+
     if( gen.memo[ this.wrap.name ] === undefined ) this.wrap.gen()
 
-    return [ this.name + '_value', functionBody ]
+    return [ this.name +'_value', functionBody ]
   },
 
-  callback( _name, _incr, _min, _max, _reset, loops, valueRef, wrapRef ) {
+  callback( _incr, _min, _max, _reset, loops, valueRef, wrapRef ) {
     let diff = this.max - this.min,
-        out = '',
+        out  = '',
         wrap = ''
     
     // must check for reset before storing value for output
     if( !(typeof this.inputs[3] === 'number' && this.inputs[3] < 1) ) { 
-      out += `  if( ${_reset} >= 1 ) ${valueRef} = ${_min}\n`
+      out += `  if( fround(${_reset}) >= fround(1) ) fround(${valueRef}) = fround(${_min})\n`
     }
 
-    out += `  var ${this.name}_value = ${valueRef};\n  ${valueRef} += ${_incr}\n` // store output value before accumulating  
+    // store output value before accumulating  
+    out += `  ${this.name}_value = fround(${valueRef});\n  ${valueRef} = fround(${valueRef}) + fround(${_incr});\n`
     
     if( typeof this.max === 'number' && this.max !== Infinity && typeof this.min !== 'number' ) {
+
       wrap = 
-`  if( ${valueRef} >= ${this.max} && ${loops} ) {
-    ${valueRef} -= ${diff}
-    ${wrapRef} = 1
+`  if( (fround(${valueRef}) >= fround(${this.max}) + ${loops}|0  ) == 2|0 ) {
+    ${valueRef} -= fround(${diff})
+    ${wrapRef} = fround(1)
   }else{
-    ${wrapRef} = 0
+    ${wrapRef} = fround(0)
   }\n`
+
     }else if( this.max !== Infinity && this.min !== Infinity ) {
+
       wrap = 
-`  if( ${valueRef} >= ${_max} && ${loops} ) {
-    ${valueRef} -= ${_max} - ${_min}
-    ${wrapRef} = 1
-  }else if( ${valueRef} < ${_min} && ${loops} ) {
-    ${valueRef} += ${_max} - ${_min}
-    ${wrapRef} = 1
+`  if( (( fround(${valueRef}) >= fround(${_max})) + ${loops}|0  ) == 2|0 ) {
+    ${valueRef} = fround( ${valueRef} ) - fround( fround(${_max}) - fround(${_min}) );
+    ${wrapRef} = fround(1)
+   } else if( (( fround(${valueRef} ) < fround(${_min})) + ${loops}|0  ) == 2|0  )  {
+    ${valueRef} = fround( ${valueRef} ) + fround( fround(${_max}) - fround(${_min}) )
+    ${wrapRef} = fround(1)
   }else{
-    ${wrapRef} = 0
+    ${wrapRef} = fround(0)
   }\n`
+
     }else{
       out += '\n'
     }
@@ -66,7 +79,7 @@ let proto = {
 
 module.exports = ( incr=1, min=0, max=Infinity, reset=0, loops=1,  properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { initialValue: 0, shouldWrap:true }
+      defaults = { initialValue: 0 }
 
   if( properties !== undefined ) Object.assign( defaults, properties )
 

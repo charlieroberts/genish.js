@@ -3,16 +3,17 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'ceil',
+  basename:'ceil',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
 
-    if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ this.name ]: Math.ceil })
+    gen.variableNames.add( [ this.name, 'f' ] )
 
-      out = `gen.ceil( ${inputs[0]} )`
+    if( isNaN( inputs[0] ) ) {
+
+      out = [ this.name, `  ${this.name} = ceil( ${inputs[0]} );\n`]
 
     } else {
       out = Math.ceil( parseFloat( inputs[0] ) )
@@ -26,6 +27,8 @@ module.exports = x => {
   let ceil = Object.create( proto )
 
   ceil.inputs = [ x ]
+  ceil.id = gen.getUID()
+  ceil.name = ceil.basename + ceil.id 
 
   return ceil
 }

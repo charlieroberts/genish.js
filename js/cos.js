@@ -8,11 +8,12 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
+
+    gen.variableNames.add( [this.name, 'f'] )
     
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'cos': Math.cos })
 
-      out = `gen.cos( ${inputs[0]} )` 
+      out = [ this.name, `  ${this.name} = cos( ${inputs[0]} );\n` ]
 
     } else {
       out = Math.cos( parseFloat( inputs[0] ) )
@@ -27,7 +28,7 @@ module.exports = x => {
 
   cos.inputs = [ x ]
   cos.id = gen.getUID()
-  cos.name = `${cos.basename}{cos.id}`
+  cos.name = `${cos.basename}${cos.id}`
 
   return cos
 }

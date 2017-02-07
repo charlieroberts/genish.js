@@ -6,13 +6,13 @@ let proto = {
   gen() {
     gen.requestMemory( this.memory )
     
-    let out = 
-`  var ${this.name} = memory[${this.memory.value.idx}]
-  if( ${this.name} === 1 ) memory[${this.memory.value.idx}] = 0      
-      
-`
-    gen.memo[ this.name ] = this.name
+    gen.variableNames.add( [ this.name, 'i'] )
 
+    let out = 
+`  ${this.name} = memory[${this.memory.value.idx}];
+  if( ${this.name} == fround(1) ) memory[${this.memory.value.idx}] = fround(0);
+
+`
     return [ this.name, out ]
   } 
 }

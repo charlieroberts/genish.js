@@ -7,15 +7,15 @@ var accum = genlib.accum
 var input = genlib.in
 
 describe( 'accum', ()=>{
-  it( 'should ramp to .5 with an increment of .1 after five executions', ()=> {
-    let answer = .5,
+  it( 'should ramp to .4 with an increment of .1 after five executions', ()=> {
+    let answer = .4,
         graph  = accum(.1),
         out    = gen.createCallback( graph, 16 ),
         result = 0
 
     for( let i = 0; i < 5; i++ ) out()
 
-    result = out()
+    result = gen.out[0].toFixed(6) 
 
     assert.equal( result, answer )
   })
@@ -38,9 +38,9 @@ describe( 'accum', ()=>{
         out    = gen.createCallback( graph, 16 ),
         result = 0
 
-    out(); out(); out();
+    out(); out(); out(); out(1);
 
-    result = out( 1 )
+    result = gen.out[0].toFixed(6)
 
     assert.equal( result, answer )
 

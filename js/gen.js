@@ -136,7 +136,7 @@ let gen = {
       this.functionBody += body.join('\n')
 
     }
-    
+
     for( let variable of this.variableNames.values() ) {
       const variableType = variable[1], name = variable[0]
 
@@ -196,10 +196,13 @@ let gen = {
   var asin = stdlib.Math.asin
   var acos = stdlib.Math.acos
   var abs = stdlib.Math.abs
+  var ceil = stdlib.Math.ceil
+  var floor = stdlib.Math.floor
   var fround = stdlib.Math.fround
   var memory = new stdlib.Float32Array( buffer )
 
-  function render() {
+  function render( in1 ) {
+    in1 = fround(in1);
 ${ this.functionBody }
 }
   
@@ -210,7 +213,10 @@ ${ this.functionBody }
 
     this.callback = new Function( buildString )
 
-    this.renderCallback = this.callback()( window, null, this.arrayBuffer )
+    // make sure to accomodate running under node.js
+    const stdlib = typeof window === 'undefined' ? global : window
+
+    this.renderCallback = this.callback()( stdlib, null, this.arrayBuffer )
     
     // assign properties to named function
     for( let dict of this.closures.values() ) {
@@ -224,7 +230,7 @@ ${ this.functionBody }
       let name = Object.keys( dict )[0],
           ugen = dict[ name ]
       
-      Object.defineProperty( callback, name, {
+      Object.defineProperty( this.callback, name, {
         configurable: true,
         get() { return ugen.value },
         set(v){ ugen.value = v }
@@ -233,7 +239,22 @@ ${ this.functionBody }
     }
 
     this.callback.data = this.data
-    this.callback.out  = new Float32Array( 2 )
+    this.out  = {}//new Float32Array( 2 )
+  
+    Object.defineProperty( this.out, '0', {
+      get() {
+        return gen.memory.heap[0]
+      },
+      set(v) {}
+    })
+
+    Object.defineProperty( this.out, '1', {
+      get() {
+        return gen.memory.heap[0]
+      },
+      set(v) {}
+    })
+
     this.callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
@@ -241,7 +262,7 @@ ${ this.functionBody }
 
     this.histories.clear()
 
-    return this.renderCallback//callback
+    return this.renderCallback.callback
   },
   
   /* getInputs
@@ -280,6 +301,7 @@ ${ this.functionBody }
             gen.localizedCode.push( code[1] )
           }
           //console.log( 'after GEN' , this.functionBody )
+          gen.memo[ code[0] ] = code[1]
           processedInput = code[0]
         }else{
           processedInput = code

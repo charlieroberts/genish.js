@@ -42,4 +42,4 @@ gulp.task( 'watch', function() {
   gulp.watch( './js/**.js', ['test'] )
 })
 
-gulp.task( 'default', ['js','test'] )
+gulp.task( 'default', ['js'] ) //'test'] )
