@@ -57,19 +57,19 @@ let proto = {
       if( this.interp === 'linear' ) {
 
         functionBody += 
-          `${this.name}_frac  = fround(${this.name}_phase - fround(${this.name}_index))
-          ${this.name}_base  = fround( memory[ (${idx}|0 + ${this.name}_index)|0 ])
-          ${this.name}_next  = ${next}`
+          `  ${this.name}_frac  = fround( ${this.name}_phase - fround(${this.name}_index|0) )
+  ${this.name}_base  = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2  ]  )
+  ${this.name}_next  = ${next}\n\n`
 
 
-      const interpolated= `${this.name}_out = fround( fround(${this.name}_base + ${this.name}_frac) * fround ( fround( memory[ (${idx}|0 + ${this.name}_next|0 )|0 ]) - ${this.name}_base ) )\n\n`
+      const interpolated= `  ${this.name}_out = fround( ${this.name}_base + fround(${this.name}_frac * fround( fround( memory[ ((${idx}|0) + (${this.name}_next * 4|0)) >>2 ]) - ${this.name}_base ) ) )\n\n`
 
         if( this.boundmode === 'ignore' ) {
 
           functionBody += `
           ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${idx} + ${this.name}_next ] - ${this.name}_base )\n\n`
         }else{
-          functionBody += interpolated 
+          functionBody += interpolated//`  ${this.name}_out = fround(0);\n\n`//interpolated 
         }
 /* END LINEAR INTERPOLATION */
       }else{
@@ -82,9 +82,10 @@ let proto = {
 
 /* END MODE !== SIMPLE */
     } else { // mode is simple
-      functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ${ inputs[0] } ) >> 2 ])\n\n`
+      functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ~~floor(+${inputs[0]} * 4.0 )|0 * 4) >> 2 ])\n\n`
     }
 
+    console.log( functionBody )
     return [ this.name+'_out', functionBody ]
   },
 }
