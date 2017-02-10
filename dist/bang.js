@@ -9,8 +9,8 @@ let proto = {
     gen.variableNames.add( [ this.name, 'i'] )
 
     let out = 
-`  ${this.name} = memory[${this.memory.value.idx}];
-  if( ${this.name} == fround(1) ) memory[${this.memory.value.idx}] = fround(0);
+`  ${this.name} = ~~floor(+memory[${this.memory.value.idx}]);
+  if( fround(${this.name}|0) == fround(1|0) ) memory[${this.memory.value.idx}] = fround(0);
 
 `
     return [ this.name, out ]

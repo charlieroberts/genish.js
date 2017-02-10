@@ -42,7 +42,7 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
-      out += `  if( fround(${_reset}) >= fround(1) ) { ${valueRef} = fround(${this.min}); }\n\n` 
+      out += `  if( fround(${_reset}|0) >= fround(1|0) ) { ${valueRef} = fround(${this.min}); }\n\n` 
     }
 
     out += `  ${this.name}_value = fround(${valueRef});\n`

@@ -62,19 +62,21 @@ let proto = {
   ${this.name}_next  = ${next}\n\n`
 
 
-      const interpolated= `  ${this.name}_out = fround( ${this.name}_base + fround(${this.name}_frac * fround( fround( memory[ ((${idx}|0) + (${this.name}_next * 4|0)) >>2 ]) - ${this.name}_base ) ) )\n\n`
 
+        const interpolated= `  fround( ${this.name}_base + fround(${this.name}_frac * fround( fround( memory[ ((${idx}|0) + (${this.name}_next * 4|0)) >>2 ]) - ${this.name}_base ) ) )\n\n`
+
+        const interpolatedWithAssignment = `  ${this.name}_out = ` + interpolated
         if( this.boundmode === 'ignore' ) {
-
-          functionBody += `
-          ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${idx} + ${this.name}_next ] - ${this.name}_base )\n\n`
+          
+          functionBody += 
+`  ${this.name}_out = (fround(${this.name}_index|0) >= fround(${this.data.buffer.length - 1})|0) + (fround(${this.name}_index|0) < fround(0) )|0 == 2|0 ? fround(0) : ${interpolated}\n\n`
         }else{
-          functionBody += interpolated//`  ${this.name}_out = fround(0);\n\n`//interpolated 
+          functionBody += interpolatedWithAssignment//`  ${this.name}_out = fround(0);\n\n`//interpolated 
         }
 /* END LINEAR INTERPOLATION */
       }else{
         if( this.boundmode === 'clamp' ) {
-          functionBody += `  ${this.name}_out = fround( memory[ ${idx} + ${this.name}_index ] )\n\n`
+          functionBody += `  ${this.name}_out = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2 ] )\n\n`
         }else{
           functionBody += `  ${this.name}_out = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2  ] )\n\n`
         }  
@@ -94,15 +96,16 @@ module.exports = ( data, index, properties ) => {
   let ugen = Object.create( proto ),
       defaults = { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' } 
   
-  if( properties !== undefined ) Object.assign( defaults, properties )
-
-  Object.assign( ugen, { 
-    data,
-    dataName:   data.name,
-    uid:        gen.getUID(),
-    inputs:     [ index, data ],
-  },
-  defaults )
+  Object.assign( ugen, 
+    { 
+      data,
+      dataName:   data.name,
+      uid:        gen.getUID(),
+      inputs:     [ index, data ],
+    },
+    defaults,
+    properties
+  )
   
   ugen.name = ugen.basename + ugen.uid
 
