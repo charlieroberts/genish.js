@@ -9,18 +9,20 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
     
-    out = `  var ${this.name} = `  
 
     if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
-      out += `(( ${inputs[0]} > ${inputs[1]}) | 0 )`
+      gen.variableNames.add( [this.name, 'f'] )
+
+      out = [ 
+        this.name, 
+        `  ${this.name} = fround(( ${inputs[0]} > ${inputs[1]}) | 0 )\n`
+      ]
+
     } else {
-      out += inputs[0] > inputs[1] ? 1 : 0 
+      out = inputs[0] > inputs[1] ? 1 : 0 
     }
-    out += '\n\n'
 
-    gen.memo[ this.name ] = this.name
-
-    return [this.name, out]
+    return out 
   }
 }
 

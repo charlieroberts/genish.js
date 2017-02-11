@@ -10,11 +10,8 @@ let proto = {
 
     gen.variableNames.add( [this.name, 'f'] )
 
-    //out = `  ${this.name} = ((fround(${inputs[0]}) != fround(0|0)) + (fround(${inputs[1]}|0) != fround(0|0) ) == fround(2|0) );\n\n`
-
-    //out = `  ${this.name} = fround(+(+(+${inputs[0]} != 0. + (+(${inputs[1]}|0) != 0.) ) == 2.) );\n\n`
-    //out= `  ${this.name} = fround((((+${inputs[0]} != 0.) + (+${inputs[1]} != 0.)) == 2) |0 )\n`
     out = `  ${this.name} = fround((${inputs[0]} != fround(0) & ${inputs[1]} != fround(0))|0)\n`
+
     return [ this.name, out ]
   },
 

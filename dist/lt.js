@@ -8,22 +8,21 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-
-    gen.variableNames.add( [this.name,'i'] )
-    out = `  ${this.name} = `  
-
-    if( isNaN( this.inputs[0] ) || isNaN( this.inputs[i] ) ) {
-      out += `(( ${inputs[0]} < ${inputs[1]}) | 0  )`
-    } else {
-      out += inputs[0] < inputs[1] ? 1 : 0 
-    }
-    out += '\n'
-
-    gen.memo[ this.name ] = this.name
-
-    return [this.name, out]
     
-    return out
+
+    if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
+      gen.variableNames.add( [this.name, 'f'] )
+
+      out = [ 
+        this.name, 
+        `  ${this.name} = fround(( ${inputs[0]} < ${inputs[1]}) | 0 )\n`
+      ]
+
+    } else {
+      out = inputs[0] < inputs[1] ? 1 : 0 
+    }
+
+    return out 
   }
 }
 
@@ -35,3 +34,4 @@ module.exports = (x,y) => {
 
   return lt
 }
+
