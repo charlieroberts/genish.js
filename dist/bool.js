@@ -12,9 +12,9 @@ let proto = {
 
     out = 
 `  if( ${inputs[0]} == fround(0) ) {
-    ${this.name} =  0;
+    ${this.name} =  0
   }else{
-    ${this.name} = 1;
+    ${this.name} = 1
   }
 `
     

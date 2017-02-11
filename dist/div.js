@@ -9,7 +9,7 @@ module.exports = (...args) => {
 
     gen() {
       let inputs = gen.getInputs( this ),
-          out='(',
+          out='fround(',
           diff = 0, 
           numCount = 0,
           lastNumber = inputs[ 0 ],
@@ -26,7 +26,7 @@ module.exports = (...args) => {
           lastNumber = lastNumber / v
           out += lastNumber
         }else{
-          out += `${lastNumber} / ${v}`
+          out += `fround(${lastNumber}) / fround(${v})`
         }
 
         if( !isFinalIdx ) out += ' / ' 

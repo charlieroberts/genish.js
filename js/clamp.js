@@ -1,9 +1,6 @@
 'use strict'
 
-let gen  = require('./gen.js'),
-    floor= require('./floor.js'),
-    sub  = require('./sub.js'),
-    memo = require('./memo.js')
+let gen  = require('./gen.js')
 
 let proto = {
   basename:'clip',

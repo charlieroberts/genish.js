@@ -8,11 +8,12 @@ let proto = {
   gen() {
     let inputs = gen.getInputs( this ), out
 
-    out = this.inputs[0] === this.inputs[1] ? 1 : `  var ${this.name} = (${inputs[0]} === ${inputs[1]}) | 0\n\n`
+    //out = this.inputs[0] === this.inputs[1] ? 1 : `  var ${this.name} = (${inputs[0]} === ${inputs[1]}) | 0\n\n`
+    gen.variableNames.add( [this.name, 'i'] )
 
-    gen.memo[ this.name ] = `${this.name}`
+    out = `  ${this.name} = ${inputs[0]} == ${inputs[1]}\n\n`
 
-    return [ `${this.name}`, out ]
+    return [ this.name, out ]
   },
 
 }

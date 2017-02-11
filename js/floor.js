@@ -3,16 +3,15 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'floor',
+  basename:'floor',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-      //gen.closures.add({ [ this.name ]: Math.floor })
 
-      out = `( ${inputs[0]} | 0 )`
+      out = [ this.name, `  ${this.name} = floor( ${inputs[0]} )`]
 
     } else {
       out = inputs[0] | 0
@@ -24,6 +23,8 @@ let proto = {
 
 module.exports = x => {
   let floor = Object.create( proto )
+
+  floor.name = floor.basename + gen.getUID()
 
   floor.inputs = [ x ]
 

@@ -13,7 +13,7 @@ let proto = {
     
     if( isNaN( inputs[0] ) ) {
 
-      out = [ this.name, `  ${this.name} = cos( ${inputs[0]} );\n` ]
+      out = [ this.name, `  ${this.name} = fround( cos( +${inputs[0]} ) );\n` ]
 
     } else {
       out = Math.cos( parseFloat( inputs[0] ) )

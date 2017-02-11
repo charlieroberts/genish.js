@@ -20,8 +20,8 @@ let proto = {
       inputs[2], 
       inputs[3], 
       inputs[4],  
-      `memory[${this.memory.value.idx}]`,
-      `memory[${this.memory.wrap.idx}]`
+      `memory[${this.memory.value.idx * 4} >> 2]`,
+      `memory[${this.memory.wrap.idx * 4} >> 2]`
     )
 
     gen.memo[ this.name ] = functionBody

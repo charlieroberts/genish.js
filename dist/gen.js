@@ -185,6 +185,8 @@ let gen = {
   var ceil = stdlib.Math.ceil
   var floor = stdlib.Math.floor
   var fround = stdlib.Math.fround
+  var random = foreign.random
+  var tanh   = foreign.tanh
   var memory = new stdlib.Float32Array( buffer )
 
   function render( in1 ) {
@@ -202,7 +204,7 @@ ${ this.functionBody }
     // make sure to accomodate running under node.js
     const stdlib = typeof window === 'undefined' ? global : window
 
-    this.renderCallback = this.callback()( stdlib, null, this.arrayBuffer )
+    this.renderCallback = this.callback()( stdlib, Math, this.arrayBuffer )
     
     // assign properties to named function
     for( let dict of this.closures.values() ) {

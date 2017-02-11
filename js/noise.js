@@ -8,12 +8,10 @@ let proto = {
   gen() {
     let out
 
-    gen.closures.add({ 'noise' : Math.random })
+    gen.variableNames.add( [ this.name, 'f' ] )
 
-    out = `  var ${this.name} = gen.noise()\n`
+    out = `  ${this.name} = fround(+random())\n`
     
-    gen.memo[ this.name ] = this.name
-
     return [ this.name, out ]
   }
 }
