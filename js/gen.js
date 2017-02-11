@@ -162,6 +162,7 @@ let gen = {
       this.functionBody += Array.from( this.endBlock ).join('\n')
     }
 
+    console.log( this.functionBody )
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
     if( shouldInlineMemory === true ) {
@@ -190,7 +191,7 @@ let gen = {
   var memory = new stdlib.Float32Array( buffer )
 
   function render( in1 ) {
-    in1 = fround(in1);
+  in1 = fround(in1);
 ${ this.functionBody }
 }
   
@@ -296,7 +297,9 @@ ${ this.functionBody }
         }
       }
     }else{ // it input is a number
-      processedInput = input
+      const isInt = /^-?\d+$/.test( String( input ) )
+
+      processedInput = isInt ? `fround(${input}|0)` : `fround(${input})`
     }
 
     return processedInput

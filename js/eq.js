@@ -9,9 +9,9 @@ let proto = {
     let inputs = gen.getInputs( this ), out
 
     //out = this.inputs[0] === this.inputs[1] ? 1 : `  var ${this.name} = (${inputs[0]} === ${inputs[1]}) | 0\n\n`
-    gen.variableNames.add( [this.name, 'i'] )
+    gen.variableNames.add( [this.name, 'f'] )
 
-    out = `  ${this.name} = ${inputs[0]} == ${inputs[1]}\n\n`
+    out = `  ${this.name} = fround( (+${inputs[0]} == +${inputs[1]}) |0 )\n\n`
 
     return [ this.name, out ]
   },

@@ -10,7 +10,7 @@ let proto = {
 
     this.value = this.initialValue
 
-    gen.memo[ this.name ] = `memory[${this.memory.value.idx}]`
+    gen.memo[ this.name ] = `fround( memory[${this.memory.value.idx * 4} >> 2] )`
 
     return gen.memo[ this.name ]
   } 
