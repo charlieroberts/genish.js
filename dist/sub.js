@@ -41,7 +41,8 @@ module.exports = ( ...args ) => {
           return
         }else{
           needsParens = true
-          out += `${lastNumber} - ${v}`
+          out += `fround(${lastNumber}) - fround(${v})`
+
         }
 
         if( !isFinalIdx ) out += ' - ' 

@@ -26,7 +26,7 @@ module.exports = ( in1=0 ) => {
 
           let idx = ugen.memory.value.idx
           
-          gen.addToEndBlock( 'memory[ ' + idx + ' ] = ' + inputs[ 0 ] )
+          gen.addToEndBlock( 'memory[ ' + (idx*4) + '>>2 ] = fround(' +inputs[ 0 ] +')' )
           
           // return ugen that is being recorded instead of ssd.
           // this effectively makes a call to ssd.record() transparent to the graph.
@@ -58,7 +58,7 @@ module.exports = ( in1=0 ) => {
         }
         let idx = ugen.memory.value.idx
          
-        return 'memory[ ' + idx + ' ] '
+        return 'memory[ ' + (idx*4) + '>>2 ] '
       },
     },
 

@@ -137,6 +137,11 @@ let gen = {
 
     }
 
+    this.histories.forEach( value => {
+      if( value !== null )
+        value.gen()      
+    })
+
     for( let variable of this.variableNames.values() ) {
       const variableType = variable[1], name = variable[0]
 
@@ -153,34 +158,15 @@ let gen = {
       }
     } 
 
-    this.histories.forEach( value => {
-      if( value !== null )
-        value.gen()      
-    })
-
-/*
- *    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
- *    
- *    this.functionBody = this.functionBody.split('\n')
- *
- *    if( this.endBlock.size ) { 
- *      this.functionBody = this.functionBody.concat( Array.from( this.endBlock ) )
- *      this.functionBody.push( returnStatement )
- *    }else{
- *      this.functionBody.push( returnStatement )
- *    }
- *    // reassemble function body
- *    this.functionBody = this.functionBody.join('\n')
- */
+    if( this.endBlock.size ) { 
+      this.functionBody += Array.from( this.endBlock ).join('\n')
+    }
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
-    //
     if( shouldInlineMemory === true ) {
       this.parameters.push( 'memory' )
     }
-    //let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
-    //let buildString = `return function gen( stdlib, foreign, buffer ){ \n${ this.functionBody }\n}`
 
     let buildString = 
 `return function ugen( stdlib, foreign, buffer ) {
