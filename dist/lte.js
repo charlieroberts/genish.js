@@ -3,34 +3,34 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'lte',
+  basename:'lte',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
-
-    out = `  var ${this.name} = `  
+    
 
     if( isNaN( this.inputs[0] ) || isNaN( this.inputs[1] ) ) {
-      out += `( ${inputs[0]} <= ${inputs[1]} | 0  )`
+      gen.variableNames.add( [this.name, 'f'] )
+
+      out = [ 
+        this.name, 
+        `  ${this.name} = fround(( ${inputs[0]} <= ${inputs[1]}) | 0 )\n`
+      ]
+
     } else {
-      out += inputs[0] <= inputs[1] ? 1 : 0 
+      out = inputs[0] <= inputs[1] ? 1 : 0 
     }
-    out += '\n'
 
-    gen.memo[ this.name ] = this.name
-
-    return [this.name, out]
-    
-    return out
+    return out 
   }
 }
 
 module.exports = (x,y) => {
-  let lt = Object.create( proto )
+  let lte = Object.create( proto )
 
-  lt.inputs = [ x,y ]
-  lt.name = 'lte' + gen.getUID()
+  lte.inputs = [ x,y ]
+  lte.name = lte.basename + gen.getUID()
 
-  return lt
+  return lte
 }
