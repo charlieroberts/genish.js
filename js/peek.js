@@ -30,24 +30,24 @@ let proto = {
         }else{
           ${this.name}_next = ( ${this.name}_index + 1|0 )|0 
         }\n\n`
-
+      
+      const clampIndex = 
+        `  ${this.name}_index = +${this.name}_phase <= +${this.data.buffer.length - 1} ? ~~floor(+${this.name}_phase) : ${this.data.buffer.length - 1}\n` 
+    
       const clampNext =
-        `if( (${this.name}_index + 1|0 )|0 >= (${this.data.buffer.length - 1})|0 ) {
-          ${this.name}_next = ${this.data.buffer.length - 1}|0
-        }else{
-          ${this.name}_next = ( ${this.name}_index + 1|0 )|0
-        }\n\n`
+        `+(${this.name}_index + 1|0 ) > +${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ( ${this.name}_index + 1|0 )`
 
-
-      functionBody = 
-      `  ${this.name}_phase = ${phase} 
-  ${this.name}_index = ~~floor(+${this.name}_phase)\n`
-
+      functionBody = `  ${this.name}_phase = ${phase}\n` 
+  
+      if( this.boundmode === 'clamp' ) {
+        functionBody += clampIndex
+      }else{
+        functionBody += `  ${this.name}_index = ~~floor(+${this.name}_phase)\n`
+      }
 
       if( this.boundmode === 'wrap' ) {
         next = lengthIsLog2 ? `( ${this.name}_index + 1 )|0 & (${this.data.buffer.length} - 1)|0` : nonLog2Next
       }else if( this.boundmode === 'clamp' ) {
-        console.log('clamp')
         next = clampNext 
       }else{
         next = `( ${this.name}_index + 1|0 )|0`     
@@ -73,16 +73,15 @@ let proto = {
         }else{
           functionBody += interpolatedWithAssignment//`  ${this.name}_out = fround(0);\n\n`//interpolated 
         }
+
 /* END LINEAR INTERPOLATION */
+      
       }else{
-        if( this.boundmode === 'clamp' ) {
-          functionBody += `  ${this.name}_out = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2 ] )\n\n`
-        }else{
           functionBody += `  ${this.name}_out = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2  ] )\n\n`
-        }  
       }
 
 /* END MODE !== SIMPLE */
+
     } else { // mode is simple
       functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ~~floor(+${inputs[0]} * 4.0 )|0 * 4) >> 2 ])\n\n`
     }
