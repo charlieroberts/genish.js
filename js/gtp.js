@@ -18,7 +18,7 @@ let proto = {
       ]
 
     } else {
-      out = inputs[0] * (( inputs[0] > inputs[1] ) | 0 )
+      out = this.inputs[0] * (( this.inputs[0] > this.inputs[1] ) | 0 )
     }
     
     return out

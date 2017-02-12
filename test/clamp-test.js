@@ -13,10 +13,14 @@ describe( 'clamp', () => {
         storage = [],
         out = gen.createCallback( graph, 2048 )
 
-    for( let i = 0; i < 200; i++ ) storage[i] = out()
+    for( let i = 0; i < 200; i++ ) {
+      out()
+      storage[ i ] = gen.out[ 0 ]
+    }
 
-    let min = Math.min.apply( null, storage),
-        max = Math.max.apply( null, storage)
+
+    let min = Math.min.apply( null, storage ),
+        max = Math.max.apply( null, storage )
 
     assert( min >= -1 && max <= 1 )
   })

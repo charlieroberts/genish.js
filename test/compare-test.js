@@ -10,60 +10,89 @@ var ltp = genlib.ltp
 var max = genlib.max
 var min = genlib.min
 
+// XXX most of these only check for constant inputs
+// need to check against variable inputs (e.g. ugen output)
+
 describe( 'compare', ()=> {
 
   it( 'should return 1 for gt(1,0)', ()=> {
     let answer = 1,
         graph = gt(1,0),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should return 0 for lt(1,0)', ()=> {
     let answer = 0,
         graph = lt(1,0),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should return .5 for ltp(.5,1)', ()=> {
     let answer = .5,
         graph = ltp( .5,1 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
+  })
+
+  it( 'should return 0 for ltp(2,1)', ()=> {
+    let answer = 0,
+        graph = ltp( 2,1 ),
+        out = gen.createCallback( graph )
+
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should return 2 for gtp(2,1)', ()=> {
     let answer = 2,
         graph = gtp( 2,1 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )  
+  })
+
+  it( 'should return 0 for gtp(.5,1)', ()=> {
+    let answer = 0,
+        graph = gtp( .5,1 ),
+        out = gen.createCallback( graph )
+
+    out()
+
+    assert.equal( gen.out[0], answer )  
   })
 
   it( 'should return 4 for max(2,4)', ()=> {
     let answer = 4,
         graph = max(2,4),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should return 2 for min(2,4)', ()=> {
     let answer = 2,
         graph = min(2,4),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
 })

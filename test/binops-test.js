@@ -12,37 +12,41 @@ describe( 'binops', ()=> {
   it( 'should add 4 and 7 to get 11', ()=> {
     let answer = 11,
         graph = add( 4,7 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
+    
+    out() 
 
-    assert.equal( result, answer )
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should sub 4 and 7 to get -3', ()=> {
     let answer = -3,
         graph = sub( 4,7 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should multiply 4 and 7 to get 28', ()=> {
     let answer = 28,
       graph = mul( 4,7 ),
-      out = gen.createCallback( graph ),
-      result = out()
+      out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should divide 49 and 7 to get 7', ()=> {
     let answer = 7,
       graph = div( 49,7 ),
-      out = gen.createCallback( graph ),
-      result = out()
+      out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out()
+
+    assert.equal( gen.out[0], answer )
   })
 
 })
