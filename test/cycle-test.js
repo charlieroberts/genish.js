@@ -12,7 +12,10 @@ describe( 'cycle', ()=> {
         out = gen.createCallback( c, 2048 ),
         result = []
 
-    for( let i = 0; i < 5; i++ ) result[i] = out()
+    for( let i = 0; i < 5; i++ ) {
+      out(); result.push( gen.out[0] )
+    }
+
     assert.equal( result[4], answer )
   })
 
@@ -22,12 +25,13 @@ describe( 'cycle', ()=> {
         out = gen.createCallback( c,2048 ),
         outputMin, outputMax
 
-    for( let i = 0; i < 2000; i++ ) storage[i] = out()
+    for( let i = 0; i < 2000; i++ ) {
+      out(); storage.push( gen.out[0] )
+    }
 
     outputMin = Math.min.apply( null, storage )
     outputMax = Math.max.apply( null, storage )
 
-    //console.log( '  ', outputMin, outputMax )
     assert( (outputMin <= -.99 && outputMin >= -1.0001) && (outputMax >= .99 && outputMax <= 1.0001) )
   })
 })
