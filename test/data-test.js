@@ -18,20 +18,21 @@ describe( 'data + peek', ()=>{
     assert.equal( gen.out[0], answer )
   })
 
-  it( 'should return the value of 49 when indexing uisng phase w/ peek', ()=> {
-    let answer = 49,
-        _d = new Float32Array( 512 ),
-        d,p,out,result
+  it( 'should return the value of 2 when peeking into an array of {0,512} at a sampling rate of 512 and a phase of 2 * (1/512) w/ peek', ()=> {
+    const arraySize = 512
+    const answer = 2,
+          dataArray = new Float32Array( arraySize )
 
-    _d[2] = 49
+    let p,out,result, sampleIncrement, phase
+
+    for( let i = 0; i < arraySize; i++ ) { dataArray[i] = i }
     
-    // XXX somehow this is indexing _d[1] instead of _d[2]...
-    // uncommenting the line below makes this test pass
-    //_d[1] = 49
-  
-    d = data( _d )
-    p = peek( d, .00390625, { mode:'phase', interp:'none' } ) //.00390625 is phase for index[2] if 512 data length
-    out = gen.createCallback( p, 2048 )
+    sampleIncrement = 1 / arraySize
+    phase = 2 * sampleIncrement
+
+    p = peek( data( dataArray ), phase, { mode:'phase', interp:'none' } ) 
+    
+    out = gen.createCallback( p )
 
     out()
 

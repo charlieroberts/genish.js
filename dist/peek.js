@@ -22,7 +22,7 @@ let proto = {
 
     if( this.mode !== 'simple' ) {
 
-      const phase = this.mode === 'samples' ? `fround(${inputs[0]}|0)` : `fround( fround(${inputs[0]}) * fround(${this.data.buffer.length - 1}|0) )`
+      const phase = this.mode === 'samples' ? `fround(${inputs[0]}|0)` : `fround( fround(${inputs[0]}) * fround(${this.data.buffer.length}|0) )`
 
       const nonLog2Next =  
         `  ( ${this.name}_index + 1|0 )|0 >= ${this.data.buffer.length}|0
@@ -84,7 +84,6 @@ let proto = {
       functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ~~floor(+${inputs[0]} * 4.0 )|0 * 4) >> 2 ])\n\n`
     }
 
-    console.log( functionBody )
     return [ this.name+'_out', functionBody ]
   },
 }
