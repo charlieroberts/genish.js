@@ -22,14 +22,12 @@ let proto = {
 
     if( this.mode !== 'simple' ) {
 
-      const phase = this.mode === 'samples' ? `fround(${inputs[0]})` : `fround( fround(${inputs[0]}) * fround(${this.data.buffer.length - 1}|0) )`
+      const phase = this.mode === 'samples' ? `fround(${inputs[0]}|0)` : `fround( fround(${inputs[0]}) * fround(${this.data.buffer.length - 1}|0) )`
 
       const nonLog2Next =  
-        `if( ( ${this.name}_index + 1|0 )|0 >= ${this.data.buffer.length}|0 ) {
-          ${this.name}_next = ( ${this.name}_index + 1|0 - ${this.data.buffer.length}|0 )|0
-        }else{
-          ${this.name}_next = ( ${this.name}_index + 1|0 )|0 
-        }\n\n`
+        `  ( ${this.name}_index + 1|0 )|0 >= ${this.data.buffer.length}|0
+  ? ( ${this.name}_index + 1|0 - ${this.data.buffer.length}|0 )|0
+  : ( ${this.name}_index + 1|0 )|0\n\n`
       
       const clampIndex = 
         `  ${this.name}_index = +${this.name}_phase <= +${this.data.buffer.length - 1} ? ~~floor(+${this.name}_phase) : ${this.data.buffer.length - 1}\n` 
