@@ -10,11 +10,10 @@ let proto = {
         inputs = gen.getInputs( this )
 
     gen.variableNames.add( [this.name, 'f'] )
-
+    
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'asin': Math.asin })
 
-      out = [ this.name, `  ${this.name} = fround( asin( ${inputs[0]} ) );\n` ]
+      out = [ this.name, `  ${this.name} = fround( asin( +${inputs[0]} ) );\n` ]
 
     } else {
       out = Math.asin( parseFloat( inputs[0] ) )

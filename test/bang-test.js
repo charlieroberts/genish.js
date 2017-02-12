@@ -12,12 +12,13 @@ describe( 'bang', ()=> {
         out = gen.createCallback( b ),
         result = []
 
-    result.push( out() )
+    out(); result.push( gen.out[0] )
+    
     b.trigger()
-    result.push( out() )
-    result.push( out() )
+    out(); result.push( gen.out[0] )
+
+    out(); result.push( gen.out[0] )
 
     assert.deepEqual( result, answer )
-
  })
 })

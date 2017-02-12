@@ -1,5 +1,4 @@
 /* global describe it */
-// FIXME: extract non-arithmetic
 var assert = require('assert')
 var genlib = require( '../dist/index.js' )
 
@@ -54,7 +53,7 @@ describe( 'monops', ()=> {
       
     out()
 
-    assert.equal( parseFloat( get.out[0].toFixed(6) ), answer )
+    assert.equal( parseFloat( gen.out[0].toFixed(6) ), answer )
   })
 
   it( 'should generate a value of 0 for tan(0)', ()=> {
@@ -87,7 +86,7 @@ describe( 'monops', ()=> {
   })
 
   it( 'should generate a value of PI/2 for asin( 1 )', ()=> {
-    let answer = Math.PI * .5,
+    let answer = Math.fround( Math.PI * .5 ),
         graph = asin( 1 ),
         out = gen.createCallback( graph )
     
@@ -97,7 +96,7 @@ describe( 'monops', ()=> {
   })
 
   it( 'should generate a value of PI/2 for acos(0)', ()=> {
-    let answer = Math.PI * .5,
+    let answer = Math.fround( Math.PI * .5 ),
         graph = acos( 0 ),
         out = gen.createCallback( graph )
 
@@ -109,23 +108,23 @@ describe( 'monops', ()=> {
   it( 'should generate a value of 0 for acos( 1 )', ()=> {
     let answer = 0,
         graph = acos( 1 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
+      
+    out()
 
-    assert.equal( result, answer )
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should generate a value of 0 for atan(0)', ()=> {
     let answer = 0,
         graph = atan( 0 ),
-        out = gen.createCallback( graph ),
-        result = out()
+        out = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    assert.equal( gen.out[0], answer )
   })
 
   it( 'should generate a value of PI/4 for atan( 1 )', ()=> {
-    let answer = Math.PI / 4,
+    let answer = Math.fround( Math.PI / 4 ),
         graph = atan( 1 ),
         out = gen.createCallback( graph )
     
@@ -134,27 +133,5 @@ describe( 'monops', ()=> {
     assert.equal( gen.out[0], answer )
   })
 
-  it( 'should fade 1 to .001 over 10 samples using t60(10)', ()=> {
-    let answer = .001,
-        x = history( 1 ),
-        graph = x.in( mul( x.out, t60(10) ) ),
-        out   = gen.createCallback( graph, 4096 ),
-        result
 
-    for( let i = 0 ; i < 10; i++ ) out()
-
-    result = parseFloat( gen.out[0].toFixed( 4 ) )
-
-    assert.equal( result, answer )
-  })
-
-  it( 'should convert midi value 69 to 440 (hz, default tuning)', ()=> {
-    let answer = 440,
-        graph  = mtof( 69 ),
-        out    = gen.createCallback( graph )
-
-    out()
-
-    assert.equal( answer, gen.out[0] )
-  })
 })

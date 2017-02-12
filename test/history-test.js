@@ -19,4 +19,18 @@ describe( 'history', ()=> {
     for( let i = 0; i < 5; i++ ) result[i] = out()
     assert.equal( result[4], answer )
   })
+
+  it( 'should fade 1 to .001 over 10 samples using t60(10)', ()=> {
+    let answer = .001,
+        x = history( 1 ),
+        graph = x.in( mul( x.out, t60(10) ) ),
+        out   = gen.createCallback( graph, 4096 ),
+        result
+
+    for( let i = 0 ; i < 10; i++ ) out()
+
+    result = parseFloat( gen.out[0].toFixed( 4 ) )
+
+    assert.equal( result, answer )
+  })
 })

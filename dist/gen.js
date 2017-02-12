@@ -162,7 +162,7 @@ let gen = {
       this.functionBody += Array.from( this.endBlock ).join('\n')
     }
 
-    console.log( this.functionBody )
+    //console.log( this.functionBody )
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
     if( shouldInlineMemory === true ) {

@@ -9,12 +9,11 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
 
-    gen.variableNames.add( [this.name,'f'] )
-
+    gen.variableNames.add( [this.name, 'f'] )
+    
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'acos': Math.acos })
 
-      out = [ this.name, `  ${this.name} = acos( ${inputs[0]} );\n` ] 
+      out = [ this.name, `  ${this.name} = fround( acos( +${inputs[0]} ) );\n` ]
 
     } else {
       out = Math.acos( parseFloat( inputs[0] ) )
@@ -29,7 +28,8 @@ module.exports = x => {
 
   acos.inputs = [ x ]
   acos.id = gen.getUID()
-  acos.name = `${acos.basename}{acos.id}`
+  acos.name = `${acos.basename}${acos.id}`
 
   return acos
 }
+
