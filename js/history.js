@@ -17,23 +17,29 @@ module.exports = ( in1=0 ) => {
 
       let obj = {
         gen() {
-          let inputs = gen.getInputs( ugen )
+          //if( typeof v === 'object' ) { console.log( 'MEMO:', gen.memo[ v.name ] ) }
 
-          if( ugen.memory.value.idx === null ) {
-            gen.requestMemory( ugen.memory )
-            gen.memory.heap[ ugen.memory.value.idx ] = in1
+          if( typeof v === 'object' && gen.memo[ this.name ] !== undefined ) {
+            return gen.memo[ this.name ]//v.name
+          }else{
+            let inputs = gen.getInputs( ugen )
+
+            if( ugen.memory.value.idx === null ) {
+              gen.requestMemory( ugen.memory )
+              gen.memory.heap[ ugen.memory.value.idx ] = in1
+            }
+
+            let idx = ugen.memory.value.idx
+
+            gen.addToEndBlock( 'memory[ ' + (idx*4) + '>>2 ] = fround(' +inputs[ 0 ] +')' )
+            
+            gen.histories.set( v, obj )
+
+            // return ugen that is being recorded instead of ssd.
+            // this effectively makes a call to ssd.record() transparent to the graph.
+            // recording is triggered by prior call to gen.addToEndBlock.
+            return [ this.name, inputs[ 0 ] ]
           }
-
-          let idx = ugen.memory.value.idx
-          
-          gen.addToEndBlock( 'memory[ ' + (idx*4) + '>>2 ] = fround(' +inputs[ 0 ] +')' )
-          
-          // return ugen that is being recorded instead of ssd.
-          // this effectively makes a call to ssd.record() transparent to the graph.
-          // recording is triggered by prior call to gen.addToEndBlock.
-          gen.histories.set( v, obj )
-
-          return inputs[ 0 ]
         },
         name: ugen.name + '_in'+gen.getUID(),
         memory: ugen.memory

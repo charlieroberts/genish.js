@@ -19,7 +19,11 @@ let proto = {
         gen.memory.heap.set( this.buffer, idx )
       }catch( e ) {
         console.log( e )
-        throw Error( 'error with request. asking for ' + this.buffer.length +'. current index: ' + gen.memoryIndex + ' of ' + gen.memory.heap.length )
+        throw Error( 
+          'error with request. asking for ' + 
+          this.buffer.length + '. current index: ' + 
+          gen.memoryIndex + ' of ' + gen.memory.heap.length 
+        )
       }
       //gen.data[ this.name ] = this
       //return 'gen.memory' + this.name + '.buffer'
@@ -27,7 +31,9 @@ let proto = {
     }else{
       idx = gen.memo[ this.name ]
     }
+
     idx *= 4
+
     return idx
   },
 }

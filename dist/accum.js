@@ -24,7 +24,7 @@ let proto = {
 
     //gen.memo[ this.name ] = this.name + '_value'
     
-    return [ this.name + '_value', functionBody ]
+    return [ this.name + '_value', functionBody, true ]
   },
 
   callback( _name, _incr, _reset, valueRef ) {

@@ -84,7 +84,7 @@ let proto = {
       functionBody = `  ${this.name}_out = fround( memory[ (${idx} + ~~floor(+${inputs[0]} * 4.0 )|0 * 4) >> 2 ])\n\n`
     }
 
-    return [ this.name+'_out', functionBody ]
+    return [ this.name+'_out', functionBody, true ]
   },
 }
 

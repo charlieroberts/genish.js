@@ -11,7 +11,7 @@ describe( 'dcblock', ()=>{
   it( 'should filter offset of .5 to make signal range {-1,1} after >20000 samples', ()=> {
     let storage = [],
         graph  = dcblock( add( .5, cycle( 440 ) ) ),
-        out    = gen.createCallback( graph, 2048 ),
+        out    = gen.createCallback( graph, 2048, true ),
         outputMax, outputMin
 
     // let filter run for a bit

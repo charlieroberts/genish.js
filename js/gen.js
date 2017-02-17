@@ -109,7 +109,8 @@ let gen = {
     for( let i = 0; i < 1 + isStereo; i++ ) {
       if( typeof ugen[i] === 'number' ) continue
 
-      let channel = isStereo ? ugen[i].gen() : ugen.gen(),
+      //let channel = isStereo ? ugen[i].gen() : ugen.gen(),
+      let channel = isStereo ? gen.getInput(ugen[i]) : gen.getInput( ugen ),
           body = ''
 
 
@@ -129,20 +130,19 @@ let gen = {
       // get index of last line
       let lastidx = body.length - 1
 
-      // insert return keyword
-      //body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      // output value 
       body[ lastidx ] = '  memory[ ' + i + ' >> 2 ]  = fround(' + body[ lastidx ] + ');\n\n'
 
       this.functionBody += body.join('\n')
 
     }
-
+ 
     this.histories.forEach( value => {
       if( value !== null )
         value.gen()      
     })
-
-    for( let variable of this.variableNames.values() ) {
+		
+		for( let variable of this.variableNames.values() ) {
       const variableType = variable[1], name = variable[0]
 
       switch( variableType ) {
@@ -163,6 +163,7 @@ let gen = {
     }
 
     //console.log( this.functionBody )
+
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
     if( shouldInlineMemory === true ) {
@@ -266,12 +267,13 @@ ${ this.functionBody }
   },
 
   getInput( input ) {
+		//debugger;
     let isObject = typeof input === 'object',
         processedInput
 
     if( isObject ) { // if input is a ugen... 
-      if( gen.memo[ input.name ] ) { // if it has been memoized...
-        processedInput = gen.memo[ input.name ]
+      if( gen.memo[ input.name ] !== undefined ) { // if it has been memoized...
+        processedInput = gen.memo[ input.name ]//input.name
       }else if( Array.isArray( input ) ) {
         gen.getInput( input[0] )
         gen.getInput( input[1] )
@@ -279,24 +281,26 @@ ${ this.functionBody }
         if( typeof input.gen !== 'function' ) {
           console.log( 'no gen found:', input, input.gen )
         }
+
         let code = input.gen()
-        //if( code.indexOf( 'Object' ) > -1 ) console.log( 'bad input:', input, code )
         
         if( Array.isArray( code ) ) {
-          if( !gen.shouldLocalize ) {
+					
+					if( !gen.shouldLocalize ) {
             gen.functionBody += code[1]
-          }else{
-            gen.codeName = code[0]
-            gen.localizedCode.push( code[1] )
-          }
-          //console.log( 'after GEN' , this.functionBody )
-          gen.memo[ code[0] ] = code[1]
+					}else{
+						gen.codeName = code[0]
+						gen.localizedCode.push( code[1] )
+					}
+
+					gen.memo[ input.name ] = code[0]
           processedInput = code[0]
+
         }else{
           processedInput = code
         }
       }
-    }else{ // it input is a number
+    }else{ // if input is a number
       const isInt = /^-?\d+$/.test( String( input ) )
 
       processedInput = isInt ? `fround(${input}|0)` : `fround(${input})`
