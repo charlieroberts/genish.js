@@ -15,9 +15,14 @@ describe( 'dcblock', ()=>{
         outputMax, outputMin
 
     // let filter run for a bit
-    for( let i = 0; i < 20000; i++ ) out()
+    for( let i = 0; i < 20000; i++ ) {
+      out()
+    }
 
-    for( let i = 0; i < 1000; i++ ) storage[ i ] = out()
+    for( let i = 0; i < 1000; i++ ) {
+      out()
+      storage[ i ] = gen.out[ 0 ]
+    }
 
     outputMax = Math.max.apply( null, storage )
     outputMin = Math.min.apply( null, storage )
