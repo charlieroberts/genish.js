@@ -10,7 +10,10 @@ describe( 'fold', ()=> {
     let answer = .75,
         graph = fold( 1.25 ),
         out = gen.createCallback( graph ),
-        result = out()
+        result
+
+    out()
+    result = gen.out[0]
 
     assert.equal( answer, result )
   })
