@@ -24,7 +24,7 @@ let proto = {
 
     //gen.memo[ this.name ] = this.name + '_value'
     
-    return [ this.name + '_value', functionBody, true ]
+    return [ this.name + '_value', functionBody ]
   },
 
   callback( _name, _incr, _reset, valueRef ) {
@@ -53,8 +53,9 @@ let proto = {
       out += `  ${valueRef} = fround(${valueRef}) + fround(${_incr});\n` // store output value before accumulating  
     }
 
-    if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
-    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) { ${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
+    if( this.max !== Infinity  && this.shouldWrapMax ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
+    if( !this.shouldWrapMin ) wrap += '\n'
+    if( this.min !== -Infinity && this.shouldWrapMin ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) { ${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
 
     //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
@@ -70,25 +71,23 @@ let proto = {
   }
 }
 
-module.exports = ( incr, reset=0, properties ) => {
-  let ugen = Object.create( proto ),
-      defaults = { min:0, max:1, shouldWrap: true, shouldClamp:false }
-  
-  if( properties !== undefined ) Object.assign( defaults, properties )
+const defaults = { min:0, max:1, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
 
-  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min
+module.exports = ( incr, reset=0, userProperties ) => {
+  const ugen = Object.create( proto )
+      
+  const properties = Object.assign( {}, defaults, userProperties )
+
+  if( properties.initialValue === undefined ) properties.initialValue = properties.min
 
   Object.assign( ugen, { 
-    min: defaults.min, 
-    max: defaults.max,
-    initial: defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, reset ],
     memory: {
       value: { length:1, idx:null }
     }
   },
-  defaults )
+  properties )
 
   Object.defineProperty( ugen, 'value', {
     get() { return gen.memory.heap[ this.memory.value.idx ] },

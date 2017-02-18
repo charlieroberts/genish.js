@@ -272,9 +272,7 @@ ${ this.functionBody }
         processedInput
 
     if( isObject ) { // if input is a ugen... 
-			console.log( 'INPUT NAME', input.name )
       if( gen.memo[ input.name ] !== undefined ) { // if it has been memoized...
-				debugger
         processedInput = gen.memo[ input.name ]//input.name
       }else if( Array.isArray( input ) ) {
         gen.getInput( input[0] )
@@ -295,9 +293,7 @@ ${ this.functionBody }
 						gen.localizedCode.push( code[1] )
 					}
 
-					//gen.memo[ code[0] ] = code[2] !== true ? code[1] : code[0]
 					gen.memo[ input.name ] = code[0]
-					console.log( 'memo:', code[0] )
           processedInput = code[0]
 
         }else{
