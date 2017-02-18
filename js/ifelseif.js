@@ -29,7 +29,6 @@ let proto = {
           preblock = conditionals[ i+1 ],
           block, blockName, output
 
-      //console.log( 'pb', preblock )
 
       if( typeof preblock === 'number' ){
         block = preblock

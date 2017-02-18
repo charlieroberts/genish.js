@@ -33,7 +33,7 @@ describe( 'history', ()=> {
         out, result
 
     x.in( graph )
-    out   = gen.createCallback( graph, 4096, true )
+    out   = gen.createCallback( graph, 4096 )
 
     for( let i = 0 ; i < 10; i++ ) out()
 

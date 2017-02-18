@@ -13,10 +13,12 @@ describe( 'sah', ()=> {
   it( 'should return the same value until told to sample', ()=> {
     let graph = sah( noise(), peek( data([1,0,1,0]), accum(1,0,{ max:4 }), {interp:'none', mode:'samples'} ) ),
         out   = gen.createCallback( graph, 512 ),
-
         result = []
 
-    for( let i = 0; i < 4; i++ ) result[i] = out()
+    for( let i = 0; i < 4; i++ ) { 
+      out()
+      result[i] = gen.out[0]
+    }
 
     assert( result[0] === result[1] && result[2] !== result[1]  )
   })

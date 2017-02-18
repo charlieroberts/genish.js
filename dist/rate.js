@@ -20,7 +20,6 @@ let proto = {
 
     if( typeof this.inputs[0] === 'object' ) {
       if( this.inputs[0].initialValue !== undefined ) {
-        console.log( 'SETTING VALUE', this.inputs[0].initialValue )
         gen.memory.heap[ this.memory.phase.idx ] = this.inputs[0].initialValue
       }
     }
