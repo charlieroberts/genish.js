@@ -12,9 +12,10 @@ let proto = {
         functionBody
 
     gen.requestMemory( this.memory )
-    this.memory.value.idx *= 4
-
+    
     gen.memory.heap[ this.memory.value.idx ] = this.initialValue
+
+    this.memory.value.idx *= 4
 
     functionBody = this.callback( genName, inputs[0], inputs[1], `memory[ ${this.memory.value.idx} >> 2 ]` )
 

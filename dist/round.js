@@ -3,16 +3,16 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'round',
+  basename:'round',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
 
-    if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ this.name ]: Math.round })
 
-      out = `gen.round( ${inputs[0]} )`
+    if( isNaN( inputs[0] ) ) {
+      gen.variableNames.add( [this.name, 'f'] )
+      out = [ this.name, `${this.name} = fround( round( ${inputs[0]} ) )\n`]
 
     } else {
       out = Math.round( parseFloat( inputs[0] ) )
@@ -24,6 +24,7 @@ let proto = {
 
 module.exports = x => {
   let round = Object.create( proto )
+  round.name = round.basename + gen.getUID()
 
   round.inputs = [ x ]
 

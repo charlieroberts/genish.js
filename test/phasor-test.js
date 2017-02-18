@@ -6,15 +6,15 @@ var gen = genlib.gen
 var phasor = genlib.phasor
 
 describe( 'phasor', ()=>{
-  it( 'should ramp to 0 with an frequency of 4410 after five executions', ()=> {
+  it( 'should ramp to 0 with an frequency of 4410 after six executions', ()=> {
     let answer = 0,
         graph  = phasor( 4410 ),
         out    = gen.createCallback( graph, 512 ),
-        result = 0
+        result
 
-    for( let i = 0; i < 5; i++ ) out()
+    for( let i = 0; i < 6; i++ ) out()
 
-    result = out().toFixed( 2 )
+    result = parseFloat( gen.out[0].toFixed( 2 ) )
 
     assert.equal( result, answer )
   })

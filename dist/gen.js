@@ -185,6 +185,8 @@ let gen = {
       this.parameters.push( 'memory' )
     }
 
+		// type annotations for function parameters must be provided
+		// in order at top of function
 		let parameterString = ''
 		for( let param of this.parameters ) {
 			parameterString += `  ${param} = fround(${param});\n` 
@@ -210,12 +212,14 @@ let gen = {
   var random = foreign.random
   var tanh   = foreign.tanh
   var exp    = foreign.exp
+	var round  = foreign.round
+	var sign   = foreign.sign
   var memory = new stdlib.Float32Array( buffer )
 
   function render( ${this.parameters.join(',')} ) {
 ${ parameterString }
 ${ this.functionBody }
-}
+  }
   
   return { callback:render }
 }`

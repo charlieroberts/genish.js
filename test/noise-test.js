@@ -14,7 +14,8 @@ describe( 'noise', ()=> {
         result
 
     for( var i = 0; i < 256; i++ ) {
-      var sample = out()
+      out()
+      var sample = gen.out[0]
       result = storage.indexOf( sample )
       if( result !== -1 ) break
       storage.push( sample )

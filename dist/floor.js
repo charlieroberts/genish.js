@@ -10,8 +10,8 @@ let proto = {
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-
-      out = [ this.name, `  ${this.name} = floor( ${inputs[0]} )`]
+      gen.variableNames.add( [ this.name, 'f' ] )
+      out = [ this.name, `  ${this.name} = fround( floor( ${inputs[0]} ) )\n`]
 
     } else {
       out = inputs[0] | 0

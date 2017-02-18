@@ -6,7 +6,7 @@ let gen  = require( './gen.js' ),
     proto = { basename:'phasor' }
 
 module.exports = ( frequency=1, reset=0, props ) => {
-  if( props === undefined ) props = { min: -1 }
+  if( props === undefined ) props = { min: -1, initialValue:-1 }
 
   let range = (props.max || 1 ) - props.min
 
