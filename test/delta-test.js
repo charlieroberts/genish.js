@@ -13,7 +13,10 @@ describe( 'delta', ()=> {
         out = gen.createCallback( d1, 8 ),
         result = []
 
-    for( let i = 0; i < 11; i++ ) result.push( parseFloat( out().toFixed( 6 ) ) )
+    for( let i = 0; i < 11; i++ ) {
+      out()
+      result.push( parseFloat( gen.out[0].toFixed( 6 ) ) )
+    }
 
     assert.deepEqual( result, answer )
   })
