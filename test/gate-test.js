@@ -17,7 +17,10 @@ describe( 'gate', ()=> {
         out    = gen.createCallback( graph, 512 ),
         result = []
 
-    result.push( out() ); result.push( out() ); result.push( out() ); result.push( out() );
+    for( let i = 0; i < 4; i++ ) {
+      out()
+      result.push( gen.out[0] )
+    }
 
     assert.deepEqual( result, answer )
   })
