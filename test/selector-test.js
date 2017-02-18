@@ -13,7 +13,12 @@ describe( 'selector', ()=> {
         out    = gen.createCallback( graph ),
         result = []
 
-    result.push( out( 0 ) ); result.push( out( 1 ) ); result.push( out( 2 ) )
+    out( 0 )
+    result.push( gen.out[0] )
+    out( 1 )
+    result.push( gen.out[0] )
+    out( 2 )
+    result.push( gen.out[0] )
 
     assert.deepEqual( result, answer )
   })
