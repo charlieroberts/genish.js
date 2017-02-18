@@ -1,5 +1,5 @@
 /* global describe it */
-var assert = require('assert')
+/*var assert = require('assert')
 var genlib = require( '../dist/index.js' )
 
 var gen = genlib.gen
@@ -16,4 +16,4 @@ describe( 'memo', ()=> {
 
     assert.equal( result, answer )
   })
-})
+})*/

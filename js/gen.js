@@ -185,6 +185,8 @@ let gen = {
       this.parameters.push( 'memory' )
     }
 
+		// type annotations for function parameters must be provided
+		// in order at top of function
 		let parameterString = ''
 		for( let param of this.parameters ) {
 			parameterString += `  ${param} = fround(${param});\n` 
