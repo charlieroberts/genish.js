@@ -26,10 +26,12 @@ let proto = {
       diff = max - min
     }
 
+    gen.variableNames.add( [this.name, 'f'] )
+
     out =
-` var ${this.name} = ${inputs[0]}
-  if( ${this.name} < ${this.min} ) ${this.name} += ${diff}
-  else if( ${this.name} > ${this.max} ) ${this.name} -= ${diff}
+` ${this.name} = fround( ${inputs[0]} )
+  if( ${this.name} < fround(${this.min}) ) ${this.name} = fround( ${this.name} + fround(${diff}) )
+  else if( ${this.name} > fround(${this.max}) ) ${this.name} = fround( ${this.name} - fround(${diff}) )
 
 `
 

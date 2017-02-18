@@ -15,7 +15,10 @@ describe( 'wrap', () => {
         out = gen.createCallback( graph, 512 ),
         result
 
-    for( let i = 0; i < 20; i++ ) storage[ i ] = out()
+    for( let i = 0; i < 20; i++ ) {
+      out()
+      storage[ i ] = gen.out[0]
+    }
 
     result = Math.max.apply( null, storage )
 
