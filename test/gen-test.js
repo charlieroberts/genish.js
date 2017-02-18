@@ -8,7 +8,7 @@ var add = genlib.add
 
 describe( 'gen', ()=> {
   it( 'should get back two numbers when fetching the arguments from an add ugen', ()=> {
-    let answer = [5,3],
+    let answer = ['fround(5|0)','fround(3|0)'],
         graph  = add(5,3),
         result = gen.getInputs( graph )
 

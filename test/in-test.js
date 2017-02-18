@@ -9,9 +9,10 @@ describe( 'in', ()=> {
   it( 'should return the first argument of 42', ()=> {
     let answer = 42,
         graph = input(),
-        out   = gen.createCallback( graph ),
-        result = out( 42 )
+        out   = gen.createCallback( graph )
 
-    assert.equal( result, answer )
+    out( 42 )
+
+    assert.equal( gen.out[0], answer )
   })
 })

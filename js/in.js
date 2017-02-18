@@ -7,6 +7,7 @@ let proto = {
 
   gen() {
     gen.parameters.push( this.name )
+    //gen.variableNames.add( [this.name, 'p'] )
     
     gen.memo[ this.name ] = this.name
 

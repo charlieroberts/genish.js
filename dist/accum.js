@@ -54,16 +54,10 @@ let proto = {
     }
 
     if( this.max !== Infinity  && this.shouldWrapMax ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
-    if( !this.shouldWrapMin ) wrap += '\n'
-    if( this.min !== -Infinity && this.shouldWrapMin ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) { ${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
 
-    //if( this.min === 0 && this.max === 1 ) { 
-    //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
-    //} else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
-    //  wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
-    //} else if( this.max !== Infinity ){
-    //  wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
-    //}
+    if( !this.shouldWrapMin ) wrap += '\n'
+
+    if( this.min !== -Infinity && this.shouldWrapMin ) wrap += `  if( fround(${valueRef}) < fround(${this.min}) ) { ${valueRef} = fround(${valueRef}) +  fround(${diff}); }\n\n`
 
     out = out + wrap
 

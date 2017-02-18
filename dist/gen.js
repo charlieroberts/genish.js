@@ -60,7 +60,25 @@ let gen = {
 
       request.idx = gen.memory.alloc( request.length, immutable )
     }
-  },
+	},
+
+	createCallback( ugen, mem, debug = false, shouldInlineMemory=false ) {
+		const functionDef = this.createASMDef( ugen, mem, shouldInlineMemory )
+
+		if( this.debug || debug ) console.log( functionDef ) 
+
+    this.asmModuleMaker = new Function( functionDef )()
+
+    // make sure to accomodate running under node.js
+    const stdlib = typeof window === 'undefined' ? global : window
+
+		this.asmModule = this.asmModuleMaker( stdlib, Math, this.arrayBuffer )
+		this.callback = this.asmModule.callback
+
+		this.finishCallback()
+
+		return this.callback
+	},
 
   /* createCallback
    *
@@ -75,8 +93,9 @@ let gen = {
    *
    * ... the generated function will have a signature of ( abs, p0 ).
    */
+
   
-  createCallback( ugen, mem, debug = false, shouldInlineMemory=false ) {
+  createASMDef( ugen, mem, shouldInlineMemory=false ) {
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -88,22 +107,17 @@ let gen = {
       //mem.alloc( 2, true )
     }
     
-    //console.log( 'cb memory:', mem )
-    //this.memory = mem
     this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
     this.variableNames.clear()
     this.params.clear()
-    //this.globals = { windows:{} }
+		this.histories.clear()
     
     this.parameters.length = 0
     
     this.functionBody = '\n';
-    //this.functionBody = "  'use asm'\n"
-    //if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
-
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
     for( let i = 0; i < 1 + isStereo; i++ ) {
@@ -112,7 +126,6 @@ let gen = {
       //let channel = isStereo ? ugen[i].gen() : ugen.gen(),
       let channel = isStereo ? gen.getInput(ugen[i]) : gen.getInput( ugen ),
           body = ''
-
 
       // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
       // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
@@ -155,7 +168,9 @@ let gen = {
         case 'd':
           this.functionBody = `  var ${name} = 0.0;\n` + this.functionBody
           break;
-      }
+        case 'p':
+          this.functionBody = `  ${name} = fround(${name});\n` + this.functionBody
+          break;     }
     } 
 
     if( this.endBlock.size ) { 
@@ -169,6 +184,11 @@ let gen = {
     if( shouldInlineMemory === true ) {
       this.parameters.push( 'memory' )
     }
+
+		let parameterString = ''
+		for( let param of this.parameters ) {
+			parameterString += `  ${param} = fround(${param});\n` 
+		}
 
     let buildString = 
 `return function ugen( stdlib, foreign, buffer ) {
@@ -189,25 +209,21 @@ let gen = {
   var fround = stdlib.Math.fround
   var random = foreign.random
   var tanh   = foreign.tanh
+  var exp    = foreign.exp
   var memory = new stdlib.Float32Array( buffer )
 
-  function render( in1 ) {
-  in1 = fround(in1);
+  function render( ${this.parameters.join(',')} ) {
+${ parameterString }
 ${ this.functionBody }
 }
   
   return { callback:render }
 }`
+	
+	  return buildString
+	},
 
-    if( this.debug || debug ) console.log( buildString ) 
-
-    this.callback = new Function( buildString )
-
-    // make sure to accomodate running under node.js
-    const stdlib = typeof window === 'undefined' ? global : window
-
-    this.renderCallback = this.callback()( stdlib, Math, this.arrayBuffer )
-    
+	finishCallback() {
     // assign properties to named function
     for( let dict of this.closures.values() ) {
       let name = Object.keys( dict )[0],
@@ -229,7 +245,7 @@ ${ this.functionBody }
     }
 
     this.callback.data = this.data
-    this.out  = {}//new Float32Array( 2 )
+    this.out  = {}
   
     Object.defineProperty( this.out, '0', {
       get() {
@@ -250,9 +266,7 @@ ${ this.functionBody }
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
     this.callback.memory = this.memory.heap
 
-    this.histories.clear()
-
-    return this.renderCallback.callback
+    return this.callback
   },
   
   /* getInputs

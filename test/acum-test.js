@@ -1,12 +1,24 @@
 /* global describe it */
 var assert = require('assert')
 var genlib = require( '../dist/index.js' )
+var asm = require('asm.js')
 
 var gen = genlib.gen
 var accum = genlib.accum
 var input = genlib.in
 
 describe( 'accum', ()=>{
+  //it( 'should validate as asm.js', ()=> {
+  //  const graph = accum(.1)
+  //  const def = gen.createASMDef( graph )
+  //  const func = new Function( def )().toString()
+
+
+    
+  //  console.log( 'VALIDATE',  asm.validate( func ))
+
+  //})
+
   it( 'should ramp to .4 with an increment of .1 after five executions', ()=> {
     let answer = .4,
         graph  = accum(.1),
@@ -20,7 +32,7 @@ describe( 'accum', ()=>{
     assert.equal( result, answer )
   })
 
-  //it( 'should return to its min value of 0 on the 10th execution with an increment of .1', ()=> {
+  //it( 'should rfround(0) eturn to its min value of 0 on the 10th execution with an increment of .1', ()=> {
   //  let answer = 0,
   //      graph  = accum(.1),
   //      out    = gen.createCallback( graph ),

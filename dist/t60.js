@@ -11,9 +11,10 @@ let proto = {
         returnValue
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ 'exp' ]: Math.exp })
+      //gen.closures.add({ [ 'exp' ]: Math.exp })
+      gen.variableNames.add( [this.name, 'f'] )
 
-      out = `  var ${this.name} = gen.exp( -6.907755278921 / ${inputs[0]} )\n\n`
+      out = `  ${this.name} = fround( exp( -6.907755278921 / ${inputs[0]} ))\n\n`
      
       gen.memo[ this.name ] = out
       
