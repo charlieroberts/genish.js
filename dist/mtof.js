@@ -3,16 +3,18 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'mtof',
+  basename:'mtof',
 
   gen() {
     let out,
         inputs = gen.getInputs( this )
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ this.name ]: Math.exp })
-
-      out = `( ${this.tuning} * gen.exp( .057762265 * (${inputs[0]} - 69) ) )`
+      gen.variableNames.add( [this.name, 'f'] )
+      out = [ 
+        this.name,  
+        `  ${this.name } = fround( +${this.tuning} * +exp( .057762265 * (+${inputs[0]}  - 69.0 ) ) )\n`
+      ]
 
     } else {
       out = this.tuning * Math.exp( .057762265 * ( inputs[0] - 69) )
@@ -30,6 +32,8 @@ module.exports = ( x, props ) => {
 
   Object.assign( ugen, defaults )
   ugen.inputs = [ x ]
+
+  ugen.name = ugen.basename + gen.getUID()
   
 
   return ugen
