@@ -14,23 +14,29 @@ let proto = {
 
   gen() {
     let inputs = gen.getInputs( this ),
-        phase  = history(),
-        inMinus1 = history(),
-        genName = 'gen.' + this.name,
         filter, sum, out
 
-    gen.closures.add({ [ this.name ]: this }) 
+    gen.requestMemory( this.memory )
+
+    if( typeof this.inputs[0] === 'object' ) {
+      if( this.inputs[0].initialValue !== undefined ) {
+        console.log( 'SETTING VALUE', this.inputs[0].initialValue )
+        gen.memory.heap[ this.memory.phase.idx ] = this.inputs[0].initialValue
+      }
+    }
+
+    gen.variableNames.add( [this.name+'_phase', 'f'] )
+    gen.variableNames.add( [this.name+'_diff', 'f'] )
 
     out = 
-` var ${this.name}_diff = ${inputs[0]} - ${genName}.lastSample
-  if( ${this.name}_diff < -.5 ) ${this.name}_diff += 1
-  ${genName}.phase += ${this.name}_diff * ${inputs[1]}
-  if( ${genName}.phase > 1 ) ${genName}.phase -= 1
-  ${genName}.lastSample = ${inputs[0]}
+`  ${this.name}_diff = fround(${inputs[0]} - fround(memory[ ${this.memory.lastSample.idx * 4} >>2 ]) )\n
+  if( ${this.name}_diff < fround(-.5) ) ${this.name}_diff = fround(${this.name}_diff + fround(1))
+  memory[ ${this.memory.phase.idx * 4} >> 2 ] = memory[ ${this.memory.phase.idx * 4} >> 2 ] + fround(${this.name}_diff * ${inputs[1]})
+  if( +memory[ ${this.memory.phase.idx * 4} >> 2 ] > 1.0 ) memory[ ${this.memory.phase.idx * 4} >> 2 ] = fround(memory[ ${this.memory.phase.idx * 4} >> 2 ]) - fround(1)
+  ${this.name}_phase = fround(memory[ ${this.memory.phase.idx * 4} >>2 ])
+  memory[ ${this.memory.lastSample.idx * 4} >>2 ] = fround(${inputs[0]})\n
 `
-    out = ' ' + out
-
-    return [ genName + '.phase', out ]
+    return [ `${this.name}_phase`,  out ]
   }
 }
 
@@ -42,6 +48,10 @@ module.exports = ( in1, rate ) => {
     lastSample: 0,
     uid:        gen.getUID(),
     inputs:     [ in1, rate ],
+    memory: {
+      phase: { length:1, idx:null },
+      lastSample: { length:1, idx:null }
+    }
   })
   
   ugen.name = `${ugen.basename}${ugen.uid}`

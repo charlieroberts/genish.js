@@ -13,9 +13,9 @@ describe( 'rate', ()=>{
         out    = gen.createCallback( graph, 512 ),
         result = 0
 
-    for( let i = 0; i < 5; i++ ) out()
+    for( let i = 0; i < 6; i++ ) out()
 
-    result = out().toFixed( 2 )
+    result = parseFloat( gen.out[0].toFixed( 2 ) )
 
     assert.equal( result, answer )
   })

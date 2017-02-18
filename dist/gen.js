@@ -212,8 +212,8 @@ let gen = {
   var random = foreign.random
   var tanh   = foreign.tanh
   var exp    = foreign.exp
-	var round  = foreign.round
-	var sign   = foreign.sign
+  var round  = foreign.round
+  var sign   = foreign.sign
   var memory = new stdlib.Float32Array( buffer )
 
   function render( ${this.parameters.join(',')} ) {
