@@ -13,7 +13,7 @@ let proto = {
     
     if( isNaN( inputs[0] ) ) {
 
-      out = [ this.name, `  ${this.name} = fround( sin( ${inputs[0]} ) );\n` ]
+      out = [ this.name, `  ${this.name} = fround( sin( +${inputs[0]} ) );\n` ]
 
     } else {
       out = Math.sin( parseFloat( inputs[0] ) )

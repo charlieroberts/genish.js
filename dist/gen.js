@@ -8,7 +8,7 @@
 
 let MemoryHelper = require( 'memory-helper' )
 
-let buf = new ArrayBuffer( 0x10000 )
+let buf = new ArrayBuffer( 0x1000000 )
 
 let gen = {
 

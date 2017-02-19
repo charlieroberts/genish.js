@@ -19,8 +19,9 @@ let proto = {
   gen() {
     let conditionals = this.inputs[0],
         defaultValue = gen.getInput( conditionals[ conditionals.length - 1] ),
-        out = `  var ${this.name}_out = ${defaultValue}\n` 
+        out = `  ${this.name}_out = ${defaultValue}\n` 
 
+    gen.variableNames.add( [this.name+'_out', 'f'] )
     //console.log( 'defaultValue:', defaultValue )
 
     for( let i = 0; i < conditionals.length - 2; i+= 2 ) {
@@ -56,7 +57,7 @@ let proto = {
       
       if( i===0 ) out += ' '
       out += 
-` if( ${cond} === 1 ) {
+` if( ${cond} == fround(1) ) {
 ${output}
   }`
 
@@ -82,7 +83,6 @@ ${output}
       }*/
     }
 
-    gen.memo[ this.name ] = `${this.name}_out`
 
     return [ `${this.name}_out`, out ]
   }
