@@ -10,14 +10,15 @@ let gen  = require( './gen.js' ),
 let proto = {
   basename:'cycle',
 
-  initTable() {    
+  initTable() {
+    console.log( 'INIT CYCLE' ) 
     let buffer = new Float32Array( 1024 )
 
     for( let i = 0, l = buffer.length; i < l; i++ ) {
       buffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
     }
 
-    gen.globals.cycle = data( buffer, 1, { immutable:true } )
+    data( buffer, 1, { immutable:true, global:'cycle' } )
   }
 
 }

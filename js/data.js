@@ -13,7 +13,9 @@ let proto = {
     let idx
     if( gen.memo[ this.name ] === undefined ) {
       let ugen = this
-      gen.requestMemory( this.memory, this.immutable ) 
+      if( this.memory.values.idx === null )
+        gen.requestMemory( this.memory, this.immutable ) 
+      
       idx = this.memory.values.idx
       try {
         gen.memory.heap.set( this.buffer, idx )
@@ -90,6 +92,7 @@ module.exports = ( x, y=1, properties ) => {
     },
   }
 
+  console.log( 'ugen memory request', ugen.dim )
   ugen.memory = {
     values: { length:ugen.dim, idx:null }
   }
@@ -101,6 +104,7 @@ module.exports = ( x, y=1, properties ) => {
   if( properties !== undefined ) {
     if( properties.global !== undefined ) {
       gen.globals[ properties.global ] = ugen
+      gen.requestMemory( ugen.memory )
     }
     if( properties.meta === true ) {
       for( let i = 0, length = ugen.buffer.length; i < length; i++ ) {

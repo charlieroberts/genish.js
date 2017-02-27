@@ -55,15 +55,19 @@ let proto = {
       if( this.interp === 'linear' ) {
 
         functionBody += 
-          `  ${this.name}_frac  = fround( ${this.name}_phase - fround(${this.name}_index|0) )
+`  ${this.name}_frac  = fround( ${this.name}_phase - fround(${this.name}_index|0) )
   ${this.name}_base  = fround( memory[ ((${idx}|0) + ((${this.name}_index * 4)|0)) >>2  ]  )
-  ${this.name}_next  = ${next}\n\n`
+  ${this.name}_next  = ${next}\n
+`
 
 
 
-        const interpolated= `  fround( ${this.name}_base + fround(${this.name}_frac * fround( fround( memory[ ((${idx}|0) + (${this.name}_next * 4|0)) >>2 ]) - ${this.name}_base ) ) )\n\n`
+        const interpolated= 
+`  fround( ${this.name}_base + fround(${this.name}_frac * fround( fround( memory[ ((${idx}|0) + (${this.name}_next * 4|0)) >>2 ]) - ${this.name}_base ) ) )\n
+`
 
         const interpolatedWithAssignment = `  ${this.name}_out = ` + interpolated
+
         if( this.boundmode === 'ignore' ) {
           
           functionBody += 

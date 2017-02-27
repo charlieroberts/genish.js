@@ -56,16 +56,18 @@ let proto = {
         `${block}  ${this.name}_out = ${blockName}`
       
       if( i===0 ) out += ' '
-      out += 
+
+      out +=
+
 ` if( ${cond} == fround(1) ) {
 ${output}
   }`
 
-if( !isEndBlock ) {
-  out += ` else`
-}else{
-  out += `\n`
-}
+      if( !isEndBlock ) {
+        out += ` else`
+      }else{
+        out += `\n`
+      }
 /*         
  else`
       }else if( isEndBlock ) {

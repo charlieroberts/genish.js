@@ -29,7 +29,7 @@ let proto = {
   },
 
   callback( _name, _incr, _reset, valueRef ) {
-    let diff = this.max - this.min,
+    let diff = this.max - this.min ,
         out = '',
         wrap = ''
     
@@ -54,7 +54,7 @@ let proto = {
       out += `  ${valueRef} = fround(${valueRef}) + fround(${_incr});\n` // store output value before accumulating  
     }
 
-    if( this.max !== Infinity  && this.shouldWrapMax ) wrap += `  if( fround(${valueRef}) >= fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
+    if( this.max !== Infinity  && this.shouldWrapMax ) wrap += `  if( fround(${valueRef}) > fround(${this.max}) ) { ${valueRef} = fround(${valueRef}) - fround(${diff}); }\n`
 
     if( !this.shouldWrapMin ) wrap += '\n'
 

@@ -219,6 +219,8 @@ let gen = {
   function render( ${this.parameters.join(',')} ) {
 ${ parameterString }
 ${ this.functionBody }
+
+  return memory[0]
   }
   
   return { callback:render }
