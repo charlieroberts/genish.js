@@ -5,6 +5,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _gen = require('./gen.js');
 
 var proto = {
+  basename: 'param',
+
   gen: function gen() {
     _gen.requestMemory(this.memory);
 
@@ -25,7 +27,7 @@ module.exports = function () {
   var ugen = Object.create(proto);
 
   if (typeof propName !== 'string') {
-    ugen.name = 'param' + _gen.getUID();
+    ugen.name = ugen.basename + _gen.getUID();
     ugen.initialValue = propName;
   } else {
     ugen.name = propName;

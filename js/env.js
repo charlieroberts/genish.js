@@ -4,16 +4,20 @@ let gen     = require( './gen' ),
     windows = require( './windows' ),
     data    = require( './data' ),
     peek    = require( './peek' ),
-    phasor  = require( './phasor' )
+    phasor  = require( './phasor' ),
+    defaults = {
+      type:'triangular', length:1024, alpha:.15, shift:0 
+    }
 
-module.exports = ( type='triangular', length=1024, alpha=.15, shift=0 ) => {
-  let buffer = new Float32Array( length )
+module.exports = props => {
+  let properties = Object.assign( {}, defaults, props )
+  let buffer = new Float32Array( properties.length )
 
-  let name = type + '_' + length + '_' + shift
+  let name = properties.type + '_' + properties.length + '_' + properties.shift
   if( typeof gen.globals.windows[ name ] === 'undefined' ) { 
 
-    for( let i = 0; i < length; i++ ) {
-      buffer[ i ] = windows[ type ]( length, i, alpha, shift )
+    for( let i = 0; i < properties.length; i++ ) {
+      buffer[ i ] = windows[ properties.type ]( properties.length, i, properties.alpha, properties.shift )
     }
 
     gen.globals.windows[ name ] = data( buffer )

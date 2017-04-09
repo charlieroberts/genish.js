@@ -24,7 +24,10 @@ var proto = {
   }
 };
 
-module.exports = function (leftInput, rightInput, pan, properties) {
+module.exports = function (leftInput, rightInput) {
+  var pan = arguments.length <= 2 || arguments[2] === undefined ? .5 : arguments[2];
+  var properties = arguments[3];
+
   if (gen.globals.panL === undefined) proto.initTable();
 
   var ugen = Object.create(proto);

@@ -40,4 +40,8 @@ Thumbs.db
 ############
 .tm_properties
 
+# vim #
+*.swp
+*~
+
 node_modules

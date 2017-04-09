@@ -25,7 +25,7 @@ let proto = {
 
 }
 
-module.exports = ( leftInput, rightInput, pan, properties ) => {
+module.exports = ( leftInput, rightInput, pan =.5, properties ) => {
   if( gen.globals.panL === undefined ) proto.initTable()
 
   let ugen = Object.create( proto )

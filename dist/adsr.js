@@ -53,7 +53,9 @@ module.exports = function () {
   //    0
   //  )
   //} else {    
-  bufferData = env(1024, { type: props.shape, alpha: props.alpha });
+  bufferData = env({ length: 1024, alpha: props.alpha, shift: 0, type: props.shape });
+
+  console.log(bufferData);
 
   sustainCondition = props.triggerRelease ? shouldSustain : lt(phase, add(attackTime, decayTime, sustainTime));
 

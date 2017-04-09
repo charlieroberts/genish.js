@@ -3,6 +3,8 @@
 let gen = require('./gen.js')
 
 let proto = {
+  basename: 'param',
+
   gen() {
     gen.requestMemory( this.memory )
     
@@ -20,7 +22,7 @@ module.exports = ( propName=0, value=0 ) => {
   let ugen = Object.create( proto )
   
   if( typeof propName !== 'string' ) {
-    ugen.name = 'param' + gen.getUID()
+    ugen.name = ugen.basename + gen.getUID()
     ugen.initialValue = propName
   }else{
     ugen.name = propName

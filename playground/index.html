@@ -9,6 +9,7 @@
     <script src="./dat.gui.js"></script>
     <script src="../dist/gen.lib.js"></script>
     <script src="./environment.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 <style>
 .CodeMirror-highlight {
   background:red
@@ -51,6 +52,9 @@ h1 {
   margin:0
 }
 
+#jsdspHelp { font-size:1.2em !important; cursor: pointer; color:white }
+#jsdspHelp:hover { color:red }
+
 #header span { font-size: .8em; }
 
 #editor { width:60%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
@@ -92,6 +96,11 @@ h1 {
         <option>karplus strong</option>
       </select>
 
+      <span style='position:relative; left:1em'>
+        use jsdsp:<input type='checkbox' id='jsdsp'>
+        <span ><a id='jsdspHelp' href="../jsdsp.html">?</a></span>
+      </span>
+      
       <span id='reference'><a href='../docs/index.html'>reference</a>
 
     </div>
@@ -99,44 +108,5 @@ h1 {
     <div id='editor'></div>
     <div id='console'></div>
   </body>
-
-  <script> 
-    let select = document.querySelector( 'select' ),
-        files = [
-          'intro.js',
-          'thereminish.js',
-          'bitcrusher.js',
-          'enveloping.js',
-          'bandlimitedFM.js',
-          'biquad.js',
-          'zeroDelay.js',
-          'zeroDelayLadder.js',
-          'slicingAndDicing.js', 
-          'oneDelayLine.js',
-          'combfilter.js',
-          'freeverb.js',
-          'gigaverb.js',
-          'gardenOfDelays.js', 
-          'karplusStrong.js'
-        ]
-
-    select.onchange = function( e ) {
-      loadexample( files[ select.selectedIndex ] )
-    }
-    
-    let loadexample = function( filename ) {
-      var req = new XMLHttpRequest()
-        req.open( 'GET', './examples/'+filename, true )
-        req.onload = function() {
-          var js = req.responseText
-          utilities.editor.setValue( js )
-        }
-    
-      req.send()
-    }
-    
-    loadexample( 'intro.js' )
-
-  </script>
 
 </html>

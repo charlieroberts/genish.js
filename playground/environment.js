@@ -1,5 +1,5 @@
 var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContext,
-isStereo = false
+isStereo = false, jsdsp, shouldUseJSDSP = false
 
 window.onload = function() {
   cm = CodeMirror( document.querySelector('#editor'), {
@@ -36,8 +36,88 @@ window.onload = function() {
 
     return cb
   }
-}
 
+  const operators = {
+    '+':'add',
+    '-':'sub',
+    '*':'mul',
+    '/':'div',
+    '^':'pow',
+    '%':'mod'
+  }
+
+  jsdsp = function({ types:t }) {
+    return {
+      visitor: {
+        BinaryExpression( path ) {
+
+          // don't transform if arguments are both number literals
+          if( t.isNumericLiteral( path.node.left ) && t.isNumericLiteral( path.node.right ) ) return
+          
+          // don't transform if no overload is found
+          if( !(path.node.operator in operators) ) return
+
+          const operatorString = operators[ path.node.operator ]
+
+          path.replaceWith(
+            t.callExpression(
+              t.memberExpression(
+                t.identifier('genish'),
+                t.identifier( operatorString )
+              ),
+              [path.node.left, path.node.right]
+            )
+          )
+        }
+      }
+    }
+  }
+
+  Babel.registerPlugin( 'jsdsp', jsdsp )
+
+  let select = document.querySelector( 'select' ),
+      files = [
+        'intro',
+        'thereminish',
+        'bitcrusher',
+        'enveloping',
+        'bandlimitedFM',
+        'biquad',
+        'zeroDelay',
+        'zeroDelayLadder',
+        'slicingAndDicing', 
+        'oneDelayLine',
+        'combfilter',
+        'freeverb',
+        'gigaverb',
+        'gardenOfDelays', 
+        'karplusStrong'
+      ]
+
+  select.onchange = function( e ) {
+    loadexample( files[ select.selectedIndex ] )
+  }
+  
+  let loadexample = function( filename ) {
+    var req = new XMLHttpRequest()
+      req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.jsdsp' : '.js'), true )
+      req.onload = function() {
+        var js = req.responseText
+        utilities.editor.setValue( js )
+      }
+  
+    req.send()
+  }
+  
+  loadexample( 'intro' )
+
+  let jsdspBtn = document.querySelector( '#jsdsp' ) 
+
+  jsdspBtn.addEventListener( 'change', v => {
+    shouldUseJSDSP = v.target.checked
+  })
+
+}
 
 CodeMirror.keyMap.playground =  {
   fallthrough:'default',
@@ -48,7 +128,9 @@ CodeMirror.keyMap.playground =  {
 
       flash( cm, selectedCode.selection )
 
-      var func = new Function( selectedCode.code )
+      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
+
+      var func = new Function( code )
 
       func()
     } catch (e) {
@@ -59,9 +141,10 @@ CodeMirror.keyMap.playground =  {
     try {
       var selectedCode = getSelectionCodeColumn( cm, true )
 
-      flash( cm, selectedCode.selection )
+      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
 
-      var func = new Function( selectedCode.code )
+      var func = new Function( code )
+
       func()
     } catch (e) {
       console.log( e )
