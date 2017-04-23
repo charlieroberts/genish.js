@@ -93,9 +93,11 @@ window.onload = function() {
         'gardenOfDelays', 
         'karplusStrong'
       ]
-
+  
+  let currentFile = 'intro'
   select.onchange = function( e ) {
-    loadexample( files[ select.selectedIndex ] )
+    currentFile = files[ select.selectedIndex ] 
+    loadexample( currentFile )
   }
   
   let loadexample = function( filename ) {
@@ -115,8 +117,15 @@ window.onload = function() {
 
   jsdspBtn.addEventListener( 'change', v => {
     shouldUseJSDSP = v.target.checked
+    askForReload()
   })
 
+  const askForReload = ()=> {
+    let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'
+    if( window.confirm( msg ) ) {
+      loadexample( currentFile )
+    }
+  }
 }
 
 CodeMirror.keyMap.playground =  {

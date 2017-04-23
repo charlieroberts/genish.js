@@ -1,0 +1,11 @@
+/* 
+
+The biquad demo mixes a signal processing graph
+with a big chunk of non-genish JavaScript to determine filter
+coefficients. Unfortunatley, .jsdsp doesn't play nicely
+when there are operators that should not be overloaded are
+in the same script as operators that should be overloaded.
+Please uncheck the .jsdsp option to reload this demo 
+using vanilla JavaScript.
+
+*/
