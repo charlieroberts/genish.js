@@ -8,7 +8,11 @@ var gulp = require('gulp'),
     source     = require('vinyl-source-stream'),
     babelify   = require('babelify'),
     mocha      = require('gulp-mocha'),
-    pathmodify = require('pathmodify')
+    pathmodify = require('pathmodify'),
+    options    = require('yargs')
+
+
+const target = options.target === undefined ? 'es5' : options.target
 
 gulp.task( 'js', function() {
   browserify({ debug:true, standalone:'genish' })
@@ -18,12 +22,11 @@ gulp.task( 'js', function() {
           if( rec.id.indexOf( 'target' ) > -1 ) {
 
             var alias = {
-              id: rec.id.replace('target','asm')
+              id: rec.id.replace('target', target )
             }
 
             return alias
           }else if( rec.id === './gen.js' ) {
-            console.log( rec.id, __dirname + '/js/gen.js' )
             return { id: __dirname + '/js/gen.js' }
           }
       }] 

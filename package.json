@@ -21,7 +21,8 @@
     "gulp-mocha": "^2.2.0",
     "memory-helper": "^1.0.0",
     "pathmodify": "^0.5.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^7.1.0"
   },
   "scripts": {
     "test": "mocha test/*.js"
