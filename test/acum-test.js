@@ -1,7 +1,6 @@
 /* global describe it */
 var assert = require('assert')
 var genlib = require( '../dist/index.js' )
-var asm = require('asm.js')
 
 var gen = genlib.gen
 var accum = genlib.accum
