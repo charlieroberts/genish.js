@@ -6,6 +6,8 @@
  *
  */
 
+console.log( 'target:', GENISH_TARGET )
+
 let MemoryHelper = require( 'memory-helper' )
 
 let buf = new ArrayBuffer( 0x1000000 )

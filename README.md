@@ -67,3 +67,7 @@ utilities.playGraph( cycle( 330 ), true )
 ```
 ## develop & test
 The build script is a gulpfile. With gulp installed, run `gulp` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
+
+By default genish compiles to ES5. However, you can also target asm.js as with `gulp --target asm`. In `js/ugens` there are different folders for each compilation target, as well as a folder named `common` that contains ugens that are shared between targets. These shared ugens do not actually contain compilation instructions; instead they are higher-level ugens that combine other ugens that do possess compilation instructions specific to each target.
+
+You can access the current target being used with the keyword GENISH_TARGET. This is automatically inserted by browserify into every module that references it.

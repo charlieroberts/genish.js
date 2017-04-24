@@ -12,7 +12,6 @@ let library = {
       delete library.switch
     }
 
-    console.log( 'library:', library )
     Object.assign( destination, library )
 
     Object.defineProperty( library, 'samplerate', {

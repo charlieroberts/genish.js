@@ -3,19 +3,22 @@ var gulp = require('gulp'),
     notify     = require('gulp-notify'),
     babel      = require('gulp-babel'),
     browserify = require('browserify'),
-    //tap       = require('gulp-tap'),
     buffer     = require('gulp-buffer'),
     source     = require('vinyl-source-stream'),
     babelify   = require('babelify'),
     mocha      = require('gulp-mocha'),
     pathmodify = require('pathmodify'),
-    options    = require('yargs')
+    options    = require('yargs').argv
 
 
 const target = options.target === undefined ? 'es5' : options.target
 
 gulp.task( 'js', function() {
-  browserify({ debug:true, standalone:'genish' })
+  browserify({ 
+      debug:true, 
+      standalone:'genish',
+      insertGlobalVars: { GENISH_TARGET: function() { return `'${target}'` } } // must be wrapped string, inserted directly into code
+    })
     .plugin( pathmodify, { 
       mods:[ 
         rec => {
