@@ -7,10 +7,27 @@ var gulp = require('gulp'),
     buffer     = require('gulp-buffer'),
     source     = require('vinyl-source-stream'),
     babelify   = require('babelify'),
-    mocha      = require('gulp-mocha')
+    mocha      = require('gulp-mocha'),
+    pathmodify = require('pathmodify')
 
 gulp.task( 'js', function() {
   browserify({ debug:true, standalone:'genish' })
+    .plugin( pathmodify, { 
+      mods:[ 
+        rec => {
+          if( rec.id.indexOf( 'target' ) > -1 ) {
+
+            var alias = {
+              id: rec.id.replace('target','asm')
+            }
+
+            return alias
+          }else if( rec.id === './gen.js' ) {
+            console.log( rec.id, __dirname + '/js/gen.js' )
+            return { id: __dirname + '/js/gen.js' }
+          }
+      }] 
+    } )
     .require( './js/index.js', { entry: true } )
     //.transform( babelify, { presets:['es2015'] })
     .bundle()

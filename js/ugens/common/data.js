@@ -1,9 +1,9 @@
 'use strict'
 
 let gen  = require('./gen.js'),
-  utilities = require( './utilities.js' ),
-  peek = require('./peek.js'),
-  poke = require('./poke.js')
+  utilities = require( '../../utilities.js' ),
+  peek = require( '../target/peek.js' ), 
+  poke = require( '../target/poke.js' )
 
 let proto = {
   basename:'data',

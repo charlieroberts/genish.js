@@ -1,9 +1,9 @@
 'use strict'
 
 let gen     = require( './gen.js' ),
-    history = require( './history.js' ),
-    mul     = require( './mul.js' ),
-    t60     = require( './t60.js' )
+    history = require( '../target/history.js' ),
+    mul     = require( '../target/mul.js' ),
+    t60     = require( '../target/t60.js' )
 
 module.exports = ( decayTime = 44100, props ) => {
   let properties = Object.assign({}, { initValue:1 }, props ),

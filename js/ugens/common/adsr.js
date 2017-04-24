@@ -1,20 +1,20 @@
 'use strict'
 
 let gen      = require( './gen.js' ),
-    mul      = require( './mul.js' ),
-    sub      = require( './sub.js' ),
-    div      = require( './div.js' ),
+    mul      = require( '../target/mul.js' ),
+    sub      = require( '../target/sub.js' ),
+    div      = require( '../target/div.js' ),
     data     = require( './data.js' ),
-    peek     = require( './peek.js' ),
-    accum    = require( './accum.js' ),
-    ifelse   = require( './ifelseif.js' ),
-    lt       = require( './lt.js' ),
-    bang     = require( './bang.js' ),
+    peek     = require( '../target/peek.js' ),
+    accum    = require( '../target/accum.js' ),
+    ifelse   = require( '../target/ifelseif.js' ),
+    lt       = require( '../target/lt.js' ),
+    bang     = require( '../target/bang.js' ),
     env      = require( './env.js' ),
-    param    = require( './param.js' ),
-    add      = require( './add.js' ),
-    gtp      = require( './gtp.js' ),
-    not      = require( './not.js' )
+    param    = require( '../target/param.js' ),
+    add      = require( '../target/add.js' ),
+    gtp      = require( '../target/gtp.js' ),
+    not      = require( '../target/not.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),

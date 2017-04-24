@@ -1,7 +1,7 @@
 'use strict'
 
 let gen = require( './gen.js' ),
-    data = require( './data.js' )
+    data = require( './ugens/common/data.js' )
 
 let isStereo = false
 

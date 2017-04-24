@@ -10,9 +10,7 @@ let proto = {
         inputs = gen.getInputs( this )
     
     if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
-      gen.closures.add({ 'pow': Math.pow })
-
-      out = `gen.pow( ${inputs[0]}, ${inputs[1]} )` 
+      out = `fround( pow( ${inputs[0]}, ${inputs[1]} ) )` 
 
     } else {
       if( typeof inputs[0] === 'string' && inputs[0][0] === '(' ) {

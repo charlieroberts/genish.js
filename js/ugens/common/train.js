@@ -1,7 +1,7 @@
 'use strict'
 
 let gen     = require( './gen.js' ),
-    lt      = require( './lt.js' ),
+    lt      = require( '../target/lt.js' ),
     phasor  = require( './phasor.js' )
 
 module.exports = ( frequency=440, pulsewidth=.5 ) => {

@@ -1,22 +1,21 @@
 'use strict'
 
 let gen      = require( './gen.js' ),
-    mul      = require( './mul.js' ),
-    sub      = require( './sub.js' ),
-    div      = require( './div.js' ),
+    mul      = require( '../target/mul.js' ),
+    sub      = require( '../target/sub.js' ),
+    div      = require( '../target/div.js' ),
     data     = require( './data.js' ),
-    peek     = require( './peek.js' ),
-    accum    = require( './accum.js' ),
-    ifelse   = require( './ifelseif.js' ),
-    lt       = require( './lt.js' ),
-    bang     = require( './bang.js' ),
+    peek     = require( '../target/peek.js' ),
+    accum    = require( '../target/accum.js' ),
+    ifelse   = require( '../target/ifelseif.js' ),
+    lt       = require( '../target/lt.js' ),
+    bang     = require( '../target/bang.js' ),
     env      = require( './env.js' ),
-    add      = require( './add.js' ),
-    poke     = require( './poke.js' ),
-    neq      = require( './neq.js' ),
-    and      = require( './and.js' ),
-    gte      = require( './gte.js' ),
-    memo     = require( './memo.js' )
+    add      = require( '../target/add.js' ),
+    poke     = require( '../target/poke.js' ),
+    neq      = require( '../target/neq.js' ),
+    and      = require( '../target/and.js' ),
+    gte      = require( '../target/gte.js' )
 
 module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   let _bang = bang(),
@@ -31,7 +30,7 @@ module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   if( props.shape === 'linear' ) {
     out = ifelse( 
       and( gte( phase, 0), lt( phase, attackTime )),
-      memo( div( phase, attackTime ) ),
+      div( phase, attackTime ),
 
       and( gte( phase, 0),  lt( phase, add( attackTime, decayTime ) ) ),
       sub( 1, div( sub( phase, attackTime ), decayTime ) ),

@@ -1,11 +1,10 @@
 'use strict'
 
 let gen     = require( './gen.js' ),
-    history = require( './history.js' ),
-    sub     = require( './sub.js' ),
-    add     = require( './add.js' ),
-    mul     = require( './mul.js' ),
-    memo    = require( './memo.js' )
+    history = require( '../target/history.js' ),
+    sub     = require( '../target/sub.js' ),
+    add     = require( '../target/add.js' ),
+    mul     = require( '../target/mul.js' )
 
 module.exports = in1 => {
   let x1 = history(),

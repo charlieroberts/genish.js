@@ -1,8 +1,8 @@
 'use strict'
 
 let gen     = require( './gen.js' ),
-    history = require( './history.js' ),
-    sub     = require( './sub.js' )
+    history = require( '../target/history.js' ),
+    sub     = require( '../target/sub.js' )
 
 module.exports = ( in1 ) => {
   let n1 = history()

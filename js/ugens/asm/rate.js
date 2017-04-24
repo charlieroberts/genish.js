@@ -6,7 +6,7 @@ let gen     = require( './gen.js' ),
     add     = require( './add.js' ),
     mul     = require( './mul.js' ),
     memo    = require( './memo.js' ),
-    delta   = require( './delta.js' ),
+    delta   = require( '../common/delta.js' ),
     wrap    = require( './wrap.js' )
 
 let proto = {

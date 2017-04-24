@@ -1,15 +1,15 @@
 'use strict'
 
-let gen     = require( './gen' ),
-    windows = require( './windows' ),
-    data    = require( './data' ),
-    peek    = require( './peek' ),
-    phasor  = require( './phasor' )
+const gen     = require( './gen.js' ),
+      windows = require( '../../windows.js' ),
+      data    = require( './data.js' ), 
+      peek    = require( '../target/peek.js' ),
+      phasor  = require( './phasor.js' )
 
 module.exports = ( type='triangular', length=1024, alpha=.15, shift=0 ) => {
-  let buffer = new Float32Array( length )
+  const buffer = new Float32Array( length )
 
-  let name = type + '_' + length + '_' + shift
+  const name = type + '_' + length + '_' + shift
   if( typeof gen.globals.windows[ name ] === 'undefined' ) { 
 
     for( let i = 0; i < length; i++ ) {
@@ -19,7 +19,7 @@ module.exports = ( type='triangular', length=1024, alpha=.15, shift=0 ) => {
     gen.globals.windows[ name ] = data( buffer )
   }
 
-  let ugen = gen.globals.windows[ name ] 
+  const ugen = gen.globals.windows[ name ] 
   ugen.name = 'env' + gen.getUID()
 
   return ugen

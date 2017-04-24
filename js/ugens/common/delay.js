@@ -2,11 +2,11 @@
 
 let gen  = require( './gen.js'  ),
     data = require( './data.js' ),
-    poke = require( './poke.js' ),
-    peek = require( './peek.js' ),
-    sub  = require( './sub.js'  ),
-    wrap = require( './wrap.js' ),
-    accum= require( './accum.js')
+    poke = require( '../target/poke.js' ),
+    peek = require( '../target/peek.js' ),
+    sub  = require( '../target/sub.js'  ),
+    wrap = require( '../target/wrap.js' ),
+    accum= require( '../target/accum.js')
 
 let proto = {
   basename:'delay',

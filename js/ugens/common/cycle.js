@@ -1,10 +1,9 @@
 'use strict'
 
 let gen  = require( './gen.js' ),
-    accum= require( './phasor.js' ),
     data = require( './data.js' ),
-    peek = require( './peek.js' ),
-    mul  = require( './mul.js' ),
+    peek = require( '../target/peek.js' ),
+    mul  = require( '../target/mul.js' ),
     phasor=require( './phasor.js')
 
 let proto = {

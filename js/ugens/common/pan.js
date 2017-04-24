@@ -2,8 +2,8 @@
 
 let gen = require( './gen.js' ),
     data = require( './data.js' ),
-    peek = require( './peek.js' ),
-    mul  = require( './mul.js' )
+    peek = require( '../target/peek.js' ),
+    mul  = require( '../target/mul.js' )
 
 let proto = {
   basename:'pan', 
