@@ -5,10 +5,12 @@ let gen  = require( './gen.js' ),
     mul  = require( './mul.js' ),
     proto = { basename:'phasor' }
 
-module.exports = ( frequency=1, reset=0, props ) => {
-  if( props === undefined ) props = { min: -1 }
+const defaults = { min: -1, max: 1 }
 
-  let range = (props.max || 1 ) - props.min
+module.exports = ( frequency=1, reset=0, _props ) => {
+  const props = Object.assign( {}, defaults, _props )
+
+  let range = props.max - props.min
 
   let ugen = typeof frequency === 'number' ? accum( (frequency * range) / gen.samplerate, reset, props ) :  accum( mul( frequency, 1/gen.samplerate/(1/range) ), reset, props )
 
