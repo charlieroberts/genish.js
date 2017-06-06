@@ -36,9 +36,9 @@ var proto = {
     out += '  var ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating  
 
     if (typeof this.max === 'number' && this.max !== Infinity && typeof this.min !== 'number') {
-      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' && ' + loops + ' !== undefined && ' + loops + ' !== null && ' + loops + ') {\n    ' + valueRef + ' -= ' + diff + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
+      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' -= ' + diff + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else if (this.max !== Infinity && this.min !== Infinity) {
-      wrap = '  if( ' + valueRef + ' >= ' + _max + ' && ' + loops + ' !== undefined && ' + loops + ' !== null && ' + loops + ') {\n    ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else if( ' + valueRef + ' < ' + _min + ' && ' + loops + ' !== undefined && ' + loops + ' !== null && ' + loops + ') {\n    ' + valueRef + ' += ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
+      wrap = '  if( ' + valueRef + ' >= ' + _max + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else if( ' + valueRef + ' < ' + _min + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' += ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else {
       out += '\n';
     }
