@@ -28,7 +28,12 @@ var proto = {
     var diff = this.max - this.min,
         out = '',
         wrap = '';
-
+    // coerce to integer
+    if (loops === undefined) {
+      loops = 0;
+    } else {
+      loops += 0;
+    }
     // must check for reset before storing value for output
     if (!(typeof this.inputs[3] === 'number' && this.inputs[3] < 1)) {
       out += '  if( ' + _reset + ' >= 1 ) ' + valueRef + ' = ' + _min + '\n';
