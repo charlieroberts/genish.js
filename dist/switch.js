@@ -20,8 +20,8 @@ var proto = {
 };
 
 module.exports = function (control) {
-  var in1 = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-  var in2 = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+  var in1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var in2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
   var ugen = Object.create(proto);
   Object.assign(ugen, {

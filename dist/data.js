@@ -32,7 +32,7 @@ var proto = {
 };
 
 module.exports = function (x) {
-  var y = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+  var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   var properties = arguments[2];
 
   var ugen = void 0,
@@ -62,8 +62,8 @@ module.exports = function (x) {
       buffer[_i] = x[_i];
     }
   } else if (typeof x === 'string') {
-    buffer = { length: y > 1 ? y : _gen.samplerate * 60 }; // XXX what???
-    shouldLoad = true;
+    buffer = { length: y > 1 ? y : _gen.samplerate * 60 // XXX what???
+    };shouldLoad = true;
   } else if (x instanceof Float32Array) {
     buffer = x;
   }

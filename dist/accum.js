@@ -48,13 +48,13 @@ var proto = {
     if (this.shouldWrap === false && this.shouldClamp === true) {
       out += '  if( ' + valueRef + ' < ' + this.max + ' ) ' + valueRef + ' += ' + _incr + '\n';
     } else {
-      out += '  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating
+      out += '  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating  
     }
 
     if (this.max !== Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' >= ' + this.max + ' ) ' + valueRef + ' -= ' + diff + '\n';
     if (this.min !== -Infinity && this.shouldWrap) wrap += '  if( ' + valueRef + ' < ' + this.min + ' ) ' + valueRef + ' += ' + diff + '\n\n';
 
-    //if( this.min === 0 && this.max === 1 ) {
+    //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
     //} else if( this.min === 0 && ( Math.log2( this.max ) | 0 ) === Math.log2( this.max ) ) {
     //  wrap =  `  ${valueRef} = ${valueRef} & (${this.max} - 1)\n\n`
@@ -69,7 +69,7 @@ var proto = {
 };
 
 module.exports = function (incr) {
-  var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+  var reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   var properties = arguments[2];
 
   var ugen = Object.create(proto),

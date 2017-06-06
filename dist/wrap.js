@@ -19,7 +19,7 @@ var proto = {
 
     //out = `(((${inputs[0]} - ${this.min}) % ${diff}  + ${diff}) % ${diff} + ${this.min})`
     //const long numWraps = long((v-lo)/range) - (v < lo);
-    //return v - range * double(numWraps);  
+    //return v - range * double(numWraps);   
 
     if (this.min === 0) {
       diff = max;
@@ -36,8 +36,8 @@ var proto = {
 };
 
 module.exports = function (in1) {
-  var min = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-  var max = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+  var min = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
 
   var ugen = Object.create(proto);
 

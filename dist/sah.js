@@ -21,7 +21,7 @@ var proto = {
 };
 
 module.exports = function (in1, control) {
-  var threshold = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+  var threshold = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
   var properties = arguments[3];
 
   var ugen = Object.create(proto),

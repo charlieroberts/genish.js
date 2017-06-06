@@ -6,7 +6,7 @@ var gen = require('./gen.js'),
     sub = require('./sub.js');
 
 module.exports = function () {
-    var decayTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
+    var decayTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 44100;
 
     var ssd = history(1),
         t60 = Math.exp(-6.907755278921 / decayTime);

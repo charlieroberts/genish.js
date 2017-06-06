@@ -6,7 +6,7 @@
  *
  */
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var MemoryHelper = require('memory-helper');
 
@@ -51,7 +51,7 @@ var gen = {
     this.endBlock.add('  ' + v);
   },
   requestMemory: function requestMemory(memorySpec) {
-    var immutable = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var immutable = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     for (var key in memorySpec) {
       var request = memorySpec[key];
@@ -76,8 +76,8 @@ var gen = {
    */
 
   createCallback: function createCallback(ugen, mem) {
-    var debug = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-    var shouldInlineMemory = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+    var debug = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    var shouldInlineMemory = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
     var isStereo = Array.isArray(ugen) && ugen.length > 1,
         callback = void 0,
@@ -93,10 +93,10 @@ var gen = {
     this.memo = {};
     this.endBlock.clear();
     this.closures.clear();
-    this.params.clear();
+    this.params.clear
     //this.globals = { windows:{} }
 
-    this.parameters.length = 0;
+    ();this.parameters.length = 0;
 
     this.functionBody = "  'use strict'\n";
     if (shouldInlineMemory === false) this.functionBody += "  var memory = gen.memory\n\n";
@@ -115,12 +115,12 @@ var gen = {
       body += Array.isArray(channel) ? channel[1] + '\n' + channel[0] : channel;
 
       // split body to inject return keyword on last line
-      body = body.split('\n');
+      body = body.split('\n'
 
       //if( debug ) console.log( 'functionBody length', body )
 
       // next line is to accommodate memo as graph head
-      if (body[body.length - 1].trim().indexOf('let') > -1) {
+      );if (body[body.length - 1].trim().indexOf('let') > -1) {
         body.push('\n');
       }
 
@@ -148,22 +148,22 @@ var gen = {
       this.functionBody.push(returnStatement);
     }
     // reassemble function body
-    this.functionBody = this.functionBody.join('\n');
+    this.functionBody = this.functionBody.join('\n'
 
     // we can only dynamically create a named function by dynamically creating another function
     // to construct the named function! sheesh...
     //
-    if (shouldInlineMemory === true) {
+    );if (shouldInlineMemory === true) {
       this.parameters.push('memory');
     }
     var buildString = 'return function gen( ' + this.parameters.join(',') + ' ){ \n' + this.functionBody + '\n}';
 
     if (this.debug || debug) console.log(buildString);
 
-    callback = new Function(buildString)();
+    callback = new Function(buildString)
 
     // assign properties to named function
-    var _iteratorNormalCompletion = true;
+    ();var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
@@ -210,8 +210,9 @@ var gen = {
           set: function set(v) {
             ugen.value = v;
           }
-        });
+        }
         //callback[ name ] = value
+        );
       };
 
       for (var _iterator2 = this.params.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
@@ -234,10 +235,10 @@ var gen = {
 
     callback.data = this.data;
     callback.out = new Float32Array(2);
-    callback.parameters = this.parameters.slice(0);
+    callback.parameters = this.parameters.slice(0
 
-    //if( MemoryHelper.isPrototypeOf( this.memory ) )
-    callback.memory = this.memory.heap;
+    //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
+    );callback.memory = this.memory.heap;
 
     this.histories.clear();
 
@@ -260,7 +261,7 @@ var gen = {
         processedInput = void 0;
 
     if (isObject) {
-      // if input is a ugen...
+      // if input is a ugen... 
       if (gen.memo[input.name]) {
         // if it has been memoized...
         processedInput = gen.memo[input.name];
@@ -268,14 +269,14 @@ var gen = {
         gen.getInput(input[0]);
         gen.getInput(input[1]);
       } else {
-        // if not memoized generate code 
+        // if not memoized generate code  
         if (typeof input.gen !== 'function') {
           console.log('no gen found:', input, input.gen);
         }
-        var code = input.gen();
+        var code = input.gen
         //if( code.indexOf( 'Object' ) > -1 ) console.log( 'bad input:', input, code )
 
-        if (Array.isArray(code)) {
+        ();if (Array.isArray(code)) {
           if (!gen.shouldLocalize) {
             gen.functionBody += code[1];
           } else {

@@ -5,8 +5,8 @@ var gen = require('./gen.js'),
     phasor = require('./phasor.js');
 
 module.exports = function () {
-  var frequency = arguments.length <= 0 || arguments[0] === undefined ? 440 : arguments[0];
-  var pulsewidth = arguments.length <= 1 || arguments[1] === undefined ? .5 : arguments[1];
+  var frequency = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 440;
+  var pulsewidth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : .5;
 
   var graph = lt(accum(div(frequency, 44100)), .5);
 

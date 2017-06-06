@@ -6,7 +6,7 @@ var gen = require('./gen.js'),
     t60 = require('./t60.js');
 
 module.exports = function () {
-    var decayTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
+    var decayTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 44100;
     var props = arguments[1];
 
     var properties = Object.assign({}, { initValue: 1 }, props),
