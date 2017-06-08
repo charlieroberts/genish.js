@@ -25,7 +25,7 @@ var proto = {
 };
 
 module.exports = function (leftInput, rightInput) {
-  var pan = arguments.length <= 2 || arguments[2] === undefined ? .5 : arguments[2];
+  var pan = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : .5;
   var properties = arguments[3];
 
   if (gen.globals.panL === undefined) proto.initTable();

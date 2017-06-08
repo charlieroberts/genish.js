@@ -3,7 +3,7 @@
 var _gen = require('./gen.js');
 
 module.exports = function () {
-  var in1 = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+  var in1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
   var ugen = {
     inputs: [in1],
@@ -28,12 +28,12 @@ module.exports = function () {
 
           var idx = ugen.memory.value.idx;
 
-          _gen.addToEndBlock('memory[ ' + idx + ' ] = ' + inputs[0]);
+          _gen.addToEndBlock('memory[ ' + idx + ' ] = ' + inputs[0]
 
           // return ugen that is being recorded instead of ssd.
           // this effectively makes a call to ssd.record() transparent to the graph.
           // recording is triggered by prior call to gen.addToEndBlock.
-          _gen.histories.set(v, obj);
+          );_gen.histories.set(v, obj);
 
           return inputs[0];
         },

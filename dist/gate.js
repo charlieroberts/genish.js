@@ -1,6 +1,6 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _gen = require('./gen.js');
 
@@ -40,7 +40,8 @@ var proto = {
   },
   childgen: function childgen() {
     if (this.parent.initialized === false) {
-      _gen.getInputs(this); // parent gate is only input of a gate output, should only be gen'd once.
+      _gen.getInputs(this // parent gate is only input of a gate output, should only be gen'd once.
+      );
     }
 
     if (_gen.memo[this.name] === undefined) {

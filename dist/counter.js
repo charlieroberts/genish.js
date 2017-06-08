@@ -28,18 +28,17 @@ var proto = {
     var diff = this.max - this.min,
         out = '',
         wrap = '';
-
     // must check for reset before storing value for output
     if (!(typeof this.inputs[3] === 'number' && this.inputs[3] < 1)) {
       out += '  if( ' + _reset + ' >= 1 ) ' + valueRef + ' = ' + _min + '\n';
     }
 
-    out += '  var ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating 
+    out += '  var ' + this.name + '_value = ' + valueRef + ';\n  ' + valueRef + ' += ' + _incr + '\n'; // store output value before accumulating  
 
     if (typeof this.max === 'number' && this.max !== Infinity && typeof this.min !== 'number') {
-      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' && ' + loops + ' ) {\n    ' + valueRef + ' -= ' + diff + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
+      wrap = '  if( ' + valueRef + ' >= ' + this.max + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' -= ' + diff + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else if (this.max !== Infinity && this.min !== Infinity) {
-      wrap = '  if( ' + valueRef + ' >= ' + _max + ' && ' + loops + ' ) {\n    ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else if( ' + valueRef + ' < ' + _min + ' && ' + loops + ' ) {\n    ' + valueRef + ' += ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
+      wrap = '  if( ' + valueRef + ' >= ' + _max + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' -= ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else if( ' + valueRef + ' < ' + _min + ' &&  ' + loops + ' > 0) {\n    ' + valueRef + ' += ' + _max + ' - ' + _min + '\n    ' + wrapRef + ' = 1\n  }else{\n    ' + wrapRef + ' = 0\n  }\n';
     } else {
       out += '\n';
     }
@@ -51,11 +50,11 @@ var proto = {
 };
 
 module.exports = function () {
-  var incr = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-  var min = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-  var max = arguments.length <= 2 || arguments[2] === undefined ? Infinity : arguments[2];
-  var reset = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
-  var loops = arguments.length <= 4 || arguments[4] === undefined ? 1 : arguments[4];
+  var incr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  var min = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Infinity;
+  var reset = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+  var loops = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
   var properties = arguments[5];
 
   var ugen = Object.create(proto),

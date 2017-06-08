@@ -21,8 +21,8 @@ var proto = {
 };
 
 module.exports = function () {
-  var propName = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-  var value = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+  var propName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
   var ugen = Object.create(proto);
 

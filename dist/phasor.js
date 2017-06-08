@@ -6,8 +6,8 @@ var gen = require('./gen.js'),
     proto = { basename: 'phasor' };
 
 module.exports = function () {
-  var frequency = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-  var reset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+  var frequency = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  var reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   var props = arguments[2];
 
   if (props === undefined) props = { min: -1 };

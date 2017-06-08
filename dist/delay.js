@@ -25,7 +25,7 @@ module.exports = function (in1) {
     tapsAndProperties[_key - 2] = arguments[_key];
   }
 
-  var time = arguments.length <= 1 || arguments[1] === undefined ? 256 : arguments[1];
+  var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 256;
 
   var ugen = Object.create(proto),
       defaults = { size: 512, feedback: 0, interp: 'linear' },

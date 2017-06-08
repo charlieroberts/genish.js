@@ -55,7 +55,8 @@ module.exports = function () {
       if (needsParens) {
         out += ')';
       } else {
-        out = out.slice(1); // remove opening paren
+        out = out.slice(1 // remove opening paren
+        );
       }
 
       if (hasUgens) out += '\n';

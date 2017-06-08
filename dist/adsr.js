@@ -17,11 +17,11 @@ var gen = require('./gen.js'),
     not = require('./not.js');
 
 module.exports = function () {
-  var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44 : arguments[0];
-  var decayTime = arguments.length <= 1 || arguments[1] === undefined ? 22050 : arguments[1];
-  var sustainTime = arguments.length <= 2 || arguments[2] === undefined ? 44100 : arguments[2];
-  var sustainLevel = arguments.length <= 3 || arguments[3] === undefined ? .6 : arguments[3];
-  var releaseTime = arguments.length <= 4 || arguments[4] === undefined ? 44100 : arguments[4];
+  var attackTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 44;
+  var decayTime = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 22050;
+  var sustainTime = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 44100;
+  var sustainLevel = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : .6;
+  var releaseTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 44100;
   var _props = arguments[5];
 
   var envTrigger = bang(),
@@ -43,16 +43,16 @@ module.exports = function () {
 
   // slightly more efficient to use existing phase accumulator for linear envelopes
   //if( props.shape === 'linear' ) {
-  //  out = ifelse(
+  //  out = ifelse( 
   //    lt( phase, props.attackTime ), memo( div( phase, props.attackTime ) ),
   //    lt( phase, props.attackTime + props.decayTime ), sub( 1, mul( div( sub( phase, props.attackTime ), props.decayTime ), 1-props.sustainLevel ) ),
-  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime ),
+  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime ), 
   //      props.sustainLevel,
-  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ),
+  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ), 
   //      sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime ), props.releaseTime ), props.sustainLevel) ),
   //    0
   //  )
-  //} else {    
+  //} else {     
   bufferData = env({ length: 1024, alpha: props.alpha, shift: 0, type: props.shape });
 
   console.log(bufferData);
@@ -62,7 +62,7 @@ module.exports = function () {
   releaseAccum = props.triggerRelease ? gtp(sub(sustainLevel, accum(div(sustainLevel, releaseTime), 0, { shouldWrap: false })), 0) : sub(sustainLevel, mul(div(sub(phase, add(attackTime, decayTime, sustainTime)), releaseTime), sustainLevel)), releaseCondition = props.triggerRelease ? not(shouldSustain) : lt(phase, add(attackTime, decayTime, sustainTime, releaseTime));
 
   out = ifelse(
-  // attack
+  // attack 
   lt(phase, attackTime), peek(bufferData, div(phase, attackTime), { boundmode: 'clamp' }),
 
   // decay
@@ -74,11 +74,11 @@ module.exports = function () {
   // release
   releaseCondition, //lt( phase,  attackTime +  decayTime +  sustainTime +  releaseTime ),
   peek(bufferData, releaseAccum,
-  //sub(  sustainLevel, mul( div( sub( phase,  attackTime +  decayTime +  sustainTime),  releaseTime ),  sustainLevel ) ),
-  { boundmode: 'clamp' }), 0);
+  //sub(  sustainLevel, mul( div( sub( phase,  attackTime +  decayTime +  sustainTime),  releaseTime ),  sustainLevel ) ), 
+  { boundmode: 'clamp' }), 0
   //}
 
-  out.trigger = function () {
+  );out.trigger = function () {
     shouldSustain.value = 1;
     envTrigger.trigger();
   };

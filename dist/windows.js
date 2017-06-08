@@ -53,7 +53,7 @@ var windows = module.exports = {
     return 1 - Math.pow((index - n_1_over2) / n_1_over2, 2);
   },
   inversewelch: function inversewelch(length, _index, ignore) {
-    var shift = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
+    var shift = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
     //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
     var index = shift === 0 ? _index : (_index + Math.floor(shift * length)) % length;

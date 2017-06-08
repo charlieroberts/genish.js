@@ -19,8 +19,8 @@ var gen = require('./gen.js'),
     memo = require('./memo.js');
 
 module.exports = function () {
-  var attackTime = arguments.length <= 0 || arguments[0] === undefined ? 44100 : arguments[0];
-  var decayTime = arguments.length <= 1 || arguments[1] === undefined ? 44100 : arguments[1];
+  var attackTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 44100;
+  var decayTime = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 44100;
   var _props = arguments[2];
 
   var _bang = bang(),
@@ -32,10 +32,10 @@ module.exports = function () {
       buffer = void 0;
 
   //console.log( 'attack time:', attackTime, 'decay time:', decayTime )
-  var completeFlag = data([0]);
+  var completeFlag = data([0]
 
   // slightly more efficient to use existing phase accumulator for linear envelopes
-  if (props.shape === 'linear') {
+  );if (props.shape === 'linear') {
     out = ifelse(and(gte(phase, 0), lt(phase, attackTime)), memo(div(phase, attackTime)), and(gte(phase, 0), lt(phase, add(attackTime, decayTime))), sub(1, div(sub(phase, attackTime), decayTime)), neq(phase, -Infinity), poke(completeFlag, 1, 0, { inline: 0 }), 0);
   } else {
     bufferData = env(1024, { type: props.shape, alpha: props.alpha });

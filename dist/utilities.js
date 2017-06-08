@@ -65,14 +65,14 @@ var utilities = {
       }
     };
 
-    this.node.connect(this.ctx.destination);
+    this.node.connect(this.ctx.destination
 
     //this.node.connect( this.analyzer )
 
-    return this;
+    );return this;
   },
   playGraph: function playGraph(graph, debug) {
-    var mem = arguments.length <= 2 || arguments[2] === undefined ? 44100 * 10 : arguments[2];
+    var mem = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 44100 * 10;
 
     utilities.clear();
     if (debug === undefined) debug = false;

@@ -27,7 +27,6 @@ let proto = {
     let diff = this.max - this.min,
         out = '',
         wrap = ''
-    
     // must check for reset before storing value for output
     if( !(typeof this.inputs[3] === 'number' && this.inputs[3] < 1) ) { 
       out += `  if( ${_reset} >= 1 ) ${valueRef} = ${_min}\n`
@@ -37,7 +36,7 @@ let proto = {
     
     if( typeof this.max === 'number' && this.max !== Infinity && typeof this.min !== 'number' ) {
       wrap = 
-`  if( ${valueRef} >= ${this.max} && ${loops} ) {
+`  if( ${valueRef} >= ${this.max} &&  ${loops} > 0) {
     ${valueRef} -= ${diff}
     ${wrapRef} = 1
   }else{
@@ -45,10 +44,10 @@ let proto = {
   }\n`
     }else if( this.max !== Infinity && this.min !== Infinity ) {
       wrap = 
-`  if( ${valueRef} >= ${_max} && ${loops} ) {
+`  if( ${valueRef} >= ${_max} &&  ${loops} > 0) {
     ${valueRef} -= ${_max} - ${_min}
     ${wrapRef} = 1
-  }else if( ${valueRef} < ${_min} && ${loops} ) {
+  }else if( ${valueRef} < ${_min} &&  ${loops} > 0) {
     ${valueRef} += ${_max} - ${_min}
     ${wrapRef} = 1
   }else{
