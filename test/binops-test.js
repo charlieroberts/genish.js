@@ -12,7 +12,7 @@ describe( 'binops', ()=> {
   it( 'should add 4 and 7 to get 11', ()=> {
     let answer = 11,
         graph = add( 4,7 ),
-        out = gen.createCallback( graph ),
+        out = gen.createCallback( graph )  
         result = out()
 
     assert.equal( result, answer )

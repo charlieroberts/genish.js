@@ -8,12 +8,12 @@ var phasor = genlib.phasor
 
 describe( 'rate', ()=>{
   it( 'should cause a phasor with an frequency of 4410 to ramp to -.5 after five executions instead of 0', ()=> {
-    let answer = -.5,
+    let answer = .5,
         graph  = rate( phasor( 4410 ), .5 ),
         out    = gen.createCallback( graph, 512 ),
         result = 0
 
-    for( let i = 0; i < 5; i++ ) out()
+    for( let i = 0; i < 1; i++ ) out()
 
     result = out().toFixed( 2 )
 

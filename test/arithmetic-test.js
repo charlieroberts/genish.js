@@ -83,7 +83,7 @@ describe( 'monops', ()=> {
         out = gen.createCallback( graph ),
         result = out()
 
-    assert.equal( result, answer )
+    assert.equal( result.toFixed(6), answer.toFixed(6) )
   })
 
   it( 'should generate a value of PI/2 for acos(0)', ()=> {
@@ -92,7 +92,7 @@ describe( 'monops', ()=> {
         out = gen.createCallback( graph ),
         result = out()
 
-    assert.equal( result, answer )
+    assert.equal( result.toFixed(6), answer.toFixed(6) )
   })
 
   it( 'should generate a value of 0 for acos( 1 )', ()=> {
@@ -101,7 +101,7 @@ describe( 'monops', ()=> {
         out = gen.createCallback( graph ),
         result = out()
 
-    assert.equal( result, answer )
+    assert.equal( result.toFixed(6), answer.toFixed(6) )
   })
 
   it( 'should generate a value of 0 for atan(0)', ()=> {
@@ -119,7 +119,7 @@ describe( 'monops', ()=> {
         out = gen.createCallback( graph ),
         result = out()
 
-    assert.equal( result, answer )
+    assert.equal( result.toFixed(6), answer.toFixed(6) )
   })
 
   it( 'should fade 1 to .001 over 10 samples using t60(10)', ()=> {
