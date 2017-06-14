@@ -1,14 +1,14 @@
 'use strict'
 
-let gen  = require( './gen.js'  ),
-    data = require( './data.js' ),
-    poke = require( './poke.js' ),
-    peek = require( './peek.js' ),
-    sub  = require( './sub.js'  ),
-    wrap = require( './wrap.js' ),
-    accum= require( './accum.js')
+const gen  = require( './gen.js'  ),
+      data = require( './data.js' ),
+      poke = require( './poke.js' ),
+      peek = require( './peek.js' ),
+      sub  = require( './sub.js'  ),
+      wrap = require( './wrap.js' ),
+      accum= require( './accum.js')
 
-let proto = {
+const proto = {
   basename:'delay',
 
   gen() {
@@ -20,34 +20,26 @@ let proto = {
   },
 }
 
-module.exports = ( in1, time=256, ...tapsAndProperties ) => {
+const defaults = { size: 512, feedback:0, interp:'linear' }
+
+module.exports = ( in1, taps, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { size: 512, feedback:0, interp:'linear' },
-      writeIdx, readIdx, delaydata, properties, tapTimes = [ time ], taps
+      writeIdx, readIdx, delaydata
+
+  if( Array.isArray( taps ) === false ) taps = [ taps ]
   
-  if( Array.isArray( tapsAndProperties ) ) {
-    properties = tapsAndProperties[ tapsAndProperties.length - 1 ]
-    if( tapsAndProperties.length > 1 ) {
-      for( let i = 0; i < tapsAndProperties.length - 1; i++ ){
-        tapTimes.push( tapsAndProperties[ i ] )
-      }
-    }
-  }else{
-    properties = tapsAndProperties
-  }
+  let props = Object.assign( {}, defaults, properties )
 
-  if( properties !== undefined ) Object.assign( defaults, properties )
+  if( props.size < Math.max( ...taps ) ) props.size = Math.max( ...taps )
 
-  if( defaults.size < time ) defaults.size = time
-
-  delaydata = data( defaults.size )
+  delaydata = data( props.size )
   
   ugen.inputs = []
 
-  writeIdx = accum( 1, 0, { max:defaults.size }) 
+  writeIdx = accum( 1, 0, { max:props.size }) 
   
-  for( let i = 0; i < tapTimes.length; i++ ) {
-    ugen.inputs[ i ] = peek( delaydata, wrap( sub( writeIdx, tapTimes[i] ), 0, defaults.size ),{ mode:'samples', interp:defaults.interp })
+  for( let i = 0; i < taps.length; i++ ) {
+    ugen.inputs[ i ] = peek( delaydata, wrap( sub( writeIdx, taps[i] ), 0, props.size ),{ mode:'samples', interp:props.interp })
   }
   
   ugen.outputs = ugen.inputs // ugn, Ugh, UGH! but i guess it works.
