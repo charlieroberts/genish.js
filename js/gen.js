@@ -96,7 +96,8 @@ let gen = {
     for( let i = 0; i < 1 + isStereo; i++ ) {
       if( typeof ugen[i] === 'number' ) continue
 
-      let channel = isStereo ? ugen[i].gen() : ugen.gen(),
+      //let channel = isStereo ? ugen[i].gen() : ugen.gen(),
+      let channel = isStereo ? this.getInput( ugen[i] ) : this.getInput( ugen ), 
           body = ''
 
       // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
@@ -186,8 +187,9 @@ let gen = {
   
   /* getInputs
    *
-   * Given an argument ugen, extract its inputs. If they are numbers, return the numebrs. If
-   * they are ugens, call .gen() on the ugen, memoize the result and return the result. If the
+   * Called by each individual ugen when their .gen() method is called to resolve their various inputs.
+   * If an input is a number, return the number. If
+   * it is an ugen, call .gen() on the ugen, memoize the result and return the result. If the
    * ugen has previously been memoized return the memoized value.
    *
    */
@@ -200,6 +202,7 @@ let gen = {
         processedInput
 
     if( isObject ) { // if input is a ugen... 
+      //console.log( input.name, gen.memo[ input.name ] )
       if( gen.memo[ input.name ] ) { // if it has been memoized...
         processedInput = gen.memo[ input.name ]
       }else if( Array.isArray( input ) ) {
