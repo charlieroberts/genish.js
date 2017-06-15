@@ -20,7 +20,7 @@ const proto = {
   },
 }
 
-const defaults = { size: 512, feedback:0, interp:'linear' }
+const defaults = { size: 512, feedback:0, interp:'none' }
 
 module.exports = ( in1, taps, properties ) => {
   let ugen = Object.create( proto ),

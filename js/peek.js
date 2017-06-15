@@ -25,7 +25,10 @@ let proto = {
       `${this.name}_index + 1 >= ${this.data.buffer.length} ? ${this.name}_index + 1 - ${this.data.buffer.length} : ${this.name}_index + 1`
     }else if( this.boundmode === 'clamp' ) {
       next = 
-      `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
+        `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
+    } else if( this.boundmode === 'fold' || this.boundmode === 'mirror' ) {
+      next = 
+        `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.name}_index - ${this.data.buffer.length - 1} : ${this.name}_index + 1`
     }else{
        next = 
       `${this.name}_index + 1`     
