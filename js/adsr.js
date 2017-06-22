@@ -42,8 +42,6 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
   //} else {     
     bufferData = env({ length:1024, alpha:props.alpha, shift:0, type:props.shape })
 
-    console.log( bufferData )
-    
     sustainCondition = props.triggerRelease 
       ? shouldSustain
       : lt( phase, add( attackTime, decayTime, sustainTime ) )

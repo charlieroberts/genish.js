@@ -14,7 +14,7 @@ module.exports = props => {
   let properties = Object.assign( {}, defaults, props )
   let buffer = new Float32Array( properties.length )
 
-  let name = properties.type + '_' + properties.length + '_' + properties.shift + '_' + properties.reverse
+  let name = properties.type + '_' + properties.length + '_' + properties.shift + '_' + properties.reverse + '_' + properties.alpha
   if( typeof gen.globals.windows[ name ] === 'undefined' ) { 
 
     for( let i = 0; i < properties.length; i++ ) {

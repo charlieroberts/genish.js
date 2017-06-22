@@ -97,7 +97,8 @@ let library = {
   and:      require( './and.js' ),
   pan:      require( './pan.js' ),
   eq:       require( './eq.js' ),
-  neq:      require( './neq.js' )
+  neq:      require( './neq.js' ),
+  exp:      require( './exp.js' )
 }
 
 library.gen.lib = library

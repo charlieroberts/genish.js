@@ -53,7 +53,7 @@ const windows = module.exports = {
   },
 
   // parabola
-  welch( length, _index, ignore, shift ) {
+  welch( length, _index, ignore, shift=0 ) {
     //w[n] = 1 - Math.pow( ( n - ( (N-1) / 2 ) ) / (( N-1 ) / 2 ), 2 )
     const index = shift === 0 ? _index : (_index + Math.floor( shift * length )) % length
     const n_1_over2 = (length - 1) / 2 
@@ -77,10 +77,10 @@ const windows = module.exports = {
   },
 
   exponential( length, index, alpha ) {
-    return Math.pow( index/length, alpha )
+    return Math.pow( index / length, alpha )
   },
 
   linear( length, index ) {
-    return index/length
+    return index / length
   }
 }
