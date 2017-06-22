@@ -15,7 +15,8 @@ let gen      = require( './gen.js' ),
     add      = require( './add.js' ),
     gtp      = require( './gtp.js' ),
     not      = require( './not.js' ),
-    and      = require( './and.js' )
+    and      = require( './and.js' ),
+    neq      = require( './neq.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
