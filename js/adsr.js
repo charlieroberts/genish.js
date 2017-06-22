@@ -14,11 +14,12 @@ let gen      = require( './gen.js' ),
     param    = require( './param.js' ),
     add      = require( './add.js' ),
     gtp      = require( './gtp.js' ),
-    not      = require( './not.js' )
+    not      = require( './not.js' ),
+    and      = require( './and.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
-      phase = accum( 1, envTrigger, { max: Infinity, shouldWrap:false }),
+      phase = accum( 1, envTrigger, { max: Infinity, shouldWrap:false, initialValue:Infinity }),
       shouldSustain = param( 1 ),
       defaults = {
          shape: 'exponential',
@@ -64,7 +65,7 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
       peek( bufferData, sub( 1, mul( div( sub( phase,  attackTime ),  decayTime ), sub( 1,  sustainLevel ) ) ), { boundmode:'clamp' }),
 
       // sustain
-      sustainCondition,
+      and( sustainCondition, neq( phase, Infinity ) ),
       peek( bufferData,  sustainLevel ),
 
       // release
