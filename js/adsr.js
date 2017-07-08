@@ -16,7 +16,8 @@ let gen      = require( './gen.js' ),
     gtp      = require( './gtp.js' ),
     not      = require( './not.js' ),
     and      = require( './and.js' ),
-    neq      = require( './neq.js' )
+    neq      = require( './neq.js' ),
+    poke     = require( './poke.js' )
 
 module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLevel=.6, releaseTime=44100, _props ) => {
   let envTrigger = bang(),
@@ -30,62 +31,57 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
       props = Object.assign({}, defaults, _props ),
       bufferData, decayData, out, buffer, sustainCondition, releaseAccum, releaseCondition
 
-  // slightly more efficient to use existing phase accumulator for linear envelopes
-  //if( props.shape === 'linear' ) {
-  //  out = ifelse( 
-  //    lt( phase, props.attackTime ), memo( div( phase, props.attackTime ) ),
-  //    lt( phase, props.attackTime + props.decayTime ), sub( 1, mul( div( sub( phase, props.attackTime ), props.decayTime ), 1-props.sustainLevel ) ),
-  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime ), 
-  //      props.sustainLevel,
-  //    lt( phase, props.attackTime + props.decayTime + props.sustainTime + props.releaseTime ), 
-  //      sub( props.sustainLevel, mul( div( sub( phase, props.attackTime + props.decayTime + props.sustainTime ), props.releaseTime ), props.sustainLevel) ),
-  //    0
-  //  )
-  //} else {     
-    bufferData = env({ length:1024, alpha:props.alpha, shift:0, type:props.shape })
 
-    sustainCondition = props.triggerRelease 
-      ? shouldSustain
-      : lt( phase, add( attackTime, decayTime, sustainTime ) )
+  const completeFlag = data( [0] )
 
-    releaseAccum = props.triggerRelease
-      ? gtp( sub( sustainLevel, accum( div( sustainLevel, releaseTime ) , 0, { shouldWrap:false }) ), 0 )
-      : sub( sustainLevel, mul( div( sub( phase, add( attackTime, decayTime, sustainTime ) ), releaseTime ), sustainLevel ) ), 
+  bufferData = env({ length:1024, alpha:props.alpha, shift:0, type:props.shape })
 
-    releaseCondition = props.triggerRelease
-      ? not( shouldSustain )
-      : lt( phase, add( attackTime, decayTime, sustainTime, releaseTime ) )
+  sustainCondition = props.triggerRelease 
+    ? shouldSustain
+    : lt( phase, add( attackTime, decayTime, sustainTime ) )
 
-    out = ifelse(
-      // attack 
-      lt( phase,  attackTime ), 
-      peek( bufferData, div( phase, attackTime ), { boundmode:'clamp' } ), 
+  releaseAccum = props.triggerRelease
+    ? gtp( sub( sustainLevel, accum( div( sustainLevel, releaseTime ) , 0, { shouldWrap:false }) ), 0 )
+    : sub( sustainLevel, mul( div( sub( phase, add( attackTime, decayTime, sustainTime ) ), releaseTime ), sustainLevel ) ), 
 
-      // decay
-      lt( phase, add( attackTime, decayTime ) ), 
-      peek( bufferData, sub( 1, mul( div( sub( phase,  attackTime ),  decayTime ), sub( 1,  sustainLevel ) ) ), { boundmode:'clamp' }),
+  releaseCondition = props.triggerRelease
+    ? not( shouldSustain )
+    : lt( phase, add( attackTime, decayTime, sustainTime, releaseTime ) )
 
-      // sustain
-      and( sustainCondition, neq( phase, Infinity ) ),
-      peek( bufferData,  sustainLevel ),
+  out = ifelse(
+    // attack 
+    lt( phase,  attackTime ), 
+    peek( bufferData, div( phase, attackTime ), { boundmode:'clamp' } ), 
 
-      // release
-      releaseCondition, //lt( phase,  attackTime +  decayTime +  sustainTime +  releaseTime ),
-      peek( 
-        bufferData,
-        releaseAccum, 
-        //sub(  sustainLevel, mul( div( sub( phase,  attackTime +  decayTime +  sustainTime),  releaseTime ),  sustainLevel ) ), 
-        { boundmode:'clamp' }
-      ),
+    // decay
+    lt( phase, add( attackTime, decayTime ) ), 
+    peek( bufferData, sub( 1, mul( div( sub( phase,  attackTime ),  decayTime ), sub( 1,  sustainLevel ) ) ), { boundmode:'clamp' }),
 
-      0
-    )
-  //}
+    // sustain
+    and( sustainCondition, neq( phase, Infinity ) ),
+    peek( bufferData,  sustainLevel ),
+
+    // release
+    releaseCondition, //lt( phase,  attackTime +  decayTime +  sustainTime +  releaseTime ),
+    peek( 
+      bufferData,
+      releaseAccum, 
+      //sub(  sustainLevel, mul( div( sub( phase,  attackTime +  decayTime +  sustainTime),  releaseTime ),  sustainLevel ) ), 
+      { boundmode:'clamp' }
+    ),
+
+    neq( phase, Infinity ),
+    poke( completeFlag, 1, 0, { inline:0 }),
+
+    0
+  )
    
   out.trigger = ()=> {
     shouldSustain.value = 1
     envTrigger.trigger()
   }
+
+  out.isComplete = ()=> gen.memory.heap[ completeFlag.memory.values.idx ]
 
   out.release = ()=> {
     shouldSustain.value = 0

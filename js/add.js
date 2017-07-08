@@ -9,6 +9,8 @@ const proto = {
         out='',
         sum = 0, numCount = 0, adderAtEnd = false, alreadyFullSummed = true
 
+    if( inputs.length === 0 ) return 0
+
     out = `  var ${this.name} = `
 
     inputs.forEach( (v,i) => {

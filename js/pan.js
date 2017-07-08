@@ -11,12 +11,11 @@ let proto = {
     let bufferL = new Float32Array( 1024 ),
         bufferR = new Float32Array( 1024 )
 
-    let sqrtTwoOverTwo = Math.sqrt(2) / 2
-
+    const angToRad = Math.PI / 180
     for( let i = 0; i < 1024; i++ ) { 
-      let pan = -1 + ( i / 1024 ) * 2
-      bufferL[i] = ( sqrtTwoOverTwo * ( Math.cos(pan) - Math.sin(pan) ) )
-      bufferR[i] = ( sqrtTwoOverTwo * ( Math.cos(pan) + Math.sin(pan) ) )
+      let pan = i * ( 90 / 1024 )
+      bufferL[i] = Math.cos( pan * angToRad ) 
+      bufferR[i] = Math.sin( pan * angToRad )
     }
 
     gen.globals.panL = data( bufferL, 1, { immutable:true })
