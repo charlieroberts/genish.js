@@ -220,7 +220,7 @@ let gen = {
 ${ parameterString }
 ${ this.functionBody }
 
-  return memory[0]
+  return fround( memory[0] )
   }
   
   return { callback:render }

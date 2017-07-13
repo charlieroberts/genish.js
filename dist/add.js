@@ -14,25 +14,46 @@ module.exports = ( ...args ) => {
 
       gen.variableNames.add( [this.name,'f'] )
 
-      inputs.forEach( (v,i) => {
-        if( isNaN( v ) ) {
-          out += v
-          if( i < inputs.length -1 ) {
-            adderAtEnd = true
-            out += ' + '
+      if( inputs.length > 2 ) { 
+        inputs.forEach( (v,i) => {
+          if( isNaN( v ) ) {
+            if( i % 2 === 0 && inputs.length > 2 && i < inputs.length - 1 ) {
+              out += 'fround('
+            }
+            out += v
+            
+            if( i < inputs.length -1 &&  i % 2 === 0 ) {
+              adderAtEnd = true
+              out += ' + '
+            }
+
+            if( i % 2 === 1 && inputs.length > 2 ) {
+              out += ')'
+              if( i < inputs.length - 1 ) {
+                out += ' + '
+                adderAtEnd = true 
+              }
+            }
+
+            alreadyFullSummed = false
+          }else{
+            sum += parseFloat( v )
+            numCount++
           }
-          alreadyFullSummed = false
-        }else{
-          sum += parseFloat( v )
-          numCount++
+        })
+        if( numCount > 0 ) {
+          out += adderAtEnd || alreadyFullSummed ? `fround(${sum})` : ` + fround(${sum})`
         }
-      })
-      
+      }else{
+        if( inputs.length === 1 ) {
+          out += inputs[0] 
+        }else{
+          out += `${inputs[0]} + ${inputs[1]}`
+        }
+      }
       //if( alreadyFullSummed ) out = ''
 
-      if( numCount > 0 ) {
-        out += adderAtEnd || alreadyFullSummed ? `fround(${sum})` : ` + fround(${sum})`
-      }
+
       
       //if( !alreadyFullSummed ) out += ')'
 
