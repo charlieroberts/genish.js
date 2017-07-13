@@ -41,9 +41,12 @@ let utilities = {
   },
 
   createScriptProcessor() {
-    this.node = this.ctx.createScriptProcessor( 1024, 0, 2 ),
-    this.clearFunction = function() { return 0 },
-    this.callback = this.clearFunction
+    this.node = this.ctx.createScriptProcessor( 1024, 0, 2 )
+    this.clearFunction = function() { return 0 }
+
+    if( typeof this.callback === undefined ) this.callback = this.clearFunction
+    
+    var that = this
 
     this.node.onaudioprocess = function( audioProcessingEvent ) {
       var outputBuffer = audioProcessingEvent.outputBuffer;
@@ -56,7 +59,7 @@ let utilities = {
         
         utilities.callback()
 
-        if( !isStereo ) {
+        if( that.isStereo === false ) {
           left[ sample ] = right[ sample ] = memory[0]//utilities.callback()
         }else{
           left[ sample  ] = memory[0]
@@ -76,7 +79,7 @@ let utilities = {
     utilities.clear()
     if( debug === undefined ) debug = false
           
-    isStereo = Array.isArray( graph )
+    this.isStereo = Array.isArray( graph )
 
     utilities.callback = gen.createCallback( graph, mem, debug )
     

@@ -107,7 +107,6 @@ let gen = {
       //mem.alloc( 2, true )
     }
     
-    this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -220,7 +219,7 @@ let gen = {
 ${ parameterString }
 ${ this.functionBody }
 
-  return fround( memory[0] )
+  return fround( memory[0>>2] )
   }
   
   return { callback:render }
@@ -360,5 +359,8 @@ ${ this.functionBody }
     }
   }
 }
+
+
+gen.memoryOutputIdx = gen.memory.alloc( 2, true )
 
 module.exports = gen

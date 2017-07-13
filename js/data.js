@@ -92,7 +92,6 @@ module.exports = ( x, y=1, properties ) => {
     },
   }
 
-  console.log( 'ugen memory request', ugen.dim )
   ugen.memory = {
     values: { length:ugen.dim, idx:null }
   }

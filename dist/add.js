@@ -51,11 +51,6 @@ module.exports = ( ...args ) => {
           out += `${inputs[0]} + ${inputs[1]}`
         }
       }
-      //if( alreadyFullSummed ) out = ''
-
-
-      
-      //if( !alreadyFullSummed ) out += ')'
 
       out += ');\n'
 
