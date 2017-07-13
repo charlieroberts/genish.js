@@ -11,7 +11,6 @@ let proto = {
   basename:'cycle',
 
   initTable() {
-    console.log( 'INIT CYCLE' ) 
     let buffer = new Float32Array( 1024 )
 
     for( let i = 0, l = buffer.length; i < l; i++ ) {
