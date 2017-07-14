@@ -17,6 +17,7 @@ let utilities = {
   createContext() {
     let AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
     this.ctx = new AC()
+
     gen.samplerate = this.ctx.sampleRate
 
     let start = () => {
@@ -24,11 +25,11 @@ let utilities = {
         if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
           window.removeEventListener( 'touchstart', start )
 
-          if( 'ontouchstart' in document.documentElement ){ // required to start audio under iOS 6
-            let mySource = utilities.ctx.createBufferSource()
-            mySource.connect( utilities.ctx.destination )
-            mySource.noteOn( 0 )
-          }
+          if( 'ontouchstart' in document.documentElement ) { // required to start audio under iOS 6
+             let mySource = utilities.ctx.createBufferSource()
+             mySource.connect( utilities.ctx.destination )
+             mySource.noteOn( 0 )
+           }
          }
       }
     }
@@ -41,21 +42,24 @@ let utilities = {
   },
 
   createScriptProcessor() {
-    this.node = this.ctx.createScriptProcessor( 1024, 0, 2 ),
-    this.clearFunction = function() { return 0 },
-    this.callback = this.clearFunction
+    this.node = this.ctx.createScriptProcessor( 1024, 0, 2 )
+    this.clearFunction = function() { return 0 }
+    if( typeof this.callback === 'undefined' ) this.callback = this.clearFunction
 
     this.node.onaudioprocess = function( audioProcessingEvent ) {
       var outputBuffer = audioProcessingEvent.outputBuffer;
 
       var left = outputBuffer.getChannelData( 0 ),
-          right= outputBuffer.getChannelData( 1 )
+          right= outputBuffer.getChannelData( 1 ),
+          isStereo = utilities.isStereo
 
-      for (var sample = 0; sample < left.length; sample++) {
-        if( !isStereo ) {
-          left[ sample ] = right[ sample ] = utilities.callback()
+     for( var sample = 0; sample < left.length; sample++ ) {
+        var out = utilities.callback()
+
+        if( isStereo === false ) {
+          left[ sample ] = right[ sample ] = out 
         }else{
-          var out = utilities.callback()
+          var out = that.callback()
           left[ sample  ] = out[0]
           right[ sample ] = out[1]
         }
@@ -64,8 +68,6 @@ let utilities = {
 
     this.node.connect( this.ctx.destination )
 
-    //this.node.connect( this.analyzer )
-
     return this
   },
   
@@ -73,7 +75,7 @@ let utilities = {
     utilities.clear()
     if( debug === undefined ) debug = false
           
-    isStereo = Array.isArray( graph )
+    this.isStereo = Array.isArray( graph )
 
     utilities.callback = gen.createCallback( graph, mem, debug )
     
