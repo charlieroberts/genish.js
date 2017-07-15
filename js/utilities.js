@@ -59,7 +59,7 @@ let utilities = {
         if( isStereo === false ) {
           left[ sample ] = right[ sample ] = out 
         }else{
-          var out = that.callback()
+          var out = utilities.callback()
           left[ sample  ] = out[0]
           right[ sample ] = out[1]
         }
