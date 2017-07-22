@@ -8,6 +8,8 @@
 
 let MemoryHelper = require( 'memory-helper' )
 
+let buf = new ArrayBuffer( 0x1000000 )
+
 let gen = {
 
   accum:0,
@@ -35,6 +37,9 @@ let gen = {
   memo: {},
 
   data: {},
+  memory: MemoryHelper.create( buf ),
+
+  memoryOutputIndex:0,
   
   /* export
    *
@@ -76,6 +81,8 @@ let gen = {
 
     if( typeof mem === 'number' || mem === undefined ) {
       mem = MemoryHelper.create( mem )
+
+      this.memoryOutputIdx = mem.alloc( 2, true )
     }
     
     //console.log( 'cb memory:', mem )
@@ -117,7 +124,7 @@ let gen = {
       let lastidx = body.length - 1
 
       // insert return keyword
-      body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[' + i + ']  = ' + body[ lastidx ] + '\n'
 
       this.functionBody += body.join('\n')
     }
@@ -127,7 +134,7 @@ let gen = {
         value.gen()      
     })
 
-    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
+    let returnStatement = isStereo ? '  return memory' : '  return memory[0]'
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -266,5 +273,8 @@ let gen = {
     }
   }
 }
+
+
+gen.memoryOutputIdx = gen.memory.alloc( 2, true )
 
 module.exports = gen

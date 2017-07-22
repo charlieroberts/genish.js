@@ -46,7 +46,7 @@ let proto = {
       }
     }
 
-    out += `  var ${this.name}_value = ${valueRef};\n`
+    out += `  var ${this.name}_value = ${valueRef}\n`
     
     if( this.shouldWrap === false && this.shouldClamp === true ) {
       out += `  if( ${valueRef} < ${this.max } ) ${valueRef} += ${_incr}\n`
@@ -54,8 +54,8 @@ let proto = {
       out += `  ${valueRef} += ${_incr}\n` // store output value before accumulating  
     }
 
-    if( this.max !== Infinity  && this.shouldWrap ) wrap += `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n`
-    if( this.min !== -Infinity && this.shouldWrap ) wrap += `  if( ${valueRef} < ${this.min} ) ${valueRef} += ${diff}\n\n`
+    if( this.max !== Infinity  && this.shouldWrapMax ) wrap += `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n`
+    if( this.min !== -Infinity && this.shouldWrapMin ) wrap += `  if( ${valueRef} < ${this.min} ) ${valueRef} += ${diff}\n`
 
     //if( this.min === 0 && this.max === 1 ) { 
     //  wrap =  `  ${valueRef} = ${valueRef} - (${valueRef} | 0)\n\n`
@@ -65,7 +65,7 @@ let proto = {
     //  wrap = `  if( ${valueRef} >= ${this.max} ) ${valueRef} -= ${diff}\n\n`
     //}
 
-    out = out + wrap
+    out = out + wrap + '\n'
 
     return out
   }
@@ -73,7 +73,7 @@ let proto = {
 
 module.exports = ( incr, reset=0, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { min:0, max:1, shouldWrap: true, shouldClamp:false }
+      defaults = { min:0, max:1, shouldWrapMax: true, shouldWrapMin:false, shouldClamp:false }
   
   if( properties !== undefined ) Object.assign( defaults, properties )
 
