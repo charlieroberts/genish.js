@@ -73,7 +73,7 @@ let proto = {
 
 module.exports = ( incr, reset=0, properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { min:0, max:1, shouldWrapMax: true, shouldWrapMin:false, shouldClamp:false }
+      defaults = { min:0, max:1, shouldWrap:true, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
   
   if( properties !== undefined ) Object.assign( defaults, properties )
 
