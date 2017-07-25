@@ -2,7 +2,7 @@
   "name": "genish.js",
   "version": "0.2.3",
   "description": "gen~ in js",
-  "main": "dist/index.js",
+  "main": "js/index.js",
   "directories": {
     "test": "tests"
   },
