@@ -34,7 +34,7 @@ let gen = {
 
   memo: {},
 
-  data: {},
+  //data: {},
   
   /* export
    *
@@ -50,6 +50,14 @@ let gen = {
   requestMemory( memorySpec, immutable=false ) {
     for( let key in memorySpec ) {
       let request = memorySpec[ key ]
+
+      //console.log( 'requesting ' + key + ':' , JSON.stringify( request ) )
+
+      if( request.length === undefined ) {
+        console.log( 'undefined length for:', key )
+
+        continue
+      }
 
       request.idx = gen.memory.alloc( request.length, immutable )
     }

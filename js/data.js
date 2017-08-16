@@ -62,12 +62,13 @@ module.exports = ( x, y=1, properties ) => {
     buffer = x
   }
   
-  ugen = { 
+  ugen = Object.create( proto )
+
+  Object.assign( ugen, { 
     buffer,
     name: proto.basename + gen.getUID(),
     dim:  buffer.length, // XXX how do we dynamically allocate this?
     channels : 1,
-    gen:  proto.gen,
     onload: null,
     then( fnc ) {
       ugen.onload = fnc
@@ -81,13 +82,10 @@ module.exports = ( x, y=1, properties ) => {
         ugen.onload() 
       })
     },
-  }
-
-  ugen.memory = {
-    values: { length:ugen.dim, idx:null }
-  }
-
-  gen.name = 'data' + gen.getUID()
+    memory : {
+      values: { length:buffer.length, idx:null }
+    }
+  })
 
   if( shouldLoad ) ugen.load( x )
   

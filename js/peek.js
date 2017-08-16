@@ -1,6 +1,9 @@
 'use strict'
 
-let gen  = require('./gen.js')
+const gen  = require('./gen.js'),
+      dataUgen = require('./data.js')
+
+console.log( 'dataUgen:', dataUgen )
 
 let proto = {
   basename:'peek',
@@ -60,21 +63,28 @@ let proto = {
 
     return [ this.name+'_out', functionBody ]
   },
+
+  defaults : { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' }
 }
 
-module.exports = ( data, index, properties ) => {
-  let ugen = Object.create( proto ),
-      defaults = { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' } 
-  
-  if( properties !== undefined ) Object.assign( defaults, properties )
+module.exports = ( input_data, index=0, properties ) => {
+  let ugen = Object.create( proto )
 
-  Object.assign( ugen, { 
-    data,
-    dataName:   data.name,
-    uid:        gen.getUID(),
-    inputs:     [ index, data ],
-  },
-  defaults )
+  //console.log( dataUgen, gen.data )
+
+  // XXX why is dataUgen not the actual function? some type of browserify nonsense...
+  const finalData = typeof input_data.basename === 'undefined' ? gen.lib.data( input_data ) : input_data
+
+  Object.assign( ugen, 
+    { 
+      'data':     finalData,
+      dataName:   finalData.name,
+      uid:        gen.getUID(),
+      inputs:     [ index, finalData ],
+    },
+    proto.defaults,
+    properties 
+  )
   
   ugen.name = ugen.basename + ugen.uid
 

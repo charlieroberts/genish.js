@@ -68,31 +68,30 @@ let proto = {
     out = out + wrap + '\n'
 
     return out
-  }
+  },
+
+  defaults : { min:0, max:1, shouldWrap:true, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
 }
 
 module.exports = ( incr, reset=0, properties ) => {
-  let ugen = Object.create( proto ),
-      defaults = { min:0, max:1, shouldWrap:true, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
-  
-  if( properties !== undefined ) Object.assign( defaults, properties )
+  const ugen = Object.create( proto )
+      
+  Object.assign( ugen, 
+    { 
+      uid:    gen.getUID(),
+      inputs: [ incr, reset ],
+      memory: {
+        value: { length:1, idx:null }
+      }
+    },
+    proto.defaults,
+    properties 
+  )
 
-  if( defaults.initialValue === undefined ) defaults.initialValue = defaults.min
-
-  Object.assign( ugen, { 
-    min: defaults.min, 
-    max: defaults.max,
-    initial: defaults.initialValue,
-    uid:    gen.getUID(),
-    inputs: [ incr, reset ],
-    memory: {
-      value: { length:1, idx:null }
-    }
-  },
-  defaults )
+  if( ugen.initialValue === undefined ) ugen.initialValue = ugen.min
 
   Object.defineProperty( ugen, 'value', {
-    get() { return gen.memory.heap[ this.memory.value.idx ] },
+    get()  { return gen.memory.heap[ this.memory.value.idx ] },
     set(v) { gen.memory.heap[ this.memory.value.idx ] = v }
   })
 

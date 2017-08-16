@@ -3,7 +3,7 @@
 let gen  = require('./gen.js')
 
 let proto = {
-  name:'gt',
+  basename:'gt',
 
   gen() {
     let out,
@@ -28,7 +28,7 @@ module.exports = (x,y) => {
   let gt = Object.create( proto )
 
   gt.inputs = [ x,y ]
-  gt.name = 'gt'+gen.getUID()
+  gt.name = gt.basename + gen.getUID()
 
   return gt
 }

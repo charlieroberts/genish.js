@@ -1,14 +1,3 @@
-/*
-
- a = conditional( condition, trueBlock, falseBlock )
- b = conditional([
-   condition1, block1,
-   condition2, block2,
-   condition3, block3,
-   defaultBlock
- ])
-
-*/
 'use strict'
 
 let gen = require( './gen.js' )
@@ -20,6 +9,8 @@ let proto = {
     let conditionals = this.inputs[0],
         defaultValue = gen.getInput( conditionals[ conditionals.length - 1] ),
         out = `  var ${this.name}_out = ${defaultValue}\n` 
+
+    //console.log( 'conditionals:', this.name, conditionals )
 
     //console.log( 'defaultValue:', defaultValue )
 
@@ -61,26 +52,11 @@ let proto = {
 ${output}
   }`
 
-if( !isEndBlock ) {
-  out += ` else`
-}else{
-  out += `\n`
-}
-/*         
- else`
-      }else if( isEndBlock ) {
-        out += `{\n  ${output}\n  }\n`
-      }else {
-
-        //if( i + 2 === conditionals.length || i === conditionals.length - 1 ) {
-        //  out += `{\n  ${output}\n  }\n`
-        //}else{
-          out += 
-` if( ${cond} === 1 ) {
-${output}
-  } else `
-        //}
-      }*/
+      if( !isEndBlock ) {
+        out += ` else`
+      }else{
+        out += `\n`
+      }
     }
 
     gen.memo[ this.name ] = `${this.name}_out`
