@@ -15,7 +15,7 @@
   'use jsdsp'
 
   trigger = bang()
-  mydecay = max( accum( -2 / gen.samplerate, trigger, { shouldWrap:false, initialValue:1 }), 0 )
+  mydecay = max( accum( -2 / gen.samplerate, trigger, { shouldWrap:false, resetValue:1 }), 0 )
 
   play( cycle(330) * mydecay )
 }
@@ -38,7 +38,7 @@ decay  = gen.samplerate * 2 // two seconds
   // create the attack
   myattack = accum( 1 / attack, attackTrigger )
   // create the decay
-  mydecay = accum( -1 / decay, decayTrigger, { initialValue:1 })
+  mydecay = accum( -1 / decay, decayTrigger, { resetValue:1 })
    
   // running phase accumulator to determine currnet envelope stage
   phase = accum( 1, attackTrigger, { shouldWrap:false } )
@@ -63,7 +63,7 @@ decayTrigger.trigger()
 
 /*
  * The envelope generated above can also be created simply using ad( 88200, 88200 ), but hopefully
- * the illustrating how the ad() ugen works will give you some ideas for your own envelopes. ad() and
+ * illustrating how the ad() ugen works will give you some ideas for your own envelopes. ad() and
  * adsr() also use exponential envelopes by default, so they work a little bit better perceptually (you
  * can change this by adding a { shape:'linear' } properties dictionary to either ugen).
  * Using the ifelse() ugen, we can make as many stages in our envelope as our heart desires. That's
@@ -96,10 +96,10 @@ env.trigger()
   play( osc * env * .15 )
 }
 
+// trigger
+env.trigger()
+
 // release
 env.release()
-
-// re-trigger
-env.trigger()
 
 // see the adsr documentation for more details.

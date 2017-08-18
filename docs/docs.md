@@ -372,7 +372,7 @@ accum
 ----
 **increment** &nbsp; *ugen* or *number*  (default = 1) The amount to increase the accumulator's internal value by on each sample  
 **reset**  &nbsp; *ugen* or *number* (default = 0) When `reset` has a value of 1, the accumulator will reset its internal value to 0.  
-**properties** &nbsp; *object*  An optional dictionary containing a `max` value that the `accum` increments to before wrapping, and a `min` value that the `accum` wraps to after reaching/passing its max. An `initialValue` for the `accum` can also be provided; if it is not given the initial value is assumed to be the same as its `min`.  
+**properties** &nbsp; *object*  An optional dictionary containing a `max` value that the `accum` increments to before wrapping, and a `min` value that the `accum` wraps to after reaching/passing its max. An `initialValue` for the `accum` can also be provided; if it is not given the initial value is assumed to be the same as its `min`. Finally, a `resetValue` can determine what value the accum ugen jumps to whenever the reset input has a value of 1. 
 
 `accum()` is used to increment a stored value between a provided range that defaults to {0,1}. If the accumulator values passes its maximum, it wraps. `accum()` is very similar to the `counter` ugen, but is slightly more efficient. Additionally, the `min` and `max` properties of `accum` are fixed values, while they can be specified with signals in `counter`.
 

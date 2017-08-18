@@ -39,10 +39,13 @@ let proto = {
 
     // must check for reset before storing value for output
     if( !(typeof this.inputs[1] === 'number' && this.inputs[1] < 1) ) { 
-      if( this.initialValue !== this.min ) {
-        out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n\n`
+      if( this.resetValue !== this.min ) {
+
+        out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.resetValue}\n\n`
+        //out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n\n`
       }else{
-        out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.initialValue}\n\n`
+        out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.min}\n\n`
+        //out += `  if( ${_reset} >=1 ) ${valueRef} = ${this.initialValue}\n\n`
       }
     }
 
@@ -70,7 +73,7 @@ let proto = {
     return out
   },
 
-  defaults : { min:0, max:1, shouldWrap:true, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
+  defaults : { min:0, max:1, resetValue:0, initialValue:0, shouldWrap:true, shouldWrapMax: true, shouldWrapMin:true, shouldClamp:false }
 }
 
 module.exports = ( incr, reset=0, properties ) => {
@@ -87,6 +90,16 @@ module.exports = ( incr, reset=0, properties ) => {
     proto.defaults,
     properties 
   )
+
+  if( properties !== undefined && properties.shouldWrapMax === undefined && properties.shouldWrapMin === undefined ) {
+    if( properties.shouldWrap !== undefined ) {
+      ugen.shouldWrapMin = ugen.shouldWrapMax = properties.shouldWrap
+    }
+  }
+
+  if( properties !== undefined && properties.resetValue === undefined ) {
+    ugen.resetValue = ugen.min
+  }
 
   if( ugen.initialValue === undefined ) ugen.initialValue = ugen.min
 
