@@ -3,8 +3,6 @@
 const gen  = require('./gen.js'),
       dataUgen = require('./data.js')
 
-console.log( 'dataUgen:', dataUgen )
-
 let proto = {
   basename:'peek',
 

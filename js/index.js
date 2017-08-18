@@ -24,7 +24,6 @@ let library = {
     library.switch = destination.ternary
 
     destination.clip = library.clamp
-    console.log( destination.data )
   },
 
   gen:      require( './gen.js' ),
