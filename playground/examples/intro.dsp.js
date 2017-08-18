@@ -159,7 +159,7 @@ page.
 *****************************************************/
 {
   'use jsdsp'
-
+ 
   d = data( [220,330,440,880] )
  
   // create a ramp from 0-4 over 10 seconds
@@ -201,23 +201,26 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
 
 {
   'use jsdsp'
+ 
   // frequencing to loop through
   frequencies = data( [220,330,440,880] )
- 
-  // get non-interpolating signal for frequency
-  freqSignal = peek( frequencies, phasor( .5, 0, { min:0 } ), { interp:'none' } ) 
+  
+  // get interpolating signal for frequency
+  freqRate = .5/gen.samplerate
+  freqSignal = peek( frequencies, accum( freqRate ) ) 
  
   // create a decay envelope
-  envelope = 1 - phasor( 2, 0, { min:0 })
+  phase = counter( freqRate * 4, 0, 1 )
+  envelope = ad( 440, 11015, { trigger:phase.wrap })
  
   // multiply sine osc by envelope
-  notes = cycle( freqSignal ) * envelope
+  notes = mul( cycle( freqSignal ), envelope )
  
   // ... turn notes down
-  gain = notes * .1
+  gain = mul( notes, .1 )
  
   // create 1/4 second echo
-  echo = delay( gain, 11025, { size: 22050 })
+  echo = delay( gain, 11025, { size: 44100 })
  
   // passing an array to play creates a stereo signal
   // notes on the left, echos on the right
