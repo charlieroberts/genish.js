@@ -19,10 +19,11 @@ let gen      = require( './gen.js' ),
     memo     = require( './memo.js' )
 
 module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
-  let _bang = bang(),
-      phase = accum( 1, _bang, { min:0, max: Infinity, initialValue:-Infinity, shouldWrap:false }),
-      props = Object.assign({}, { shape:'exponential', alpha:5 }, _props ),
-      bufferData, bufferDataReverse, decayData, out, buffer
+  const props = Object.assign({}, { shape:'exponential', alpha:5, trigger:null }, _props )
+  const _bang = props.trigger !== null ? props.trigger : bang(),
+        phase = accum( 1, _bang, { min:0, max: Infinity, initialValue:-Infinity, shouldWrap:false })
+      
+  let bufferData, bufferDataReverse, decayData, out, buffer
 
   //console.log( 'shape:', props.shape, 'attack time:', attackTime, 'decay time:', decayTime )
   let completeFlag = data( [0] )
