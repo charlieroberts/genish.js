@@ -59,7 +59,6 @@ let utilities = {
         if( isStereo === false ) {
           left[ sample ] = right[ sample ] = out 
         }else{
-          var out = utilities.callback()
           left[ sample  ] = out[0]
           right[ sample ] = out[1]
         }
@@ -71,13 +70,13 @@ let utilities = {
     return this
   },
   
-  playGraph( graph, debug, mem=44100*10 ) {
+  playGraph( graph, debug, mem=44100*10, memType=Float32Array ) {
     utilities.clear()
     if( debug === undefined ) debug = false
           
     this.isStereo = Array.isArray( graph )
 
-    utilities.callback = gen.createCallback( graph, mem, debug )
+    utilities.callback = gen.createCallback( graph, mem, debug, false, memType )
     
     if( utilities.console ) utilities.console.setValue( utilities.callback.toString() )
 
