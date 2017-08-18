@@ -41,7 +41,7 @@ signalData = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
   tap4Time = add( roomSizeCoeff, 5 )
   multitap = delay( 
     prediffusePlusDamping, 
-   	tap1Time, tap2Time, tap3Time, tap4Time,
+   	[tap1Time, tap2Time, tap3Time, tap4Time],
     { size: 48000, interp:'linear' }
   )
   

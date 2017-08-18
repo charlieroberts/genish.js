@@ -1,0 +1,110 @@
+in1 = noise()
+
+x1 = ssd(); x2 = ssd(); y1 = ssd(); y2 = ssd();
+ 
+// define our coefficients
+a0 = param( 'a0', .001453 ); a1 = param( 'a1', .002906 ); a2 = param( 'a2', .001453 )
+b1 = param( 'b1', -1.888279 ); b2 = param( 'b2', .894091 );
+
+
+/***** begin sample processing ******/
+{
+  'use jsdsp'
+
+  in1a0 = x1.in( in1 ) * a0
+  x1a1  = x2.in( x1.out ) * a1
+  x2a2  = x2.out * a2
+   
+  sumLeft = in1a0 + x1a1 + x2a2
+   
+  y1b1 = y2.in( y1.out ) * b1
+  y2b2 = y2.out * b2
+   
+  sumRight = y1b1 + y2b2
+   
+  diff = sumLeft - sumRight
+   
+  y1.in( diff )
+   
+  /****** end sample processsing ******/
+   
+  cb = play( diff, true )
+}
+ 
+// setup an object to store our filter parmaeters for use with a GUI
+biquad = {
+  frequency: 550,
+  Q: .7,
+  mode: 'LP'
+}
+ 
+// get coefficients and map them to the param() ugens we declared earlier
+changeCoeffs = () => {
+  [ cb.a0, cb.a1, cb.a2, cb.b1, cb.b2 ] = getCoeffs( biquad.frequency, biquad.Q, biquad.mode )
+}
+ 
+// create our GUI using dat.GUI
+gui = new dat.GUI({ width:500 })
+gui.add( biquad, 'frequency', 100, 10000 ).onChange( changeCoeffs )
+gui.add( biquad, 'Q', 0, 20 ).onChange( changeCoeffs )
+gui.add( biquad, 'mode', ['LP','BP','HP'] ).onChange( changeCoeffs )
+ 
+// a function to generate coefficients based on cutoff, Q and filter mode
+// no operator overloading (jsdsp) is used
+getCoeffs = ( cutoff=330, Q=.7, mode='LP' ) => {
+  let c,a1,a2,b0,b1,b2,w0,sinw0,cosw0,alpha
+  c = a1 = a2 = b0 = b1 = b2 = 0
+   
+  switch ( mode ) {
+    case 'LP':
+     w0 = 2 * Math.PI * cutoff / gen.samplerate,
+     sinw0 = Math.sin( w0 ),
+     cosw0 = Math.cos( w0 ),
+     alpha = sinw0 / (2 * Q);
+ 
+     a0 = (1 - cosw0) / 2,
+     a1 = 1 - cosw0,
+     a2 = a0,
+     c  = 1 + alpha,
+     b1 = -2 * cosw0,
+     b2 = 1 - alpha
+ 
+     break;
+    case "HP":
+     w0 = 2 * Math.PI * cutoff / gen.samplerate,
+     sinw0 = Math.sin( w0 ),
+     cosw0 = Math.cos( w0 ),
+     alpha = sinw0 / (2 * Q)
+       
+     a0 = (1 + cosw0) / 2,
+     a1 = -(1 + cosw0),
+     a2 = a0,
+     c  = 1 + alpha,
+     b1 = -2 * cosw0,
+     b2 = 1 - alpha;
+     break;
+   case "BP":
+     w0 = 2 * Math.PI * cutoff / gen.samplerate
+     cosw0  = Math.cos( w0 ),
+     sinw0  = Math.sin( w0 ),
+     alpha  = sinw0 / ( 2 * Q )
+     
+     a0 = Q * alpha,
+     a1 = 0,
+     a2 = -Q * alpha,
+     c  = 1 + alpha,
+     b1 = -2 * cosw0,
+     b2 = 1 - alpha
+     break;
+   default:
+     break;
+  }
+ 
+  a0 = a0 / c;
+  a1 = a1 / c;
+  a2 = a2 / c;
+  b1 = b1 / c;
+  b2 = b2 / c;
+  
+  return [ a0, a1, a2, b1, b2 ]
+}

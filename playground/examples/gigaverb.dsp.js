@@ -4,6 +4,8 @@ ported from Gen example by thecharlie 5/18/16
 ... and it's probably not quite right. */
 
 signalData = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
+  'use jsdsp'
+
   // parameters for external manipulation (via gui)
   let dry       = param( 'dry',     1   ), 
       roomSize  = param( 'roomSize',  75  ),    // .1 - 300

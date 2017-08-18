@@ -27,50 +27,14 @@ window.onload = function() {
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v, debug ) {
+  window.play = function( v, debug, memType=Float32Array ) {
     if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playGraph( v, debug )
+    var cb = utilities.playGraph( v, debug, 44100*10, memType )
 
     return cb
-  }
-
-  const operators = {
-    '+':'add',
-    '-':'sub',
-    '*':'mul',
-    '/':'div',
-    '^':'pow',
-    '%':'mod'
-  }
-
-  jsdsp = function({ types:t }) {
-    return {
-      visitor: {
-        BinaryExpression( path ) {
-
-          // don't transform if arguments are both number literals
-          if( t.isNumericLiteral( path.node.left ) && t.isNumericLiteral( path.node.right ) ) return
-          
-          // don't transform if no overload is found
-          if( !(path.node.operator in operators) ) return
-
-          const operatorString = operators[ path.node.operator ]
-
-          path.replaceWith(
-            t.callExpression(
-              t.memberExpression(
-                t.identifier('genish'),
-                t.identifier( operatorString )
-              ),
-              [path.node.left, path.node.right]
-            )
-          )
-        }
-      }
-    }
   }
 
   Babel.registerPlugin( 'jsdsp', jsdsp )
@@ -79,6 +43,7 @@ window.onload = function() {
       files = [
         'intro',
         'thereminish',
+        'hardsync',
         'bitcrusher',
         'enveloping',
         'bandlimitedFM',
@@ -102,7 +67,7 @@ window.onload = function() {
   
   let loadexample = function( filename ) {
     var req = new XMLHttpRequest()
-      req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.jsdsp' : '.js'), true )
+      req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.dsp.js' : '.js'), true )
       req.onload = function() {
         var js = req.responseText
         utilities.editor.setValue( js )

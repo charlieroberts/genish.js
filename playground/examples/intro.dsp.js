@@ -39,116 +39,139 @@ page.
 /************************************
 ******* non-bandlimited saw *********
 ************************************/
-
-saw = mul( phasor(330), .05 )
-play( saw )
+{
+  'use jsdsp'
+  saw = phasor(330) * .05
+  play( saw )
+}
 
 /**********************************************
 ******* sine oscillator (no wavetable) ********
 **********************************************/
 
-graph = sin( 
-  mul( 
-    accum( mul( 440, 1/44100 ) ), 
-    Math.PI * 2 
+{
+  'use jsdsp'
+  graph = sin( 
+    accum( 440 * ( 1/gen.samplerate ) ) * Math.PI * 2 
   )
-)
  
-play( mul( graph,.1 ) )
+  play( graph * .1 )
+}
 
 /************************************
 ******* amplitude modulation ********
 ************************************/
 
-// cycle() creates an interpolated signal from 
-// an array holding a 1024 samples of a sine wave
-// (a wavetable)
-sineOsc = cycle( 440 )
+{
+  'use jsdsp'
  
-// create a LFO that modulates between 0-1
-// at 4 Hz
-amplitudeLFO = add( .1, mul( cycle(4), .1 ) ) 
- 
-play( 
-  mul( sineOsc, amplitudeLFO ) 
-)
+  // cycle() creates an interpolated signal from 
+  // an array holding a 1024 samples of a sine wave
+  // (a wavetable)
+  sineOsc = cycle( 440 )
+   
+  // create a LFO that modulates between 0-.1
+  // at 4 Hz
+  amplitudeLFO = .1 + cycle(4) * .1 
+   
+  play( sineOsc * amplitudeLFO )
+}
 
 /************************************
 ******* frequency modulation ********
 ************************************/
 
-lfo = mul( cycle(4), .5 )
-ramp = mul( phasor(.1, 0, { min:0 }), 200 )
-rampedLFO = mul( lfo, ramp )
- 
-osc = cycle( add( 440, rampedLFO ) )
- 
-out = mul( osc, .1 )
- 
-play( out )
+{
+  'use jsdsp'
+  
+  lfo = cycle(4) * .5 
+  ramp = phasor(.1, 0, { min:0 }) * 200
+  rampedLFO = lfo * ramp
+   
+  osc = cycle( 440 + rampedLFO )
+   
+  out = osc * .1 
+   
+  play( out )
+}
 
 /************************************************************
 ****** random oscillator frequency w/ sample & hold *********
 ************************************************************/
 
-// create random signal between 220 and 440
-random220_440 = add( 220, mul( noise(), 220 ) )
+{
+  'use jsdsp'
+  
+  // create random signal between 220 and 440
+  random220_440 = 220 + noise() * 220
  
-// create a sample-and-hold that will sample our random frequency
-// whenever another random signal (in the range of 0-1) crosses a
-// high threshold. This will create a periodically changing frequency.
-frequency = sah( random220_440, noise(), .99995 )
+  // create a sample-and-hold that will sample our random frequency
+  // whenever another random signal (in the range of 0-1) crosses a
+  // high threshold. This will create a periodically changing frequency.
+  frequency = sah( random220_440, noise(), .99995 )
  
-// sine oscillator
-play( cycle( frequency ) )
+  // sine oscillator
+  play( cycle( frequency ) )
+}
 
 /*****************************************************************
 ******* (LOUD + noisy) frequency modulation using feedback *******
 *****************************************************************/
 
-// ssd is equivalent to history in gen~, a single-sample delay
-// (the history name is used by the window object in js...)
-// an argument to ssd sets its initial value
-sampler = ssd(.001) 
+{
+  'use jsdsp'
  
-// generate a sawtooth wave using our last sample output to
-// scale its frequency
-out = phasor( mul( 1000, sampler.out ) )
-
-// record the output to process the next sample
-sampler.in( out )
+  // ssd is equivalent to history in gen~, a single-sample delay
+  // (the history name is used by the window object in js...)
+  // an argument to ssd sets its initial value
+  sampler = ssd(.001) 
  
-play( mul( out, .05 ) )
+  // generate a sawtooth wave using our last sample output to
+  // scale its frequency
+  out = phasor( 1000 * sampler.out )
+ 
+  // record the output to process the next sample
+  sampler.in( out )
+ 
+  play( out * .05 )
+}
 
 /******************************************************************
 ******* using data with peek (default linear interpolation) *******
 *******************************************************************/
 
-// create a data set of four values to loop through
-d = data( [440,880,220,330] )
+{
+  'use jsdsp'
+  
+  // create a data set of four values to loop through
+  d = data( [440,880,220,330] )
  
-// interpolate through data set over ten seocnds 
-freq = peek( d, phasor(.1, 0, { min:0 }) )
+  // interpolate through data set over ten seocnds 
+  freq = peek( d, phasor(.1, 0, { min:0 }) )
  
-out = mul( cycle( freq ), .1 )
+  out = cycle( freq ) * .1
  
-play( out )
+  play( out )
+}
 
 /*****************************************************
 ******* using data w/ peek (no interpolation)) *******
 *****************************************************/
+{
+  'use jsdsp'
 
-d = data( [220,330,440,880] )
+  d = data( [220,330,440,880] )
  
-// create a ramp from 0-4 over 10 seconds
-acceleration = mul( phasor(.1, 0, { min:0 }), 4 )
+  // create a ramp from 0-4 over 10 seconds
+  acceleration = phasor(.1, 0, { min:0 }) * 4
  
-// accelerate looking through our graph; don't use interpolation
-freq = peek( d, phasor( acceleration, 0, {min:0} ), { interp:'none' } ) 
+  // accelerate looking through our graph; don't use interpolation
+  freq = peek( d, phasor( acceleration, 0, {min:0} ), { interp:'none' } ) 
  
-out = mul( cycle( freq ), .1 )
+  out = cycle( freq ) * .1 
  
-play( out )
+  play( out )
+}
 
 /*******************************************************
 ****** random sample playback w/ sample & hold *********
@@ -157,13 +180,14 @@ play( out )
 // data lets us read in a file. The then() method of the data object
 // lets us define a function to be executed when loading is finished.
 d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+  'use jsdsp'
  
   // get a randomized playback rate via sah. Tne value will be used
   // to drive a phasor index into peek; this means the value will be
   // in Hz. That is, a value of .25 means the entire sample,
   // irrespective of length, will be played in four seconds.
   noisesig = sah( 
-    mul( noise(), .25 ),
+    noise() * .25,
     noise(),
     .99995
   )
@@ -175,36 +199,42 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
 ******* notes w/ ping-pong echo ****************
 ***********************************************/
 
-// frequencing to loop through
-frequencies = data( [220,330,440,880] )
+{
+  'use jsdsp'
+  // frequencing to loop through
+  frequencies = data( [220,330,440,880] )
  
-// get non-interpolating signal for frequency
-freqSignal = peek( frequencies, phasor( .5, 0, { min:0 } ), { interp:'none' } ) 
+  // get non-interpolating signal for frequency
+  freqSignal = peek( frequencies, phasor( .5, 0, { min:0 } ), { interp:'none' } ) 
  
-// create a decay envelope
-envelope = sub( 1, phasor( 2, 0, { min:0 }) )
+  // create a decay envelope
+  envelope = 1 - phasor( 2, 0, { min:0 })
  
-// multiply sine osc by envelope
-notes = mul( cycle( freqSignal ), envelope )
+  // multiply sine osc by envelope
+  notes = cycle( freqSignal ) * envelope
  
-// ... turn notes down
-gain = mul( notes, .1 )
+  // ... turn notes down
+  gain = notes * .1
  
-// create 1/4 second echo
-echo = delay( gain, 11025, { size: 22050 })
+  // create 1/4 second echo
+  echo = delay( gain, 11025, { size: 22050 })
  
-// passing an array to play creates a stereo signal
-// notes on the left, echos on the right
-// use 64-bit memory storage for improved timing
-play( [gain, echo], false, Float64Array )
+  // passing an array to play creates a stereo signal
+  // notes on the left, echos on the right
+  // use 64-bit memory for improved timing
+  play( [gain, echo], false, Float64Array )
+}
 
 /****** 50 sine oscillators  *******/
+
+{
+  'use jsdsp'
+  oscillators = []
+  numOscillators = 50
  
-oscillators = []
-numOscillators = 50
+  for( var i = 0; i < numOscillators; i++ ) {
+    oscillators[ i ] = cycle( 110 + i * 55) * .1/numOscillators 
+  }
  
-for( var i = 0; i < numOscillators; i++ ) {
-  oscillators[ i ] =  mul( cycle( 110 + i * 55), .1/numOscillators ) 
+  play( add( ...oscillators ) )
 }
- 
-play( add( ...oscillators ) )
