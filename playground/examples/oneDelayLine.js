@@ -8,10 +8,13 @@
  */
 
 // use noise with sample-and-hold to output random frequencies with random timing
-frequencyControl = sah( add( 220, mul( noise(),880 ) ), noise(), .99995 )
+frequencyControl = sah( noise(), noise(), .99995 )
+
+// frequencies from 220 - 660 Hz
+frequency = add( 220, mul( frequencyControl, 440 ) )
  
 // create an oscillator and scale its output
-osc = mul( cycle( slide( frequencyControl,1000 ) ), .025 )
+osc = mul( cycle( slide( frequency,1000 ) ), .025 )
  
 // create a single-sample delay
 feedback = ssd()
