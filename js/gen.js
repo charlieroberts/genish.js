@@ -63,6 +63,10 @@ let gen = {
     }
   },
 
+  createMemory( amount, type ) {
+    const mem = MemoryHelper.create( mem, type )
+  },
+
   /* createCallback
    *
    * param ugen - Head of graph to be codegen'd

@@ -104,7 +104,10 @@ module.exports = ( incr, reset=0, properties ) => {
   if( ugen.initialValue === undefined ) ugen.initialValue = ugen.min
 
   Object.defineProperty( ugen, 'value', {
-    get()  { return gen.memory.heap[ this.memory.value.idx ] },
+    get()  { 
+      //console.log( 'gen:', gen, gen.memory )
+      return gen.memory.heap[ this.memory.value.idx ] 
+    },
     set(v) { gen.memory.heap[ this.memory.value.idx ] = v }
   })
 
