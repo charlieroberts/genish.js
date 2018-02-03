@@ -36,7 +36,7 @@ window.onload = function() {
   utilities.editor  = cm
 
   window.play = function( v, name, debug ) { //, memType=Float32Array ) {
-    if( name === undefined ) {
+    if( name === undefined || name === null ) {
       name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
     }
     if( dat !== undefined ) {

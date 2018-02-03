@@ -83,13 +83,55 @@ let utilities = {
     return cbSplit.join('\n  ')
   },
 
+  createParameterDescriptors( cb ) {
+    // [{name: 'amplitude', defaultValue: 0.25, minValue: 0, maxValue: 1}];
+    let paramStr = ''
+
+    for( let dict of cb.inputs.values() ) {
+      const name = Object.keys( dict )[0],
+            ugen = dict[ name ]
+ 
+      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },`
+    }
+
+    return paramStr
+  },
+
+  createParameterDereferences( cb ) {
+    let str = ''
+    for( let dict of cb.inputs.values() ) {
+      const name = Object.keys( dict )[0],
+            ugen = dict[ name ]
+
+      str += `const ${name} = parameters.${name}\n`
+    }
+
+    return str
+  },
+
+  createParameterArguments( cb ) {
+    let  paramList = ''
+    for( let dict of cb.inputs.values() ) {
+      paramList += Object.keys( dict )[0] + '[i],'
+    }
+    paramList = paramList.slice( 0, -1 )
+
+    return paramList
+  },
+
   createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
     const inputs = cb.inputs
 
+    // get all inputs and create appropriate audioparam initializers
+    const parameterDescriptors = this.createParameterDescriptors( cb )
+    const parameterDereferences = this.createParameterDereferences( cb )
+    const paramList = this.createParameterArguments( cb )
+    
+    // get references to Math functions as needed
+    // these references are added to the callback during codegen.
     let memberString = ''
-
     for( let dict of cb.members.values() ) {
       const name = Object.keys( dict )[0],
             value = dict[ name ]
@@ -97,11 +139,12 @@ let utilities = {
       memberString += `    this.${name} = ${value}\n`
     }
 
+    // change output based on number of channels.
     const genishOutputLine = cb.isStereo === false
-      ? `left[ idx ] = out`
-      : `left[ idx ] = out[0];\n\t\tright[ idx ] = out[1]\n`
+      ? `left[ i ] = out`
+      : `left[ i ] = out[0];\n\t\tright[ i ] = out[1]\n`
 
-    const prettyCB = this.prettyPrintCallback( cb )
+    const prettyCallback = this.prettyPrintCallback( cb )
 
 
     /***** begin callback code ****/
@@ -113,7 +156,10 @@ let utilities = {
 class ${name}Processor extends AudioWorkletProcessor {
 
   static get parameterDescriptors() {
-    return []
+    const params = [
+      ${ parameterDescriptors }      
+    ]
+    return params
   }
  
   constructor( options ) {
@@ -128,7 +174,7 @@ class ${name}Processor extends AudioWorkletProcessor {
     this.initialized = true
   }
 
-  callback${prettyCB}
+  callback${prettyCallback}
 
   process( inputs, outputs, parameters ) {
     if( this.initialized === true ) {
@@ -136,10 +182,11 @@ class ${name}Processor extends AudioWorkletProcessor {
       const left   = output[ 0 ]
       const right  = output[ 1 ]
       const len    = left.length
+      const cb     = this.callback.bind( this )
+      ${parameterDereferences}
 
-      for( let idx = 0; idx < len; ++idx ) {
-        const out = this.callback() 
-
+      for( let i = 0; i < len; ++i ) {
+        const out = cb( ${paramList} )
         ${genishOutputLine}
       }
     }
@@ -176,8 +223,17 @@ registerProcessor( '${name}', ${name}Processor)`
 
       workletNode.port.postMessage({ memory:gen.memory.heap })
       utilities.workletNode = workletNode
-      
+
+      // assign all params as properties of 
+            //for( let dict of cb.params.values() ) {
+      //  const name = object.keys( dict )[0],
+      //    ugen = dict[ name ]
+
+      //}
+
       if( utilities.console ) utilities.console.setValue( codeString )
+
+      window.testing = workletNode
 
       return workletNode 
     })

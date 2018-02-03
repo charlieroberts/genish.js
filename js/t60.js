@@ -10,10 +10,13 @@ let proto = {
         inputs = gen.getInputs( this ),
         returnValue
 
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? 'this' : 'gen'
+
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ 'exp' ]: Math.exp })
 
-      out = `  var ${this.name} = gen.exp( -6.907755278921 / ${inputs[0]} )\n\n`
+      out = `  var ${this.name} = ${ref}.exp( -6.907755278921 / ${inputs[0]} )\n\n`
      
       gen.memo[ this.name ] = out
       

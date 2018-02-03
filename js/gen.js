@@ -195,6 +195,7 @@ let gen = {
 
     callback.members = this.closures
     callback.data = this.data
+    callback.params = this.params
     callback.inputs = this.params
     callback.parameters = this.parameters.slice( 0 )
     callback.isStereo = isStereo

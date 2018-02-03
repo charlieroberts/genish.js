@@ -10,15 +10,19 @@ let proto = {
     
     gen.params.add({ [this.name]: this })
 
+    const isWorklet = gen.mode === 'worklet'
+
+    if( isWorklet ) gen.parameters.push( this.name )
+
     this.value = this.initialValue
 
-    gen.memo[ this.name ] = `memory[${this.memory.value.idx}]`
+    gen.memo[ this.name ] = isWorklet ? this.name : `memory[${this.memory.value.idx}]`
 
     return gen.memo[ this.name ]
   } 
 }
 
-module.exports = ( propName=0, value=0 ) => {
+module.exports = ( propName=0, value=0, min=0, max=1 ) => {
   let ugen = Object.create( proto )
   
   if( typeof propName !== 'string' ) {
@@ -28,6 +32,9 @@ module.exports = ( propName=0, value=0 ) => {
     ugen.name = propName
     ugen.initialValue = value
   }
+
+  ugen.min = min
+  ugen.max = max
 
   Object.defineProperty( ugen, 'value', {
     get() {
