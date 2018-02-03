@@ -92,6 +92,7 @@ let gen = {
     
     //console.log( 'cb memory:', mem )
     this.memory = mem
+    this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -101,7 +102,7 @@ let gen = {
     this.parameters.length = 0
     
     this.functionBody = "  'use strict'\n"
-    if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
+    if( shouldInlineMemory===false ) this.functionBody += "  var memory = this.memory\n\n" 
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -129,7 +130,7 @@ let gen = {
       let lastidx = body.length - 1
 
       // insert return keyword
-      body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[' + i + ']  = ' + body[ lastidx ] + '\n'
 
       this.functionBody += body.join('\n')
     }
@@ -139,7 +140,7 @@ let gen = {
         value.gen()      
     })
 
-    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
+    let returnStatement = isStereo ? '  return memory' : '  return memory[0]'
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -158,7 +159,7 @@ let gen = {
     if( shouldInlineMemory === true ) {
       this.parameters.push( 'memory' )
     }
-    let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+    let buildString = `return function( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
 
@@ -186,7 +187,6 @@ let gen = {
     }
 
     callback.data = this.data
-    callback.out  = new Float32Array( 2 )
     callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 

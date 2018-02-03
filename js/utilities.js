@@ -9,9 +9,13 @@ let utilities = {
   ctx: null,
 
   clear() {
-    this.callback = () => 0
-    this.clear.callbacks.forEach( v => v() )
-    this.clear.callbacks.length = 0
+    if( this.workletNode !== undefined ) {
+      this.workletNode.disconnect()
+    }else{
+      this.callback = () => 0
+      this.clear.callbacks.forEach( v => v() )
+      this.clear.callbacks.length = 0
+    }
   },
 
   createContext() {
@@ -68,6 +72,65 @@ let utilities = {
     this.node.connect( this.ctx.destination )
 
     return this
+  },
+
+  createWorkletProcessor( graph, name, debug ) {
+    //const mem = MemoryHelper.create( 4096, Float64Array )
+    const cb = gen.createCallback( graph, 4096, debug )
+
+    const workletCode = `
+class ${name}Processor extends AudioWorkletProcessor {
+  constructor( options ) {
+    super( options )
+    this.memory = new Float64Array(4096)
+    this.noise  = Math.random
+  }
+
+  callback${cb.toString().slice(9)}
+
+  process( inputs, outputs, parameters ) {
+    const output = outputs[0]
+    const memory = this.memory
+    const left   = output[ 0 ]
+    const len    = left.length
+
+    for( let idx = 0; idx < len; ++idx ) {
+      let out = this.callback() 
+
+      left[ idx ] = out
+    }
+
+    return true
+  }
+}
+    
+registerProcessor( '${name}', ${name}Processor)`
+
+    const url = window.URL.createObjectURL(
+      new Blob(
+        [ workletCode ], 
+        { type: 'text/javascript' }
+      )
+    )
+    
+    
+
+    return [ url, workletCode ] 
+  },
+
+  playWorklet( graph, name, debug=false ) {
+    const [ url, codeString ] = utilities.createWorkletProcessor( graph, name, debug )
+
+    utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
+      const workletNode = new AudioWorkletNode( utilities.ctx, name )
+      workletNode.connect( utilities.ctx.destination )
+
+      utilities.workletNode = workletNode
+
+      if( utilities.console ) utilities.console.setValue( codeString )
+
+      return codeString
+    })
   },
   
   playGraph( graph, debug, mem=44100*10, memType=Float32Array ) {

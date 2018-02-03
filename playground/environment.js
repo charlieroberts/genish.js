@@ -23,16 +23,17 @@ window.onload = function() {
   cmconsole.setSize( null, '100%' )
   genish.export( window )
 
-  utilities.createContext().createScriptProcessor()
+  window.onclick = ()=> { utilities.createContext() }
+
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v, debug, memType=Float32Array ) {
+  window.play = function( v, name='test', debug ) { //, memType=Float32Array ) {
     if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playGraph( v, debug, 44100*10, memType )
+    var cb = utilities.playWorklet( v, name ) 
 
     return cb
   }
