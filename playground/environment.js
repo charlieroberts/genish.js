@@ -40,7 +40,7 @@ window.onload = function() {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playWorklet( v, name ) 
+    var cb = utilities.playWorklet( v, name, debug ) 
 
     return cb
   }

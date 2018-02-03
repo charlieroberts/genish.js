@@ -9,10 +9,14 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
 
-    if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
-      gen.closures.add({ [ this.name ]: Math.max })
+    
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? 'this' : 'gen'
 
-      out = `gen.max( ${inputs[0]}, ${inputs[1]} )`
+    if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
+      gen.closures.add({ [ this.name ]: isWorklet ? 'Math.max' : Math.max })
+
+      out = `${ref}.max( ${inputs[0]}, ${inputs[1]} )`
 
     } else {
       out = Math.max( parseFloat( inputs[0] ), parseFloat( inputs[1] ) )

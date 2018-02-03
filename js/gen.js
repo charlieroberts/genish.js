@@ -18,6 +18,7 @@ let gen = {
   globals:{
     windows: {},
   },
+  mode:'worklet',
   
   /* closures
    *
@@ -102,7 +103,11 @@ let gen = {
     this.parameters.length = 0
     
     this.functionBody = "  'use strict'\n"
-    if( shouldInlineMemory===false ) this.functionBody += "  var memory = this.memory\n\n" 
+    if( shouldInlineMemory===false ) {
+      this.functionBody += this.mode === 'worklet' ? 
+        "  var memory = this.memory\n\n" :
+        "  var memory = gen.memory\n\n"
+    }
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -140,7 +145,7 @@ let gen = {
         value.gen()      
     })
 
-    let returnStatement = isStereo ? '  return memory' : '  return memory[0]'
+    const returnStatement = isStereo ? '  return memory' : '  return memory[0]'
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -159,13 +164,15 @@ let gen = {
     if( shouldInlineMemory === true ) {
       this.parameters.push( 'memory' )
     }
-    let buildString = `return function( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+
+    let buildString = this.mode === 'worklet'
+      ? `return function( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+      : `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
 
     callback = new Function( buildString )()
 
-    
     // assign properties to named function
     for( let dict of this.closures.values() ) {
       let name = Object.keys( dict )[0],
@@ -186,7 +193,9 @@ let gen = {
       //callback[ name ] = value
     }
 
+    callback.members = this.closures
     callback.data = this.data
+    callback.inputs = this.params
     callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 

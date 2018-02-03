@@ -74,29 +74,42 @@ let utilities = {
     return this
   },
 
-  createWorkletProcessor( graph, name, mem=44100*10, debug ) {
+  createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
+    const inputs = cb.inputs
+
+    let memberString = ''
+
+    for( let dict of cb.members.values() ) {
+      const name = Object.keys( dict )[0],
+            value = dict[ name ]
+
+      memberString += `this.${name} = ${value}\n\t`
+    }
+
 
     const workletCode = `
 class ${name}Processor extends AudioWorkletProcessor {
+
+  static get parameterDescriptors() {
+    return []
+  }
+ 
   constructor( options ) {
     super( options )
     this.port.onmessage = this.handleMessage.bind( this )
     this.noise  = Math.random
-    this.initialized = false
+    ${memberString}
   }
 
   handleMessage( event ) {
     this.memory = event.data.memory
-    this.initialized = true
-    console.log( 'memory initialized:', this.memory )
   }
 
   callback${cb.toString().slice(9)}
 
   process( inputs, outputs, parameters ) {
-    if( this.initialized === true ) {
       const output = outputs[0]
       const left   = output[ 0 ]
       const len    = left.length
@@ -107,12 +120,13 @@ class ${name}Processor extends AudioWorkletProcessor {
         left[ idx ] = out
       }
 
-    }
     return true
   }
 }
     
 registerProcessor( '${name}', ${name}Processor)`
+
+    if( debug === true ) console.log( workletCode )
 
     const url = window.URL.createObjectURL(
       new Blob(
@@ -120,14 +134,12 @@ registerProcessor( '${name}', ${name}Processor)`
         { type: 'text/javascript' }
       )
     )
-    
-    
 
-    return [ url, workletCode ] 
+    return [ url, workletCode, inputs ] 
   },
 
-  playWorklet( graph, name, mem=44100*10, debug=false ) {
-    const [ url, codeString ] = utilities.createWorkletProcessor( graph, name, mem, debug )
+  playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
+    const [ url, codeString, inputs ] = utilities.createWorkletProcessor( graph, name, debug, mem )
 
     utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
       const workletNode = new AudioWorkletNode( utilities.ctx, name )
