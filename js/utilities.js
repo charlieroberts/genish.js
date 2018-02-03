@@ -89,6 +89,10 @@ let utilities = {
     }
 
 
+    const genishOutputLine = cb.isStereo === false
+      ? `left[ idx ] = out`
+      : `left[ idx ] = out[0];\n\t\tright[ idx ] = out[1]\n`
+
     const workletCode = `
 class ${name}Processor extends AudioWorkletProcessor {
 
@@ -112,12 +116,13 @@ class ${name}Processor extends AudioWorkletProcessor {
   process( inputs, outputs, parameters ) {
       const output = outputs[0]
       const left   = output[ 0 ]
+      const right  = output[ 1 ]
       const len    = left.length
 
       for( let idx = 0; idx < len; ++idx ) {
-        let out = this.callback() 
+        const out = this.callback() 
 
-        left[ idx ] = out
+        ${genishOutputLine}
       }
 
     return true
@@ -135,19 +140,19 @@ registerProcessor( '${name}', ${name}Processor)`
       )
     )
 
-    return [ url, workletCode, inputs ] 
+    return [ url, workletCode, inputs, cb.isStereo ] 
   },
 
   playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
-    const [ url, codeString, inputs ] = utilities.createWorkletProcessor( graph, name, debug, mem )
+    const [ url, codeString, inputs, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
 
     utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
-      const workletNode = new AudioWorkletNode( utilities.ctx, name )
+      const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
       workletNode.connect( utilities.ctx.destination )
 
       workletNode.port.postMessage({ memory:gen.memory.heap })
       utilities.workletNode = workletNode
-
+      
       if( utilities.console ) utilities.console.setValue( codeString )
 
       return workletNode 

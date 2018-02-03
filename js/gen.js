@@ -197,6 +197,7 @@ let gen = {
     callback.data = this.data
     callback.inputs = this.params
     callback.parameters = this.parameters.slice( 0 )
+    callback.isStereo = isStereo
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
     callback.memory = this.memory.heap
