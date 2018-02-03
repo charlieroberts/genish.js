@@ -74,9 +74,9 @@ let utilities = {
     return this
   },
 
-  createWorkletProcessor( graph, name, debug ) {
+  createWorkletProcessor( graph, name, mem=44100*10, debug ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
-    const cb = gen.createCallback( graph, 4096, debug )
+    const cb = gen.createCallback( graph, mem, debug )
 
     const workletCode = `
 class ${name}Processor extends AudioWorkletProcessor {
@@ -126,8 +126,8 @@ registerProcessor( '${name}', ${name}Processor)`
     return [ url, workletCode ] 
   },
 
-  playWorklet( graph, name, debug=false ) {
-    const [ url, codeString ] = utilities.createWorkletProcessor( graph, name, debug )
+  playWorklet( graph, name, mem=44100*10, debug=false ) {
+    const [ url, codeString ] = utilities.createWorkletProcessor( graph, name, mem, debug )
 
     utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
       const workletNode = new AudioWorkletNode( utilities.ctx, name )
