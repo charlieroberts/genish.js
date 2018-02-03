@@ -35,7 +35,10 @@ window.onload = function() {
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v, name='test', debug ) { //, memType=Float32Array ) {
+  window.play = function( v, name, debug ) { //, memType=Float32Array ) {
+    if( name === undefined ) {
+      name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
+    }
     if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0

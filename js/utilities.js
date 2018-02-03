@@ -74,6 +74,15 @@ let utilities = {
     return this
   },
 
+  // remove starting stuff and add tabs
+  prettyPrintCallback( cb ) {
+    // get rid of "function gen" and start with parenthesis
+    const shortendCB = cb.toString().slice(9)
+    const cbSplit = shortendCB.split('\n')
+    
+    return cbSplit.join('\n  ')
+  },
+
   createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
@@ -85,13 +94,20 @@ let utilities = {
       const name = Object.keys( dict )[0],
             value = dict[ name ]
 
-      memberString += `this.${name} = ${value}\n\t`
+      memberString += `    this.${name} = ${value}\n`
     }
-
 
     const genishOutputLine = cb.isStereo === false
       ? `left[ idx ] = out`
       : `left[ idx ] = out[0];\n\t\tright[ idx ] = out[1]\n`
+
+    const prettyCB = this.prettyPrintCallback( cb )
+
+
+    /***** begin callback code ****/
+    // note that we have to check to see that memory has been passed
+    // to the worker before running the callback function, otherwise
+    // it can be past too slowly and fail on occassion
 
     const workletCode = `
 class ${name}Processor extends AudioWorkletProcessor {
@@ -103,17 +119,19 @@ class ${name}Processor extends AudioWorkletProcessor {
   constructor( options ) {
     super( options )
     this.port.onmessage = this.handleMessage.bind( this )
-    this.noise  = Math.random
+    this.initialized = false
     ${memberString}
   }
 
   handleMessage( event ) {
     this.memory = event.data.memory
+    this.initialized = true
   }
 
-  callback${cb.toString().slice(9)}
+  callback${prettyCB}
 
   process( inputs, outputs, parameters ) {
+    if( this.initialized === true ) {
       const output = outputs[0]
       const left   = output[ 0 ]
       const right  = output[ 1 ]
@@ -124,12 +142,16 @@ class ${name}Processor extends AudioWorkletProcessor {
 
         ${genishOutputLine}
       }
-
+    }
     return true
   }
 }
     
 registerProcessor( '${name}', ${name}Processor)`
+
+    
+    /***** end callback code *****/
+
 
     if( debug === true ) console.log( workletCode )
 
@@ -144,6 +166,8 @@ registerProcessor( '${name}', ${name}Processor)`
   },
 
   playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
+    utilities.clear()
+
     const [ url, codeString, inputs, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
 
     utilities.ctx.audioWorklet.addModule( url ).then( ()=> {

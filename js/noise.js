@@ -8,9 +8,10 @@ let proto = {
   gen() {
     let out
 
-    const ref = gen.mode === 'worklet' ? 'this' : 'gen'
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? 'this' : 'gen'
 
-    gen.closures.add({ 'noise' : Math.random })
+    gen.closures.add({ 'noise' : isWorklet ? 'Math.random' : Math.random })
 
     out = `  var ${this.name} = ${ref}.noise()\n`
     
