@@ -82,24 +82,32 @@ let utilities = {
 class ${name}Processor extends AudioWorkletProcessor {
   constructor( options ) {
     super( options )
-    this.memory = new Float64Array(4096)
+    this.port.onmessage = this.handleMessage.bind( this )
     this.noise  = Math.random
+    this.initialized = false
+  }
+
+  handleMessage( event ) {
+    this.memory = event.data.memory
+    this.initialized = true
+    console.log( 'memory initialized:', this.memory )
   }
 
   callback${cb.toString().slice(9)}
 
   process( inputs, outputs, parameters ) {
-    const output = outputs[0]
-    const memory = this.memory
-    const left   = output[ 0 ]
-    const len    = left.length
+    if( this.initialized === true ) {
+      const output = outputs[0]
+      const left   = output[ 0 ]
+      const len    = left.length
 
-    for( let idx = 0; idx < len; ++idx ) {
-      let out = this.callback() 
+      for( let idx = 0; idx < len; ++idx ) {
+        let out = this.callback() 
 
-      left[ idx ] = out
+        left[ idx ] = out
+      }
+
     }
-
     return true
   }
 }
@@ -125,11 +133,12 @@ registerProcessor( '${name}', ${name}Processor)`
       const workletNode = new AudioWorkletNode( utilities.ctx, name )
       workletNode.connect( utilities.ctx.destination )
 
+      workletNode.port.postMessage({ memory:gen.memory.heap })
       utilities.workletNode = workletNode
 
       if( utilities.console ) utilities.console.setValue( codeString )
 
-      return codeString
+      return workletNode 
     })
   },
   
