@@ -23,7 +23,14 @@ window.onload = function() {
   cmconsole.setSize( null, '100%' )
   genish.export( window )
 
-  window.onclick = ()=> { utilities.createContext() }
+
+  let ctxInit = false
+  window.onclick = ()=> { 
+    if( ctxInit === false ) {
+      utilities.createContext()
+      ctxInit = true
+    }
+  }
 
   utilities.console = cmconsole
   utilities.editor  = cm
