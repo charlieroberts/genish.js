@@ -66,7 +66,7 @@ window.onload = function() {
         'combfilter_worklet',
         'freeverb_worklet',
         'gigaverb_worklet',
-        'gardenOfDelay_worklet', 
+        'gardenOfDelays_worklet', 
         'karplusStrong_worklet'
       ]
   
