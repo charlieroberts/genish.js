@@ -9,13 +9,9 @@ let proto = {
     const isWorklet = gen.mode === 'worklet'
 
     if( isWorklet ) {
-      gen.inputs.add({ 
-        inputNumber: this.inputNumber,
-        channelNumber: this.channelNumber,
-        name: this.name
-      })
+      gen.inputs.add( this )
     }else{
-      gen.parameters.push( this.name )
+      gen.parameters.add( this.name )
     }
 
     gen.memo[ this.name ] = this.name

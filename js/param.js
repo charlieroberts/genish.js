@@ -8,11 +8,11 @@ let proto = {
   gen() {
     gen.requestMemory( this.memory )
     
-    gen.params.add({ [this.name]: this })
+    gen.params.add( this )
 
     const isWorklet = gen.mode === 'worklet'
 
-    if( isWorklet ) gen.parameters.push( this.name )
+    if( isWorklet ) gen.parameters.add( this.name )
 
     this.value = this.initialValue
 

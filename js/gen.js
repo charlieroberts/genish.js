@@ -30,7 +30,7 @@ let gen = {
   params:   new Set(),
   inputs:   new Set(),
 
-  parameters:[],
+  parameters: new Set(),
   endBlock: new Set(),
   histories: new Map(),
 
@@ -102,7 +102,7 @@ let gen = {
     this.params.clear()
     //this.globals = { windows:{} }
     
-    this.parameters.length = 0
+    this.parameters.clear()
     
     this.functionBody = "  'use strict'\n"
     if( shouldInlineMemory===false ) {
@@ -167,8 +167,26 @@ let gen = {
       this.parameters.push( 'memory' )
     }
 
+    let paramString = ''
+    if( this.mode === 'worklet' ) {
+      for( let name of this.parameters.values() ) {
+        paramString += name + ','
+      }
+      paramString = paramString.slice(0,-1)
+    }
+
+    const separator = this.parameters.size !== 0 && this.inputs.size > 0 ? ', ' : ''
+
+    let inputString = ''
+    if( this.mode === 'worklet' ) {
+      for( let ugen of this.inputs.values() ) {
+        inputString+= ugen.name + ','
+      }
+      inputString = inputString.slice(0,-1)
+    }
+
     let buildString = this.mode === 'worklet'
-      ? `return function( freqMod ){ \n${ this.functionBody }\n}`
+      ? `return function( ${inputString} ${separator} ${paramString} ){ \n${ this.functionBody }\n}`
       : `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
@@ -199,7 +217,7 @@ let gen = {
     callback.data = this.data
     callback.params = this.params
     callback.inputs = this.inputs
-    callback.parameters = this.parameters.slice( 0 )
+    callback.parameters = this.parameters//.slice( 0 )
     callback.isStereo = isStereo
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 

@@ -87,10 +87,7 @@ let utilities = {
     // [{name: 'amplitude', defaultValue: 0.25, minValue: 0, maxValue: 1}];
     let paramStr = ''
 
-    for( let dict of cb.params.values() ) {
-      const name = Object.keys( dict )[0],
-            ugen = dict[ name ]
- 
+    for( let ugen of cb.params.values() ) {
       paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
     }
 
@@ -99,11 +96,8 @@ let utilities = {
 
   createParameterDereferences( cb ) {
     let str = ''
-    for( let dict of cb.params.values() ) {
-      const name = Object.keys( dict )[0],
-            ugen = dict[ name ]
-
-      str += `const ${name} = parameters.${name}\n      `
+    for( let ugen of cb.params.values() ) {
+      str += `const ${ugen.name} = parameters.${ugen.name}\n      `
     }
 
     return str
@@ -111,8 +105,8 @@ let utilities = {
 
   createParameterArguments( cb ) {
     let  paramList = ''
-    for( let dict of cb.params.values() ) {
-      paramList += Object.keys( dict )[0] + '[i],'
+    for( let ugen of cb.params.values() ) {
+      paramList += ugen.name + '[i],'
     }
     paramList = paramList.slice( 0, -1 )
 
@@ -234,13 +228,13 @@ registerProcessor( '${name}', ${name}Processor)`
       )
     )
 
-    return [ url, workletCode, inputs, cb.isStereo ] 
+    return [ url, workletCode, inputs, cb.params, cb.isStereo ] 
   },
 
   playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
     utilities.clear()
 
-    const [ url, codeString, inputs, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
+    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
 
     const nodePromise = new Promise( (resolve,reject) => {
    
@@ -254,6 +248,20 @@ registerProcessor( '${name}', ${name}Processor)`
         // assign all params as properties of node for easier reference 
         for( let dict of inputs.values() ) {
           const name = Object.keys( dict )[0]
+          const param = workletNode.parameters.get( name )
+      
+          Object.defineProperty( workletNode, name, {
+            set( v ) {
+              param.value = v
+            },
+            get() {
+              return param.value
+            }
+          })
+        }
+
+        for( let ugen of params.values() ) {
+          const name = ugen.name
           const param = workletNode.parameters.get( name )
       
           Object.defineProperty( workletNode, name, {
