@@ -53,7 +53,7 @@ window.onload = function() {
   let select = document.querySelector( 'select' ),
       files = [
         'intro',
-        'thereminish',
+        'thereminish_worklet',         
         'hardsync',
         'bitcrusher',
         'enveloping',

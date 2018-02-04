@@ -103,7 +103,7 @@ let utilities = {
       const name = Object.keys( dict )[0],
             ugen = dict[ name ]
 
-      str += `const ${name} = parameters.${name}\n`
+      str += `const ${name} = parameters.${name}\n      `
     }
 
     return str
@@ -217,26 +217,38 @@ registerProcessor( '${name}', ${name}Processor)`
 
     const [ url, codeString, inputs, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
 
-    utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
-      const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
-      workletNode.connect( utilities.ctx.destination )
+    const nodePromise = new Promise( (resolve,reject) => {
+   
+      utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
+        const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
+        workletNode.connect( utilities.ctx.destination )
 
-      workletNode.port.postMessage({ memory:gen.memory.heap })
-      utilities.workletNode = workletNode
+        workletNode.port.postMessage({ memory:gen.memory.heap })
+        utilities.workletNode = workletNode
 
-      // assign all params as properties of 
-            //for( let dict of cb.params.values() ) {
-      //  const name = object.keys( dict )[0],
-      //    ugen = dict[ name ]
+        // assign all params as properties of node for easier reference 
+        for( let dict of inputs.values() ) {
+          const name = Object.keys( dict )[0]
+          const param = workletNode.parameters.get( name )
+      
+          Object.defineProperty( workletNode, name, {
+            set( v ) {
+              param.value = v
+            },
+            get() {
+              return param.value
+            }
+          })
+        }
 
-      //}
+        if( utilities.console ) utilities.console.setValue( codeString )
 
-      if( utilities.console ) utilities.console.setValue( codeString )
+        resolve( workletNode )
+      })
 
-      window.testing = workletNode
-
-      return workletNode 
     })
+
+    return nodePromise
   },
   
   playGraph( graph, debug, mem=44100*10, memType=Float32Array ) {
