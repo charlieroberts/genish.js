@@ -14,7 +14,7 @@ let proto = {
     const ref = isWorklet? 'this' : 'gen'
 
     if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ [ 'exp' ]: Math.exp })
+      gen.closures.add({ [ 'exp' ]: isWorklet ? 'Math.exp' : Math.exp })
 
       out = `  var ${this.name} = ${ref}.exp( -6.907755278921 / ${inputs[0]} )\n\n`
      

@@ -67,7 +67,7 @@ window.onload = function() {
         'freeverb_worklet',
         'gigaverb_worklet',
         'gardenOfDelay_worklet', 
-        'karplusStrong'
+        'karplusStrong_worklet'
       ]
   
   let currentFile = 'intro'

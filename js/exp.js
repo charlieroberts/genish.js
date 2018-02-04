@@ -8,7 +8,6 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
-
     
     const isWorklet = gen.mode === 'worklet'
     const ref = isWorklet? 'this' : 'gen'
