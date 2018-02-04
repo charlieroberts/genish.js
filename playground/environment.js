@@ -54,10 +54,10 @@ window.onload = function() {
       files = [
         'intro',
         'thereminish_worklet',         
-        'hardsync',
+        'hardsync_worklet',
         'bitcrusher',
         'enveloping',
-        'bandlimitedFM',
+        'bandlimitedFM_worklet',
         'biquad',
         'zeroDelay',
         'zeroDelayLadder',

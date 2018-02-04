@@ -36,6 +36,9 @@ module.exports = ( propName=0, value=0, min=0, max=1 ) => {
   ugen.min = min
   ugen.max = max
 
+  // for storing worklet nodes once they're instantiated
+  ugen.waapi = null
+
   Object.defineProperty( ugen, 'value', {
     get() {
       if( this.memory.value.idx !== null ) {
@@ -44,7 +47,12 @@ module.exports = ( propName=0, value=0, min=0, max=1 ) => {
     },
     set( v ) {
       if( this.memory.value.idx !== null ) {
-        gen.memory.heap[ this.memory.value.idx ] = v 
+        const isWorklet = gen.mode === 'worklet'
+        if( isWorklet && ugen.waapi !== null ) {
+          ugen.waapi.value = v
+        }else{
+          gen.memory.heap[ this.memory.value.idx ] = v
+        } 
       }
     }
   })

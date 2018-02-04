@@ -13,9 +13,9 @@ let utilities = {
       this.workletNode.disconnect()
     }else{
       this.callback = () => 0
-      this.clear.callbacks.forEach( v => v() )
-      this.clear.callbacks.length = 0
     }
+    this.clear.callbacks.forEach( v => v() )
+    this.clear.callbacks.length = 0
   },
 
   createContext() {
@@ -188,8 +188,12 @@ class ${name}Processor extends AudioWorkletProcessor {
   }
 
   handleMessage( event ) {
-    this.memory = event.data.memory
-    this.initialized = true
+    if( event.data.key === 'init' ) {
+      this.memory = event.data.memory
+      this.initialized = true
+    }else if( event.data.key === 'set' ) {
+      this.memory[ event.data.idx ] = event.data.value
+    }
   }
 
   callback${prettyCallback}
@@ -242,7 +246,7 @@ registerProcessor( '${name}', ${name}Processor)`
         const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
         workletNode.connect( utilities.ctx.destination )
 
-        workletNode.port.postMessage({ memory:gen.memory.heap })
+        workletNode.port.postMessage({ key:'init', memory:gen.memory.heap })
         utilities.workletNode = workletNode
 
         // assign all params as properties of node for easier reference 
@@ -263,7 +267,8 @@ registerProcessor( '${name}', ${name}Processor)`
         for( let ugen of params.values() ) {
           const name = ugen.name
           const param = workletNode.parameters.get( name )
-      
+          ugen.waapi = param 
+
           Object.defineProperty( workletNode, name, {
             set( v ) {
               param.value = v

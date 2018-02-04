@@ -14,7 +14,7 @@ let proto = {
     if( this.memory.value.idx === null ) gen.requestMemory( this.memory )
     functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], inputs[4],  `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
 
-    gen.closures.add({ [ this.name ]: this }) 
+    //gen.closures.add({ [ this.name ]: this }) 
 
     gen.memo[ this.name ] = this.name + '_value'
    
