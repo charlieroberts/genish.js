@@ -61,7 +61,7 @@ window.onload = function() {
         'biquad_worklet',
         'zeroDelay_worklet',
         'zeroDelayLadder_worklet',
-        'slicingAndDicing', 
+        'slicingAndDicing_worklet', 
         'oneDelayLine',
         'combfilter',
         'freeverb',
