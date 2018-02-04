@@ -28,6 +28,7 @@ let gen = {
 
   closures: new Set(),
   params:   new Set(),
+  inputs:   new Set(),
 
   parameters:[],
   endBlock: new Set(),
@@ -97,6 +98,7 @@ let gen = {
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
+    this.inputs.clear()
     this.params.clear()
     //this.globals = { windows:{} }
     
@@ -166,7 +168,7 @@ let gen = {
     }
 
     let buildString = this.mode === 'worklet'
-      ? `return function( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+      ? `return function( freqMod ){ \n${ this.functionBody }\n}`
       : `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
@@ -196,7 +198,7 @@ let gen = {
     callback.members = this.closures
     callback.data = this.data
     callback.params = this.params
-    callback.inputs = this.params
+    callback.inputs = this.inputs
     callback.parameters = this.parameters.slice( 0 )
     callback.isStereo = isStereo
 

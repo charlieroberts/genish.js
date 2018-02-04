@@ -87,11 +87,11 @@ let utilities = {
     // [{name: 'amplitude', defaultValue: 0.25, minValue: 0, maxValue: 1}];
     let paramStr = ''
 
-    for( let dict of cb.inputs.values() ) {
+    for( let dict of cb.params.values() ) {
       const name = Object.keys( dict )[0],
             ugen = dict[ name ]
  
-      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },`
+      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
     }
 
     return paramStr
@@ -99,7 +99,7 @@ let utilities = {
 
   createParameterDereferences( cb ) {
     let str = ''
-    for( let dict of cb.inputs.values() ) {
+    for( let dict of cb.params.values() ) {
       const name = Object.keys( dict )[0],
             ugen = dict[ name ]
 
@@ -111,13 +111,34 @@ let utilities = {
 
   createParameterArguments( cb ) {
     let  paramList = ''
-    for( let dict of cb.inputs.values() ) {
+    for( let dict of cb.params.values() ) {
       paramList += Object.keys( dict )[0] + '[i],'
     }
     paramList = paramList.slice( 0, -1 )
 
     return paramList
   },
+
+  createInputDereferences( cb ) {
+    let str = ''
+    for( let input of  cb.inputs.values() ) {
+      str += `const ${input.name} = inputs[ ${input.inputNumber} ][ ${input.channelNumber} ]\n      `
+    }
+
+    return str
+  },
+
+
+  createInputArguments( cb ) {
+    let  paramList = ''
+    for( let input of cb.inputs.values() ) {
+      paramList += input.name + '[i],'
+    }
+    paramList = paramList.slice( 0, -1 )
+
+    return paramList
+  },
+      
 
   createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
@@ -128,7 +149,10 @@ let utilities = {
     const parameterDescriptors = this.createParameterDescriptors( cb )
     const parameterDereferences = this.createParameterDereferences( cb )
     const paramList = this.createParameterArguments( cb )
-    
+    const inputDereferences = this.createInputDereferences( cb )
+    const inputList = this.createInputArguments( cb )   
+    const separator = cb.params.size !== 0 && cb.inputs.size > 0 ? ', ' : ''
+
     // get references to Math functions as needed
     // these references are added to the callback during codegen.
     let memberString = ''
@@ -184,9 +208,10 @@ class ${name}Processor extends AudioWorkletProcessor {
       const len    = left.length
       const cb     = this.callback.bind( this )
       ${parameterDereferences}
+      ${inputDereferences}
 
       for( let i = 0; i < len; ++i ) {
-        const out = cb( ${paramList} )
+        const out = cb( ${inputList} ${separator} ${paramList} )
         ${genishOutputLine}
       }
     }
