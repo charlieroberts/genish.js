@@ -193,6 +193,8 @@ class ${name}Processor extends AudioWorkletProcessor {
       this.initialized = true
     }else if( event.data.key === 'set' ) {
       this.memory[ event.data.idx ] = event.data.value
+    }else if( event.data.key === 'get' ) {
+      this.port.postMessage({ key:'return', idx:event.data.idx, value:this.memory[event.data.idx] })     
     }
   }
 
@@ -235,6 +237,13 @@ registerProcessor( '${name}', ${name}Processor)`
     return [ url, workletCode, inputs, cb.params, cb.isStereo ] 
   },
 
+  registeredForNodeAssignment: [],
+  register( ugen ) {
+    if( this.registeredForNodeAssignment.indexOf( ugen ) === -1 ) {
+      this.registeredForNodeAssignment.push( ugen )
+    }
+  },
+
   playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
     utilities.clear()
 
@@ -246,8 +255,24 @@ registerProcessor( '${name}', ${name}Processor)`
         const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
         workletNode.connect( utilities.ctx.destination )
 
+        workletNode.callbacks = {}
+        workletNode.onmessage = function( event ) {
+          if( event.data.message === 'return' ) {
+            workletNode.callbacks[ event.data.idx ]( event.data.value )
+            delete workletNode.callbacks[ event.data.idx ]
+          }
+        }
+
+        workletNode.getMemoryValue = function( idx, cb ) {
+          this.workletCallbacks[ idx ] = cb
+          this.workletNode.port.postMessage({ key:'get', idx: idx })
+        }
+        
         workletNode.port.postMessage({ key:'init', memory:gen.memory.heap })
         utilities.workletNode = workletNode
+
+        utilities.registeredForNodeAssignment.forEach( ugen => ugen.node = workletNode )
+        utilities.registeredForNodeAssignment.length = 0
 
         // assign all params as properties of node for easier reference 
         for( let dict of inputs.values() ) {

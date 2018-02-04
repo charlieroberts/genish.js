@@ -76,18 +76,41 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
     0
   )
    
+  const usingWorklet = gen.mode === 'worklet'
+  if( usingWorklet === true ) {
+    out.node = null
+    utilities.register( out )
+  }
+
   out.trigger = ()=> {
     shouldSustain.value = 1
     envTrigger.trigger()
   }
+ 
+  // needed for gibberish... getting this to work right with worklets
+  // via promises will probably be tricky
+  out.isComplete = ()=> {
+    if( usingWorklet === true && out.node !== null ) {
+      const p = new Promise( resolve => {
+        out.node.getMemoryValue( completeFlag.memory.values.idx, resolve )
+      })
 
-  out.isComplete = ()=> gen.memory.heap[ completeFlag.memory.values.idx ]
+      return p
+    }else{
+      return gen.memory.heap[ completeFlag.memory.values.idx ]
+    }
+  }
+
 
   out.release = ()=> {
     shouldSustain.value = 0
     // XXX pretty nasty... grabs accum inside of gtp and resets value manually
     // unfortunately envTrigger won't work as it's back to 0 by the time the release block is triggered...
-    gen.memory.heap[ releaseAccum.inputs[0].inputs[1].memory.value.idx ] = 0
+    if( usingWorklet && out.node !== null ) {
+      out.node.port.postMessage({ key:'set', idx:releaseAccum.inputs[0].inputs[1].memory.value.idx, value:0 })
+    }else{
+      gen.memory.heap[ releaseAccum.inputs[0].inputs[1].memory.value.idx ] = 0
+    }
   }
 
   return out 

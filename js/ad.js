@@ -16,7 +16,8 @@ let gen      = require( './gen.js' ),
     neq      = require( './neq.js' ),
     and      = require( './and.js' ),
     gte      = require( './gte.js' ),
-    memo     = require( './memo.js' )
+    memo     = require( './memo.js' ),
+    utilities= require( './utilities.js' )
 
 module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   const props = Object.assign({}, { shape:'exponential', alpha:5, trigger:null }, _props )
@@ -60,10 +61,32 @@ module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
     )
   }
 
-  out.isComplete = ()=> gen.memory.heap[ completeFlag.memory.values.idx ]
+  const usingWorklet = gen.mode === 'worklet'
+  if( usingWorklet === true ) {
+    out.node = null
+    utilities.register( out )
+  }
+
+  // needed for gibberish... getting this to work right with worklets
+  // via promises will probably be tricky
+  out.isComplete = ()=> {
+    if( usingWorklet === true && out.node !== null ) {
+      const p = new Promise( resolve => {
+        out.node.getMemoryValue( completeFlag.memory.values.idx, resolve )
+      })
+
+      return p
+    }else{
+      return gen.memory.heap[ completeFlag.memory.values.idx ]
+    }
+  }
 
   out.trigger = ()=> {
-    gen.memory.heap[ completeFlag.memory.values.idx ] = 0
+    if( usingWorklet === true && out.node !== null ) {
+      out.node.port.postMessage({ key:'set', idx:completeFlag.memory.values.idx, value:0 })
+    }else{
+      gen.memory.heap[ completeFlag.memory.values.idx ] = 0
+    }
     _bang.trigger()
   }
 

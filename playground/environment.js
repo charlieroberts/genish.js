@@ -55,7 +55,7 @@ window.onload = function() {
         'intro',
         'thereminish_worklet',         
         'hardsync_worklet',
-        'bitcrusher',
+        'bitcrusher_worklet',
         'enveloping',
         'bandlimitedFM_worklet',
         'biquad',
