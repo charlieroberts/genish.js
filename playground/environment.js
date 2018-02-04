@@ -63,7 +63,7 @@ window.onload = function() {
         'zeroDelayLadder_worklet',
         'slicingAndDicing_worklet', 
         'oneDelayLine',
-        'combfilter_worklet',
+        'combFilter_worklet',
         'freeverb_worklet',
         'gigaverb_worklet',
         'gardenOfDelays_worklet', 
