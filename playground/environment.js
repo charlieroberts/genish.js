@@ -64,7 +64,7 @@ window.onload = function() {
         'slicingAndDicing_worklet', 
         'oneDelayLine',
         'combfilter_worklet',
-        'freeverb',
+        'freeverb_worklet',
         'gigaverb',
         'gardenOfDelays', 
         'karplusStrong'
