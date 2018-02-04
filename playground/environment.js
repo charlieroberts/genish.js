@@ -65,7 +65,7 @@ window.onload = function() {
         'oneDelayLine',
         'combfilter_worklet',
         'freeverb_worklet',
-        'gigaverb',
+        'gigaverb_worklet',
         'gardenOfDelays', 
         'karplusStrong'
       ]
