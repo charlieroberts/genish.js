@@ -60,7 +60,7 @@ window.onload = function() {
         'bandlimitedFM_worklet',
         'biquad_worklet',
         'zeroDelay_worklet',
-        'zeroDelayLadder',
+        'zeroDelayLadder_worklet',
         'slicingAndDicing', 
         'oneDelayLine',
         'combfilter',

@@ -20,7 +20,7 @@ kwa = memo( mul( 2/iT, tan( mul( kwd, iT/2 ) ) ) )
 kg = memo( mul( kwa, iT/2 ) )
 
 // kk = 4.0*(kQ - 0.5)/(25.0 - 0.5)
-kk = memo( mul( 4, div( sub( slide(Q,512,512), ,.5), 24.5 ) ) )
+kk = memo( mul( 4, div( sub( slide(Q,512,512), .5), 24.5 ) ) )
 
 // kg_plus_1 = (1.0 + kg)
 kg_plus_1 = add( 1, kg )
