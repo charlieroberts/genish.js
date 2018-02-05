@@ -16,7 +16,7 @@ let proto = {
 
     this.value = this.initialValue
 
-    gen.memo[ this.name ] = isWorklet ? this.name : `memory[${this.memory.value.idx}]`
+    gen.memo[ this.name ] = isWorklet ? this.name + '[i]' : `memory[${this.memory.value.idx}]`
 
     return gen.memo[ this.name ]
   } 

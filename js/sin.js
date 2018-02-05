@@ -11,12 +11,12 @@ let proto = {
     
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'sin': isWorklet ? 'Math.sin' : Math.sin })
 
-      out = `${ref}.sin( ${inputs[0]} )` 
+      out = `${ref}sin( ${inputs[0]} )` 
 
     } else {
       out = Math.sin( parseFloat( inputs[0] ) )

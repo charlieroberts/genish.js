@@ -11,12 +11,12 @@ let proto = {
     
 
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet ? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'acos': isWorklet ? 'Math.acos' :Math.acos })
 
-      out = `${ref}.acos( ${inputs[0]} )` 
+      out = `${ref}acos( ${inputs[0]} )` 
 
     } else {
       out = Math.acos( parseFloat( inputs[0] ) )

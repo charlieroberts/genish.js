@@ -11,12 +11,12 @@ let proto = {
     
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet? '' : 'gen.'
 
     if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
       gen.closures.add({ 'pow': isWorklet ? 'Math.pow' : Math.pow })
 
-      out = `${ref}.pow( ${inputs[0]}, ${inputs[1]} )` 
+      out = `${ref}pow( ${inputs[0]}, ${inputs[1]} )` 
 
     } else {
       if( typeof inputs[0] === 'string' && inputs[0][0] === '(' ) {

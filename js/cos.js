@@ -11,12 +11,13 @@ let proto = {
     
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+
+    const ref = isWorklet ? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'cos': isWorklet ? 'Math.cos' : Math.cos })
 
-      out = `${ref}.cos( ${inputs[0]} )` 
+      out = `${ref}cos( ${inputs[0]} )` 
 
     } else {
       out = Math.cos( parseFloat( inputs[0] ) )

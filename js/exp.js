@@ -8,14 +8,15 @@ let proto = {
   gen() {
     let out,
         inputs = gen.getInputs( this )
+
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ this.name ]: isWorklet ? 'Math.exp' : Math.exp })
 
-      out = `${ref}.exp( ${inputs[0]} )`
+      out = `${ref}exp( ${inputs[0]} )`
 
     } else {
       out = Math.exp( parseFloat( inputs[0] ) )

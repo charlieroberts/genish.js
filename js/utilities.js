@@ -77,10 +77,12 @@ let utilities = {
   // remove starting stuff and add tabs
   prettyPrintCallback( cb ) {
     // get rid of "function gen" and start with parenthesis
-    const shortendCB = cb.toString().slice(9)
-    const cbSplit = shortendCB.split('\n')
+    // const shortendCB = cb.toString().slice(9)
+    const cbSplit = cb.toString().split('\n')
+    const cbTrim = cbSplit.slice( 3, -2 )
+    const cbTabbed = cbTrim.map( v => '      ' + v ) 
     
-    return cbSplit.join('\n  ')
+    return cbTabbed.join('\n')
   },
 
   createParameterDescriptors( cb ) {
@@ -95,7 +97,7 @@ let utilities = {
   },
 
   createParameterDereferences( cb ) {
-    let str = ''
+    let str = cb.params.size > 0 ? '\n      ' : ''
     for( let ugen of cb.params.values() ) {
       str += `const ${ugen.name} = parameters.${ugen.name}\n      `
     }
@@ -114,7 +116,7 @@ let utilities = {
   },
 
   createInputDereferences( cb ) {
-    let str = ''
+    let str = cb.inputs.size > 0 ? '\n' : ''
     for( let input of  cb.inputs.values() ) {
       str += `const ${input.name} = inputs[ ${input.inputNumber} ][ ${input.channelNumber} ]\n      `
     }
@@ -133,6 +135,21 @@ let utilities = {
     return paramList
   },
       
+  createFunctionDereferences( cb ) {
+    let memberString = cb.members.size > 0 ? '\n' : ''
+    let memo = {}
+    for( let dict of cb.members.values() ) {
+      const name = Object.keys( dict )[0],
+            value = dict[ name ]
+
+      if( memo[ name ] !== undefined ) continue
+      memo[ name ] = true
+
+      memberString += `      const ${name} = ${value}\n`
+    }
+
+    return memberString
+  },
 
   createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
@@ -145,22 +162,15 @@ let utilities = {
     const paramList = this.createParameterArguments( cb )
     const inputDereferences = this.createInputDereferences( cb )
     const inputList = this.createInputArguments( cb )   
-    const separator = cb.params.size !== 0 && cb.inputs.size > 0 ? ', ' : ''
+    const memberString = this.createFunctionDereferences( cb )
 
     // get references to Math functions as needed
     // these references are added to the callback during codegen.
-    let memberString = ''
-    for( let dict of cb.members.values() ) {
-      const name = Object.keys( dict )[0],
-            value = dict[ name ]
-
-      memberString += `    this.${name} = ${value}\n`
-    }
 
     // change output based on number of channels.
     const genishOutputLine = cb.isStereo === false
-      ? `left[ i ] = out`
-      : `left[ i ] = out[0];\n\t\tright[ i ] = out[1]\n`
+      ? `left[ i ] = memory[0]`
+      : `left[ i ] = memory[0];\n\t\tright[ i ] = memory[1]\n`
 
     const prettyCallback = this.prettyPrintCallback( cb )
 
@@ -184,7 +194,6 @@ class ${name}Processor extends AudioWorkletProcessor {
     super( options )
     this.port.onmessage = this.handleMessage.bind( this )
     this.initialized = false
-    ${memberString}
   }
 
   handleMessage( event ) {
@@ -198,20 +207,16 @@ class ${name}Processor extends AudioWorkletProcessor {
     }
   }
 
-  callback${prettyCallback}
-
   process( inputs, outputs, parameters ) {
     if( this.initialized === true ) {
       const output = outputs[0]
       const left   = output[ 0 ]
       const right  = output[ 1 ]
       const len    = left.length
-      const cb     = this.callback.bind( this )
-      ${parameterDereferences}
-      ${inputDereferences}
+      const memory = this.memory ${parameterDereferences}${inputDereferences}${memberString}
 
       for( let i = 0; i < len; ++i ) {
-        const out = cb( ${inputList} ${separator} ${paramList} )
+        ${prettyCallback}
         ${genishOutputLine}
       }
     }

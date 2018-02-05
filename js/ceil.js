@@ -11,12 +11,12 @@ let proto = {
 
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet ? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ [ this.name ]: isWorklet ? 'Math.ceil' : Math.ceil })
 
-      out = `${ref}.ceil( ${inputs[0]} )`
+      out = `${ref}ceil( ${inputs[0]} )`
 
     } else {
       out = Math.ceil( parseFloat( inputs[0] ) )

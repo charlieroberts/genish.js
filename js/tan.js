@@ -11,12 +11,12 @@ let proto = {
     
     
     const isWorklet = gen.mode === 'worklet'
-    const ref = isWorklet? 'this' : 'gen'
+    const ref = isWorklet? '' : 'gen.'
 
     if( isNaN( inputs[0] ) ) {
       gen.closures.add({ 'tan': isWorklet ? 'Math.tan' : Math.tan })
 
-      out = `${ref}.tan( ${inputs[0]} )` 
+      out = `${ref}tan( ${inputs[0]} )` 
 
     } else {
       out = Math.tan( parseFloat( inputs[0] ) )
