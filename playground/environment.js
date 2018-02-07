@@ -48,7 +48,7 @@ window.onload = function() {
     return cb
   }
 
-  Babel.registerPlugin( 'jsdsp', jsdsp )
+  //Babel.registerPlugin( 'jsdsp', jsdsp )
 
   let select = document.querySelector( 'select' ),
       files = [
@@ -89,12 +89,12 @@ window.onload = function() {
   
   loadexample( 'intro' )
 
-  let jsdspBtn = document.querySelector( '#jsdsp' ) 
+  //let jsdspBtn = document.querySelector( '#jsdsp' ) 
 
-  jsdspBtn.addEventListener( 'change', v => {
-    shouldUseJSDSP = v.target.checked
-    askForReload()
-  })
+  //jsdspBtn.addEventListener( 'change', v => {
+  //  shouldUseJSDSP = v.target.checked
+  //  askForReload()
+  //})
 
   const askForReload = ()=> {
     let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'

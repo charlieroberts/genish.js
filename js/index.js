@@ -98,7 +98,8 @@ let library = {
   pan:      require( './pan.js' ),
   eq:       require( './eq.js' ),
   neq:      require( './neq.js' ),
-  exp:      require( './exp.js' )
+  exp:      require( './exp.js' ),
+  seq:      require( './seq.js' )
 }
 
 library.gen.lib = library
