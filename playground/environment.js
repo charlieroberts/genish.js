@@ -54,6 +54,7 @@ window.onload = function() {
       files = [
         'intro',
         'thereminish_worklet',         
+        'sequencing', 
         'hardsync_worklet',
         'bitcrusher_worklet',
         'enveloping',

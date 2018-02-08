@@ -2,12 +2,11 @@
 
 let gen   = require( './gen.js' ),
     accum = require( './accum.js' ),
-    proto = { basename:'seq' },
     counter= require( './counter.js' ),
     peek  = require( './peek.js' ),
     ssd   = require( './history.js' ),
-    data  = require( './data.js' )
-
+    data  = require( './data.js' ),
+    proto = { basename:'seq' }
 
 module.exports = ( durations = 11025, values = [0,1], phaseIncrement = 1) => {
   let clock
