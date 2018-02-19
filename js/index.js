@@ -1,6 +1,6 @@
 'use strict'
 
-let library = {
+const library = {
   export( destination ) {
     if( destination === window ) {
       destination.ssd = library.history    // history is window object property, so use ssd as alias
