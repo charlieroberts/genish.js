@@ -3,7 +3,6 @@
   <head>
     <meta charset='utf-8'>
     <script src='../dist/gen.lib.js'></script>
-  <meta http-equiv="origin-trial" data-feature="AudioWorklet" data-expires="2018-03-06" content="Al1KANuVLbIk5hLbRXsa1k3bLvSuCaQn/2/3HlZIJPkwLlbzglGg8Cg96npoqaDaNHunPRHSqTijdeMurQV8GQQAAABQeyJvcmlnaW4iOiJodHRwOi8vMTI3LjAuMC4xOjEwMDAwIiwiZmVhdHVyZSI6IkF1ZGlvV29ya2xldCIsImV4cGlyeSI6MTUyMDI5NDQwMH0=">
   </head>
   <body>
     <p> click in the window please. </p>
@@ -30,6 +29,7 @@
         gain.connect( node )
         node.connect( ctx.destination )
         sine.start()
+        console.log( 'playing...' )
       })
 
       window.removeEventListener( 'click', click )

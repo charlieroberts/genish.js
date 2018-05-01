@@ -94,7 +94,7 @@ let gen = {
     
     //console.log( 'cb memory:', mem )
     this.memory = mem
-    this.memory.alloc( 2, true )
+    this.outputIdx = this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -137,7 +137,7 @@ let gen = {
       let lastidx = body.length - 1
 
       // insert return keyword
-      body[ lastidx ] = '  memory[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[' + (this.outputIdx + i) + ']  = ' + body[ lastidx ] + '\n'
 
       this.functionBody += body.join('\n')
     }
@@ -147,7 +147,7 @@ let gen = {
         value.gen()      
     })
 
-    const returnStatement = isStereo ? '  return memory' : '  return memory[0]'
+    const returnStatement = isStereo ? `  return [ memory[${this.outputIdx}], memory[${this.outputIdx + 1}] ]` : `  return memory[${this.outputIdx}]`
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -164,7 +164,7 @@ let gen = {
     // to construct the named function! sheesh...
     //
     if( shouldInlineMemory === true ) {
-      this.parameters.push( 'memory' )
+      this.parameters.add( 'memory' )
     }
 
     let paramString = ''
@@ -187,7 +187,7 @@ let gen = {
 
     let buildString = this.mode === 'worklet'
       ? `return function( ${inputString} ${separator} ${paramString} ){ \n${ this.functionBody }\n}`
-      : `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+      : `return function gen( ${ [...this.parameters].join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
 

@@ -89,10 +89,12 @@ let utilities = {
     // [{name: 'amplitude', defaultValue: 0.25, minValue: 0, maxValue: 1}];
     let paramStr = ''
 
-    for( let ugen of cb.params.values() ) {
-      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
+    //for( let ugen of cb.params.values() ) {
+    //  paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
+    //}
+    for( let ugen of cb.inputs.values() ) {
+      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.defaultValue}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
     }
-
     return paramStr
   },
 
@@ -164,9 +166,6 @@ let utilities = {
     const inputList = this.createInputArguments( cb )   
     const memberString = this.createFunctionDereferences( cb )
 
-    // get references to Math functions as needed
-    // these references are added to the callback during codegen.
-
     // change output based on number of channels.
     const genishOutputLine = cb.isStereo === false
       ? `left[ i ] = memory[0]`
@@ -174,11 +173,10 @@ let utilities = {
 
     const prettyCallback = this.prettyPrintCallback( cb )
 
-
     /***** begin callback code ****/
     // note that we have to check to see that memory has been passed
     // to the worker before running the callback function, otherwise
-    // it can be past too slowly and fail on occassion
+    // it can be passed too slowly and fail on occassion
 
     const workletCode = `
 class ${name}Processor extends AudioWorkletProcessor {
