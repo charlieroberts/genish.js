@@ -12,6 +12,8 @@ let proto = {
         functionBody
        
     if( this.memory.value.idx === null ) gen.requestMemory( this.memory )
+    console.log( 'counter value:', this.value )
+    gen.memory.heap[ this.memory.value.idx ] = this.initialValue
     functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], inputs[4],  `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
 
     gen.closures.add({ [ this.name ]: this }) 
@@ -65,13 +67,12 @@ let proto = {
 
 module.exports = ( incr=1, min=0, max=Infinity, reset=0, loops=1,  properties ) => {
   let ugen = Object.create( proto ),
-      defaults = { initialValue: 0, shouldWrap:true }
-
-  if( properties !== undefined ) Object.assign( defaults, properties )
+      defaults = Object.assign( { initialValue: 0, shouldWrap:true }, properties )
 
   Object.assign( ugen, { 
     min:    min, 
     max:    max,
+    initialValue: defaults.initialValue,
     value:  defaults.initialValue,
     uid:    gen.getUID(),
     inputs: [ incr, min, max, reset, loops ],

@@ -82,7 +82,7 @@ let gen = {
    * ... the generated function will have a signature of ( abs, p0 ).
    */
   
-  createCallback( ugen, mem, debug = false, shouldInlineMemory=false, memType = Float32Array ) {
+  createCallback( ugen, mem, debug = false, shouldInlineMemory=false, memType = Float64Array ) {
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -187,7 +187,7 @@ let gen = {
     }
 
     callback.data = this.data
-    callback.out  = new Float32Array( 2 )
+    callback.out  = new Float64Array( 2 )
     callback.parameters = this.parameters.slice( 0 )
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
