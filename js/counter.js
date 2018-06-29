@@ -12,8 +12,8 @@ let proto = {
         functionBody
        
     if( this.memory.value.idx === null ) gen.requestMemory( this.memory )
-    console.log( 'counter value:', this.value )
     gen.memory.heap[ this.memory.value.idx ] = this.initialValue
+    
     functionBody  = this.callback( genName, inputs[0], inputs[1], inputs[2], inputs[3], inputs[4],  `memory[${this.memory.value.idx}]`, `memory[${this.memory.wrap.idx}]`  )
 
     gen.closures.add({ [ this.name ]: this }) 
