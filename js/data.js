@@ -78,8 +78,8 @@ module.exports = ( x, y=1, properties ) => {
     load( filename ) {
       let promise = utilities.loadSample( filename, ugen )
       promise.then( ( _buffer )=> { 
-        ugen.memory.values.length = ugen.dim = _buffer.length     
-        ugen.onload() 
+        ugen.memory.values.length = ugen.dim = _buffer.length
+        if( typeof ugen.onload === 'function' ) ugen.onload() 
       })
     },
     memory : {
