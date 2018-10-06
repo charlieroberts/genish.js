@@ -16,7 +16,7 @@ let proto = {
 
     this.value = this.initialValue
 
-    gen.memo[ this.name ] = isWorklet ? this.name  : `memory[${this.memory.value.idx}]`
+    gen.memo[ this.name ] = isWorklet ? this.name : `memory[${this.memory.value.idx}]`
 
     return gen.memo[ this.name ]
   } 
@@ -35,6 +35,7 @@ module.exports = ( propName=0, value=0, min=0, max=1 ) => {
 
   ugen.min = min
   ugen.max = max
+  ugen.defaultValue = ugen.initialValue
 
   // for storing worklet nodes once they're instantiated
   ugen.waapi = null

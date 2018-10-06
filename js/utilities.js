@@ -92,8 +92,8 @@ let utilities = {
     //for( let ugen of cb.params.values() ) {
     //  paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.value}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
     //}
-    for( let ugen of cb.inputs.values() ) {
-      paramStr += `{ name:'${ugen.name}', defaultValue:${ugen.defaultValue}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
+    for( let ugen of cb.params.values() ) {
+      paramStr += `{ name:'${ugen.name}', automationRate:'k-rate', defaultValue:${ugen.defaultValue}, minValue:${ugen.min}, maxValue:${ugen.max} },\n      `
     }
     return paramStr
   },
@@ -101,7 +101,7 @@ let utilities = {
   createParameterDereferences( cb ) {
     let str = cb.params.size > 0 ? '\n      ' : ''
     for( let ugen of cb.params.values() ) {
-      str += `const ${ugen.name} = parameters.${ugen.name}\n      `
+      str += `const ${ugen.name} = parameters.${ugen.name}[0]\n      `
     }
 
     return str
@@ -256,7 +256,6 @@ registerProcessor( '${name}', ${name}Processor)`
    
       utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
         const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
-        workletNode.connect( utilities.ctx.destination )
 
         workletNode.callbacks = {}
         workletNode.onmessage = function( event ) {
@@ -293,9 +292,12 @@ registerProcessor( '${name}', ${name}Processor)`
         }
 
         for( let ugen of params.values() ) {
+          console.log( ugen )
           const name = ugen.name
           const param = workletNode.parameters.get( name )
           ugen.waapi = param 
+          // initialize?
+          param.value = ugen.defaultValue
 
           Object.defineProperty( workletNode, name, {
             set( v ) {
@@ -308,6 +310,8 @@ registerProcessor( '${name}', ${name}Processor)`
         }
 
         if( utilities.console ) utilities.console.setValue( codeString )
+
+        workletNode.connect( utilities.ctx.destination )
 
         resolve( workletNode )
       })

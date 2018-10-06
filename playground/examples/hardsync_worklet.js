@@ -17,7 +17,7 @@ increment inversino in soft sync.
 */
 
 // create a sample increment for our master oscillator
-freq = param( 'freq', 110, 55, 2500 ) 
+freq = seq( [11025], [110,165,220] )
 incr = div( freq, gen.samplerate )
 
 // create our master ramp oscillator
@@ -36,15 +36,6 @@ slave = phasor( syncSweep, master.wrap )
 
 play( mul( add( master, slave ), .01 ) )
 
-// create some notes for our master oscillator to play 
-notes = [110,165,220]
-count = 0
-interval = setInterval( ()=> {
-  freq.value = notes[ count++ % notes.length ]
-}, 500 )
-
-// clear setInterval whenever genish.js is cleared
-utilities.clear.callbacks.push( ()=> clearInterval( interval ) )
 
 // soft sync works in a similar fashion to hard sync, except
 // instead of resetting the phase of the slave oscillator, we
@@ -61,7 +52,7 @@ utilities.clear.callbacks.push( ()=> clearInterval( interval ) )
 // clear hard sync if it's still running
 genish.utilities.clear()
 
-freq = param( 'frequency', 110,55,2000 )
+freq = seq( [11025], [110,165,220] )
 incr = div( freq, gen.samplerate )
 
 // create our master ramp oscillator
@@ -93,14 +84,3 @@ freqmod = ifelse(
 slave = phasor( mul( syncSweep, freqmod ) ) 
 
 play( mul( add( master, slave ), .01 ) )
-
-// create some notes for our master oscillator to play 
-notes = [110,165,220]
-count = 0
-interval = setInterval( ()=> {
-  freq.value = notes[ count++ % notes.length ]
-}, 500 )
-
-// clear setInterval whenever genish.js is cleared
-utilities.clear.callbacks.push( ()=> clearInterval( interval ) )
-

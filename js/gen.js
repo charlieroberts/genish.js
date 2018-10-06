@@ -180,7 +180,7 @@ let gen = {
     let inputString = ''
     if( this.mode === 'worklet' ) {
       for( let ugen of this.inputs.values() ) {
-        inputString+= ugen.name + ','
+        inputString += ugen.name + ','
       }
       inputString = inputString.slice(0,-1)
     }
