@@ -292,7 +292,6 @@ registerProcessor( '${name}', ${name}Processor)`
         }
 
         for( let ugen of params.values() ) {
-          console.log( ugen )
           const name = ugen.name
           const param = workletNode.parameters.get( name )
           ugen.waapi = param 
