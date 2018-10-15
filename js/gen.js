@@ -67,6 +67,7 @@ let gen = {
 
   createMemory( amount, type ) {
     const mem = MemoryHelper.create( mem, type )
+    return mem
   },
 
   /* createCallback
