@@ -1,6 +1,6 @@
 {
   "name": "genish.js",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "gen~ in js",
   "main": "js/index.js",
   "directories": {
