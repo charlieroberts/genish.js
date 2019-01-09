@@ -15,6 +15,7 @@ let gen = {
   debug:false,
   samplerate: 44100, // change on audiocontext creation
   shouldLocalize: false,
+  graph:null,
   globals:{
     windows: {},
   },
@@ -92,12 +93,13 @@ let gen = {
     }
     
     //console.log( 'cb memory:', mem )
+    this.graph = ugen
     this.memory = mem
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
     this.params.clear()
-    //this.globals = { windows:{} }
+    this.globals = { windows:{} }
     
     this.parameters.length = 0
     

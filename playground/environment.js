@@ -23,7 +23,7 @@ window.onload = function() {
   cmconsole.setSize( null, '100%' )
   genish.export( window )
 
-  utilities.createContext().createScriptProcessor()
+  utilities.createContext()//.createScriptProcessor()
   utilities.console = cmconsole
   utilities.editor  = cm
 

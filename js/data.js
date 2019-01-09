@@ -1,30 +1,40 @@
 'use strict'
 
-let gen  = require('./gen.js'),
-  utilities = require( './utilities.js' ),
-  peek = require('./peek.js'),
-  poke = require('./poke.js')
+const gen  = require('./gen.js'),
+      utilities = require( './utilities.js' ),
+      peek = require('./peek.js'),
+      poke = require('./poke.js')
 
-let proto = {
+const proto = {
   basename:'data',
   globals: {},
+  memo:{},
 
   gen() {
     let idx
+    //console.log( 'data name:', this.name, proto.memo )
+    //debugger
     if( gen.memo[ this.name ] === undefined ) {
       let ugen = this
       gen.requestMemory( this.memory, this.immutable ) 
       idx = this.memory.values.idx
-      try {
-        gen.memory.heap.set( this.buffer, idx )
-      }catch( e ) {
-        console.log( e )
-        throw Error( 'error with request. asking for ' + this.buffer.length +'. current index: ' + gen.memoryIndex + ' of ' + gen.memory.heap.length )
+      if( this.buffer !== undefined ) {
+        try {
+          gen.memory.heap.set( this.buffer, idx )
+        }catch( e ) {
+          console.log( e )
+          throw Error( 'error with request. asking for ' + this.buffer.length +'. current index: ' + gen.memoryIndex + ' of ' + gen.memory.heap.length )
+        }
       }
       //gen.data[ this.name ] = this
       //return 'gen.memory' + this.name + '.buffer'
-      gen.memo[ this.name ] = idx
+      if( this.name.indexOf('data') === -1 ) {
+        proto.memo[ this.name ] = idx
+      }else{
+        gen.memo[ this.name ] = idx
+      }
     }else{
+      console.log( 'using gen data memo', proto.memo[ this.name ] )
       idx = gen.memo[ this.name ]
     }
     return idx
@@ -56,38 +66,44 @@ module.exports = ( x, y=1, properties ) => {
       buffer[ i ] = x[ i ]
     }
   }else if( typeof x === 'string' ) {
-    buffer = { length: y > 1 ? y : gen.samplerate * 60 } // XXX what???
+    //buffer = { length: y > 1 ? y : gen.samplerate * 60 } // XXX what???
+    buffer = { length: y > 1 ? y : gen.samplerate * 20 * 60 } // XXX what???
     shouldLoad = true
   }else if( x instanceof Float32Array ) {
     buffer = x
   }
   
-  ugen = Object.create( proto )
+  ugen = Object.create( proto ) 
 
   Object.assign( ugen, { 
     buffer,
     name: proto.basename + gen.getUID(),
-    dim:  buffer.length, // XXX how do we dynamically allocate this?
+    dim:  buffer !== undefined ? buffer.length : 1, // XXX how do we dynamically allocate this?
     channels : 1,
     onload: null,
-    then( fnc ) {
-      ugen.onload = fnc
-      return ugen
-    },
+    //then( fnc ) {
+    //  ugen.onload = fnc
+    //  return ugen
+    //},
     immutable: properties !== undefined && properties.immutable === true ? true : false,
-    load( filename ) {
+    load( filename, __resolve ) {
       let promise = utilities.loadSample( filename, ugen )
-      promise.then( ( _buffer )=> { 
+      promise.then( _buffer => { 
+        ugen.name = filename
         ugen.memory.values.length = ugen.dim = _buffer.length
+
+        gen.requestMemory( ugen.memory, ugen.immutable ) 
+        gen.memory.heap.set( _buffer, ugen.memory.values.idx )
         if( typeof ugen.onload === 'function' ) ugen.onload() 
+        console.log( 'loaded:', _buffer )
+        __resolve( ugen )
       })
     },
     memory : {
-      values: { length:buffer.length, idx:null }
+      values: { length:buffer !== undefined ? buffer.length : 1, idx:null }
     }
   })
 
-  if( shouldLoad ) ugen.load( x )
   
   if( properties !== undefined ) {
     if( properties.global !== undefined ) {
@@ -107,5 +123,25 @@ module.exports = ( x, y=1, properties ) => {
     }
   }
 
-  return ugen
+  let returnValue
+  if( shouldLoad === true ) {
+    console.log( 'loading data!!!' )
+    returnValue = new Promise( (resolve,reject) => {
+      //ugen.load( x, resolve )
+      let promise = utilities.loadSample( x, ugen )
+      promise.then( _buffer => { 
+        ugen.memory.values.length = ugen.dim = _buffer.length
+
+        gen.requestMemory( ugen.memory, ugen.immutable ) 
+        gen.memory.heap.set( _buffer, ugen.memory.values.idx )
+        if( typeof ugen.onload === 'function' ) ugen.onload() 
+        resolve( ugen )
+      })     
+    })
+  }else{
+    returnValue = ugen
+  }
+
+  return returnValue 
 }
+

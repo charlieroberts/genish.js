@@ -33,11 +33,15 @@ module.exports = ( propName=0, value=0 ) => {
     get() {
       if( this.memory.value.idx !== null ) {
         return gen.memory.heap[ this.memory.value.idx ]
+      }else{
+        return this.initialValue
       }
     },
     set( v ) {
       if( this.memory.value.idx !== null ) {
         gen.memory.heap[ this.memory.value.idx ] = v 
+      }else{
+        this.initialValue = v
       }
     }
   })
