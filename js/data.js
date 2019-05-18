@@ -34,7 +34,7 @@ const proto = {
         gen.memo[ this.name ] = idx
       }
     }else{
-      console.log( 'using gen data memo', proto.memo[ this.name ] )
+      //console.log( 'using gen data memo', proto.memo[ this.name ] )
       idx = gen.memo[ this.name ]
     }
     return idx
@@ -67,15 +67,20 @@ module.exports = ( x, y=1, properties ) => {
     }
   }else if( typeof x === 'string' ) {
     //buffer = { length: y > 1 ? y : gen.samplerate * 60 } // XXX what???
-    buffer = { length: y > 1 ? y : gen.samplerate * 20 * 60 } // XXX what???
-    shouldLoad = true
+    //if( proto.memo[ x ] === undefined ) {
+      buffer = { length: y > 1 ? y : 1 } // XXX what???
+      shouldLoad = true
+    //}else{
+      //buffer = proto.memo[ x ]
+    //}
   }else if( x instanceof Float32Array ) {
     buffer = x
   }
   
   ugen = Object.create( proto ) 
 
-  Object.assign( ugen, { 
+  Object.assign( ugen, 
+  { 
     buffer,
     name: proto.basename + gen.getUID(),
     dim:  buffer !== undefined ? buffer.length : 1, // XXX how do we dynamically allocate this?
@@ -89,20 +94,22 @@ module.exports = ( x, y=1, properties ) => {
     load( filename, __resolve ) {
       let promise = utilities.loadSample( filename, ugen )
       promise.then( _buffer => { 
+        proto.memo[ x ] = _buffer
         ugen.name = filename
         ugen.memory.values.length = ugen.dim = _buffer.length
 
         gen.requestMemory( ugen.memory, ugen.immutable ) 
         gen.memory.heap.set( _buffer, ugen.memory.values.idx )
-        if( typeof ugen.onload === 'function' ) ugen.onload() 
-        console.log( 'loaded:', _buffer )
+        if( typeof ugen.onload === 'function' ) ugen.onload( _buffer ) 
         __resolve( ugen )
       })
     },
     memory : {
       values: { length:buffer !== undefined ? buffer.length : 1, idx:null }
     }
-  })
+  },
+  properties
+  )
 
   
   if( properties !== undefined ) {
@@ -125,19 +132,26 @@ module.exports = ( x, y=1, properties ) => {
 
   let returnValue
   if( shouldLoad === true ) {
-    console.log( 'loading data!!!' )
     returnValue = new Promise( (resolve,reject) => {
       //ugen.load( x, resolve )
       let promise = utilities.loadSample( x, ugen )
       promise.then( _buffer => { 
+        proto.memo[ x ] = _buffer
         ugen.memory.values.length = ugen.dim = _buffer.length
 
+        ugen.buffer = _buffer
         gen.requestMemory( ugen.memory, ugen.immutable ) 
         gen.memory.heap.set( _buffer, ugen.memory.values.idx )
-        if( typeof ugen.onload === 'function' ) ugen.onload() 
+        if( typeof ugen.onload === 'function' ) ugen.onload( _buffer ) 
         resolve( ugen )
       })     
     })
+  }else if( proto.memo[ x ] !== undefined ) {
+    gen.requestMemory( ugen.memory, ugen.immutable ) 
+    gen.memory.heap.set( ugen.buffer, ugen.memory.values.idx )
+    if( typeof ugen.onload === 'function' ) ugen.onload( ugen.buffer ) 
+
+    returnValue = ugen
   }else{
     returnValue = ugen
   }

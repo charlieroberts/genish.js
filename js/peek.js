@@ -108,7 +108,6 @@ module.exports = ( input_data, index=0, properties ) => {
     memLength.value = 1
 
     input_data.then( d => {
-      console.log( 'data promise:', d )
       memLocation.value = gen.memory.heap[ memLocation.memory.value.idx ] = d.memory.values.idx
       memLength.value = gen.memory.heap[ memLength.memory.value.idx ] = d.memory.values.length
 
