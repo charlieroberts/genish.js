@@ -226,6 +226,7 @@ let gen = {
       }else{ // if not memoized generate code  
         if( typeof input.gen !== 'function' ) {
           console.log( 'no gen found:', input, input.gen )
+          input = input.graph
         }
         let code = input.gen()
         //if( code.indexOf( 'Object' ) > -1 ) console.log( 'bad input:', input, code )
