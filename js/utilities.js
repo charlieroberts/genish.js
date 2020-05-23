@@ -29,7 +29,6 @@ let utilities = {
     
     let start = () => {
       if( typeof AC !== 'undefined' ) {
-        console.log( 'creating context' )
         utilities.ctx = new AC()
 
         gen.samplerate = this.ctx.sampleRate
