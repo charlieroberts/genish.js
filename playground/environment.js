@@ -24,14 +24,14 @@ window.onload = function() {
   genish.export( window )
 
 
-  let ctxInit = false
-  window.onclick = ()=> { 
-    if( ctxInit === false ) {
-      utilities.createContext()
-      ctxInit = true
-    }
-  }
+  //let ctxInit = false
+  //window.onclick = ()=> { 
+  //  if( ctxInit === false ) {
+  //    ctxInit = true
+  //  }
+  //}
 
+  utilities.createContext( 2048 )
   utilities.console = cmconsole
   utilities.editor  = cm
 

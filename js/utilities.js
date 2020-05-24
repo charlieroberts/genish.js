@@ -1,11 +1,12 @@
 'use strict'
 
-let gen = require( './gen.js' ),
-    data = require( './data.js' )
+const AWPF = require( './external/audioworklet-polyfill.js' ),
+      gen  = require( './gen.js' ),
+      data = require( './data.js' )
 
 let isStereo = false
 
-let utilities = {
+const utilities = {
   ctx: null,
 
   clear() {
@@ -18,28 +19,35 @@ let utilities = {
     this.clear.callbacks.length = 0
   },
 
-  createContext() {
-    let AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
-    this.ctx = new AC()
+  createContext( bufferSize = 2048 ) {
+    const AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
+    
+    // tell polyfill global object and buffersize
+    AWPF( window, bufferSize )
 
-    gen.samplerate = this.ctx.sampleRate
-
-    let start = () => {
+    const start = () => {
       if( typeof AC !== 'undefined' ) {
+        this.ctx = new AC()
+
+        gen.samplerate = this.ctx.sampleRate
+
         if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
           window.removeEventListener( 'touchstart', start )
-
-          if( 'ontouchstart' in document.documentElement ) { // required to start audio under iOS 6
-             let mySource = utilities.ctx.createBufferSource()
-             mySource.connect( utilities.ctx.destination )
-             mySource.noteOn( 0 )
-           }
-         }
+        }else{
+          window.removeEventListener( 'mousedown', start )
+          window.removeEventListener( 'keydown', start )
+        }
+        const mySource = utilities.ctx.createBufferSource()
+        mySource.connect( utilities.ctx.destination )
+        mySource.start()
       }
     }
 
     if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
       window.addEventListener( 'touchstart', start )
+    }else{
+      window.addEventListener( 'mousedown', start )
+      window.addEventListener( 'keydown', start )
     }
 
     return this
