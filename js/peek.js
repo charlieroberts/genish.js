@@ -1,8 +1,6 @@
-'use strict'
 
-const gen      = require( './gen.js' ),
-      dataUgen = require( './data.js' ),
-      param    = require( './param.js' )
+const gen  = require('./gen.js'),
+      dataUgen = require('./data.js')
 
 let proto = {
   basename:'peek',
@@ -11,10 +9,9 @@ let proto = {
     let genName = 'gen.' + this.name,
         inputs = gen.getInputs( this ),
         out, functionBody, next, lengthIsLog2, idx
-
+    
     idx = inputs[1]
-
-    lengthIsLog2 = (Math.log2( inputs[3] ) | 0)  === Math.log2( inputs[3] )
+    lengthIsLog2 = (Math.log2( this.data.buffer.length ) | 0)  === Math.log2( this.data.buffer.length )
 
     if( this.mode !== 'simple' ) {
 
@@ -24,14 +21,14 @@ let proto = {
 
     if( this.boundmode === 'wrap' ) {
       next = lengthIsLog2 ?
-      `( ${this.name}_index + 1 ) & (${inputs[3]} - 1)` :
-      `${this.name}_index + 1 >= ${inputs[3]} ? ${this.name}_index + 1 - ${inputs[3]} : ${this.name}_index + 1`
+      `( ${this.name}_index + 1 ) & (${this.data.buffer.length} - 1)` :
+      `${this.name}_index + 1 >= ${this.data.buffer.length} ? ${this.name}_index + 1 - ${this.data.buffer.length} : ${this.name}_index + 1`
     }else if( this.boundmode === 'clamp' ) {
       next = 
-        `${this.name}_index + 1 >= ${inputs[3] - 1} ? ${inputs[3] - 1} : ${this.name}_index + 1`
+        `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.data.buffer.length - 1} : ${this.name}_index + 1`
     } else if( this.boundmode === 'fold' || this.boundmode === 'mirror' ) {
       next = 
-        `${this.name}_index + 1 >= ${inputs[3] - 1} ? ${this.name}_index - ${inputs[3] - 1} : ${this.name}_index + 1`
+        `${this.name}_index + 1 >= ${this.data.buffer.length - 1} ? ${this.name}_index - ${this.data.buffer.length - 1} : ${this.name}_index + 1`
     }else{
        next = 
       `${this.name}_index + 1`     
@@ -44,7 +41,7 @@ let proto = {
       
       if( this.boundmode === 'ignore' ) {
         functionBody += `
-      ${this.name}_out   = ${this.name}_index >= ${inputs[3] - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
+      ${this.name}_out   = ${this.name}_index >= ${this.data.buffer.length - 1} || ${this.name}_index < 0 ? 0 : ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
       }else{
         functionBody += `
       ${this.name}_out   = ${this.name}_base + ${this.name}_frac * ( memory[ ${this.name}_dataIdx + ${this.name}_next ] - ${this.name}_base )\n\n`
@@ -67,9 +64,10 @@ let proto = {
   defaults : { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' }
 }
 
-
 module.exports = ( input_data, index=0, properties ) => {
   let ugen = Object.create( proto )
+
+  //console.log( dataUgen, gen.data )
 
   // XXX why is dataUgen not the actual function? some type of browserify nonsense...
   const finalData = typeof input_data.basename === 'undefined' ? gen.lib.data( input_data ) : input_data
@@ -89,3 +87,4 @@ module.exports = ( input_data, index=0, properties ) => {
 
   return ugen
 }
+
