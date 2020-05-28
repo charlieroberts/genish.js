@@ -35,6 +35,7 @@ module.exports = ( durations = 11025, values = [0,1], phaseIncrement = 1) => {
   const ugen = peek( data( values ), stepper, { mode:'simple' })
 
   ugen.name = proto.basename + gen.getUID()
+  ugen.trigger = clock.wrap
 
   return ugen
 }
