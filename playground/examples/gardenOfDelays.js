@@ -1,3 +1,4 @@
+)
 /* garden of earthly delays
  *
  * original gen~ patch by Gregory Taylor
@@ -9,7 +10,7 @@
  
 // passing string to data loads resource via xmlhttprequest.
 // run rest of script once the audiofile has loaded
-audiofile = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
+data( './resources/audiofiles/dead-presidents.wav' ).then( presidents => {
   
 // 'ssd', or single-sample delay,  is pseudonym for gen~ history, since history
 //  is a default property of the window object in the browser...
@@ -18,16 +19,16 @@ feedback2 = ssd()
 feedback3 = ssd()
 feedback4 = ssd()
   
-damp     = param( 'damping', .5 )
-damp2    = param( 'damping2', .5 )
-damp3    = param( 'damping3', .5 )
-delayTime= param( 'delayTime', 556 )
-gateCtrl = param( 'feedbackRouter', 0 )
+damp     = param( 'damping', .5, 0, 1 )
+damp2    = param( 'damping2', .19, 0, 1 )
+damp3    = param( 'damping3', .13, 0, 1 )
+delayTime= param( 'delayTime', 536, 64, 4096 )
+gateCtrl = param( 'feedbackRouter', 0, 0, 3 )
  
 // read through audiofile sample by sample
 in1 = peek( 
-  audiofile, // data
-  accum( 1,0,{ max:audiofile.buffer.length } ), // indexing
+  presidents, // data
+  accum( 1,0,{ max:presidents.dim } ), // indexing
   { interp:'none', mode:'samples' } 			// attributes
 )
  
@@ -78,13 +79,15 @@ limitL = clamp( left, -1,1 )
 limitR = clamp( right, -1,1 )
   
 // play stereo out & print callback to console for potential debugging
-cb = play( [ limitL, limitR ], true )
+play( [ limitL, limitR ], null ).then( node => {
  
-gui = new dat.GUI({ width:400 })
-gui.add( cb, 'damping',   0, 1 )
-gui.add( cb, 'damping2',  0, 1 )
-gui.add( cb, 'damping3',  0, 1 )
-gui.add( cb, 'delayTime', 64, 4096 )
-gui.add( cb, 'feedbackRouter', 0,3 ).step(1)
+  gui = new dat.GUI({ width:400 })
+  gui.add( node, 'damping',   0, 1 )
+  gui.add( node, 'damping2',  0, 1 )
+  gui.add( node, 'damping3',  0, 1 )
+  gui.add( node, 'delayTime', 64, 4096 )
+  gui.add( node, 'feedbackRouter', 0,3 ).step(1)
+  
+})
   
 })

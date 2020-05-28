@@ -1,3 +1,4 @@
+
 /*************************************************************
 ****** Freeverb (reverb via comb and allpass filters) ********
 **************************************************************
@@ -54,12 +55,12 @@ tuning = {
  
 combs = []
  
-amenData = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
+data( './resources/audiofiles/dead-presidents.wav' ).then( presidents => {
   // parameters for external manipulation (via gui)
-  let wet = param( 'wet',.55 ), dry = param( 'dry',.5 ), 
-      roomSize = param( 'roomSize',.84 ), damping = param( 'damping', .5 )
+  let wet = param( 'wet',.55, .01, 1 ), dry = param( 'dry',.5, .01, 1 ), 
+      roomSize = param( 'roomSize',.84, .5, 1 ), damping = param( 'damping', .5, .01, 1 )
   
-  amenSignal = peek( amenData, accum( 1,0, { max:amenData.buffer.length } ), { interp:'none', mode:'samples' } )
+  amenSignal = peek( presidents, accum( 1,0, { max:presidents.dim } ), { interp:'none', mode:'samples' } )
  
   attenuatedAmen = memo( mul( amenSignal, tuning.fixedGain ) )
   
@@ -79,12 +80,13 @@ amenData = data( './resources/audiofiles/dead-presidents.wav' ).then( ()=> {
   // combine wet and dry signals
   out = add( mul( amenSignal, dry ), mul( out,  wet ) )
   
-  cb = play( out, true )
+  play( out ).then( node => {
   
-  gui = new dat.GUI()
-  gui.add( cb, 'roomSize', .5, 1 )
-  gui.add( cb, 'damping',  .01, 1 ) 
-  gui.add( cb, 'wet', .01, 1 )
-  gui.add( cb, 'dry', .01, 1 )
+    gui = new dat.GUI()
+    gui.add( node, 'roomSize', .5, 1 )
+    gui.add( node, 'damping',  .01, 1 ) 
+    gui.add( node, 'wet', .01, 1 )
+    gui.add( node, 'dry', .01, 1 )
+  })
   
 })

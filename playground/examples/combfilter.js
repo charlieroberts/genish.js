@@ -16,7 +16,7 @@ https://ccrma.stanford.edu/~jos/pasp/Filtered_Feedback_Comb_Filters.html
 // for each example, load the amen break first and then create our
 // graph. We need to know the length of the file before we cna set
 // all our parameters
-amenData = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+data( './resources/audiofiles/amen.wav' ).then( amenData => {
  
   // comb filter parameters
   combLength = 1200

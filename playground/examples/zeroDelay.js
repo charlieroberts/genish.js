@@ -4,16 +4,16 @@ based off Csound code by Steven Yi: https://github.com/kunstmusik/libsyi/blob/ma
 in turn based off code by Will Pirkle: http://www.willpirkle.com/app-notes/
 */
 
-d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+data( './resources/audiofiles/amen.wav' ).then( amen => {
   iT = 1 / gen.samplerate
   z1 = ssd(0)
   z2 = ssd(0)
   
-  freq = param( 'frequency', 550 )
-  mode = param( 'mode', 0 )
-  Q    = param( 'Q', .5 )
+  freq = param( 'frequency', 550, 80, 15000 )
+  mode = param( 'mode', 0, 0, 3 )
+  Q    = param( 'Q', .5, .5, 20 )
   
-  input = peek( d, accum( 1, 0, { min: 0, max:d.dim }), { mode:'samples' } )
+  input = peek( amen, accum( 1, 0, { min: 0, max:amen.dim }), { mode:'samples' } )
 
   kwd = mul( Math.PI * 2, freq )
   kwa = memo( mul( 2/iT, tan( mul( kwd, iT/2 ) ) ) )
@@ -51,10 +51,10 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
   
   outSignal = selector( mode, lp, hp, bp, notch )
   
-  cb = play( outSignal, true )
-
-  gui = new dat.GUI({ width: 400 }) 
-  gui.add( cb, 'frequency', 80, 15000 )
-  gui.add( cb, 'Q', .5, 20 )
-  gui.add( cb, 'mode', { LowPass:0, HighPass:1, BandPass:2, Notch:3 } )
+  play( outSignal, true ).then( node => {
+    gui = new dat.GUI({ width: 400 }) 
+    gui.add( node, 'frequency', 80, 15000 )
+    gui.add( node, 'Q', .5, 20 )
+    gui.add( node, 'mode', { LowPass:0, HighPass:1, BandPass:2, Notch:3 } )
+  })
 })

@@ -9,7 +9,7 @@ not interpolated. */
 // generate a ramp from 0-1
 lookup = phasor( .5, 0, { min:0 })
 freq = peek( data([220,330,440,550]), lookup, { interp:'none' })
-play( cycle( freq ) )
+play( mul( cycle( freq ), .05 ) )
 
 // although it can be fun to use arbitrary waveforms to drive
 // lookup values, sometimes there is a need for systems with
@@ -36,7 +36,7 @@ indexer = counter( clock.wrap, 0, values.length )
 // a phase (from 0 to 1) like in our original example.
 freq    = peek( data( values ), indexer, { mode:'simple' } )
  
-play( cycle( freq ) )
+play( mul( cycle( freq ), .05 ) )
 
 // genish encapsulates the above behavior in the seq() ugen
 // which is written with counters, peeks and data ugens just
@@ -44,7 +44,7 @@ play( cycle( freq ) )
 // of values and an array of durations to loop through.
 
 freq = seq( [11025, 22050], [220,330,440,550] )
-play( cycle( freq ) )
+play( mul( cycle( freq ), .05 ) )
 
 // you can also pass single values instead of arrays for
 // either the durations or the outputted values. There's
@@ -54,7 +54,7 @@ play( cycle( freq ) )
 
 speed = add( .5, phasor( .25, 0, { min:0, max:2 }) )
 freq = seq( [5512, 11025], [220,330,440,550], speed )
-play( cycle( freq ) )
+play( mul( cycle( freq ), .05 ) )
 
 // there are of course other ways to create sequences (for 
 // example, changing params from within a setInterval) but

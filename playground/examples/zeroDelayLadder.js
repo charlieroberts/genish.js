@@ -1,4 +1,4 @@
-d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+data( './resources/audiofiles/amen.wav' ).then( amen => {
 
 iT = 1/gen.samplerate
 z1 = ssd(0)
@@ -6,9 +6,9 @@ z2 = ssd(0)
 z3 = ssd(0)
 z4 = ssd(0)
 
-Q  = param('Q', .5 )
-freq = param('frequency', 880 )
-input = peek( d, accum( 1, 0, { min: 0, max:d.dim }), { mode:'samples' } )
+Q  = param('Q', .5, .5, 23 )
+freq = param('frequency', 880, 80, 15000 )
+input = peek( amen, accum( 1, 0, { min: 0, max:amen.dim }), { mode:'samples' } )
 
 // kwd = 2 * $M_PI * acf[kindx]
 kwd = memo( mul( Math.PI * 2, slide(freq,512,512) ) )
@@ -65,9 +65,10 @@ kv = memo( mul( sub( klp, z4.out ), kG ) )
 klp = memo( add( kv, z4.out ) )
 z4.in( add( klp, kv ) )
 
-cb = play( klp )
-gui = new dat.GUI({ width: 400 }) 
-gui.add( cb, 'frequency', 80, 15000 )
-gui.add( cb, 'Q', .5, 23 )
+play( klp ).then( node => {
+  gui = new dat.GUI({ width: 400 })
+  gui.add( node, 'frequency', 80, 15000 )
+  gui.add( node, 'Q', .5, 23 )
+})
 
 })

@@ -10,18 +10,19 @@ current slice reaches its end */
 
 
 // for each example, load the amen break first and then create our
-// graph. We need to know the length of the file before we cna set
-// all our parameters
-d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+// graph. We need to know the length of the file before we can set
+// all our parameters; the data function returns a promise that will
+// give us the newly loaded data object which we can query for this.
+data( './resources/audiofiles/amen.wav' ).then( amen => {
   
   // larger numSlices values result in smaller slices 
   numSlices = 32
  
   // measured in samples...
-  sliceLength = d.buffer.length / numSlices
+  sliceLength = amen.dim / numSlices
   
   // enable the 'speed' variable to be controlled externally, in this case by a GUI
-  speed = param( 'speed', 1.2 )
+  speed = param( 'speed', 1.2, -4, 4 )
   
   // create a random signal between 0 and 31 (or whatever numSlices equals)
   random0_31 = floor( mul( noise(), numSlices ) ) 
@@ -38,9 +39,10 @@ d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
   // get ending position of currentSlice
   end   = add( start, sliceLength )
   
+  bufferOut = peek( amen, add( start, sliceCounter ), {mode:'samples'} ) 
   // add the current sliceCounter position to start to get the buffer index to read
-  cb = play( peek( d, add( start, sliceCounter ), {mode:'samples'} ), true )
-  
-  gui = new dat.GUI({ width: 400 }) 
-  gui.add( cb, 'speed', -4, 4 )
+  play( bufferOut ).then( cb => {
+    gui = new dat.GUI({ width: 400 }) 
+    gui.add( cb, 'speed', -4, 4 )
+  })
 })
