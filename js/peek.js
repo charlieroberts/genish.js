@@ -9,22 +9,12 @@ let proto = {
 
   gen() {
     let genName = 'gen.' + this.name,
-        inputs = [],
+        inputs = gen.getInputs( this ),
         out, functionBody, next, lengthIsLog2, idx
 
-    // we must manually get each input so that we
-    // can assign correct memory location value
-    // after the data input has requested memory.
-    inputs[ 0 ] = gen.getInput( this.inputs[ 0 ] )
-    inputs[ 1 ] = gen.getInput( this.inputs[ 1 ] )
+    idx = inputs[1]
 
-
-    idx = inputs[2]
-
-    // this no longer works with dynamic memory locations / buffer lengths. We would have
-    // to rerun codegen upon learning the length of the underlying data buffer in order for
-    // this optimization to function again... 
-    lengthIsLog2 = false //(Math.log2( inputs[3] ) | 0)  === Math.log2( inputs[3] )
+    lengthIsLog2 = (Math.log2( inputs[3] ) | 0)  === Math.log2( inputs[3] )
 
     if( this.mode !== 'simple' ) {
 
