@@ -18,8 +18,8 @@ in1 = noise()
 x1 = ssd(); x2 = ssd(); y1 = ssd(); y2 = ssd();
  
 // define our coefficients
-a0 = param( 'a0', .001453 ); a1 = param( 'a1', .002906 ); a2 = param( 'a2', .001453 )
-b1 = param( 'b1', -1.888279 ); b2 = param( 'b2', .894091 );
+a0 = param( 'a0', .001453, -10, 10 ); a1 = param( 'a1', .002906, -10, 10 ); a2 = param( 'a2', .001453,-10,10 )
+b1 = param( 'b1', -1.888279,-10,10 ); b2 = param( 'b2', .894091,-10,10 );
  
 /***** begin sample processing ******/
  
@@ -39,27 +39,26 @@ diff = sub( sumLeft, sumRight )
 y1.in( diff )
  
 /****** end sample processsing ******/
- 
-cb = play( diff, true )
- 
- 
 // setup an object to store our filter parmaeters for use with a GUI
 biquad = {
   frequency: 550,
   Q: .7,
   mode: 'LP'
 }
- 
-// get coefficients and map them to the param() ugens we declared earlier
-changeCoeffs = () => {
-  [ cb.a0, cb.a1, cb.a2, cb.b1, cb.b2 ] = getCoeffs( biquad.frequency, biquad.Q, biquad.mode )
-}
- 
-// create our GUI using dat.GUI
-gui = new dat.GUI({ width:500 })
-gui.add( biquad, 'frequency', 100, 10000 ).onChange( changeCoeffs )
-gui.add( biquad, 'Q', 0, 20 ).onChange( changeCoeffs )
-gui.add( biquad, 'mode', ['LP','BP','HP'] ).onChange( changeCoeffs )
+
+play( diff ).then( node => {
+  // get coefficients and map them to the param() ugens we declared earlier
+  changeCoeffs = () => {
+    [ node.a0, node.a1, node.a2, node.b1, node.b2 ] = getCoeffs( biquad.frequency, biquad.Q, biquad.mode )
+  }  
+
+  // create our GUI using dat.GUI
+  gui = new dat.GUI({ width:500 })
+  gui.add( biquad, 'frequency', 100, 10000 ).onChange( changeCoeffs )
+  gui.add( biquad, 'Q', 0, 20 ).onChange( changeCoeffs )
+  gui.add( biquad, 'mode', ['LP','BP','HP'] ).onChange( changeCoeffs )
+
+})
  
 // a function to generate coefficients based on cutoff, Q and filter mode
 getCoeffs = ( cutoff=330, Q=.7, mode='LP' ) => {

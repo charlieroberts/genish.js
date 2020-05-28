@@ -262,7 +262,7 @@ registerProcessor( '${name}', ${name}Processor)`
     }
   },
 
-  playWorklet( graph, name, debug=false, mem=44100 * 10 ) {
+  playWorklet( graph, name, debug=false, mem=44100 * 60 ) {
     utilities.clear()
 
     const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )

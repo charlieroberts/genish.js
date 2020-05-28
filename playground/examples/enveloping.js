@@ -15,7 +15,7 @@
 trigger = bang()
 mydecay = max( accum( -2 / gen.samplerate, trigger, { shouldWrap:false, resetValue:1 }), 0 )
 
-play( mul( cycle(330), mydecay ) )
+play( mul( cycle(330), mydecay, .1 ) )
 
 // re-trigger envelope
 trigger.trigger()
@@ -49,7 +49,7 @@ myenv = ifelse(
   0
 )
  
-play( mul( cycle(330), myenv ) )
+play( mul( cycle(330), myenv, .1 ) )
 
 // re-trigger envelope (run both lines at once)
 attackTrigger.trigger()
@@ -68,7 +68,7 @@ osc = phasor(330)
 // attackTime, decayTime, sustainTime, sustainLevel, releaseTime
 env = adsr( gen.samplerate / 2, gen.samplerate / 2, gen.samplerate, .65, gen.samplerate )
 
-play( mul( osc, env ) )
+play( mul( osc, env, .1 ) )
 
 env.trigger()
 
@@ -81,7 +81,7 @@ osc = phasor(330)
 // attackTime, decayTime, sustainTime, sustainLevel, releaseTime
 env = adsr( gen.samplerate / 2, gen.samplerate / 2, gen.samplerate, .65, gen.samplerate, { triggerRelease:true })
 
-play( mul( osc, env ) )
+play( mul( osc, env,.1 ) )
 
 // trigger
 env.trigger()

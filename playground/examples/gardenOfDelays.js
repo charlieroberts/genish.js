@@ -1,18 +1,16 @@
-)
 /* garden of earthly delays
  *
  * original gen~ patch by Gregory Taylor
  * https://cycling74.com/2011/11/07/gen-tutorial-1-the-garden-of-earthly-delays/
  *
- * adapted to genish.js by thecharlie 5/2/2016
+ * adapted to genish.js by thecharlie 5/2/2016, modified 5/28/2020
  * after executing code, use GUI (will appear top right) to control feedback network
  */
  
 // passing string to data loads resource via xmlhttprequest.
 // run rest of script once the audiofile has loaded
 data( './resources/audiofiles/dead-presidents.wav' ).then( presidents => {
-  
-// 'ssd', or single-sample delay,  is pseudonym for gen~ history, since history
+// 'ssd', or single-sample delay, is a pseudonym for gen~ history, since history
 //  is a default property of the window object in the browser...
 feedback1 = ssd()
 feedback2 = ssd()

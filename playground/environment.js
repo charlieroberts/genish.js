@@ -45,22 +45,22 @@ window.onload = function() {
   let select = document.querySelector( 'select' ),
       files = [
         'intro',
-        'thereminish_worklet',         
+        'thereminish',         
         'sequencing', 
-        'hardsync_worklet',
-        'bitcrusher_worklet',
+        'hardsync',
+        'bitcrusher',
         'enveloping',
-        'bandlimitedFM_worklet',
-        'biquad_worklet',
-        'zeroDelay_worklet',
-        'zeroDelayLadder_worklet',
-        'slicingAndDicing_worklet', 
+        'bandlimitedFM',
+        'biquad',
+        'zeroDelay',
+        'zeroDelayLadder',
+        'slicingAndDicing', 
         'oneDelayLine',
-        'combFilter_worklet',
-        'freeverb_worklet',
-        'gigaverb_worklet',
-        'gardenOfDelays_worklet', 
-        'karplusStrong_worklet'
+        'combFilter',
+        'freeverb',
+        'gigaverb',
+        'gardenOfDelays', 
+        'karplusStrong'
       ]
   
   let currentFile = 'intro'

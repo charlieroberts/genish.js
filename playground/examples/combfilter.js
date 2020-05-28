@@ -45,10 +45,10 @@ data( './resources/audiofiles/amen.wav' ).then( amenData => {
   // write sum of input signal and feedback signal to delay buffer 
   poke( combBuffer, add( amenSignal, mul( storeInput, feedbackCoeff ) ), readWriteIdx )
  
-  cb = play( out )
-  
-  gui = new dat.GUI()
-  gui.add( cb, 'damping', 0,.995 )
-  gui.add( cb, 'feedback', 0,.995 )
+  play( out ).then( node => {
+    gui = new dat.GUI()
+    gui.add( cb, 'damping', 0,.995 )
+    gui.add( cb, 'feedback', 0,.995 )
+  })
   
 })
