@@ -107,10 +107,8 @@ module.exports = ( attackTime=44, decayTime=22050, sustainTime=44100, sustainLev
     // XXX pretty nasty... grabs accum inside of gtp and resets value manually
     // unfortunately envTrigger won't work as it's back to 0 by the time the release block is triggered...
     if( usingWorklet && out.node !== null ) {
-      console.log( 'worklet??' )
       out.node.port.postMessage({ key:'set', idx:releaseAccum.inputs[0].inputs[1].memory.value.idx, value:0 })
     }else{
-      console.log( 'non-worklet...' )
       gen.memory.heap[ releaseAccum.inputs[0].inputs[1].memory.value.idx ] = 0
     }
   }
