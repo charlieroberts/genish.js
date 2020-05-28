@@ -4,66 +4,56 @@ A library for generating optimized, single-sample audio callbacks in JavaScript.
 ## try it out
 http://www.charlie-roberts.com/genish/playground
 
-Genish.js is alpha status and currently runs in Chrome and Firefox.
+genish.js should run in all reasonably modern browsers; however, it runs best in Firefox and Chrome due to their support for AudioWorklets.
 
 ## what?
 A little more detail: genish.js will compile per-sample callback functions from a graph. Given the following code:
 
 ```javascript
-abs( add( mul(5,2), input() ) )
+mul( cycle( 220 ), .1 )
 ```
 
-...genish will generate the following function.
+...genish will generate the following sample processing loop (reading from a wavetable) inside of an AudioWorklet node:
 
 ```javascript
-function gen( in6 ){ 
-  'use strict'
-  let memory = gen.memory
+for( let i = 0; i < len; ++i ) {
+  var phasor2_value = memory[2]
+  memory[2] += 0.004988662131519274
+  if( memory[2] >= 1 ) memory[2] -= 1
+  if( memory[2] < 0 ) memory[2] += 1
 
-  gen.out[0]  = gen.abs( (in6 + 10) )
+  var cycle4_dataIdx  = 3, 
+      cycle4_phase = phasor2_value * 1024, 
+      cycle4_index = cycle4_phase | 0,
+      cycle4_frac  = cycle4_phase - cycle4_index,
+      cycle4_base  = memory[ cycle4_dataIdx +  cycle4_index ],
+      cycle4_next  = ( cycle4_index + 1 ) & (1024 - 1),
+      cycle4_out   = cycle4_base + cycle4_frac * ( memory[ cycle4_dataIdx + cycle4_next ] - cycle4_base )
 
-  return gen.out[0]
+  var mul5 = cycle4_out * 0.1
+  memory[0]  = mul5
+
+  left[ i ] = memory[0]
 }
 ```
-
-`abs`, a reference to `Math.abs`, is assigned as a property to the named `gen` function as part of the codegen process; this removes the need to look it up in the global scope. genish is also reduces multiplcation of two numbers to a constant. A sine oscillator accepting frequency as an input could be expressed as follows:
-
-```javascript
-frequency = input()
-sin( mul( accum( mul( frequency, 1/gen.samplerate ) ), Math.PI * 2 ) )
-```
-
-... which would then be translated into the following function:
-
-```javascript
-function gen( in0 ){ 
-  'use strict'
-  let memory = gen.memory
-
-  let accum2_value = memory[0];
-  memory[0] += (in0 * 0.000022675736961451248)
-  if( memory[0] >= 1 ) memory[0] -= 1
-  if( memory[0] < 0 ) memory[0] += 1
-
-  gen.out[0]  = gen.sin( (accum2_value * 6.283185307179586) )
-
-  return gen.out[0]
-}
-```
-
-The sin function is assigned as a property of the named `gen` function in this example; this limits most objects and functions to an object in the current scope. All memory used in any generated callback (in this case only a single float) is centrally stored in a single Float32Array, which decreases the need for de-referencing throughout the callback and yields improved efficiency.
 
 ## use
-To use genish.js, you need to create an AudioContext and a ScriptProcessor node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks, as well as inserting generated functions into the callback of the ScriptProcessor. The following example performs the necessary setup and starts a sine oscillator running:
+To use genish.js, you need to create an AudioContext and a AudioWorklet node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks. The following example performs the necessary setup and starts a sine oscillator running:
 
 ```javascript
  // optionally put all genish object in global namespace
 genish.export( window )
 
-utilities.createContext().createScriptProcessor()
+utilities.createContext()
 
-// second argument prints generated function body to console
-utilities.playGraph( cycle( 330 ), true ) 
+// audio context won't be created until users
+// have interacted with the page
+window.onclick = ()=> {
+  utilities.playWorklet( cycle( 330 ) ) 
+}
 ```
+
+A [more complex example](https://gist.github.com/charlieroberts/7bcc6e19c66b9ed2b4bf26db309738e4) is also available.
+
 ## develop & test
-The build script is a gulpfile. With gulp installed, run `gulp` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
+The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
