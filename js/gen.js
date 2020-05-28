@@ -5,10 +5,10 @@
  * low-level code generation for unit generators
  *
  */
+const MemoryHelper = require( 'memory-helper' )
+const EE = require( 'events' ).EventEmitter
 
-let MemoryHelper = require( 'memory-helper' )
-
-let gen = {
+const gen = {
 
   accum:0,
   getUID() { return this.accum++ },
@@ -71,33 +71,19 @@ let gen = {
     return mem
   },
 
-  /* createCallback
-   *
-   * param ugen - Head of graph to be codegen'd
-   *
-   * Generate callback function for a particular ugen graph.
-   * The gen.closures property stores functions that need to be
-   * passed as arguments to the final function; these are prefixed
-   * before any defined params the graph exposes. For example, given:
-   *
-   * gen.createCallback( abs( param() ) )
-   *
-   * ... the generated function will have a signature of ( abs, p0 ).
-   */
-  
   createCallback( ugen, mem, debug = false, shouldInlineMemory=false, memType = Float64Array ) {
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
 
     if( typeof mem === 'number' || mem === undefined ) {
-      mem = MemoryHelper.create( mem, memType )
+      this.memory = this.createMemory( mem, memType )
+      this.outputIdx = this.memory.alloc( 2, true )
+      this.emit( 'memory init' )
     }
     
     //console.log( 'cb memory:', mem )
     this.graph = ugen
-    this.memory = mem
-    this.outputIdx = this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
@@ -313,5 +299,7 @@ let gen = {
     }
   }
 }
+
+gen.__proto__ = new EE()
 
 module.exports = gen

@@ -140,17 +140,21 @@ module.exports = ( x, y=1, properties ) => {
         ugen.memory.values.length = ugen.dim = _buffer.length
 
         ugen.buffer = _buffer
-        gen.requestMemory( ugen.memory, ugen.immutable ) 
-        gen.memory.heap.set( _buffer, ugen.memory.values.idx )
-        if( typeof ugen.onload === 'function' ) ugen.onload( _buffer ) 
+        gen.on( 'memory init', ()=> {
+          gen.requestMemory( ugen.memory, ugen.immutable ) 
+          gen.memory.heap.set( _buffer, ugen.memory.values.idx )
+          if( typeof ugen.onload === 'function' ) ugen.onload( _buffer ) 
+        })
         resolve( ugen )
       })     
     })
   }else if( proto.memo[ x ] !== undefined ) {
-    gen.requestMemory( ugen.memory, ugen.immutable ) 
-    gen.memory.heap.set( ugen.buffer, ugen.memory.values.idx )
-    if( typeof ugen.onload === 'function' ) ugen.onload( ugen.buffer ) 
+    gen.on( 'memory init', ()=> {
+      gen.requestMemory( ugen.memory, ugen.immutable ) 
+      gen.memory.heap.set( ugen.buffer, ugen.memory.values.idx )
+      if( typeof ugen.onload === 'function' ) ugen.onload( ugen.buffer ) 
 
+    })
     returnValue = ugen
   }else{
     returnValue = ugen
