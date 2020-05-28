@@ -9,10 +9,13 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
     
-    if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'asin': Math.asin })
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet ? '' : 'gen.'
 
-      out = `gen.asin( ${inputs[0]} )` 
+    if( isNaN( inputs[0] ) ) {
+      gen.closures.add({ 'asin': isWorklet ? 'Math.sin' : Math.asin })
+
+      out = `${ref}asin( ${inputs[0]} )` 
 
     } else {
       out = Math.asin( parseFloat( inputs[0] ) )

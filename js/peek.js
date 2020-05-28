@@ -18,12 +18,6 @@ let proto = {
     inputs[ 0 ] = gen.getInput( this.inputs[ 0 ] )
     inputs[ 1 ] = gen.getInput( this.inputs[ 1 ] )
 
-    this.memLocation.value = this.data.memory.values.idx
-    this.memLength.value = this.data.memory.values.length
-
-    inputs[ 2 ] = gen.getInput( this.inputs[ 2 ] )
-    inputs[ 3 ] = gen.getInput( this.inputs[ 3 ] )
-
 
     idx = inputs[2]
 
@@ -35,7 +29,7 @@ let proto = {
     if( this.mode !== 'simple' ) {
 
     functionBody = `  var ${this.name}_dataIdx  = ${idx}, 
-      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + `(${inputs[3]} - 1)` }, 
+      ${this.name}_phase = ${this.mode === 'samples' ? inputs[0] : inputs[0] + ' * ' + (this.data.buffer.length) }, 
       ${this.name}_index = ${this.name}_phase | 0,\n`
 
     if( this.boundmode === 'wrap' ) {
@@ -83,51 +77,19 @@ let proto = {
   defaults : { channels:1, mode:'phase', interp:'linear', boundmode:'wrap' }
 }
 
+
 module.exports = ( input_data, index=0, properties ) => {
   let ugen = Object.create( proto )
 
-  //console.log( dataUgen, gen.data )
-
   // XXX why is dataUgen not the actual function? some type of browserify nonsense...
   const finalData = typeof input_data.basename === 'undefined' ? gen.lib.data( input_data ) : input_data
-
-  const uid = gen.getUID()
-
-  // we need to make these dynamic so that they can be changed
-  // when a data object has finished loading, at which point
-  // we'll need to allocate a new memory block and update the
-  // memory block's length in the generated code.
-  const memLocation = param( 'dataLocation'+uid )
-  const memLength   = param( 'dataLength'+uid )
-
-  
-  // for data that is loading when this peek object is created, a promise
-  // will be returned by the call to data.
-  if( input_data instanceof Promise ) {
-    //memLocation.value = 0 
-    memLength.value = 1
-
-    input_data.then( d => {
-      memLocation.value = gen.memory.heap[ memLocation.memory.value.idx ] = d.memory.values.idx
-      memLength.value = gen.memory.heap[ memLength.memory.value.idx ] = d.memory.values.length
-
-      //memLocation.value = d.memory.values.idx
-      //memLength.value = d.buffer.length
-    })
-  }else{
-    //console.log( 'memory:', input_data.memory.values.idx )
-    //memLocation.value = input_data.memory.values.idx
-    //memLength.value   = input_data.memory.values.length
-  }
 
   Object.assign( ugen, 
     { 
       'data':     finalData,
       dataName:   finalData.name,
-      inputs:     [ index, finalData, memLocation, memLength ],
-      uid,
-      memLocation,
-      memLength
+      uid:        gen.getUID(),
+      inputs:     [ index, finalData ],
     },
     proto.defaults,
     properties 

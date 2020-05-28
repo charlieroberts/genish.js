@@ -9,10 +9,14 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
     
-    if( isNaN( inputs[0] ) ) {
-      gen.closures.add({ 'tan': Math.tan })
+    
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? '' : 'gen.'
 
-      out = `gen.tan( ${inputs[0]} )` 
+    if( isNaN( inputs[0] ) ) {
+      gen.closures.add({ 'tan': isWorklet ? 'Math.tan' : Math.tan })
+
+      out = `${ref}tan( ${inputs[0]} )` 
 
     } else {
       out = Math.tan( parseFloat( inputs[0] ) )

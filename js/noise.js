@@ -8,9 +8,12 @@ let proto = {
   gen() {
     let out
 
-    gen.closures.add({ 'noise' : Math.random })
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? '' : 'gen.'
 
-    out = `  var ${this.name} = gen.noise()\n`
+    gen.closures.add({ 'noise' : isWorklet ? 'Math.random' : Math.random })
+
+    out = `  var ${this.name} = ${ref}noise()\n`
     
     gen.memo[ this.name ] = this.name
 

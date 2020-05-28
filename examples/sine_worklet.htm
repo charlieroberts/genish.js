@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang=en>
+  <head>
+    <meta charset='utf-8'>
+    <script src='../dist/gen.lib.js'></script>
+  </head>
+  <body>
+    <p> click in the window please. </p>
+  </body>
+  <script>
+
+    const click = function() {
+      genish.export( window )
+
+      // context will be stored in utilities.ctx
+      utilities.createContext()
+
+      const ctx = utilities.ctx
+
+      const sine = ctx.createOscillator()
+      sine.frequency.value = 2
+
+      const gain  = ctx.createGain()
+      gain.gain.value = 40
+
+      sine.connect( gain )
+
+      utilities.playWorklet( cycle( add( 220, input('freqMod', 0, 0 ) ) ) ).then( node => {
+        gain.connect( node )
+        node.connect( ctx.destination )
+        sine.start()
+        console.log( 'playing...' )
+      })
+
+      window.removeEventListener( 'click', click )
+    }
+
+    window.onload = ()=> window.addEventListener( 'click', click )
+  </script>
+
+</html>
+
+
+

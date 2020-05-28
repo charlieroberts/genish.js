@@ -23,40 +23,44 @@ window.onload = function() {
   cmconsole.setSize( null, '100%' )
   genish.export( window )
 
-  utilities.createContext()//.createScriptProcessor()
+  utilities.createContext( 2048 )
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v, debug, memType=Float32Array ) {
+  window.play = function( v, name, debug ) { //, memType=Float32Array ) {
+    if( name === undefined || name === null ) {
+      name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
+    }
     if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playGraph( v, debug, 44100*10, memType )
+    var cb = utilities.playWorklet( v, name, debug ) 
 
     return cb
   }
 
-  Babel.registerPlugin( 'jsdsp', jsdsp )
+  //Babel.registerPlugin( 'jsdsp', jsdsp )
 
   let select = document.querySelector( 'select' ),
       files = [
         'intro',
-        'thereminish',
-        'hardsync',
-        'bitcrusher',
+        'thereminish_worklet',         
+        'sequencing', 
+        'hardsync_worklet',
+        'bitcrusher_worklet',
         'enveloping',
-        'bandlimitedFM',
-        'biquad',
-        'zeroDelay',
-        'zeroDelayLadder',
-        'slicingAndDicing', 
+        'bandlimitedFM_worklet',
+        'biquad_worklet',
+        'zeroDelay_worklet',
+        'zeroDelayLadder_worklet',
+        'slicingAndDicing_worklet', 
         'oneDelayLine',
-        'combfilter',
-        'freeverb',
-        'gigaverb',
-        'gardenOfDelays', 
-        'karplusStrong'
+        'combFilter_worklet',
+        'freeverb_worklet',
+        'gigaverb_worklet',
+        'gardenOfDelays_worklet', 
+        'karplusStrong_worklet'
       ]
   
   let currentFile = 'intro'
@@ -78,12 +82,12 @@ window.onload = function() {
   
   loadexample( 'intro' )
 
-  let jsdspBtn = document.querySelector( '#jsdsp' ) 
+  //let jsdspBtn = document.querySelector( '#jsdsp' ) 
 
-  jsdspBtn.addEventListener( 'change', v => {
-    shouldUseJSDSP = v.target.checked
-    askForReload()
-  })
+  //jsdspBtn.addEventListener( 'change', v => {
+  //  shouldUseJSDSP = v.target.checked
+  //  askForReload()
+  //})
 
   const askForReload = ()=> {
     let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'

@@ -8,17 +8,21 @@ let proto = {
   gen() {
     gen.requestMemory( this.memory )
     
-    gen.params.add({ [this.name]: this })
+    gen.params.add( this )
+
+    const isWorklet = gen.mode === 'worklet'
+
+    if( isWorklet ) gen.parameters.add( this.name )
 
     this.value = this.initialValue
 
-    gen.memo[ this.name ] = `memory[${this.memory.value.idx}]`
+    gen.memo[ this.name ] = isWorklet ? this.name : `memory[${this.memory.value.idx}]`
 
     return gen.memo[ this.name ]
   } 
 }
 
-module.exports = ( propName=0, value=0 ) => {
+module.exports = ( propName=0, value=0, min=0, max=1 ) => {
   let ugen = Object.create( proto )
   
   if( typeof propName !== 'string' ) {
@@ -28,6 +32,15 @@ module.exports = ( propName=0, value=0 ) => {
     ugen.name = propName
     ugen.initialValue = value
   }
+
+  ugen.min = min
+  ugen.max = max
+  ugen.defaultValue = ugen.initialValue
+
+  // for storing worklet nodes once they're instantiated
+  ugen.waapi = null
+
+  ugen.isWorklet = gen.mode === 'worklet'
 
   Object.defineProperty( ugen, 'value', {
     get() {
@@ -39,9 +52,11 @@ module.exports = ( propName=0, value=0 ) => {
     },
     set( v ) {
       if( this.memory.value.idx !== null ) {
-        gen.memory.heap[ this.memory.value.idx ] = v 
-      }else{
-        this.initialValue = v
+        if( this.isWorklet && this.waapi !== null ) {
+          this.waapi.value = v
+        }else{
+          gen.memory.heap[ this.memory.value.idx ] = v
+        } 
       }
     }
   })

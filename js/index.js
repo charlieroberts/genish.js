@@ -1,6 +1,6 @@
 'use strict'
 
-let library = {
+const library = {
   export( destination ) {
     if( destination === window ) {
       destination.ssd = library.history    // history is window object property, so use ssd as alias
@@ -99,7 +99,8 @@ let library = {
   eq:       require( './eq.js' ),
   neq:      require( './neq.js' ),
   exp:      require( './exp.js' ),
-  process:  require( './process.js' )
+  process:  require( './process.js' ),
+  seq:      require( './seq.js' )
 }
 
 library.gen.lib = library

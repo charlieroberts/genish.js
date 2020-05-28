@@ -196,7 +196,7 @@ echo = delay( gain, 11025, { size: 22050 })
 // passing an array to play creates a stereo signal
 // notes on the left, echos on the right
 // use 64-bit memory storage for improved timing
-play( [gain, echo], false, Float64Array )
+play( [gain, echo] ) 
 
 /****** 50 sine oscillators  *******/
  

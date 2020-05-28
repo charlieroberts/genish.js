@@ -9,10 +9,14 @@ let proto = {
     let out,
         inputs = gen.getInputs( this )
     
-    if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
-      gen.closures.add({ 'pow': Math.pow })
+    
+    const isWorklet = gen.mode === 'worklet'
+    const ref = isWorklet? '' : 'gen.'
 
-      out = `gen.pow( ${inputs[0]}, ${inputs[1]} )` 
+    if( isNaN( inputs[0] ) || isNaN( inputs[1] ) ) {
+      gen.closures.add({ 'pow': isWorklet ? 'Math.pow' : Math.pow })
+
+      out = `${ref}pow( ${inputs[0]}, ${inputs[1]} )` 
 
     } else {
       if( typeof inputs[0] === 'string' && inputs[0][0] === '(' ) {

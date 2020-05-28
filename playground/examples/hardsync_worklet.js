@@ -17,7 +17,7 @@ increment inversino in soft sync.
 */
 
 // create a sample increment for our master oscillator
-freq = seq( [11025], [110,165,220] ) 
+freq = seq( [11025], [110,165,220] )
 incr = div( freq, gen.samplerate )
 
 // create our master ramp oscillator
@@ -36,6 +36,7 @@ slave = phasor( syncSweep, master.wrap )
 
 play( mul( add( master, slave ), .01 ) )
 
+
 // soft sync works in a similar fashion to hard sync, except
 // instead of resetting the phase of the slave oscillator, we
 // reverse the direction; if a triangle oscillator was traveling
@@ -51,7 +52,7 @@ play( mul( add( master, slave ), .01 ) )
 // clear hard sync if it's still running
 genish.utilities.clear()
 
-freq = seq( [11025], [110,165,220] ) 
+freq = seq( [11025], [110,165,220] )
 incr = div( freq, gen.samplerate )
 
 // create our master ramp oscillator

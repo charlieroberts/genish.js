@@ -26,7 +26,7 @@ let proto = {
   }
 `
     
-    gen.memo[ this.name ] = `gen.data.${this.name}`
+    gen.memo[ this.name ] = `memory[${this.memory.value.idx}]`//`gen.data.${this.name}`
 
     return [ `memory[${this.memory.value.idx}]`, ' ' +out ]
   }

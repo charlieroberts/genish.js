@@ -15,12 +15,12 @@
     "babelify": "^7.2.0",
     "benchmark": "^2.1.0",
     "browserify": "^13.0.0",
-    "codemirror": "^5.41.0",
+    "codemirror": "^5.9.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-buffer": "^0.0.2",
     "gulp-mocha": "^2.2.0",
-    "memory-helper": "^1.0.0",
+    "gulp-notify": "^3.2.0",
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {

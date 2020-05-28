@@ -1,11 +1,12 @@
 'use strict'
 
-let gen = require( './gen.js' ),
-    data = require( './data.js' )
+const AWPF = require( './external/audioworklet-polyfill.js' ),
+      gen  = require( './gen.js' ),
+      data = require( './data.js' )
 
 let isStereo = false
 
-let utilities = {
+const utilities = {
   ctx: null,
   buffers: {},
   isStereo:false,
@@ -24,30 +25,29 @@ let utilities = {
     if( gen.graph !== null ) gen.free( gen.graph )
   },
 
-  createContext() {
-    let AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
+  createContext( bufferSize = 2048 ) {
+    const AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
     
-    let start = () => {
+    // tell polyfill global object and buffersize
+    AWPF( window, bufferSize )
+
+    const start = () => {
       if( typeof AC !== 'undefined' ) {
-        utilities.ctx = new AC()
+        this.ctx = new AC()
 
         gen.samplerate = this.ctx.sampleRate
 
         if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
           window.removeEventListener( 'touchstart', start )
-
-          if( 'ontouchstart' in document.documentElement ) { // required to start audio under iOS 6
-             let mySource = utilities.ctx.createBufferSource()
-             mySource.connect( utilities.ctx.destination )
-             mySource.noteOn( 0 )
-           }
         }else{
           window.removeEventListener( 'mousedown', start )
           window.removeEventListener( 'keydown', start )
         }
-      }
 
-      utilities.createScriptProcessor()
+        const mySource = utilities.ctx.createBufferSource()
+        mySource.connect( utilities.ctx.destination )
+        mySource.start()
+      }
     }
 
     if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
@@ -244,7 +244,6 @@ registerProcessor( '${name}', ${name}Processor)`
 
 
     if( debug === true ) console.log( workletCode )
-          console.log( ugen )
 
     const url = window.URL.createObjectURL(
       new Blob(

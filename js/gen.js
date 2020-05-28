@@ -19,6 +19,7 @@ let gen = {
   globals:{
     windows: {},
   },
+  mode:'worklet',
   
   /* closures
    *
@@ -28,8 +29,9 @@ let gen = {
 
   closures: new Set(),
   params:   new Set(),
+  inputs:   new Set(),
 
-  parameters:[],
+  parameters: new Set(),
   endBlock: new Set(),
   histories: new Map(),
 
@@ -95,16 +97,22 @@ let gen = {
     //console.log( 'cb memory:', mem )
     this.graph = ugen
     this.memory = mem
+    this.outputIdx = this.memory.alloc( 2, true )
     this.memo = {} 
     this.endBlock.clear()
     this.closures.clear()
+    this.inputs.clear()
     this.params.clear()
     this.globals = { windows:{} }
     
-    this.parameters.length = 0
+    this.parameters.clear()
     
     this.functionBody = "  'use strict'\n"
-    if( shouldInlineMemory===false ) this.functionBody += "  var memory = gen.memory\n\n" 
+    if( shouldInlineMemory===false ) {
+      this.functionBody += this.mode === 'worklet' ? 
+        "  var memory = this.memory\n\n" :
+        "  var memory = gen.memory\n\n"
+    }
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
@@ -132,7 +140,7 @@ let gen = {
       let lastidx = body.length - 1
 
       // insert return keyword
-      body[ lastidx ] = '  gen.out[' + i + ']  = ' + body[ lastidx ] + '\n'
+      body[ lastidx ] = '  memory[' + (this.outputIdx + i) + ']  = ' + body[ lastidx ] + '\n'
 
       this.functionBody += body.join('\n')
     }
@@ -142,7 +150,7 @@ let gen = {
         value.gen()      
     })
 
-    let returnStatement = isStereo ? '  return gen.out' : '  return gen.out[0]'
+    const returnStatement = isStereo ? `  return [ memory[${this.outputIdx}], memory[${this.outputIdx + 1}] ]` : `  return memory[${this.outputIdx}]`
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -159,15 +167,35 @@ let gen = {
     // to construct the named function! sheesh...
     //
     if( shouldInlineMemory === true ) {
-      this.parameters.push( 'memory' )
+      this.parameters.add( 'memory' )
     }
-    let buildString = `return function gen( ${ this.parameters.join(',') } ){ \n${ this.functionBody }\n}`
+
+    let paramString = ''
+    if( this.mode === 'worklet' ) {
+      for( let name of this.parameters.values() ) {
+        paramString += name + ','
+      }
+      paramString = paramString.slice(0,-1)
+    }
+
+    const separator = this.parameters.size !== 0 && this.inputs.size > 0 ? ', ' : ''
+
+    let inputString = ''
+    if( this.mode === 'worklet' ) {
+      for( let ugen of this.inputs.values() ) {
+        inputString += ugen.name + ','
+      }
+      inputString = inputString.slice(0,-1)
+    }
+
+    let buildString = this.mode === 'worklet'
+      ? `return function( ${inputString} ${separator} ${paramString} ){ \n${ this.functionBody }\n}`
+      : `return function gen( ${ [...this.parameters].join(',') } ){ \n${ this.functionBody }\n}`
     
     if( this.debug || debug ) console.log( buildString ) 
 
     callback = new Function( buildString )()
 
-    
     // assign properties to named function
     for( let dict of this.closures.values() ) {
       let name = Object.keys( dict )[0],
@@ -188,9 +216,12 @@ let gen = {
       //callback[ name ] = value
     }
 
+    callback.members = this.closures
     callback.data = this.data
-    callback.out  = new Float64Array( 2 )
-    callback.parameters = this.parameters.slice( 0 )
+    callback.params = this.params
+    callback.inputs = this.inputs
+    callback.parameters = this.parameters//.slice( 0 )
+    callback.isStereo = isStereo
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
     callback.memory = this.memory.heap
