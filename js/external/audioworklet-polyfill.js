@@ -19,7 +19,8 @@
 // https://github.com/GoogleChromeLabs/audioworklet-polyfill
 // I am modifying it to accept variable buffer sizes
 // and to get rid of some strange global initialization that seems required to use it
-// with browserify.
+// with browserify. Also, I added changes to fix a bug in Safari for the AudioWorkletProcessor
+// property not having a prototype (see:https://github.com/GoogleChromeLabs/audioworklet-polyfill/pull/25)
 // TODO: Why is there an iframe involved? (realm.js)
 
 const Realm = require( './realm.js' )
@@ -63,6 +64,12 @@ const AWPF = function( self = window, bufferSize = 4096 ) {
       }
     });
 
+    /* XXX - ADDED TO OVERCOME PROBLEM IN SAFARI WHERE AUDIOWORKLETPROCESSOR PROTOTYPE IS NOT AN OBJECT */
+    const AudioWorkletProcessor = function() {
+      this.port = nextPort
+    }
+    AudioWorkletProcessor.prototype = {}
+
     self.AudioWorklet = class AudioWorklet {
       constructor (audioContext) {
         this.$$context = audioContext;
@@ -76,9 +83,7 @@ const AWPF = function( self = window, bufferSize = 4096 ) {
           const context = {
             sampleRate: this.$$context.sampleRate,
             currentTime: this.$$context.currentTime,
-            AudioWorkletProcessor () {
-              this.port = nextPort;
-            },
+            AudioWorkletProcessor,
             registerProcessor: (name, Processor) => {
               const processors = getProcessorsForContext(this.$$context);
               processors[name] = {
