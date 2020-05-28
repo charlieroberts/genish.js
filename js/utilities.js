@@ -33,7 +33,7 @@ const utilities = {
 
     const start = () => {
       if( typeof AC !== 'undefined' ) {
-        this.ctx = new AC()
+        this.ctx = new AC({ latencyHint:.0125 })
 
         gen.samplerate = this.ctx.sampleRate
 
