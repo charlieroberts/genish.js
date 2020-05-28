@@ -47,8 +47,8 @@ data( './resources/audiofiles/amen.wav' ).then( amenData => {
  
   play( out ).then( node => {
     gui = new dat.GUI()
-    gui.add( cb, 'damping', 0,.995 )
-    gui.add( cb, 'feedback', 0,.995 )
+    gui.add( node, 'damping', 0,.995 )
+    gui.add( node, 'feedback', 0,.995 )
   })
   
 })
