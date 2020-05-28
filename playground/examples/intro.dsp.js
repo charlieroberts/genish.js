@@ -179,7 +179,7 @@ page.
 
 // data lets us read in a file. The then() method of the data object
 // lets us define a function to be executed when loading is finished.
-d = data( './resources/audiofiles/amen.wav' ).then( ()=> {
+data( './resources/audiofiles/amen.wav' ).then( d => {
   'use jsdsp'
  
   // get a randomized playback rate via sah. Tne value will be used
