@@ -4,10 +4,10 @@ A library for generating optimized, single-sample audio callbacks in JavaScript.
 ## try it out
 http://www.charlie-roberts.com/genish/playground
 
-genish.js should run in all reasonably modern browsers; however, it runs best in Firefox and Chrome due to their support for AudioWorklets.
+genish.js should run in all reasonably modern browsers; however, it runs best in Firefox, Edge, and Chrome due to their support for AudioWorklets. Other browsers will fallback to using a ScriptProcessor node, which runs on the main thread and thus may result in glitches.
 
 ## what?
-A little more detail: genish.js will compile per-sample callback functions from a graph. Given the following code:
+A little more detail: genish.js will compile per-sample callback functions from a graph. Given the following code to create a sine oscillator and scale its output:
 
 ```javascript
 mul( cycle( 220 ), .1 )
