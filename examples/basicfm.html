@@ -10,7 +10,13 @@ Most of the code consists of setup; the synthesis (a FM synthesized gong) is onl
     <script src='../dist/gen.lib.js'></script>
   </head>
 
-  <body></body>
+  <body>
+  <p style="width:25em;" > 
+    <span style="font-weight:bold">Click/touch in the page to begin</span>. 
+    This example shows how to build a simple FM synth playing a gong sound in genish.js. 
+    If you open your developer's console, you should see the generated callback function. 
+  </p>
+  </body>
 
   <script>
 // need to wait for the genish.js library to be loaded...
@@ -42,13 +48,15 @@ window.onload = function() {
   // this adds callback functions that will be called when the user first
   // clicks/touches/presses a key in the browser window. 
   utilities.createContext( 2048 )
+
+  const synth = mul( carrier, env )
   
   // make worklet only the first time window is clicked
   // and trigger gong every time window is clicked
   let init = false
   window.onclick = ()=> {
     if( init === false ) {
-      utilities.playWorklet( mul( carrier, env ), 'fmsynth', true ) 
+      utilities.playWorklet( synth, 'fmsynth', true ) 
       init = true
     }
     env.trigger()
