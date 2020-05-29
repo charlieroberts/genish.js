@@ -40,20 +40,36 @@ for( let i = 0; i < len; ++i ) {
 ## use
 To use genish.js, you need to create an AudioContext and a AudioWorklet node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks. The following example performs the necessary setup and starts a sine oscillator running:
 
-```javascript
- // optionally put all genish object in global namespace
-genish.export( window )
+```html
+<!doctype html>
+<html lang='en'>
+<head>
+  <script src="https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js"></script>
+</head>
 
-utilities.createContext()
+<body></body>
 
-// audio context won't be created until users
-// have interacted with the page
-window.onclick = ()=> {
-  utilities.playWorklet( cycle( 330 ) ) 
+<script>
+// wait until genish.js has loaded...
+window.onload = function() {
+   // optionally put all genish object in global namespace
+  genish.export( window )
+
+  // schedule our audiocontext to be created when a user
+  // interacts with the page... this is required by browsers
+  utilities.createContext()
+
+  window.onclick = ()=> {
+    // now our audiocontext has been created and we
+    // can create an audioworklet...
+    utilities.playWorklet( cycle( 330 ) ) 
+  }
 }
+</script>
+</html>
 ```
 
-A [more complex example](https://gist.github.com/charlieroberts/7bcc6e19c66b9ed2b4bf26db309738e4) is also available.
+A [more complex example](https://gist.github.com/charlieroberts/7bcc6e19c66b9ed2b4bf26db309738e4) is also available. You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js).
 
 ## develop & test
 The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
