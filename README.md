@@ -38,7 +38,7 @@ for( let i = 0; i < len; ++i ) {
 ```
 
 ## use
-To use genish.js, you need to create an AudioContext and a AudioWorklet node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks. The following example performs the necessary setup and starts a sine oscillator running:
+To use genish.js, you need to create an AudioContext and an AudioWorklet node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks. The following example performs the necessary setup and starts a sine oscillator running:
 
 ```html
 <!doctype html>
@@ -69,7 +69,7 @@ window.onload = function() {
 </html>
 ```
 
-A [more complex example](https://gist.github.com/charlieroberts/7bcc6e19c66b9ed2b4bf26db309738e4) is also available. You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js).
+More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.htmll) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js).
 
 ## develop & test
 The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
