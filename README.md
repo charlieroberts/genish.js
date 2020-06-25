@@ -69,7 +69,7 @@ window.onload = function() {
 </html>
 ```
 
-More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.htmll) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js).
+More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.html) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js).
 
 ## develop & test
 The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).

@@ -14,10 +14,9 @@ let proto = {
       gen.parameters.add( this.name )
     }
 
-    //gen.memo[ this.name ] = isWorklet ? this.name + '[i]' : this.name
-    gen.memo[ this.name ] = this.name + '[i]'
+    gen.memo[ this.name ] = isWorklet === true ? this.name + '[i]' : this.name
 
-    return this.name + '[i]'
+    return gen.memo[ this.name ]
   } 
 }
 
