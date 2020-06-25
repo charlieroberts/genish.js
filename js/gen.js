@@ -66,7 +66,7 @@ const gen = {
     }
   },
 
-  createMemory( amount, type ) {
+  createMemory( amount=4096, type ) {
     const mem = MemoryHelper.create( amount, type )
     return mem
   },
@@ -78,10 +78,13 @@ const gen = {
 
     if( typeof mem === 'number' || mem === undefined ) {
       this.memory = this.createMemory( mem, memType )
-      this.outputIdx = this.memory.alloc( 2, true )
-      this.emit( 'memory init' )
+    }else{
+      this.memory = mem
     }
     
+    this.outputIdx = this.memory.alloc( 2, true )
+    this.emit( 'memory init' )
+
     //console.log( 'cb memory:', mem )
     this.graph = ugen
     this.memo = {} 
@@ -207,6 +210,7 @@ const gen = {
     callback.params = this.params
     callback.inputs = this.inputs
     callback.parameters = this.parameters//.slice( 0 )
+    callback.out = this.memory.heap.subarray( this.outputIdx, this.outputIdx + 2 )
     callback.isStereo = isStereo
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
