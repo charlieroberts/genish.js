@@ -47,6 +47,7 @@ const library = {
   phasor:   require( './phasor.js' ),
   data:     require( './data.js' ),
   peek:     require( './peek.js' ),
+  peekDyn:  require( './peekDyn.js' ),
   cycle:    require( './cycle.js' ),
   history:  require( './history.js' ),
   delta:    require( './delta.js' ),

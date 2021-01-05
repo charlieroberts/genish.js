@@ -84,9 +84,10 @@ module.exports = ( attackTime = 44100, decayTime = 44100, _props ) => {
   out.trigger = ()=> {
     if( usingWorklet === true && out.node !== null ) {
       out.node.port.postMessage({ key:'set', idx:completeFlag.memory.values.idx, value:0 })
-    }else{
-      gen.memory.heap[ completeFlag.memory.values.idx ] = 0
     }
+    //else{
+    //  gen.memory.heap[ completeFlag.memory.values.idx ] = 0
+    //}
     _bang.trigger()
   }
 

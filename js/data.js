@@ -85,7 +85,7 @@ module.exports = ( x, y=1, properties ) => {
     name: proto.basename + gen.getUID(),
     dim:  buffer !== undefined ? buffer.length : 1, // XXX how do we dynamically allocate this?
     channels : 1,
-    onload: null,
+    onload: properties !== undefined ? properties.onload || null : null,
     //then( fnc ) {
     //  ugen.onload = fnc
     //  return ugen
