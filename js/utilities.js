@@ -168,7 +168,7 @@ const utilities = {
     return memberString
   },
 
-  createWorkletProcessor( graph, name, debug, mem=44100*10 ) {
+  createWorkletProcessor( graph, name, debug, mem=44100*10, __eval=false ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
     const inputs = cb.inputs
@@ -187,6 +187,14 @@ const utilities = {
       : `left[ i ] = memory[0];\n\t\tright[ i ] = memory[1]\n`
 
     const prettyCallback = this.prettyPrintCallback( cb )
+
+    // if __eval, provide the ability of eval code in worklet
+    const evalString = __eval
+      ? ` else if( event.data.key === 'eval' ) {
+        eval( event.data.code )
+      }
+`
+      : ''
 
     /***** begin callback code ****/
     // note that we have to check to see that memory has been passed
@@ -217,7 +225,7 @@ class ${name}Processor extends AudioWorkletProcessor {
       this.memory[ event.data.idx ] = event.data.value
     }else if( event.data.key === 'get' ) {
       this.port.postMessage({ key:'return', idx:event.data.idx, value:this.memory[event.data.idx] })     
-    }
+    }${ evalString }
   }
 
   process( inputs, outputs, parameters ) {
@@ -262,10 +270,10 @@ registerProcessor( '${name}', ${name}Processor)`
     }
   },
 
-  playWorklet( graph, name, debug=false, mem=44100 * 60 ) {
+  playWorklet( graph, name, debug=false, mem=44100 * 60, __eval=false ) {
     utilities.clear()
 
-    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem )
+    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval )
 
     const nodePromise = new Promise( (resolve,reject) => {
    
