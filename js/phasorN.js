@@ -3,10 +3,10 @@
 const gen   = require( './gen.js' ),
       accum = require( './accum.js' ),
       mul   = require( './mul.js' ),
-      proto = { basename:'phasor' },
+      proto = { basename:'phasorN' },
       div   = require( './div.js' )
 
-const defaults = { min: -1, max: 1 }
+const defaults = { min: 0, max: 1 }
 
 module.exports = ( frequency = 1, reset = 0, _props ) => {
   const props = Object.assign( {}, defaults, _props )

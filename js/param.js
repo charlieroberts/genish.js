@@ -28,13 +28,15 @@ module.exports = ( propName=0, value=0, min=0, max=1 ) => {
   if( typeof propName !== 'string' ) {
     ugen.name = ugen.basename + gen.getUID()
     ugen.initialValue = propName
+    ugen.min = value
+    ugen.max = min
   }else{
     ugen.name = propName
+    ugen.min = min
+    ugen.max = max
     ugen.initialValue = value
   }
 
-  ugen.min = min
-  ugen.max = max
   ugen.defaultValue = ugen.initialValue
 
   // for storing worklet nodes once they're instantiated
@@ -53,7 +55,7 @@ module.exports = ( propName=0, value=0, min=0, max=1 ) => {
     set( v ) {
       if( this.memory.value.idx !== null ) {
         if( this.isWorklet && this.waapi !== null ) {
-          this.waapi.value = v
+          this.waapi[ propName ].value = v
         }else{
           gen.memory.heap[ this.memory.value.idx ] = v
         } 
