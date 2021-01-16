@@ -168,7 +168,7 @@ const utilities = {
     return memberString
   },
 
-  createWorkletProcessor( graph, name, debug, mem=44100*10, __eval=false ) {
+  createWorkletProcessor( graph, name, debug, mem=44100*10, __eval=false, kernel=false ) {
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
     const inputs = cb.inputs
@@ -196,6 +196,9 @@ const utilities = {
 `
       : ''
 
+    const kernelFncString = `this.kernel = function( memory ) {
+      ${prettyCallback}
+    }`
     /***** begin callback code ****/
     // note that we have to check to see that memory has been passed
     // to the worker before running the callback function, otherwise
@@ -215,6 +218,7 @@ class ${name}Processor extends AudioWorkletProcessor {
     super( options )
     this.port.onmessage = this.handleMessage.bind( this )
     this.initialized = false
+    ${ kernel ? kernelFncString : '' }
   }
 
   handleMessage( event ) {
@@ -235,9 +239,10 @@ class ${name}Processor extends AudioWorkletProcessor {
       const right  = output[ 1 ]
       const len    = left.length
       const memory = this.memory ${parameterDereferences}${inputDereferences}${memberString}
+      ${kernel ? 'const kernel = this.kernel' : '' }
 
       for( let i = 0; i < len; ++i ) {
-        ${prettyCallback}
+        ${kernel ? 'kernel( memory )\n' : prettyCallback}
         ${genishOutputLine}
       }
     }
@@ -270,10 +275,10 @@ registerProcessor( '${name}', ${name}Processor)`
     }
   },
 
-  playWorklet( graph, name, debug=false, mem=44100 * 60, __eval=false ) {
+  playWorklet( graph, name, debug=false, mem=44100 * 60, __eval=false, kernel=false ) {
     utilities.clear()
 
-    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval )
+    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval, kernel )
 
     const nodePromise = new Promise( (resolve,reject) => {
    

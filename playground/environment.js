@@ -27,7 +27,7 @@ window.onload = function() {
   utilities.console = cmconsole
   utilities.editor  = cm
 
-  window.play = function( v, name, debug, mem, __eval=false ) { //, memType=Float32Array ) {
+  window.play = function( v, name, debug, mem, __eval=false, kernel=false ) { //, memType=Float32Array ) {
     if( name === undefined || name === null ) {
       name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
     }
@@ -35,7 +35,7 @@ window.onload = function() {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    var cb = utilities.playWorklet( v, name, debug, mem, __eval ) 
+    var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
 
     return cb
   }
