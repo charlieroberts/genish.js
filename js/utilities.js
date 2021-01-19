@@ -66,11 +66,11 @@ const utilities = {
     if( typeof this.callback === 'undefined' ) this.callback = this.clearFunction
 
     this.node.onaudioprocess = function( audioProcessingEvent ) {
-      var outputBuffer = audioProcessingEvent.outputBuffer;
+      const outputBuffer = audioProcessingEvent.outputBuffer
 
-      var left = outputBuffer.getChannelData( 0 ),
-          right= outputBuffer.getChannelData( 1 ),
-          isStereo = utilities.isStereo
+      const left = outputBuffer.getChannelData( 0 ),
+            right= outputBuffer.getChannelData( 1 ),
+            isStereo = utilities.isStereo
 
      for( var sample = 0; sample < left.length; sample++ ) {
         var out = utilities.callback()
@@ -169,6 +169,7 @@ const utilities = {
   },
 
   createWorkletProcessor( graph, name, debug, mem=44100*10, __eval=false, kernel=false ) {
+    const numChannels = Array.isArray( graph ) ? graph.length : 1
     //const mem = MemoryHelper.create( 4096, Float64Array )
     const cb = gen.createCallback( graph, mem, debug )
     const inputs = cb.inputs
@@ -181,10 +182,18 @@ const utilities = {
     const inputList = this.createInputArguments( cb )   
     const memberString = this.createFunctionDereferences( cb )
 
+    let inputsString = ''
+    let genishOutputLine = ''
+    for( let i = 0; i < numChannels; i++ ) {
+      inputsString += `const channel${i} = output[ ${i} ]\n\t\t`
+      genishOutputLine += `channel${i}[ i ] = memory[ ${i} ]\n\t\t`
+    }
+
     // change output based on number of channels.
-    const genishOutputLine = cb.isStereo === false
-      ? `left[ i ] = memory[0]`
-      : `left[ i ] = memory[0];\n\t\tright[ i ] = memory[1]\n`
+    //const genishOutputLine = cb.isStereo === false
+    //  ? `left[ i ] = memory[0]`
+    //  : `left[ i ] = memory[0];\n\t\tright[ i ] = memory[1]\n`
+    
 
     const prettyCallback = this.prettyPrintCallback( cb )
 
@@ -235,9 +244,8 @@ class ${name}Processor extends AudioWorkletProcessor {
   process( inputs, outputs, parameters ) {
     if( this.initialized === true ) {
       const output = outputs[0]
-      const left   = output[ 0 ]
-      const right  = output[ 1 ]
-      const len    = left.length
+      ${inputsString}
+      const len    = channel0.length
       const memory = this.memory ${parameterDereferences}${inputDereferences}${memberString}
       ${kernel ? 'const kernel = this.kernel' : '' }
 
@@ -265,7 +273,7 @@ registerProcessor( '${name}', ${name}Processor)`
       )
     )
 
-    return [ url, workletCode, inputs, cb.params, cb.isStereo ] 
+    return [ url, workletCode, inputs, cb.params, numChannels ] 
   },
 
   registeredForNodeAssignment: [],
@@ -278,12 +286,13 @@ registerProcessor( '${name}', ${name}Processor)`
   playWorklet( graph, name, debug=false, mem=44100 * 60, __eval=false, kernel=false ) {
     utilities.clear()
 
-    const [ url, codeString, inputs, params, isStereo ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval, kernel )
+    const [ url, codeString, inputs, params, numChannels ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval, kernel )
+    console.log( 'numChannels:', numChannels )
 
     const nodePromise = new Promise( (resolve,reject) => {
    
       utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
-        const workletNode = new AudioWorkletNode( utilities.ctx, name, { outputChannelCount:[ isStereo ? 2 : 1 ] })
+        const workletNode = new AudioWorkletNode( utilities.ctx, name, { channelInterpretation:'discrete', channelCount: numChannels, outputChannelCount:[ numChannels ] })
 
         workletNode.callbacks = {}
         workletNode.onmessage = function( event ) {

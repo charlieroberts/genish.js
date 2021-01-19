@@ -72,6 +72,7 @@ const gen = {
   },
 
   createCallback( ugen, mem, debug = false, shouldInlineMemory=false, memType = Float64Array ) {
+    const numChannels = Array.isArray( ugen ) ? ugen.length : 1
     let isStereo = Array.isArray( ugen ) && ugen.length > 1,
         callback, 
         channel1, channel2
@@ -82,7 +83,7 @@ const gen = {
       this.memory = mem
     }
     
-    this.outputIdx = this.memory.alloc( 2, true )
+    this.outputIdx = this.memory.alloc( numChannels, true )
     this.emit( 'memory init' )
 
     //console.log( 'cb memory:', mem )
@@ -105,17 +106,23 @@ const gen = {
 
     // call .gen() on the head of the graph we are generating the callback for
     //console.log( 'HEAD', ugen )
-    for( let i = 0; i < 1 + isStereo; i++ ) {
+    for( let i = 0; i < numChannels; i++ ) {
       if( typeof ugen[i] === 'number' ) continue
 
       //let channel = isStereo ? ugen[i].gen() : ugen.gen(),
-      let channel = isStereo ? this.getInput( ugen[i] ) : this.getInput( ugen ), 
+      let channel = numChannels > 1 ? this.getInput( ugen[i] ) : this.getInput( ugen ), 
           body = ''
 
       // if .gen() returns array, add ugen callback (graphOutput[1]) to our output functions body
       // and then return name of ugen. If .gen() only generates a number (for really simple graphs)
       // just return that number (graphOutput[0]).
-      body += Array.isArray( channel ) ? channel[1] + '\n' + channel[0] : channel
+      if( Array.isArray( channel ) ) {
+        for( let j = 0; j < channel.length; j++ ) {
+          body += channel[ j ] + '\n'
+        }
+      }else{
+        body += channel
+      }
 
       // split body to inject return keyword on last line
       body = body.split('\n')
@@ -139,7 +146,12 @@ const gen = {
         value.gen()      
     })
 
-    const returnStatement = isStereo ? `  return [ memory[${this.outputIdx}], memory[${this.outputIdx + 1}] ]` : `  return memory[${this.outputIdx}]`
+    let returnStatement =  `  return [ memory[${this.outputIdx}]`
+    for( let i = 1; i < numChannels; i++ ) {
+      returnStatement += `, memory[ ${this.outputIdx + i} ]`
+    }
+    returnStatement += ' ] '
+     // memory[${this.outputIdx + 1}] ]` : `  return memory[${this.outputIdx}]`
     
     this.functionBody = this.functionBody.split('\n')
 
@@ -210,7 +222,7 @@ const gen = {
     callback.params = this.params
     callback.inputs = this.inputs
     callback.parameters = this.parameters//.slice( 0 )
-    callback.out = this.memory.heap.subarray( this.outputIdx, this.outputIdx + 2 )
+    callback.out = this.memory.heap.subarray( this.outputIdx, this.outputIdx + numChannels )
     callback.isStereo = isStereo
 
     //if( MemoryHelper.isPrototypeOf( this.memory ) ) 
