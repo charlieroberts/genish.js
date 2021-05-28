@@ -69,7 +69,7 @@ window.onload = function() {
 </html>
 ```
 
-More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.html) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/main/dist/gen.lib.js).
+AudioWorklets only run if your webpage is loaded from a server; [http-server](https://github.com/http-party/http-server) is a nice way to quickly start a server running for local testing purposes. More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.html) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/main/dist/gen.lib.js).
 
 ## develop & test
 The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
