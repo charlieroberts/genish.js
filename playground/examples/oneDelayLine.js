@@ -9,7 +9,7 @@
 
 // use noise with sample-and-hold to output random frequencies with random timing
 frequencyControl = sah( noise(), noise(42), .99999 )
-
+ 
 // frequencies from 220 - 660 Hz
 frequency = add( 220, mul( frequencyControl, 440 ) )
  

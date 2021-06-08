@@ -8,7 +8,7 @@ inputs are smoothed over 1000 samples using the slide() function. */
 // define frequency as a property of our callback function, so that it
 // can easily be referenced and modified from outside of genish.js
 frequency = mouseY = param( 330 )
-
+ 
 // move from one frequency to the next logarithmically
 // over 1000 samples, both down and up
 portamento = slide( frequency, 1000, 1000 )
@@ -26,4 +26,4 @@ window.onmousemove = function( e ) {
   // it every sample.
   mouseY.value = 990 - (e.clientY / window.innerHeight) * 880
   mouseX.value = (e.clientX / window.innerWidth) * 100
-} 
+}
