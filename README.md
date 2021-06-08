@@ -7,9 +7,9 @@ https://gibber-cc.github.io/genish.js/playground/
 Currently only runs in Chrome as I need to debug the loading in the wasm module.
 
 ## what?
-Genish is a collection of commonly used, low-level audio building blocks, to create phasors, read/write to data, perform sample-and-hold, and create feedback loops. Unlike the built-in web audio nodes, genish operates at a *per-sample* level, meaning you can create single-sample feedback loops that are necessary for many types of synthesis and effects.
+Genish is a collection of commonly used, low-level audio building blocks. Example audio processors include phasors, read/write (peek/poke) to data, sample-and-hold, and single-sample feedback loops. Unlike the built-in web audio nodes, genish operates at a *per-sample* level, meaning you can create single-sample feedback loops that are necessary for many types of synthesis and effects.
 
-This branch of genish consists of a small (~3KB) web assembly blob, and ~20 KB of wrapper code. The web asssembly is written by hand, eliminating the need for wrappers like emscripten. The library models the [entity component systems](https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d) commonly found in game engines; this basically means that the JS is primarily responsible for memory layout / enabling user manipulation of memory and that's about it.
+This branch of genish consists of a small (~3KB) web assembly blob, and ~20 KB of JS wrapper code. The web asssembly is written by hand, eliminating the need for more complex wrappers like emscripten. The library models the [entity component systems](https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d) commonly found in game engines; this basically means that the JS is primarily responsible for memory layout / enabling user manipulation of memory and that's about it.
 
 ## why wasm?
 Other versions of genish create custom javascript functions that are then typically compiled by the JIT compiler found in browsers. Advantages of using the JIT to compile our audio callbacks include:
