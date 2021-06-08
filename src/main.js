@@ -652,11 +652,6 @@ let counter
       idx : getMemory( 14 ),
       fid,
     }
-    
-    
-    createProperty( obj, 'incr',  obj.idx,     incr )
-    createProperty( obj, 'reset', obj.idx + 4, reset )
-    createProperty( obj, 'max',   obj.idx + 8, max )
 
     memf[ obj.idx + 12 ] = phase
     memf[ obj.idx + 13 ] = 0
@@ -671,6 +666,10 @@ let counter
         return out
       }
     })
+
+    createProperty( __memo, 'incr',  obj.idx,     incr )
+    createProperty( __memo, 'reset', obj.idx + 4, reset )
+    createProperty( __memo, 'max',   obj.idx + 8, max )
   
     return __memo
   }
