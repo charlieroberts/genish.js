@@ -6,11 +6,9 @@
     <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
     <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
     <script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="../node_modules/jsdsp/jsdsp_include.js"></script>
     <script src="./dat.gui.js"></script>
-    <script src="../dist/gen.lib.js"></script>
+    <script src="../src/main.js"></script>
     <script src="./environment.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 <style>
 .CodeMirror-highlight {
   background:red
@@ -58,8 +56,8 @@ h1 {
 
 #header span { font-size: .8em; }
 
-#editor { width:60%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
-#console{ width:40%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ); }
+#editor { width:100%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
+/* #console{ width:40%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ); } */
 
 .dg { z-index:100 !important }
 #reference a{ color: #ccc !important; margin-left: 2em }
@@ -82,7 +80,10 @@ h1 {
       <select>
         <option>intro & instructions</option>
         <option>thereminish - mouse interaction</option>
-        <option>sequencing and modulating scheduling</option>
+        <option>one delay line</option>
+        <option>slicing the amen break</option>
+
+        <!-- <option>sequencing and modulating scheduling</option>
         <option>hard sync</option>
         <option>bit crushing / sample reduction</option>
         <option>enveloping</option>
@@ -90,26 +91,18 @@ h1 {
         <option>biquad filter</option>
         <option>zero-delay (virtual analog) filter</option>
         <option>zero-delay (virtual analog) ladder filter</option>
-        <option>slicing the amen break</option>
-        <option>one delay line</option>
         <option>comb filter w/ feedback</option>
         <option>schroeder/moorer reverberation (freeverb)</option>
         <option>gigaverb</option>
         <option>garden of earthly delays</option>
-        <option>karplus strong</option>
+        <option>karplus strong</option> -->
       </select>
-
-      <!--<span style='position:relative; left:1em'>-->
-      <!--  use jsdsp:<input type='checkbox' id='jsdsp'>-->
-      <!--  <span ><a id='jsdspHelp' href="../jsdsp.html">?</a></span>-->
-      <!--</span>-->
       
       <span id='reference'><a href='../docs/index.html'>reference</a>
 
     </div>
 
     <div id='editor'></div>
-    <div id='console'></div>
   </body>
 
 </html>
