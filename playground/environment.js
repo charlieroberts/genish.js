@@ -13,39 +13,43 @@ window.onload = function() {
 
   cm.setSize( null, '100%' )
 
-  cmconsole = CodeMirror( document.querySelector('#console'), {
-    mode:'javascript',
-    value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
-    readOnly:'nocursor',
-    theme:'monokai'
-  })     
+  // cmconsole = CodeMirror( document.querySelector('#console'), {
+  //   mode:'javascript',
+  //   value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
+  //   readOnly:'nocursor',
+  //   theme:'monokai'
+  // })     
 
-  cmconsole.setSize( null, '100%' )
-  genish.export( window )
+  // cmconsole.setSize( null, '100%' )
+  // genish.export( window )
 
-  utilities.createContext( 2048 )
-  utilities.console = cmconsole
-  utilities.editor  = cm
+  // utilities.createContext( 2048 )
+  // utilities.console = cmconsole
+  // utilities.editor  = cm
 
-  window.play = function( v, name, debug, mem, __eval=false, kernel=false ) { //, memType=Float32Array ) {
-    if( name === undefined || name === null ) {
-      name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
-    }
-    if( dat !== undefined ) {
-      dat.GUI.__all__.forEach( v => v.destroy() )
-      dat.GUI.__all__.length = 0
-    }
-    var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
+  // window.play = function( v, name, debug, mem, __eval=false, kernel=false ) { //, memType=Float32Array ) {
+  //   if( name === undefined || name === null ) {
+  //     name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
+  //   }
+  //   if( dat !== undefined ) {
+  //     dat.GUI.__all__.forEach( v => v.destroy() )
+  //     dat.GUI.__all__.length = 0
+  //   }
+  //   var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
 
-    return cb
-  }
+  //   return cb
+  // }
 
   //Babel.registerPlugin( 'jsdsp', jsdsp )
 
   let select = document.querySelector( 'select' ),
       files = [
         'intro',
-        'thereminish',         
+        'thereminish',  
+        'oneDelayLine',
+        'slicingAndDicing', 
+
+/*       
         'sequencing', 
         'hardsync',
         'bitcrusher',
@@ -54,13 +58,12 @@ window.onload = function() {
         'biquad',
         'zeroDelay',
         'zeroDelayLadder',
-        'slicingAndDicing', 
-        'oneDelayLine',
         'combFilter',
         'freeverb',
         'gigaverb',
         'gardenOfDelays', 
         'karplusStrong'
+*/
       ]
   
   let currentFile = 'intro'
@@ -74,7 +77,7 @@ window.onload = function() {
       req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.dsp.js' : '.js'), true )
       req.onload = function() {
         var js = req.responseText
-        utilities.editor.setValue( js )
+        cm.setValue( js )
       }
   
     req.send()
@@ -134,7 +137,7 @@ CodeMirror.keyMap.playground =  {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
-    cmconsole.setValue('// silencio.\n' )
+    //cmconsole.setValue('// silencio.\n' )
   },
 }
 

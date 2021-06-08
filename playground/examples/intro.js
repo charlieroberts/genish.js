@@ -43,19 +43,6 @@ page.
 saw = mul( phasor(330), .05 )
 play( saw )
 
-/**********************************************
-******* sine oscillator (no wavetable) ********
-**********************************************/
-
-graph = sin( 
-  mul( 
-    accum( mul( 440, 1/44100 ) ), 
-    Math.PI * 2 
-  )
-)
- 
-play( mul( graph,.1 ) )
-
 /************************************
 ******* amplitude modulation ********
 ************************************/
@@ -78,7 +65,7 @@ play(
 ************************************/
 
 lfo = mul( cycle(4), .5 )
-ramp = mul( phasor(.1, 0, { min:0 }), 200 )
+ramp = mul( phasor( .1 ), 200 )
 rampedLFO = mul( lfo, ramp )
  
 osc = cycle( add( 440, rampedLFO ) )
@@ -97,10 +84,12 @@ random220_440 = add( 220, mul( noise(), 220 ) )
 // create a sample-and-hold that will sample our random frequency
 // whenever another random signal (in the range of 0-1) crosses a
 // high threshold. This will create a periodically changing frequency.
-frequency = sah( random220_440, noise(), .99995 )
+// make sure to use different a seed for each call to noise() unless
+// you want them to output the same number stream
+frequency = sah( random220_440, noise(2), .99995 )
  
 // sine oscillator
-play( cycle( frequency ) )
+play( mul( cycle( frequency ), .1 ) )
 
 /*****************************************************************
 ******* (LOUD + noisy) frequency modulation using feedback *******
@@ -109,26 +98,26 @@ play( cycle( frequency ) )
 // ssd is equivalent to history in gen~, a single-sample delay
 // (the history name is used by the window object in js...)
 // an argument to ssd sets its initial value
-sampler = ssd(.001) 
+sampler = ssd(.1) 
  
 // generate a sawtooth wave using our last sample output to
 // scale its frequency
 out = phasor( mul( 1000, sampler.out ) )
-
+ 
 // record the output to process the next sample
 sampler.in( out )
  
-play( mul( out, .05 ) )
+play( mul( out, .1 ) )
 
-/******************************************************************
-******* using data with peek (default linear interpolation) *******
-*******************************************************************/
+/**********************************************************
+******* using data with peek (linear interpolation) *******
+**********************************************************/
 
 // create a data set of four values to loop through
 d = data( [440,880,220,330] )
  
 // interpolate through data set over ten seocnds 
-freq = peek( d, phasor(.1, 0, { min:0 }) )
+freq = peek( d, phasor( .1, 0 ), 'linear' )
  
 out = mul( cycle( freq ), .1 )
  
@@ -141,10 +130,10 @@ play( out )
 d = data( [220,330,440,880] )
  
 // create a ramp from 0-4 over 10 seconds
-acceleration = mul( phasor(.1, 0, { min:0 }), 4 )
+acceleration = mul( phasor( .1 ), 4 )
  
 // accelerate looking through our graph; don't use interpolation
-freq = peek( d, phasor( acceleration, 0, {min:0} ), { interp:'none' } ) 
+freq = peek( d, phasor( acceleration ), 'none' ) 
  
 out = mul( cycle( freq ), .1 )
  
@@ -164,11 +153,16 @@ data( './resources/audiofiles/amen.wav' ).then( d => {
   // irrespective of length, will be played in four seconds.
   noisesig = sah( 
     mul( noise(), .25 ),
-    noise(),
+    noise(11),
     .99995
   )
   
-  play( peek( d, phasor( noisesig, 0, { min: 0 } ) ) )
+  play( 
+    mul( 
+      peek( d, phasor( noisesig ) ), 
+      .25 
+    ) 
+  )
 })
 
 /***********************************************
@@ -179,32 +173,42 @@ data( './resources/audiofiles/amen.wav' ).then( d => {
 frequencies = data( [220,330,440,880] )
  
 // get non-interpolating signal for frequency
-freqSignal = peek( frequencies, phasor( .5, 0, { min:0 } ), { interp:'none' } ) 
+freqSignal = peek( frequencies, phasor( .5 ), 'none' ) 
  
 // create a decay envelope
-envelope = sub( 1, phasor( 2, 0, { min:0 }) )
+envelope = sub( 1, phasor( 2 ) )
  
 // multiply sine osc by envelope
 notes = mul( cycle( freqSignal ), envelope )
  
-// ... turn notes down
-gain = mul( notes, .1 )
+// turn notes down and store result via memo()
+// so that it is only calculated once per
+// sample; the result can be used in multiple
+// spots throughout the graph. here it's used
+// in the delay and also is directly passed to
+// play.
+ 
+gain = memo( mul( notes, .1 ) )
  
 // create 1/4 second echo
-echo = delay( gain, 11025, { size: 22050 })
+echo = delay( gain, 11025, 22050 )
  
 // passing an array to play creates a stereo signal
 // notes on the left, echos on the right
 // use 64-bit memory storage for improved timing
 play( [gain, echo] ) 
 
-/****** 50 sine oscillators  *******/
+/****** 100 sine oscillators  *******/
  
-oscillators = []
-numOscillators = 50
+let size = 100
+b = bus( size, 1/size )
  
-for( var i = 0; i < numOscillators; i++ ) {
-  oscillators[ i ] =  mul( cycle( 110 + i * 55), .1/numOscillators ) 
+let baseFreq = 80
+for( let i = 0; i < size; i++) {
+  b.connect(
+    cycle( baseFreq )
+  )
+  baseFreq *= 1.035
 }
  
-play( add( ...oscillators ) )
+play( b )
