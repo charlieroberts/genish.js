@@ -1,75 +1,26 @@
 # genish.js
-A library for generating optimized, single-sample audio callbacks in JavaScript. Inspired by gen~ in Max/MSP.
+A library for performing single-sample audio callbacks in JavaScript. Inspired by gen~ in Max/MSP.
 
 ## try it out
-http://www.charlie-roberts.com/genish/playground
+https://gibber-cc.github.io/genish.js/playground/
 
-genish.js should run in all reasonably modern browsers; however, it runs best in Firefox, Edge, and Chrome due to their support for AudioWorklets. Other browsers will fallback to using a ScriptProcessor node, which runs on the main thread and thus may result in glitches.
+Currently only runs in Chrome as I need to debug the loading in the wasm module.
 
 ## what?
-A little more detail: genish.js will compile per-sample callback functions from a graph. Given the following code to create a sine oscillator and scale its output:
+Genish is a collection of commonly used, low-level audio building blocks, to create phasors, read/write to data, perform sample-and-hold, and create feedback loops. Unlike the built-in web audio nodes, genish operates at a *per-sample* level, meaning you can create single-sample feedback loops that are necessary for many types of synthesis and effects.
 
-```javascript
-mul( cycle( 220 ), .1 )
-```
+This branch of genish consists of a small (~3KB) web assembly blob, and ~20 KB of wrapper code. The web asssembly is written by hand, eliminating the need for wrappers like emscripten. The library models the [entity component systems](https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d) commonly found in game engines; this basically means that the JS is primarily responsible for memory layout / enabling user manipulation of memory and that's about it.
 
-...genish will generate the following sample processing loop (reading from a wavetable) inside of an AudioWorklet node:
+## why wasm?
+Other versions of genish create custom javascript functions that are then typically compiled by the JIT compiler found in browsers. Advantages of using the JIT to compile our audio callbacks include:
 
-```javascript
-for( let i = 0; i < len; ++i ) {
-  var phasor2_value = memory[2]
-  memory[2] += 0.004988662131519274
-  if( memory[2] >= 1 ) memory[2] -= 1
-  if( memory[2] < 0 ) memory[2] += 1
+1. In many cases, improved performance. By code-generating our audio callback, we can perform many optimizations, including avoiding indirect function calls.
 
-  var cycle4_dataIdx  = 3, 
-      cycle4_phase = phasor2_value * 1024, 
-      cycle4_index = cycle4_phase | 0,
-      cycle4_frac  = cycle4_phase - cycle4_index,
-      cycle4_base  = memory[ cycle4_dataIdx +  cycle4_index ],
-      cycle4_next  = ( cycle4_index + 1 ) & (1024 - 1),
-      cycle4_out   = cycle4_base + cycle4_frac * ( memory[ cycle4_dataIdx + cycle4_next ] - cycle4_base )
+Advantages of wasm include:
 
-  var mul5 = cycle4_out * 0.1
-  memory[0]  = mul5
+1. Ahead of time compliation means that functions run fasts immediately, without having to wait for the JIT to compile and optimize hot branches.
+2. A much simpler codebase. About 20 KB of javascript (uncompressed) instead 450 KB.
+3. The JIT stumbles on very large functions (think hundreds of sine oscillators). WASM has no such problems.
+4. Altering the audio graph in the old version required a new code generation cycle, which in turn requires a new JIT cycle, which can lead to pops. Altering the audio graph in this version simply means adjusting some numbers in memory, and can easily be done dynamically at runtime.
 
-  left[ i ] = memory[0]
-}
-```
-
-## use
-To use genish.js, you need to create an AudioContext and an AudioWorklet node that will run the functions genish.js creates. Genish includes a `utilities` object that provides convenience methods for these tasks. The following example performs the necessary setup and starts a sine oscillator running:
-
-```html
-<!doctype html>
-<html lang='en'>
-<head>
-  <script src="https://gitcdn.link/repo/charlieroberts/genish.js/master/dist/gen.lib.js"></script>
-</head>
-
-<body></body>
-
-<script>
-// wait until genish.js has loaded...
-window.onload = function() {
-   // optionally put all genish object in global namespace
-  genish.export( window )
-
-  // schedule our audiocontext to be created when a user
-  // interacts with the page... this is required by browsers
-  utilities.createContext()
-
-  window.onclick = ()=> {
-    // now our audiocontext has been created and we
-    // can create an audioworklet...
-    utilities.playWorklet( cycle( 330 ) ) 
-  }
-}
-</script>
-</html>
-```
-
-More [standalone](./examples/sine_worklet.htm) [examples](./examples/basicfm.html) are also available in the [examples directory](./examples). You can either use the prebuilt library in the `dist` folder, or use [a version served by GitCDN](https://gitcdn.link/repo/charlieroberts/genish.js/main/dist/gen.lib.js).
-
-## develop & test
-The build script is a gulpfile. With gulp installed, run `gulp js` or `gulp watch` in the top level of the repo. `gulp test` will run the testing suite (mocha).
+This wasm branch is currently under active development and it remains to be seen if the benefits of wasm will outweigh any potential performance penalties. I am optimistic.
