@@ -335,12 +335,16 @@ const sub = binop()
 
 let ifelse
 {
-  let fid = fidx++
-  ifelse = function( condition=1, t=1, f=0 ) {
+  let fid = fidx++,
+      fid2 = fidx++
+
+  ifelse = function( condition=1, t=1, f=0, shouldProcess=false ) {
     const obj = {
       idx : getMemory( 12 ),
       fid,
     }
+
+    if( shouldProcess ) obj.fid = fid2
   
     createProperty( obj, 'condition', obj.idx, condition )
     createProperty( obj, 'true', obj.idx + 4, t )
@@ -746,6 +750,16 @@ let pan
     return obj
   }
 }
+
+let sin = monop()
+let cos = monop()
+let tan = monop()
+let asin = monop()
+let acos = monop()
+let atan = monop()
+let tanh = monop()
+let pow  = binop()
+let atan2 = binop()
 
 function setupMemory( buffer ) {
   memf = new Float32Array( buffer )

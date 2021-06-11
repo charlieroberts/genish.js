@@ -2,13 +2,20 @@
   (import "env" "memory" (memory $mem 50 50 shared))
   (import "env" "_logf" (func $_logf (param f32) ) )
   (import "env" "_logi" (func $_logi (param i32) ) ) 
-  (import "math" "_sin" (func $_sin (param f32) (result f32) ) )
-    
+
+  (import "math" "sin"   (func $_sin   (param f32) (result f32) ) )
+  (import "math" "cos"   (func $_cos   (param f32) (result f32) ) )
+  (import "math" "tan"   (func $_tan   (param f32) (result f32) ) )
+  (import "math" "asin"  (func $_asin  (param f32) (result f32) ) )
+  (import "math" "acos"  (func $_acos  (param f32) (result f32) ) )
+  (import "math" "atan"  (func $_atan  (param f32) (result f32) ) )
+  (import "math" "tanh"  (func $_tanh  (param f32) (result f32) ) )
+  (import "math" "atan2" (func $_atan2 (param f32) (param f32) (result f32) ) )
+
   (global $sr (import "env" "sr") f32)
   (global $fmax (import "env" "fmax") f32)  
   (export "memory" (memory $mem) )
   (global $clock (mut i32) (i32.const 0))
-  
   
   ;; for noise function
   (type $t2 (func (param f64 i32) (result f64)))
@@ -20,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 41 funcref)
+  (table 51 funcref)
   (elem (i32.const 0) 
     $bus
     $accum
@@ -32,6 +39,7 @@
     $add
     $sub
     $ifelse
+    $ifelse2
     $round
     $and
     $or
@@ -63,6 +71,16 @@
     $counter
     $caller
     $float
+    ;;
+    $sin
+    $cos
+    $tan
+    $asin
+    $acos
+    $atan
+    $tanh
+    $pow
+    $atan2
   )
   
   ;; this is used to lookup all property values that might be
@@ -105,28 +123,40 @@
     (local.get $val)
   )
 
-  (func $pow (export "pow") (param $x f32) (param $y f32) (result f32)
+  (func $pow (export "pow") (param $loc i32) (result f32)
+    (local $x f32) (local $y f32)
     (local $out f32)
     (local $index f32)
+
+    local.get $loc
+    call $get-property
+    local.set $x
+
+    i32.const 16
+    local.get $loc
+    i32.add
+    call $get-property
+    local.set $y
+
     f32.const 1
-    set_local $out
+    local.set $out
     f32.const 1
-    set_local $index
+    local.set $index
 
     (block $b0
       (loop $l0
         (f32.mul 
-          (get_local $out)
-          (get_local $x)
+          (local.get $out)
+          (local.get $x)
         )
-        set_local $out
+        local.set $out
 
         (f32.add 
-          (get_local $index)
+          (local.get $index)
           (f32.const 1)
         )
-        tee_local $index
-        get_local $y
+        local.tee $index
+        local.get $y
         f32.gt
         br_if 1
 
@@ -134,7 +164,7 @@
       )
     )
 
-    get_local $out
+    local.get $out
   )
   
   ;; basic accumulator with variable range
@@ -216,22 +246,27 @@
     end
   )
   
+  ;; only runs the "true" expression, the false expression
+  ;; does not calculate samples.
   (func $ifelse (export "ifelse") (param $loc i32) (result f32)
+    (select
+      (i32.const 16)
+      (i32.const 32)
+      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
+    )
+
     local.get $loc
+    i32.add 
     call $get-property
-    
-    i32.trunc_u/f32
-    if (result f32)
-      local.get $loc
-      i32.const 16
-      i32.add
-      call $get-property
-    else
-      local.get $loc
-      i32.const 32
-      i32.add 
-      call $get-property
-    end
+  )
+
+  ;; both expressions calculate samples
+  (func $ifelse2 (export "ifelse2") (param $loc i32) (result f32)
+    (select
+      (call $get-property (i32.add (i32.const 16) (local.get $loc) ) )
+      (call $get-property (i32.add (i32.const 32) (local.get $loc) ) )
+      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
+    )
   )
   
   (func $and (export "and") (param $loc i32) (result f32)
@@ -440,6 +475,60 @@
     call $get-property
     
     f32.sqrt
+  )
+
+  (func $sin (export "sin") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_sin    
+  )
+
+  (func $cos (export "cos") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_cos
+  )
+
+  (func $tan (export "tan") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_tan    
+  )
+
+  (func $asin (export "asin") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_asin    
+  )
+
+  (func $acos (export "acos") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_acos
+  )
+
+  (func $atan (export "atan") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_atan    
+  )
+
+  (func $tanh (export "tanh") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    call $_tanh    
+  )
+
+  (func $atan2 (export "atan2") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    
+    i32.const 16
+    local.get $loc
+    i32.add
+    call $get-property
+    
+    call $_atan2
   )
   
   ;; TODO: is there a way to do this without
@@ -1237,48 +1326,48 @@
     end
   )
   
-  ;; adapted from:
-  ;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
-  (func $noise (export "noise") (param $loc i32) (result f32)
-    (local $0 i32)
-    (local $1 i32)
-    (i32.store
-      (i32.add (local.get $loc) (i32.const 8) )
-      (local.tee $1
-        (i32.xor
+;; adapted from:
+;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
+(func $noise (export "noise") (param $loc i32) (result f32)
+  (local $0 i32)
+  (local $1 i32)
+  (i32.store
+    (i32.add (local.get $loc) (i32.const 8) )
+    (local.tee $1
+      (i32.xor
+        (i32.load
+          (i32.add (local.get $loc) (i32.const 8) )
+        )
+        (local.tee $0
           (i32.load
-            (i32.add (local.get $loc) (i32.const 8) )
-          )
-          (local.tee $0
-            (i32.load
-              (i32.add (local.get $loc) (i32.const 4) )
-            )
+            (i32.add (local.get $loc) (i32.const 4) )
           )
         )
       )
-    )
-    (i32.store
-      (i32.add (local.get $loc) (i32.const 4) )
-      (i32.add
-        (local.get $1)
-        (local.get $0)
-      )
-    )
-    (f32.mul
-      (f32.add
-        (f32.mul
-          (f32.load
-            (local.get $loc)
-          )
-          (f32.convert_i32_s
-            (local.get $0)
-          )
-        )
-        (f32.const 1)
-      )
-      (f32.const 0.5)
     )
   )
+  (i32.store
+    (i32.add (local.get $loc) (i32.const 4) )
+    (i32.add
+      (local.get $1)
+      (local.get $0)
+    )
+  )
+  (f32.mul
+    (f32.add
+      (f32.mul
+        (f32.load
+          (local.get $loc)
+        )
+        (f32.convert_i32_s
+          (local.get $0)
+        )
+      )
+      (f32.const 1)
+    )
+    (f32.const 0.5)
+  )
+)
 
 (func $slide (export "slide") (param $loc i32) (result f32)
   (local $y f32)
@@ -1405,10 +1494,9 @@
     
     ;; wrap phase if needed
     ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap)
+    ;; the most common result (phase increments with no wrap).
+    ;; also, set wrap flag to either 1 or 0
     (f32.lt (local.get $newphs) (local.get $max))
-    ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
-    ;;i32.and
     if (result f32)
       (f32.store (i32.add (local.get $idx) (i32.const 52) ) (f32.const 0) )
       (local.get $newphs)

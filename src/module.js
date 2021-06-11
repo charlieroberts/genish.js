@@ -25,7 +25,19 @@ class WASMProcessor extends AudioWorkletProcessor {
               _logi:function( n ) { console.log(n) }, 
               _logf:function( n ) { console.log(n) } 
             },
-            math: { _sin:Math.sin, pi:Math.PI, twopi:Math.PI * 2 }
+            math: { 
+              sin:  Math.sin,
+              cos:  Math.cos,
+              tan : Math.tan,
+              asin: Math.asin, 
+              acos: Math.acos,
+              atan: Math.atan,
+              tanh: Math.tanh,
+              pow:  Math.pow,
+              atan2: Math.atan2,
+              pi:   Math.PI, 
+              twopi:Math.PI * 2 
+            }
           } 
         )
         .then( wasm => {
