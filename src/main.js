@@ -1,3 +1,9 @@
+/* 
+ugen memory layout
+[0] = function id
+[1] = data
+*/
+
 let audioContext = null, 
     node = null, 
     wasmbytes = null,
@@ -161,6 +167,33 @@ const getMemory = function( amt ) {
   return idx
 }
 
+let fidx = 0
+
+const createProperty_old = function( obj, name, idx, start ) {
+  let value
+  Object.defineProperty( obj, name, {
+    get() { return value },
+    set(v){ 
+      if( isNaN( v ) ) {
+        if( v.type !== undefined && v.type === 'param' ) {
+          memi[ idx ] = 2
+          memi[ idx + 1 ] = v.idx * 4
+        }else{
+          memi[ idx ] = 1
+          memi[ idx + 2 ] = v.fid
+          memi[ idx + 3 ] = v.idx * 4
+        }
+      }else{
+        memf[ idx ] = 0          
+        memf[ idx + 1 ] = v
+      }
+      value = v
+    }
+  })
+  
+  obj[ name ] = start
+}
+
 const createProperty = function( obj, name, idx, start ) {
   let value
   Object.defineProperty( obj, name, {
@@ -186,7 +219,61 @@ const createProperty = function( obj, name, idx, start ) {
   obj[ name ] = start
 }
 
-let fidx = 0
+const factory = function( props, statics, baseidx ) {
+  const obj = {},
+        keys = Object.keys( props ),
+        statickeys = Object.keys( statics )
+
+  // initial binary signature
+  const initSig = Object.values( props ).reduce(
+    (accum,val) => accum + ( isNaN(val) ? 1 : 0 ), 
+    '0b'
+  )
+  
+  // array of bits to twiddle
+  const flags = Object.values( props ).map( v => isNaN  ( v ) ? 1 : 0 )
+  
+  obj.fid = baseidx + Number( initSig )
+  obj.idx = getMemory( keys.length * 2 + statickeys.length )
+
+  for( let i = 0; i < keys.length; i++ ) {
+    const key = keys[ i ]
+    const idx = obj.idx + i * 2
+
+    let value = props[ key ]
+    Object.defineProperty( obj, key, {
+      get() { return value },
+      set( v ) {
+        // is this a number or a ugen?
+        const isUgen = isNaN( v ) ? 1 : 0
+        // set flag for determining function signature
+        flags[ i ] = isUgen
+        // get number for signature
+        const sig = Number( flags.reduce( (accum,val)=>accum+val, '0b') )
+        
+        obj.fid = baseidx + sig
+
+        if( isUgen ) {
+          memi[ idx ] = v.fid
+          memi[ idx + 1 ] = v.idx * 4
+        }else{
+          memf[ idx ] = v
+        }
+      }
+    })
+
+    obj[ key ] = props[ key ]
+  }
+
+  const staticidx = obj.idx + keys.length * 2
+  let count = 0
+  for( let key of statickeys ) {
+    memf[ staticidx + count++ ] = statics[ key ]
+  }
+
+  return obj
+}
+
 const binop = function() {
   let fid = fidx++
   return function( x=1, y=1 ) {
@@ -216,6 +303,18 @@ const monop = function() {
   out.fid = fid
   
   return out
+}
+
+let accum
+{
+  const baseidx = fidx
+  fidx += 4
+  accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
+    const props = { incr, reset },
+          statics = { min, max, phase }
+
+    return factory( props, statics, baseidx )
+  }
 }
 
 let bus
@@ -248,25 +347,25 @@ let bus
   }
 }
 
-let accum // 44 bytes
-{
-  let fid = fidx++
-  accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
-    const obj = {
-      idx : getMemory( 11 ),
-      fid,
-    }
+// let accum // 44 bytes
+// {
+//   let fid = fidx++
+//   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
+//     const obj = {
+//       idx : getMemory( 11 ),
+//       fid,
+//     }
   
-    createProperty( obj, 'incr',  obj.idx,     incr )
-    createProperty( obj, 'reset', obj.idx + 4, reset )
+//     createProperty( obj, 'incr',  obj.idx,     incr )
+//     createProperty( obj, 'reset', obj.idx + 4, reset )
   
-    memf[ obj.idx + 8 ] = min
-    memf[ obj.idx + 9 ] = max
-    memf[ obj.idx + 10 ] = phase
+//     memf[ obj.idx + 8 ] = min
+//     memf[ obj.idx + 9 ] = max
+//     memf[ obj.idx + 10 ] = phase
   
-    return obj
-  }
-}
+//     return obj
+//   }
+// }
 
 let phasor
 {
@@ -310,19 +409,17 @@ let peek // 24 bytes
 
 let cycle
 {
-  let fid = fidx++
+  let sig_d = fidx++,
+      sig_s = fidx++
+
   cycle = function( frequency=0, phase=0 ) {
     const obj = {
-      idx : getMemory( 11 ),
+      idx : getMemory( 3 ),
       fid,
     }
   
     createProperty( obj, 'frequency', obj.idx, frequency )
-    createProperty( obj, 'reset', obj.idx + 4, 0 )
-  
-    memf[ obj.idx + 8 ] = min
-    memf[ obj.idx + 9 ] = max
-    memf[ obj.idx + 10 ] = phase
+    memf[ obj.idx + 3 ] = phase
   
     return obj
   }

@@ -27,61 +27,61 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 52 funcref)
-  (elem (i32.const 0) 
-    $bus
-    $accum
-    $phasor
-    $peek
-    $cycle
-    $cycle_s
-    $mul
-    $div
-    $add
-    $sub
-    $ifelse
-    $ifelse2
-    $round
-    $and
-    $or
-    $gt
-    $gte
-    $lt
-    $lte
-    $eq
-    $neq
-    $poke
-    $bang
-    $clamp
-    $memo
-    $ad
-    $abs
-    $floor
-    $ceil
-    $sqrt
-    $min
-    $max
-    $gtp
-    $ltp
-    $ssd
-    $delay
-    $mix
-    $sah
-    $noise
-    $slide
-    $counter
-    $caller
-    $float
-    ;;
-    $sin
-    $cos
-    $tan
-    $asin
-    $acos
-    $atan
-    $tanh
-    $pow
-    $atan2
+  (table 1 funcref)
+  (elem (i32.const 0)
+    $accum_s_s
+    ;; $bus
+    ;; $accum
+    ;; $phasor
+    ;; $peek
+    ;; $cycle
+    ;; $cycle_s
+    ;; $mul
+    ;; $div
+    ;; $add
+    ;; $sub
+    ;; $ifelse
+    ;; $ifelse2
+    ;; $round
+    ;; $and
+    ;; $or
+    ;; $gt
+    ;; $gte
+    ;; $lt
+    ;; $lte
+    ;; $eq
+    ;; $neq
+    ;; $poke
+    ;; $bang
+    ;; $clamp
+    ;; $memo
+    ;; $ad
+    ;; $abs
+    ;; $floor
+    ;; $ceil
+    ;; $sqrt
+    ;; $min
+    ;; $max
+    ;; $gtp
+    ;; $ltp
+    ;; $ssd
+    ;; $delay
+    ;; $mix
+    ;; $sah
+    ;; $noise
+    ;; $slide
+    ;; $counter
+    ;; $caller
+    ;; $float
+    ;; $sin
+    ;; $cos
+    ;; $tan
+    ;; $asin
+    ;; $acos
+    ;; $atan
+    ;; $tanh
+    ;; $pow
+    ;; $atan2
   )
   
   ;; this is used to lookup all property values that might be
@@ -103,8 +103,8 @@
       i32.eq
       if (result f32)
         (call_indirect (type $sig-i32--f32) 
-          (i32.load (i32.add (local.get $idx) (i32.const 12) ) )
-          (i32.load (i32.add (local.get $idx) (i32.const 8) ) )
+          (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data
+          (i32.load (i32.add (local.get $idx) (i32.const 8) ) )  ;; function id
         )
       else
         (f32.load (i32.load (i32.add (local.get $idx) (i32.const 4)) ) )
@@ -241,6 +241,87 @@
       ;; set phase.value to $min [65]
       (f32.store
         (i32.add (local.get $idx) (i32.const 40)) 
+        (local.get $min)
+      ) 
+      local.get $min
+    end
+  )
+
+  ;; 0-4 incr value or function id
+  ;; 4-8 incr data idx (optional)
+  ;; 8-12 reset value or function id
+  ;; 12-16 reset data idx (optional)
+  ;; 16-20 min
+  ;; 20-24 max
+  ;; 24-28 phase
+  (func $accum_s_s (export "accum_s_s") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $min f32)
+    (local $max f32)
+    
+    ;; get min, delay retrieving max.
+    (i32.add (local.get $idx) (i32.const 16))
+    f32.load
+    local.set $min
+    
+    ;; check phase reset flag [64]
+    (i32.add (local.get $idx) (i32.const 8))
+    f32.load
+    i32.trunc_f32_u
+    i32.eqz
+    if (result f32)
+      ;; get max [32]
+      (i32.add (local.get $idx) (i32.const 20))
+      f32.load
+      local.set $max
+      
+      ;; load phase [64]
+      local.get $idx
+      i32.const 24
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      local.get $idx
+      f32.load
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 24
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap)
+      (f32.lt (local.get $newphs) (local.get $max))
+      ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
+      ;;i32.and
+      if (result f32)
+        (local.get $newphs)
+      else
+        (f32.sub 
+          (local.get $newphs) 
+          (f32.sub (local.get $max) (local.get $min) ) 
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      (f32.store 
+        (i32.add (local.get $idx) (i32.const 8) ) 
+        (f32.const 0) 
+      )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 24)) 
         (local.get $min)
       ) 
       local.get $min
