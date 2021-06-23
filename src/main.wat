@@ -27,9 +27,16 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 1 funcref)
+  (table 8 funcref)
   (elem (i32.const 0)
     $accum_s_s
+    $accum_s_d
+    $accum_d_s
+    $accum_d_d
+    $add_s_s
+    $add_s_d
+    $add_d_s
+    $add_d_d
     ;; $bus
     ;; $accum
     ;; $phasor
@@ -328,6 +335,48 @@
     end
   )
   
+  (func $accum_s_d (export "accum_s_d") )
+  (func $accum_d_s (export "accum_d_s") )
+  (func $accum_d_d (export "accum_d_d") )
+
+  (func $add_s_s (export "add_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    f32.add
+  )
+  (func $add_s_d (export "add_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    f32.add
+  )
+  (func $add_d_s (export "add_d_s") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    f32.add
+  )
+  (func $add_d_d (export "add_d_d") (param $idx i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data
+      (i32.load (local.get $idx) )  ;; function id
+    )
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) )  ;; function id
+    )
+    f32.add
+  )
   ;; only runs the "true" expression, the false expression
   ;; does not calculate samples.
   (func $ifelse (export "ifelse") (param $loc i32) (result f32)

@@ -265,10 +265,9 @@ const factory = function( props, statics, baseidx ) {
     obj[ key ] = props[ key ]
   }
 
-  const staticidx = obj.idx + keys.length * 2
-  let count = 0
+  let staticidx = obj.idx + keys.length * 2
   for( let key of statickeys ) {
-    memf[ staticidx + count++ ] = statics[ key ]
+    memf[ staticidx++ ] = statics[ key ]
   }
 
   return obj
@@ -312,6 +311,18 @@ let accum
   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
     const props = { incr, reset },
           statics = { min, max, phase }
+
+    return factory( props, statics, baseidx )
+  }
+}
+
+let add
+{
+  const baseidx = fidx
+  fidx += 4
+  add = function( x,y ) {
+    const props = { '0':x, '1':y },
+          statics = {}
 
     return factory( props, statics, baseidx )
   }
@@ -443,7 +454,7 @@ let cycle_s
 
 const mul = binop()
 const div = binop()
-const add = binop()
+//const add = binop()
 const sub = binop()
 
 let ifelse
