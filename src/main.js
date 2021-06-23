@@ -328,6 +328,22 @@ let cycle
   }
 }
 
+let cycle_s
+{
+  let fid = fidx++
+  cycle_s = function( frequency=0, phase=0 ) {
+    const obj = {
+      idx : getMemory( 2 ),
+      fid,
+    }
+  
+    memf[ obj.idx ] = frequency
+    memf[ obj.idx + 1 ] = phase
+  
+    return obj
+  }
+}
+
 const mul = binop()
 const div = binop()
 const add = binop()

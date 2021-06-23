@@ -27,13 +27,14 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 51 funcref)
+  (table 52 funcref)
   (elem (i32.const 0) 
     $bus
     $accum
     $phasor
     $peek
     $cycle
+    $cycle_s
     $mul
     $div
     $add
@@ -123,49 +124,49 @@
     (local.get $val)
   )
 
-  (func $pow (export "pow") (param $loc i32) (result f32)
-    (local $x f32) (local $y f32)
-    (local $out f32)
-    (local $index f32)
+  ;; (func $pow (export "pow") (param $loc i32) (result f32)
+  ;;   (local $x f32) (local $y f32)
+  ;;   (local $out f32)
+  ;;   (local $index f32)
 
-    local.get $loc
-    call $get-property
-    local.set $x
+  ;;   local.get $loc
+  ;;   call $get-property
+  ;;   local.set $x
 
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    local.set $y
+  ;;   i32.const 16
+  ;;   local.get $loc
+  ;;   i32.add
+  ;;   call $get-property
+  ;;   local.set $y
 
-    f32.const 1
-    local.set $out
-    f32.const 1
-    local.set $index
+  ;;   f32.const 1
+  ;;   local.set $out
+  ;;   f32.const 1
+  ;;   local.set $index
 
-    (block $b0
-      (loop $l0
-        (f32.mul 
-          (local.get $out)
-          (local.get $x)
-        )
-        local.set $out
+  ;;   (block $b0
+  ;;     (loop $l0
+  ;;       (f32.mul 
+  ;;         (local.get $out)
+  ;;         (local.get $x)
+  ;;       )
+  ;;       local.set $out
 
-        (f32.add 
-          (local.get $index)
-          (f32.const 1)
-        )
-        local.tee $index
-        local.get $y
-        f32.gt
-        br_if 1
+  ;;       (f32.add 
+  ;;         (local.get $index)
+  ;;         (f32.const 1)
+  ;;       )
+  ;;       local.tee $index
+  ;;       local.get $y
+  ;;       f32.gt
+  ;;       br_if 1
 
-        br 0
-      )
-    )
+  ;;       br 0
+  ;;     )
+  ;;   )
 
-    local.get $out
-  )
+  ;;   local.get $out
+  ;; )
   
   ;; basic accumulator with variable range
   ;; TODO correct this table it's wrong
@@ -530,6 +531,18 @@
     
     call $_atan2
   )
+
+  (func $pow (export "pow") (param $loc i32) (result f32)
+    local.get $loc
+    call $get-property
+    
+    i32.const 16
+    local.get $loc
+    i32.add
+    call $get-property
+    
+    call $_atan2
+  )
   
   ;; TODO: is there a way to do this without
   ;; requiring a divide for every sample even
@@ -838,6 +851,104 @@
     ;; push phase idx for set-property to the stack
     local.get $idx
     i32.const 40
+    i32.add
+    
+    ;; wrap phase if needed
+    ;; no branch if condition is true so use that for
+    ;; the most common result (phase increments with no wrap)
+    (f32.lt (local.get $newphs) (f32.const 1.0))
+    ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
+    ;;i32.and
+    if (result f32)
+      (local.get $newphs)
+    else
+      (f32.sub 
+        (local.get $newphs) 
+        (f32.const 1.0) 
+      )
+      local.tee $newphs 
+    end
+    
+    f32.store
+    local.get $newphs
+    
+    ;; set $phase in range of 0-len
+    f32.const 1024
+    f32.mul
+    local.tee $phase
+    
+    ;; get base index by rounding $phase down
+    i32.trunc_f32_u
+    local.set $base
+    
+    ;; multiply base index by 4 and load
+    local.get $base
+    i32.const 4
+    i32.mul
+    i32.const 1024
+    i32.add
+    f32.load
+    local.set $floor 
+    
+    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
+    local.get $base
+    i32.const 1
+    i32.add
+    i32.const 1023
+    i32.and
+    i32.const 4
+    i32.mul
+    i32.const 1024
+    i32.add
+    f32.load
+    local.set $ceil
+    
+    ;; get fractional part via phase - floor( phase )
+    local.get $phase
+    local.get $phase
+    f32.floor
+    f32.sub
+    local.set $fract
+    
+    ;; multiply difference between ceil and floor by fractional part and 
+    ;; add to floor
+    local.get $ceil
+    local.get $floor
+    f32.sub
+    local.get $fract
+    f32.mul
+    local.get $floor
+    f32.add
+  )
+
+  (func $cycle_s (export "cycle_s") (param $idx i32) (result f32)
+    (local $newphs f32)
+    (local $phase f32)
+    (local $floor f32)
+    (local $ceil f32)
+    (local $base i32)
+    (local $incr f32)
+    (local $fract f32)
+    
+    ;; load phase [64]
+    local.get $idx
+    i32.const 4
+    i32.add
+    f32.load
+    
+    ;; get phase increment [0] and add to current phase
+    ;; to obtain new phase
+    ;;(call $get-property (local.get $idx) )
+    local.get $idx
+    f32.load
+    global.get $sr
+    f32.div
+    f32.add
+    local.set $newphs
+
+    ;; push phase idx for set-property to the stack
+    local.get $idx
+    i32.const 4
     i32.add
     
     ;; wrap phase if needed
