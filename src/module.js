@@ -83,7 +83,7 @@ class WASMProcessor extends AudioWorkletProcessor {
     const len = outputs[0][0].length
     const output = outputs[0][0]
     if( this.numChannels === 1 ) {
-      this.wasm.render( this.renderFunction, this.renderLocation, len, 0 )
+      this.wasm.render( this.renderLocation, len, 0 )
       outputs[0][0].set( this.outputL )
       outputs[0][1].set( this.outputL )
     }else{

@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 8 funcref)
+  (table 12 funcref)
   (elem (i32.const 0)
     $accum_s_s
     $accum_s_d
@@ -37,6 +37,10 @@
     $add_s_d
     $add_d_s
     $add_d_d
+    $mul_s_s
+    $mul_s_d
+    $mul_d_s
+    $mul_d_d
     ;; $bus
     ;; $accum
     ;; $phasor
@@ -269,37 +273,37 @@
     (local $max f32)
     
     ;; get min, delay retrieving max.
-    (i32.add (local.get $idx) (i32.const 16))
+    (i32.add (local.get $idx) (i32.const 20))
     f32.load
     local.set $min
     
     ;; check phase reset flag [64]
-    (i32.add (local.get $idx) (i32.const 8))
+    (i32.add (local.get $idx) (i32.const 12))
     f32.load
     i32.trunc_f32_u
     i32.eqz
     if (result f32)
       ;; get max [32]
-      (i32.add (local.get $idx) (i32.const 20))
+      (i32.add (local.get $idx) (i32.const 24))
       f32.load
       local.set $max
       
       ;; load phase [64]
       local.get $idx
-      i32.const 24
+      i32.const 28
       i32.add
       f32.load
       
       ;; get phase increment [0] and add to current phase
       ;; to obtain new phase
-      local.get $idx
+      (i32.add (local.get $idx) (i32.const 4) )
       f32.load
       f32.add
       local.set $newphs
 
       ;; push phase idx for set-property to the stack
       local.get $idx
-      i32.const 24
+      i32.const 28
       i32.add
       
       ;; wrap phase if needed
@@ -323,13 +327,13 @@
     else
       ;; reset.value [68] to 0
       (f32.store 
-        (i32.add (local.get $idx) (i32.const 8) ) 
+        (i32.add (local.get $idx) (i32.const 12) ) 
         (f32.const 0) 
       )
       ;; set phase.value to $min [65]
       (f32.store
-        (i32.add (local.get $idx) (i32.const 24)) 
-        (local.get $min)
+        (i32.add (local.get $idx) (i32.const 28)) 
+        (local.get $min)    
       ) 
       local.get $min
     end
@@ -376,6 +380,47 @@
       (i32.load (i32.add (local.get $idx) (i32.const 8) ) )  ;; function id
     )
     f32.add
+  )
+
+  (func $mul_s_s (export "mul_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    f32.mul
+  )
+  (func $mul_s_d (export "mul_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    f32.mul
+  )
+  (func $mul_d_s (export "mul_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.mul
+  )
+  (func $mul_d_d (export "mul_d_d") (param $idx i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; function id
+    )
+    f32.mul
   )
   ;; only runs the "true" expression, the false expression
   ;; does not calculate samples.
@@ -1767,55 +1812,56 @@
   end
 )
 
-  ;; render a function for a given number
-  ;; of samples to shared memory. can
-  ;; replace using a for-loop in the main thread
-  ;; to read samples one at a time.
-  (func $render (export "render") 
-    (param $fid i32) ;; function to call
-    (param $loc i32) ;; memory location for function to call
-    (param $len i32) ;; number of samples to render
-    (param $idx i32) ;; position in memory to write to
-    (result     i32) ;; return number of samples rendered
-    (local $i   i32) ;; iterator for loop
-    
-    (loop $l 
+;; render a function for a given number
+;; of samples to shared memory. can
+;; replace using a for-loop in the main thread
+;; to read samples one at a time.
+(func $render (export "render") 
+  (param $loc i32) ;; memory location for function to call
+  (param $len i32) ;; number of samples to render
+  (param $idx i32) ;; position in memory to write to
+  (result     i32) ;; return number of samples rendered
+  (local $i   i32) ;; iterator for loop
+  (local $fid i32)
+  
+  (loop $l 
 
-      ;; store call fnc and store output at $idx
-      (f32.store 
-        (local.get $idx)
-        (call_indirect (type $sig-i32--f32) 
-          (local.get $loc)
-          (local.get $fid)
-        )
+    (local.set $fid (i32.load (local.get $loc) ) )
+    ;; store call fnc and store output at $idx
+    (f32.store 
+      (local.get $idx)
+      (call_indirect (type $sig-i32--f32) 
+        (local.get $loc)
+        (local.get $fid)
       )
-            
-      ;; increment i
-      local.get $i
-      i32.const 1
-      i32.add
-      local.set $i
-      
-      ;; update idx to next storage position
-      local.get $idx
-      i32.const 4
-      i32.add
-      local.set $idx
-
-      global.get $clock
-      i32.const 1
-      i32.add 
-      global.set $clock
-      
-      ;; check if i > len and break $l if true
-      local.get $len
-      local.get $i
-      i32.gt_u 
-      br_if $l
     )
+          
+    ;; increment i
+    local.get $i
+    i32.const 1
+    i32.add
+    local.set $i
     
+    ;; update idx to next storage position
+    local.get $idx
+    i32.const 4
+    i32.add
+    local.set $idx
+
+    global.get $clock
+    i32.const 1
+    i32.add 
+    global.set $clock
+    
+    ;; check if i > len and break $l if true
     local.get $len
+    local.get $i
+    i32.gt_u 
+    br_if $l
   )
+  
+  local.get $len
+)
 
 ;; render a function for a given number
   ;; of samples to shared memory. can

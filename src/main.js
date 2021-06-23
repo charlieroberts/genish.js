@@ -99,8 +99,7 @@ const play = function( ugen ) {
   }else{
     node.port.postMessage({
       address:'render',
-      loc:ugen.idx*4,
-      func:ugen.fid
+      loc:ugen.idx*4
     })
   }
 }
@@ -224,6 +223,9 @@ const factory = function( props, statics, baseidx ) {
         keys = Object.keys( props ),
         statickeys = Object.keys( statics )
 
+  // function id, properties, statics
+  obj.idx = getMemory( 1 + (keys.length * 2) + statickeys.length )
+
   // initial binary signature
   const initSig = Object.values( props ).reduce(
     (accum,val) => accum + ( isNaN(val) ? 1 : 0 ), 
@@ -232,13 +234,21 @@ const factory = function( props, statics, baseidx ) {
   
   // array of bits to twiddle
   const flags = Object.values( props ).map( v => isNaN  ( v ) ? 1 : 0 )
+
+  let __fid = baseidx + Number( initSig )
+  Object.defineProperty( obj, 'fid', { 
+    get() { return __fid },
+    set(v) {
+      __fid = v
+      memi[ obj.idx ] = __fid
+    }
+  })
   
-  obj.fid = baseidx + Number( initSig )
-  obj.idx = getMemory( keys.length * 2 + statickeys.length )
+  obj.fid = __fid
 
   for( let i = 0; i < keys.length; i++ ) {
     const key = keys[ i ]
-    const idx = obj.idx + i * 2
+    const idx = obj.idx + 1 + i * 2
 
     let value = props[ key ]
     Object.defineProperty( obj, key, {
@@ -254,6 +264,7 @@ const factory = function( props, statics, baseidx ) {
         obj.fid = baseidx + sig
 
         if( isUgen ) {
+          console.log( v, v.idx, v.fid )
           memi[ idx ] = v.fid
           memi[ idx + 1 ] = v.idx * 4
         }else{
@@ -265,7 +276,7 @@ const factory = function( props, statics, baseidx ) {
     obj[ key ] = props[ key ]
   }
 
-  let staticidx = obj.idx + keys.length * 2
+  let staticidx = obj.idx + 1 + keys.length * 2
   for( let key of statickeys ) {
     memf[ staticidx++ ] = statics[ key ]
   }
@@ -321,6 +332,18 @@ let add
   const baseidx = fidx
   fidx += 4
   add = function( x,y ) {
+    const props = { '0':x, '1':y },
+          statics = {}
+
+    return factory( props, statics, baseidx )
+  }
+}
+
+let mul
+{
+  const baseidx = fidx
+  fidx += 4
+  mul = function( x,y ) {
     const props = { '0':x, '1':y },
           statics = {}
 
@@ -452,7 +475,7 @@ let cycle_s
   }
 }
 
-const mul = binop()
+//const mul = binop()
 const div = binop()
 //const add = binop()
 const sub = binop()
