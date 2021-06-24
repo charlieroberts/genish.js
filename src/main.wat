@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 94 funcref)
+  (table 96 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -128,10 +128,9 @@
     $phasor_d
     $peek_s
     $peek_d
+    $cycle_s
+    $cycle_d
     ;; $bus
-    ;; $accum
-    ;; $phasor
-    ;; $peek
     ;; $cycle
     ;; $cycle_s
     ;; $ifelse
@@ -143,10 +142,6 @@
     ;; $clamp
     ;; $memo
     ;; $ad
-    ;; $abs
-    ;; $floor
-    ;; $ceil
-    ;; $sqrt
     ;; $ssd
     ;; $delay
     ;; $mix
@@ -156,12 +151,6 @@
     ;; $counter
     ;; $caller
     ;; $float
-    ;; $sin
-    ;; $cos
-    ;; $tan
-    ;; $asin
-    ;; $acos
-    ;; $atan
     ;; $tanh
     ;; $pow
     ;; $atan2
@@ -2261,7 +2250,7 @@
     )    
   )
 
-  (func $cycle (export "cycle") (param $idx i32) (result f32)
+(func $cycle_d (export "cycle_d") (param $idx i32) (result f32)
     (local $newphs f32)
     (local $phase f32)
     (local $floor f32)
@@ -2272,13 +2261,17 @@
     
     ;; load phase [64]
     local.get $idx
-    i32.const 40
+    i32.const 8
     i32.add
     f32.load
     
     ;; get phase increment [0] and add to current phase
     ;; to obtain new phase
-    (call $get-property (local.get $idx) )
+    ;;(call $get-property (local.get $idx) )
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
+    )
     global.get $sr
     f32.div
     f32.add
@@ -2286,7 +2279,7 @@
 
     ;; push phase idx for set-property to the stack
     local.get $idx
-    i32.const 40
+    i32.const 8
     i32.add
     
     ;; wrap phase if needed
@@ -2368,7 +2361,7 @@
     
     ;; load phase [64]
     local.get $idx
-    i32.const 4
+    i32.const 8
     i32.add
     f32.load
     
@@ -2376,6 +2369,8 @@
     ;; to obtain new phase
     ;;(call $get-property (local.get $idx) )
     local.get $idx
+    i32.const 4
+    i32.add
     f32.load
     global.get $sr
     f32.div
@@ -2384,7 +2379,7 @@
 
     ;; push phase idx for set-property to the stack
     local.get $idx
-    i32.const 4
+    i32.const 8
     i32.add
     
     ;; wrap phase if needed

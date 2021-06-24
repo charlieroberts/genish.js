@@ -370,7 +370,7 @@ let phasor
   }
 }
 
-let peek // 24 bytes
+let peek
 {
   const baseidx = fidx 
   fidx+=2
@@ -383,18 +383,24 @@ let peek // 24 bytes
             interpolation: { value: Number( interp==='linear' ), type:'i' },
             mode: { value: Number( mode==='phase'), type:'i' }
           }
-  
-    // createProperty( obj, 'phase', obj.idx, phase )
-  
-    // memi[ obj.idx + 4 ] = __data.idx * 4
-    // memf[ obj.idx + 5 ] = length
-    // memi[ obj.idx + 6 ] = Number( interp === 'linear' )
-    // memi[ obj.idx + 7 ] = Number( mode === 'phase' )
 
     return factory( props, statics, baseidx )
   }
 }
 
+let cycle
+{
+  const baseidx = fidx
+  fidx += 2
+  cycle = function( frequency=1, phase=0 ) {
+    const props = { frequency },
+          statics = { 
+            'phase':{ value:phase, type:'f' } 
+          }
+
+    return factory( props, statics, baseidx )
+  }
+}
 
 let bus
 {
@@ -425,51 +431,6 @@ let bus
     return obj
   }
 }
-
-
-// TODO: needs to accept data objects instead of index
-// index can't be an option because you need to know length,
-// can't always assume 1024/log2.
-
-
-let cycle
-{
-  let sig_d = fidx++,
-      sig_s = fidx++
-
-  cycle = function( frequency=0, phase=0 ) {
-    const obj = {
-      idx : getMemory( 3 ),
-      fid,
-    }
-  
-    createProperty( obj, 'frequency', obj.idx, frequency )
-    memf[ obj.idx + 3 ] = phase
-  
-    return obj
-  }
-}
-
-let cycle_s
-{
-  let fid = fidx++
-  cycle_s = function( frequency=0, phase=0 ) {
-    const obj = {
-      idx : getMemory( 2 ),
-      fid,
-    }
-  
-    memf[ obj.idx ] = frequency
-    memf[ obj.idx + 1 ] = phase
-  
-    return obj
-  }
-}
-
-//const mul = binop()
-//const div = binop()
-//const add = binop()
-//const sub = binop()
 
 let ifelse
 {
