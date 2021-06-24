@@ -235,7 +235,10 @@ const factory = function( props, statics, baseidx ) {
   // array of bits to twiddle
   const flags = Object.values( props ).map( v => isNaN  ( v ) ? 1 : 0 )
 
-  let __fid = baseidx + Number( initSig )
+  let __fid = Object.values( props ).length >= 1 
+    ? baseidx + Number( initSig )
+    : baseidx
+
   Object.defineProperty( obj, 'fid', { 
     get() { return __fid },
     set(v) {
@@ -398,6 +401,37 @@ let cycle
             'phase':{ value:phase, type:'f' } 
           }
 
+    return factory( props, statics, baseidx )
+  }
+}
+
+let noise
+{
+  const baseidx = fidx
+  fidx++
+  noise = function( seed=0 ) {
+    const props = {},
+          statics = {
+            a: { value:2 / 0xffffffff, type:'f'},
+            seed: { value:0x67452301 + seed, type:'i' },
+            b: { value:0xefcdab89, type:'i'}
+          }
+    
+    return factory( props, statics, baseidx )
+  }
+}
+
+let sah
+{
+  const baseidx = fidx
+  fidx += 8
+  sah = function( input=0, control=0, threshold=.9 ) {
+    const props = { input, control, threshold },
+          statics = {
+            output: { value:0, type:'f'},
+            control:{ value:0, type:'f'}
+          }
+  
     return factory( props, statics, baseidx )
   }
 }
@@ -666,44 +700,6 @@ let mix
     createProperty( obj, 't', obj.idx + 8, t )
     
     return obj
-  }
-}
-
-
-let sah
-{
-  const fid = fidx++
-  sah = function( input=0, control=0, threshold=.9 ) {
-    const obj = {
-      idx : getMemory( 14 ),
-      fid
-    }
-  
-    createProperty( obj, 'input', obj.idx, input )
-    createProperty( obj, 'control', obj.idx + 4, control )
-    createProperty( obj, 'threshold', obj.idx + 8, threshold )
-    
-    memf[ obj.idx + 12 ] = 0 // held output value
-    memf[ obj.idx + 13 ] = 0 // control storage
-    return obj
-  }
-}
-
-let noise
-{
-  const fid = fidx++
-  noise = function( seed=0 ) {
-    const obj = {
-      idx : getMemory( 3 ),
-      fid
-    }
-    
-    memf[ obj.idx ] = 2 / 0xffffffff;
-    memi[ obj.idx + 1 ] = 0x67452301 + seed;
-    memi[ obj.idx + 2 ] = 0xefcdab89;
-    
-    return obj
-    
   }
 }
 

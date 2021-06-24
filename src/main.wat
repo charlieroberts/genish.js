@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 96 funcref)
+  (table 104 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -130,6 +130,15 @@
     $peek_d
     $cycle_s
     $cycle_d
+    $noise
+    $sah_s_s_s
+    $sah_s_s_d
+    $sah_s_d_s
+    $sah_s_d_d
+    $sah_d_s_s
+    $sah_d_s_d
+    $sah_d_d_s
+    ;;$sah_d_d_d
     ;; $bus
     ;; $cycle
     ;; $cycle_s
@@ -2449,6 +2458,78 @@
     local.get $floor
     f32.add
   )
+
+  (func $sah_s_s_s (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_s_s_d (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_s_d_s (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_s_d_d (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_d_s_s (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_d_s_d (param $loc i32) (result f32) (f32.const 0) )
+  (func $sah_d_d_s (export "sah_d_d_s") (param $loc i32) (result f32)
+    (local $valueinput f32)
+    (local $controlinput f32)
+    (local $threshold f32)
+    (local $lastvalue f32)
+    (local $lastcontrol f32)
+    (local $trigger f32)
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $valueinput
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $controlinput
+        
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $threshold
+    
+    local.get $loc
+    i32.const 20
+    i32.add
+    f32.load
+    local.set $lastcontrol
+    
+    (f32.gt
+      (local.get $controlinput)
+      (local.get $threshold)
+    )
+    f32.convert_i32_u
+    
+    local.tee $trigger
+    local.get $lastcontrol
+    f32.ne
+    
+    if
+      local.get $trigger
+      i32.trunc_f32_u
+      if
+        local.get $loc
+        i32.const 16
+        i32.add
+        local.get $valueinput
+        f32.store
+      end
+      
+      local.get $loc
+      i32.const 20
+      i32.add
+      local.get $trigger
+      f32.store
+    end
+    
+    local.get $loc
+    i32.const 16
+    i32.add
+    f32.load
+  )
   
   ;; Bus- a bus adds a bunch of signals together, and then
   ;; scales them and pans (gain/pan is TODO)
@@ -2763,69 +2844,7 @@
     )
   )
   
-  (func $sah (export "sah") (param $loc i32) (result f32)
-    (local $valueinput f32)
-    (local $controlinput f32)
-    (local $threshold f32)
-    (local $lastvalue f32)
-    (local $lastcontrol f32)
-    (local $trigger f32)
-    
-    local.get $loc
-    call $get-property
-    local.set $valueinput
-    
-    local.get $loc
-    i32.const 16
-    i32.add
-    call $get-property
-    local.set $controlinput
-        
-    local.get $loc
-    i32.const 32
-    i32.add
-    call $get-property
-    local.set $threshold
-    
-    local.get $loc
-    i32.const 52
-    i32.add
-    f32.load
-    local.set $lastcontrol
-    
-    (f32.gt
-      (local.get $controlinput)
-      (local.get $threshold)
-    )
-    f32.convert_i32_u
-    
-    local.tee $trigger
-    local.get $lastcontrol
-    f32.ne
-    
-    if
-      local.get $trigger
-      i32.trunc_f32_u
-      if
-        local.get $loc
-        i32.const 48
-        i32.add
-        local.get $valueinput
-        f32.store
-      end
-      
-      local.get $loc
-      i32.const 52
-      i32.add
-      local.get $trigger
-      f32.store
-    end
-    
-    local.get $loc
-    i32.const 48
-    i32.add
-    f32.load
-  )
+
   
   (func $ad (export "ad") (param $loc i32) (result f32)
     (local $attack f32)
@@ -2879,22 +2898,22 @@
   (local $0 i32)
   (local $1 i32)
   (i32.store
-    (i32.add (local.get $loc) (i32.const 8) )
+    (i32.add (local.get $loc) (i32.const 12) )
     (local.tee $1
       (i32.xor
         (i32.load
-          (i32.add (local.get $loc) (i32.const 8) )
+          (i32.add (local.get $loc) (i32.const 12) )
         )
         (local.tee $0
           (i32.load
-            (i32.add (local.get $loc) (i32.const 4) )
+            (i32.add (local.get $loc) (i32.const 8) )
           )
         )
       )
     )
   )
   (i32.store
-    (i32.add (local.get $loc) (i32.const 4) )
+    (i32.add (local.get $loc) (i32.const 8) )
     (i32.add
       (local.get $1)
       (local.get $0)
@@ -2904,7 +2923,7 @@
     (f32.add
       (f32.mul
         (f32.load
-          (local.get $loc)
+          (i32.add (local.get $loc) (i32.const 4))
         )
         (f32.convert_i32_s
           (local.get $0)
