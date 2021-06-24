@@ -27,41 +27,113 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 12 funcref)
+  (table 90 funcref)
   (elem (i32.const 0)
-    $accum_s_s
-    $accum_s_d
-    $accum_d_s
-    $accum_d_d
+    ;; monops (11*2 = 22)
+    $floor_s
+    $floor_d
+    $ceil_s
+    $ceil_d
+    $round_s
+    $round_d
+    $abs_s
+    $abs_d
+    $sqrt_s
+    $sqrt_d
+    $sin_s
+    $sin_d
+    $cos_s
+    $cos_d
+    $tan_s
+    $tan_d
+    $asin_s
+    $asin_d
+    $acos_s
+    $acos_d
+    $atan_s
+    $atan_d
+
+    ;; binops (16*4 = 64)
     $add_s_s
     $add_s_d
     $add_d_s
     $add_d_d
+    $sub_s_s
+    $sub_s_d
+    $sub_d_s
+    $sub_d_d
     $mul_s_s
     $mul_s_d
     $mul_d_s
     $mul_d_d
+    $div_s_s
+    $div_s_d
+    $div_d_s
+    $div_d_d
+    $and_s_s
+    $and_s_d
+    $and_d_s
+    $and_d_d
+    $or_s_s
+    $or_s_d
+    $or_d_s
+    $or_d_d
+    $gt_s_s
+    $gt_s_d
+    $gt_d_s
+    $gt_d_d
+    $gte_s_s
+    $gte_s_d
+    $gte_d_s
+    $gte_d_d
+    $lt_s_s
+    $lt_s_d
+    $lt_d_s
+    $lt_d_d
+    $lte_s_s
+    $lte_s_d
+    $lte_d_s
+    $lte_d_d
+    $eq_s_s
+    $eq_s_d
+    $eq_d_s
+    $eq_d_d
+    $neq_s_s
+    $neq_s_d
+    $neq_d_s
+    $neq_d_d
+    $gtp_s_s
+    $gtp_s_d
+    $gtp_d_s
+    $gtp_d_d
+    $ltp_s_s
+    $ltp_s_d
+    $ltp_d_s
+    $ltp_d_d
+    $min_s_s
+    $min_s_d
+    $min_d_s
+    $min_d_d
+    $max_s_s
+    $max_s_d
+    $max_d_s
+    $max_d_d
+
+    ;; other
+    $accum_s_s
+    $accum_s_d
+    $accum_d_s
+    $accum_d_d
     ;; $bus
     ;; $accum
     ;; $phasor
     ;; $peek
     ;; $cycle
     ;; $cycle_s
-    ;; $mul
-    ;; $div
-    ;; $add
-    ;; $sub
     ;; $ifelse
     ;; $ifelse2
     ;; $round
-    ;; $and
-    ;; $or
-    ;; $gt
-    ;; $gte
-    ;; $lt
-    ;; $lte
-    ;; $eq
-    ;; $neq
+    
     ;; $poke
     ;; $bang
     ;; $clamp
@@ -71,10 +143,6 @@
     ;; $floor
     ;; $ceil
     ;; $sqrt
-    ;; $min
-    ;; $max
-    ;; $gtp
-    ;; $ltp
     ;; $ssd
     ;; $delay
     ;; $mix
@@ -343,61 +411,314 @@
   (func $accum_d_s (export "accum_d_s") )
   (func $accum_d_d (export "accum_d_d") )
 
+ (func $round_s (export "round_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    f32.nearest    
+  )
+
+  (func $round_d (export "round_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    f32.nearest    
+  )
+  
+ (func $abs_s (export "abs_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    f32.abs    
+  )
+
+  (func $abs_d (export "abs_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    f32.abs  
+  )
+  
+ (func $floor_s (export "floor_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    f32.floor    
+  )
+
+  (func $floor_d (export "floor_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    f32.floor  
+  )
+  
+ (func $ceil_s (export "ceil_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    f32.ceil    
+  )
+
+  (func $ceil_d (export "ceil_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    f32.ceil  
+  )
+  
+ (func $sqrt_s (export "sqrt_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    f32.sqrt
+  )
+
+  (func $sqrt_d (export "sqrt_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    f32.sqrt  
+  )
+
+ (func $sin_s (export "sin_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_sin    
+  )
+
+  (func $sin_d (export "sin_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_sin
+  )
+
+ (func $cos_s (export "cos_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_cos    
+  )
+
+  (func $cos_d (export "cos_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_cos
+  )
+
+ (func $tan_s (export "tan_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_tan    
+  )
+
+  (func $tan_d (export "tan_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_tan
+  )
+
+ (func $asin_s (export "asin_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_asin    
+  )
+
+  (func $asin_d (export "asin_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_asin
+  )
+
+ (func $acos_s (export "acos_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_acos    
+  )
+
+  (func $acos_d (export "acos_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_acos
+  )
+
+ (func $atan_s (export "atan_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    
+    call $_atan    
+  )
+
+  (func $atan_d (export "atan_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    
+    call $_atan
+  )
+
   (func $add_s_s (export "add_s_s") (param $loc i32) (result f32)
     local.get $loc
+    i32.const 4
+    i32.add
     f32.load
     local.get $loc
-    i32.const 8
+    i32.const 12
     i32.add
     f32.load
     f32.add
   )
   (func $add_s_d (export "add_s_d") (param $loc i32) (result f32)
     local.get $loc
-    f32.load
-    local.get $loc
-    i32.const 8
+    i32.const 4
     i32.add
     f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
     f32.add
   )
   (func $add_d_s (export "add_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
     local.get $loc
-    f32.load
-    local.get $loc
-    i32.const 8
+    i32.const 12
     i32.add
     f32.load
     f32.add
   )
-  (func $add_d_d (export "add_d_d") (param $idx i32) (result f32)
+  (func $add_d_d (export "add_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data
-      (i32.load (local.get $idx) )  ;; function id
-    )
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data
-      (i32.load (i32.add (local.get $idx) (i32.const 8) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
     )
     f32.add
   )
 
-  (func $mul_s_s (export "mul_s_s") (param $loc i32) (result f32)
+  (func $sub_s_s (export "sub_s_s") (param $loc i32) (result f32)
     local.get $loc
+    i32.const 4
+    i32.add
     f32.load
     local.get $loc
-    i32.const 8
+    i32.const 12
+    i32.add
+    f32.load
+    f32.sub
+  )
+  (func $sub_s_d (export "sub_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.sub
+  )
+  (func $sub_d_s (export "sub_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.sub
+  )
+  (func $sub_d_d (export "sub_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.sub
+  )
+
+  (func $mul_s_s (export "mul_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
     i32.add
     f32.load
     f32.mul
   )
   (func $mul_s_d (export "mul_s_d") (param $loc i32) (result f32)
     local.get $loc
-    f32.load
-    local.get $loc
-    i32.const 8
+    i32.const 4
     i32.add
     f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
     f32.mul
   )
   (func $mul_d_s (export "mul_d_s") (param $loc i32) (result f32)
@@ -411,17 +732,822 @@
     f32.load
     f32.mul
   )
-  (func $mul_d_d (export "mul_d_d") (param $idx i32) (result f32)
+  (func $mul_d_d (export "mul_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
     )
     f32.mul
   )
+
+  (func $div_s_s (export "div_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.div
+  )
+  (func $div_s_d (export "div_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.div
+  )
+  (func $div_d_s (export "div_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.div
+  )
+  (func $div_d_d (export "div_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.div
+  )
+
+  (func $and_s_s (export "and_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+    
+    i32.and
+    f32.reinterpret_i32
+  )
+  (func $and_s_d (export "and_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.and
+    f32.reinterpret_i32
+  )
+  (func $and_d_s (export "and_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    i32.and
+    f32.reinterpret_i32
+  )
+  (func $and_d_d (export "and_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.and
+    f32.reinterpret_i32
+  )
+
+  (func $or_s_s (export "or_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+    
+    i32.or
+    f32.reinterpret_i32
+  )
+  (func $or_s_d (export "or_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.or
+    f32.reinterpret_i32
+  )
+  (func $or_d_s (export "or_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    i32.or
+    f32.reinterpret_i32
+  )
+  (func $or_d_d (export "or_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.or
+    f32.reinterpret_i32
+  )
+
+  (func $gt_s_s (export "gt_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.gt
+    f32.reinterpret_i32
+
+  )
+  (func $gt_s_d (export "gt_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.gt
+    f32.reinterpret_i32
+  )
+  (func $gt_d_s (export "gt_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.gt
+
+    f32.reinterpret_i32
+  )
+  (func $gt_d_d (export "gt_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.gt
+    f32.reinterpret_i32
+  )
+
+  (func $gte_s_s (export "gte_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $gte_s_d (export "gte_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $gte_d_s (export "gte_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $gte_d_d (export "gte_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.ge
+    f32.reinterpret_i32
+  )
+
+  (func $lt_s_s (export "lt_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.lt
+    f32.reinterpret_i32
+
+  )
+  (func $lt_s_d (export "lt_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.lt
+    f32.reinterpret_i32
+  )
+  (func $lt_d_s (export "lt_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.lt
+
+    f32.reinterpret_i32
+  )
+  (func $lt_d_d (export "lt_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.lt
+    f32.reinterpret_i32
+  )
+
+  (func $lte_s_s (export "lte_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $lte_s_d (export "lte_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $lte_d_s (export "lte_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.ge
+    f32.reinterpret_i32
+  )
+  (func $lte_d_d (export "lte_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.ge
+    f32.reinterpret_i32
+  )
+
+   (func $eq_s_s (export "eq_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+    
+    i32.eq
+    f32.reinterpret_i32
+  )
+  (func $eq_s_d (export "eq_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.eq
+    f32.reinterpret_i32
+  )
+  (func $eq_d_s (export "eq_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    i32.eq
+    f32.reinterpret_i32
+  )
+  (func $eq_d_d (export "eq_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.eq
+    f32.reinterpret_i32
+  )
+
+   (func $neq_s_s (export "neq_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+    
+    i32.ne
+    f32.reinterpret_i32
+  )
+  (func $neq_s_d (export "neq_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.ne
+    f32.reinterpret_i32
+  )
+  (func $neq_d_s (export "neq_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    i32.reinterpret_f32
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    i32.reinterpret_f32
+
+    i32.ne
+    f32.reinterpret_i32
+  )
+  (func $neq_d_d (export "neq_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    i32.reinterpret_f32
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    i32.reinterpret_f32
+
+    i32.ne
+    f32.reinterpret_i32
+  )
+
+ (func $gtp_s_s (export "gtp_s_s") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.set $x
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.gt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+
+  (func $gtp_s_d (export "gtp_s_d") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.set $x
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.gt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $gtp_d_s (export "gtp_d_s") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    local.set $x
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $y
+
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.gt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $gtp_d_d (export "gtp_d_d") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    local.set $x
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.gt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $ltp_s_s (export "ltp_s_s") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.set $x
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.lt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $ltp_s_d (export "ltp_s_d") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.set $x
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.lt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+  
+  (func $ltp_d_s (export "ltp_d_s") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    local.set $x
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $y
+
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.lt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $ltp_d_d (export "ltp_d_d") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    )
+    local.set $x
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    local.set $y
+    
+    (select
+      (local.get $x)
+      (f32.const 0)
+      (f32.lt 
+        (local.get $x) 
+        (local.get $y)
+      )
+    )
+  )
+
+  (func $min_s_s (export "min_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.min
+  )
+  (func $min_s_d (export "min_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.min
+  )
+  (func $min_d_s (export "min_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.min
+  )
+  (func $min_d_d (export "min_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.min
+  )
+
+  (func $max_s_s (export "max_s_s") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.max
+  )
+  (func $max_s_d (export "max_s_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.max
+  )
+  (func $max_d_s (export "max_d_s") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+    )
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    f32.max
+  )
+  (func $max_d_d (export "max_d_d") (param $loc i32) (result f32)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+    ) 
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+    )
+    f32.max
+  )
+  
   ;; only runs the "true" expression, the false expression
   ;; does not calculate samples.
   (func $ifelse (export "ifelse") (param $loc i32) (result f32)
@@ -436,6 +1562,8 @@
     call $get-property
   )
 
+
+
   ;; both expressions calculate samples
   (func $ifelse2 (export "ifelse2") (param $loc i32) (result f32)
     (select
@@ -445,126 +1573,6 @@
     )
   )
   
-  (func $and (export "and") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    i32.reinterpret_f32
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    i32.reinterpret_f32
-    
-    i32.and
-    f32.reinterpret_i32
-  )
-  
-  (func $or (export "or") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    i32.reinterpret_f32
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    i32.reinterpret_f32
-    
-    i32.or
-    f32.reinterpret_i32
-  )
-  
-  (func $gt (export "gt") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.gt
-    local.set $result
-    
-    (select (f32.const 1) (f32.const 0) (local.get $result) )
-  )
-  
-  (func $gte (export "gte") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.ge
-    local.set $result
-    
-    (select (f32.const 1) (f32.const 0) (local.get $result) )
-  )
-  
-  (func $lt (export "lt") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.lt
-    local.set $result
-    
-    (select (f32.const 1) (f32.const 0) (local.get $result) )
-  )
-  
-  (func $lte (export "lte") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.le
-    local.set $result
-    
-    (select (f32.const 1) (f32.const 0) (local.get $result) )
-  )
-  
-  (func $eq (export "eq") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.eq
-    f32.reinterpret_i32
-  )
-  (func $neq (export "neq") (param $loc i32) (result f32)
-    (local $result i32)
-    local.get $loc
-    call $get-property
-    
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    
-    f32.ne
-    f32.reinterpret_i32
-  )
   
   (func $min (export "min") (param $loc i32) (result f32)
     local.get $loc
@@ -590,104 +1598,6 @@
     f32.max
   )
   
-  (func $gtp (export "gtp") (param $loc i32) (result f32)
-    (local $x f32)
-    (local.set $x (call $get-property (local.get $loc) ) )
-    
-    (select
-      (local.get $x)
-      (f32.const 0)
-      (f32.gt 
-        (local.get $x) 
-        (call $get-property (i32.add (i32.const 16) (local.get $loc)))
-      )
-    )
-  )
-  
-  (func $ltp (export "ltp") (param $loc i32) (result f32)
-    (local $x f32)
-    (local.set $x (call $get-property (local.get $loc) ) )
-    
-    (select
-      (local.get $x)
-      (f32.const 0)
-      (f32.lt 
-        (local.get $x) 
-        (call $get-property (i32.add (i32.const 16) (local.get $loc)))
-      )
-    )
-  )
-  
-  (func $round (export "round") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    
-    f32.nearest    
-  )
-  
-  (func $abs (export "abs") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    
-    f32.abs    
-  )
-  
-  (func $floor (export "floor") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    
-    f32.floor
-  )
-  
-  (func $ceil (export "ceil") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    
-    f32.ceil
-  )
-  
-  (func $sqrt (export "sqrt") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    
-    f32.sqrt
-  )
-
-  (func $sin (export "sin") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_sin    
-  )
-
-  (func $cos (export "cos") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_cos
-  )
-
-  (func $tan (export "tan") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_tan    
-  )
-
-  (func $asin (export "asin") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_asin    
-  )
-
-  (func $acos (export "acos") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_acos
-  )
-
-  (func $atan (export "atan") (param $loc i32) (result f32)
-    local.get $loc
-    call $get-property
-    call $_atan    
-  )
 
   (func $tanh (export "tanh") (param $loc i32) (result f32)
     local.get $loc
@@ -976,28 +1886,6 @@
       )
       (i32.and (local.get $abovefloor) (local.get $belowceil) )
     )    
-  )
-  
-  
-  (func $add (export "add") (param $loc i32) (result f32)
-    (call $get-property (local.get $loc) )
-    (call $get-property (i32.add (local.get $loc) (i32.const 16) ) )
-    f32.add
-  )
-  (func $mul (export "mul") (param $loc i32) (result f32)
-    (call $get-property (local.get $loc) )
-    (call $get-property (i32.add (local.get $loc) (i32.const 16) ) )
-    f32.mul
-  )
-  (func $sub (export "sub") (param $loc i32) (result f32)
-    (call $get-property (local.get $loc) )
-    (call $get-property (i32.add (local.get $loc) (i32.const 16) ) )
-    f32.sub
-  )
-  (func $div (export "div") (param $loc i32) (result f32)
-    (call $get-property (local.get $loc) )
-    (call $get-property (i32.add (local.get $loc) (i32.const 16) ) )
-    f32.div
   )
 
   (func $cycle (export "cycle") (param $idx i32) (result f32)
@@ -1612,6 +2500,11 @@
     end
   )
   
+
+
+
+
+
 ;; adapted from:
 ;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
 (func $noise (export "noise") (param $loc i32) (result f32)

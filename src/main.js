@@ -284,37 +284,61 @@ const factory = function( props, statics, baseidx ) {
   return obj
 }
 
-const binop = function() {
-  let fid = fidx++
-  return function( x=1, y=1 ) {
-    const obj = {
-      idx : getMemory( 8 ),
-      fid
-    }
-  
-    createProperty( obj, '0', obj.idx, x )
-    createProperty( obj, '1', obj.idx + 4, y )
-    
-    return obj
-  }
-}
 const monop = function() {
-  const fid = fidx++
-  const out = function( x=1 ) {  
-    const obj = {
-      idx : getMemory( 4 ),
-      fid
-    }
-  
-    createProperty( obj, '0', obj.idx, x )
-    
-    return obj
+  const baseidx = fidx
+  fidx += 2
+  const fnc = function( x ) {
+    const props = { '0':x },
+          statics = {}
+
+    return factory( props, statics, baseidx )
   }
-  out.fid = fid
-  
-  return out
+
+  return fnc
 }
 
+const binop = function() {
+  const baseidx = fidx
+  fidx += 4
+  const fnc = function( x,y ) {
+    const props = { '0':x, '1':y },
+          statics = {}
+
+    return factory( props, statics, baseidx )
+  }
+
+  return fnc
+}
+
+const floor = monop(),
+      ceil  = monop(),
+      round = monop(),
+      abs   = monop(),
+      sqrt  = monop(),
+      sin   = monop(),
+      cos   = monop(),
+      tan   = monop(),
+      asin  = monop(),
+      acos  = monop(),
+      atan  = monop()
+
+const add = binop(),
+      sub = binop(),
+      mul = binop(),
+      div = binop(),
+      and = binop(),
+      or  = binop(),
+      gt  = binop(),
+      gte = binop(),
+      lt  = binop(),
+      lte = binop(),
+      eq  = binop(),
+      neq = binop(),
+      gtp = binop(),
+      ltp = binop(),
+      min = binop(),
+      max = binop()
+  
 let accum
 {
   const baseidx = fidx
@@ -322,30 +346,6 @@ let accum
   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
     const props = { incr, reset },
           statics = { min, max, phase }
-
-    return factory( props, statics, baseidx )
-  }
-}
-
-let add
-{
-  const baseidx = fidx
-  fidx += 4
-  add = function( x,y ) {
-    const props = { '0':x, '1':y },
-          statics = {}
-
-    return factory( props, statics, baseidx )
-  }
-}
-
-let mul
-{
-  const baseidx = fidx
-  fidx += 4
-  mul = function( x,y ) {
-    const props = { '0':x, '1':y },
-          statics = {}
 
     return factory( props, statics, baseidx )
   }
@@ -476,9 +476,9 @@ let cycle_s
 }
 
 //const mul = binop()
-const div = binop()
+//const div = binop()
 //const add = binop()
-const sub = binop()
+//const sub = binop()
 
 let ifelse
 {
@@ -500,17 +500,6 @@ let ifelse
     return obj
   }
 }
-
-const round = monop()
-
-const and = binop()
-const or  = binop()
-const gt  = binop()  
-const gte = binop()  
-const lt  = binop()  
-const lte = binop()  
-const eq  = binop()  
-const neq = binop()
 
 const data = function( __data, type='float' ) {
   let obj
@@ -657,15 +646,6 @@ let ad
     return obj
   }
 }
-
-let abs   = monop()
-let floor = monop()
-let ceil  = monop()
-let sqrt  = monop()
-let min   = binop()
-let max   = binop()
-let ltp   = binop()
-let gtp   = binop()
 
 let ssd 
 {
@@ -898,15 +878,15 @@ let pan
   }
 }
 
-let sin = monop()
-let cos = monop()
-let tan = monop()
-let asin = monop()
-let acos = monop()
-let atan = monop()
-let tanh = monop()
-let pow  = binop()
-let atan2 = binop()
+// let sin = monop()
+// let cos = monop()
+// let tan = monop()
+// let asin = monop()
+// let acos = monop()
+// let atan = monop()
+// let tanh = monop()
+// let pow  = binop()
+// let atan2 = binop()
 
 function setupMemory( buffer ) {
   memf = new Float32Array( buffer )
