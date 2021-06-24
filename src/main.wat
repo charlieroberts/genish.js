@@ -1930,7 +1930,122 @@
     local.get $newphs
   )
 
-  (func $peek_s (export "peek_s") (param $loc i32) (result f32)   (f32.const 0))
+  (func $peek_s (export "peek_s")
+    (param $loc i32)
+    (result f32)
+    (local $idx i32)
+    ;; len is f32 to make it easy for math
+    ;; but it should be i32...
+    (local $len f32)
+    (local $phaseN f32)
+    (local $phase f32)
+    (local $floor f32)
+    (local $ceil f32)
+    (local $base i32)
+    (local $next i32)
+    (local $incr f32)
+    (local $fract f32)
+    (local $interp i32)
+    (local $mode   i32)
+    
+    ;; get offset in memory for wavetable
+    local.get $loc
+    i32.const 8
+    i32.add
+    i32.load
+    local.set $idx
+    
+    ;; get length
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $len
+
+    local.get $loc
+    i32.const 20
+    i32.add
+    i32.load
+    local.set $mode
+    
+    ;; get normalized phase
+    (i32.add (local.get $loc) (i32.const 4) )
+    f32.load
+    local.set $phaseN
+    
+    ;; set $phase in range of 0-len based on mode
+    (select
+      (f32.mul (local.get $len) (local.get $phaseN))
+      (local.get $phaseN)
+      (i32.eq (i32.const 1) (local.get $mode))
+    )
+    local.tee $phase
+    
+    ;; get base index by rounding $phase down
+    i32.trunc_f32_u
+    local.set $base
+    
+    ;; multiply base index by 4 and load
+    local.get $base
+    i32.const 4
+    i32.mul
+    local.get $idx
+    i32.add
+    f32.load
+    local.set $floor 
+
+    ;; get interpolation mode
+    local.get $loc
+    i32.const 16
+    i32.add
+    i32.load
+    local.tee $interp
+
+    i32.const 1
+    i32.eq
+    if (result f32) ;; if linear interpolation   
+      local.get $base
+      i32.const 1
+      i32.add
+      local.tee $next
+
+      (i32.trunc_f32_u (local.get $len) )
+      i32.lt_u
+      if (result f32)
+        local.get $next
+        i32.const 4
+        i32.mul
+        local.get $idx
+        i32.add
+        f32.load
+      else
+        ;; $idx is 0 index for table
+        local.get $idx
+        f32.load
+      end
+      
+      local.set $ceil
+
+      ;; get fractional part via phase - floor( phase )
+      local.get $phase
+      local.get $phase
+      f32.floor
+      f32.sub
+      local.set $fract
+      
+      ;; multiply difference between ceil and floor by fractional part and 
+      ;; add to floor
+      local.get $ceil
+      local.get $floor
+      f32.sub
+      local.get $fract
+      f32.mul
+      local.get $floor
+      f32.add
+    else
+      local.get $floor ;; no interpolation
+    end
+  )
   ;; needs to alternatively accept a non-normalized phase,
   ;; and interpolation needs to be optional. 
   ;; to optimize, consider placing different versions of
