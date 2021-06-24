@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 90 funcref)
+  (table 92 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -124,6 +124,8 @@
     $accum_s_d
     $accum_d_s
     $accum_d_d
+    $phasor_s
+    $phasor_d
     ;; $bus
     ;; $accum
     ;; $phasor
@@ -337,8 +339,8 @@
 
   (func $round_d (export "round_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     f32.nearest    
@@ -355,8 +357,8 @@
 
   (func $abs_d (export "abs_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     f32.abs  
@@ -373,8 +375,8 @@
 
   (func $floor_d (export "floor_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     f32.floor  
@@ -391,8 +393,8 @@
 
   (func $ceil_d (export "ceil_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     f32.ceil  
@@ -409,8 +411,8 @@
 
   (func $sqrt_d (export "sqrt_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     f32.sqrt  
@@ -427,8 +429,8 @@
 
   (func $sin_d (export "sin_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_sin
@@ -445,8 +447,8 @@
 
   (func $cos_d (export "cos_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_cos
@@ -463,8 +465,8 @@
 
   (func $tan_d (export "tan_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_tan
@@ -481,8 +483,8 @@
 
   (func $asin_d (export "asin_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_asin
@@ -499,8 +501,8 @@
 
   (func $acos_d (export "acos_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_acos
@@ -517,8 +519,8 @@
 
   (func $atan_d (export "atan_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     
     call $_atan
@@ -530,7 +532,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.add
@@ -541,30 +543,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.add
   )
   (func $add_d_s (export "add_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.add
   )
   (func $add_d_d (export "add_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.add
   )
@@ -575,7 +577,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.sub
@@ -586,30 +588,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.sub
   )
   (func $sub_d_s (export "sub_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.sub
   )
   (func $sub_d_d (export "sub_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.sub
   )
@@ -620,7 +622,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.mul
@@ -631,30 +633,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.mul
   )
   (func $mul_d_s (export "mul_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.mul
   )
   (func $mul_d_d (export "mul_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.mul
   )
@@ -665,7 +667,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.div
@@ -676,30 +678,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.div
   )
   (func $div_d_s (export "div_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.div
   )
   (func $div_d_d (export "div_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.div
   )
@@ -712,7 +714,7 @@
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -728,8 +730,8 @@
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -738,13 +740,13 @@
   )
   (func $and_d_s (export "and_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -754,14 +756,14 @@
   )
   (func $and_d_d (export "and_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -777,7 +779,7 @@
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -793,8 +795,8 @@
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -803,13 +805,13 @@
   )
   (func $or_d_s (export "or_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -819,14 +821,14 @@
   )
   (func $or_d_d (export "or_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -840,7 +842,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.gt
@@ -853,19 +855,19 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.gt
     f32.reinterpret_i32
   )
   (func $gt_d_s (export "gt_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.gt
@@ -874,12 +876,12 @@
   )
   (func $gt_d_d (export "gt_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.gt
     f32.reinterpret_i32
@@ -891,7 +893,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.ge
@@ -903,19 +905,19 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
     f32.reinterpret_i32
   )
   (func $gte_d_s (export "gte_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.ge
@@ -923,12 +925,12 @@
   )
   (func $gte_d_d (export "gte_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
     f32.reinterpret_i32
@@ -940,7 +942,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.lt
@@ -953,19 +955,19 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.lt
     f32.reinterpret_i32
   )
   (func $lt_d_s (export "lt_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.lt
@@ -974,12 +976,12 @@
   )
   (func $lt_d_d (export "lt_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.lt
     f32.reinterpret_i32
@@ -991,7 +993,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.ge
@@ -1003,19 +1005,19 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
     f32.reinterpret_i32
   )
   (func $lte_d_s (export "lte_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.ge
@@ -1023,12 +1025,12 @@
   )
   (func $lte_d_d (export "lte_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
     f32.reinterpret_i32
@@ -1042,7 +1044,7 @@
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -1058,8 +1060,8 @@
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -1068,13 +1070,13 @@
   )
   (func $eq_d_s (export "eq_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -1084,14 +1086,14 @@
   )
   (func $eq_d_d (export "eq_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -1107,7 +1109,7 @@
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -1123,8 +1125,8 @@
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -1133,13 +1135,13 @@
   )
   (func $neq_d_s (export "neq_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     i32.reinterpret_f32
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     i32.reinterpret_f32
@@ -1149,14 +1151,14 @@
   )
   (func $neq_d_d (export "neq_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     i32.reinterpret_f32
 
@@ -1176,7 +1178,7 @@
     local.set $x
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     local.set $y
@@ -1203,8 +1205,8 @@
     local.set $x
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     local.set $y
     
@@ -1223,13 +1225,13 @@
     (local $y f32)
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.set $x
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     local.set $y
@@ -1249,14 +1251,14 @@
     (local $y f32)
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.set $x
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     local.set $y
     
@@ -1281,7 +1283,7 @@
     local.set $x
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     local.set $y
@@ -1307,8 +1309,8 @@
     local.set $x
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     local.set $y
     
@@ -1327,13 +1329,13 @@
     (local $y f32)
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.set $x
 
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     local.set $y
@@ -1353,14 +1355,14 @@
     (local $y f32)
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.set $x
 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     local.set $y
     
@@ -1380,7 +1382,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.min
@@ -1391,30 +1393,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.min
   )
   (func $min_d_s (export "min_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.min
   )
   (func $min_d_d (export "min_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.min
   )
@@ -1425,7 +1427,7 @@
     i32.add
     f32.load
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.max
@@ -1436,30 +1438,30 @@
     i32.add
     f32.load
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.max
   )
   (func $max_d_s (export "max_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) )  ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
     local.get $loc
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
     f32.max
   )
   (func $max_d_d (export "max_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.max
   )
@@ -1504,24 +1506,24 @@
     (local $max f32)
     
     ;; get min, delay retrieving max.
-    (i32.add (local.get $idx) (i32.const 20))
+    (i32.add (local.get $idx) (i32.const 12))
     f32.load
     local.set $min
     
     ;; check phase reset flag [64]
-    (i32.add (local.get $idx) (i32.const 12))
+    (i32.add (local.get $idx) (i32.const 8))
     f32.load
     i32.trunc_f32_u
     i32.eqz
     if (result f32)
       ;; get max [32]
-      (i32.add (local.get $idx) (i32.const 24))
+      (i32.add (local.get $idx) (i32.const 16))
       f32.load
       local.set $max
       
       ;; load phase [64]
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       f32.load
       
@@ -1534,7 +1536,7 @@
 
       ;; push phase idx for set-property to the stack
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       
       ;; wrap phase if needed
@@ -1578,26 +1580,26 @@
     (local $max f32)
     
     ;; get min, delay retrieving max.
-    (i32.add (local.get $idx) (i32.const 20))
+    (i32.add (local.get $idx) (i32.const 12))
     f32.load
     local.set $min
     
     ;; check phase reset flag [64]
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; function id
     )
     i32.trunc_f32_u
     i32.eqz
     if (result f32)
       ;; get max [32]
-      (i32.add (local.get $idx) (i32.const 24))
+      (i32.add (local.get $idx) (i32.const 16))
       f32.load
       local.set $max
       
       ;; load phase [64]
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       f32.load
       
@@ -1610,7 +1612,7 @@
 
       ;; push phase idx for set-property to the stack
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       
       ;; wrap phase if needed
@@ -1654,39 +1656,39 @@
     (local $max f32)
     
     ;; get min, delay retrieving max.
-    (i32.add (local.get $idx) (i32.const 20))
+    (i32.add (local.get $idx) (i32.const 12))
     f32.load
     local.set $min
     
     ;; check phase reset flag [64]
-    (i32.add (local.get $idx) (i32.const 12))
+    (i32.add (local.get $idx) (i32.const 8))
     f32.load
     i32.trunc_f32_u
     i32.eqz
     if (result f32)
       ;; get max [32]
-      (i32.add (local.get $idx) (i32.const 24))
+      (i32.add (local.get $idx) (i32.const 16))
       f32.load
       local.set $max
       
       ;; load phase [64]
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       f32.load
       
       ;; get phase increment [0] and add to current phase
       ;; to obtain new phase
       (call_indirect (type $sig-i32--f32) 
-        (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
-        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; function id
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; function id
       )
       f32.add
       local.set $newphs
 
       ;; push phase idx for set-property to the stack
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       
       ;; wrap phase if needed
@@ -1730,41 +1732,41 @@
     (local $max f32)
     
     ;; get min, delay retrieving max.
-    (i32.add (local.get $idx) (i32.const 20))
+    (i32.add (local.get $idx) (i32.const 12))
     f32.load
     local.set $min
     
     ;; check phase reset flag [64]
     (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 16) ) ) ;; data
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; function id
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; function id
     )
     i32.trunc_f32_u
     i32.eqz
     if (result f32)
       ;; get max [32]
-      (i32.add (local.get $idx) (i32.const 24))
+      (i32.add (local.get $idx) (i32.const 16))
       f32.load
       local.set $max
       
       ;; load phase [64]
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       f32.load
       
       ;; get phase increment [0] and add to current phase
       ;; to obtain new phase
       (call_indirect (type $sig-i32--f32) 
-        (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data
-        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; function id
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; function id
       )
       f32.add
       local.set $newphs
 
       ;; push phase idx for set-property to the stack
       local.get $idx
-      i32.const 28
+      i32.const 20
       i32.add
       
       ;; wrap phase if needed
@@ -1834,7 +1836,7 @@
   ;; TODO: is there a way to do this without
   ;; requiring a divide for every sample even
   ;; for static frequencies?
-  (func $phasor (export "phasor") 
+  (func $phasor_s (export "phasor_s") 
     (param $loc i32)
     (result f32)
     (local $idx f32)
@@ -1842,13 +1844,16 @@
     
     ;; load phase [64]
     local.get $loc
-    i32.const 16
+    i32.const 8
     i32.add
     f32.load
     
-    ;; get phase increment [0] and add to current phase
+    ;; get frequency [4] and add to current phase
     ;; to obtain new phase
-    (call $get-property (local.get $loc) )
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
     global.get $sr
     f32.div
     f32.add ;; add to retrieved phase
@@ -1856,7 +1861,7 @@
 
     ;; push phase idx for set-property to the stack
     local.get $loc
-    i32.const 16
+    i32.const 8
     i32.add
     
     ;; wrap phase if needed
@@ -1877,6 +1882,51 @@
     local.get $newphs
   )
   
+  (func $phasor_d (export "phasor_d") 
+    (param $loc i32)
+    (result f32)
+    (local $idx f32)
+    (local $newphs f32)
+    
+    ;; load phase [64]
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    
+    ;; get frequency [4] and add to current phase
+    ;; to obtain new phase
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    global.get $sr
+    f32.div
+    f32.add ;; add to retrieved phase
+    local.set $newphs
+
+    ;; push phase idx for set-property to the stack
+    local.get $loc
+    i32.const 8
+    i32.add
+    
+    ;; wrap phase if needed
+    ;; no branch if condition is true so use that for
+    ;; the most common result (phase increments with no wrap)
+    (f32.lt (local.get $newphs) (f32.const 1.0))
+    if (result f32)
+      (local.get $newphs)
+    else
+      (f32.sub 
+        (local.get $newphs) 
+        (f32.const 1.0) 
+      )
+      local.tee $newphs 
+    end
+    
+    f32.store
+    local.get $newphs
+  )
   ;; needs to alternatively accept a non-normalized phase,
   ;; and interpolation needs to be optional. 
   ;; to optimize, consider placing different versions of
@@ -2919,15 +2969,13 @@
   (local $i   i32) ;; iterator for loop
   (local $fid i32)
   
-  (loop $l 
-
-    (local.set $fid (i32.load (local.get $loc) ) )
+  (loop $l
     ;; store call fnc and store output at $idx
     (f32.store 
       (local.get $idx)
       (call_indirect (type $sig-i32--f32) 
         (local.get $loc)
-        (local.get $fid)
+        (i32.load (local.get $loc) )
       )
     )
           

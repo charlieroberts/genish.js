@@ -224,7 +224,7 @@ const factory = function( props, statics, baseidx ) {
         statickeys = Object.keys( statics )
 
   // function id, properties, statics
-  obj.idx = getMemory( 1 + (keys.length * 2) + statickeys.length )
+  obj.idx = getMemory( 1 + keys.length + statickeys.length )
 
   // initial binary signature
   const initSig = Object.values( props ).reduce(
@@ -248,7 +248,7 @@ const factory = function( props, statics, baseidx ) {
 
   for( let i = 0; i < keys.length; i++ ) {
     const key = keys[ i ]
-    const idx = obj.idx + 1 + i * 2
+    const idx = obj.idx + 1 + i
 
     let value = props[ key ]
     Object.defineProperty( obj, key, {
@@ -260,13 +260,11 @@ const factory = function( props, statics, baseidx ) {
         flags[ i ] = isUgen
         // get number for signature
         const sig = Number( flags.reduce( (accum,val)=>accum+val, '0b') )
-        
+
         obj.fid = baseidx + sig
 
         if( isUgen ) {
-          console.log( v, v.idx, v.fid )
-          memi[ idx ] = v.fid
-          memi[ idx + 1 ] = v.idx * 4
+          memi[ idx ] = v.idx * 4
         }else{
           memf[ idx ] = v
         }
@@ -276,7 +274,7 @@ const factory = function( props, statics, baseidx ) {
     obj[ key ] = props[ key ]
   }
 
-  let staticidx = obj.idx + 1 + keys.length * 2
+  let staticidx = obj.idx + 1 + keys.length
   for( let key of statickeys ) {
     memf[ staticidx++ ] = statics[ key ]
   }
@@ -351,6 +349,18 @@ let accum
   }
 }
 
+let phasor
+{
+  const baseidx = fidx
+  fidx += 2
+  phasor = function( frequency=1, phase=0 ) {
+    const props = { frequency },
+          statics = { phase }
+
+    return factory( props, statics, baseidx )
+  }
+}
+
 let bus
 {
   let fid = fidx++
@@ -381,41 +391,6 @@ let bus
   }
 }
 
-// let accum // 44 bytes
-// {
-//   let fid = fidx++
-//   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
-//     const obj = {
-//       idx : getMemory( 11 ),
-//       fid,
-//     }
-  
-//     createProperty( obj, 'incr',  obj.idx,     incr )
-//     createProperty( obj, 'reset', obj.idx + 4, reset )
-  
-//     memf[ obj.idx + 8 ] = min
-//     memf[ obj.idx + 9 ] = max
-//     memf[ obj.idx + 10 ] = phase
-  
-//     return obj
-//   }
-// }
-
-let phasor
-{
-  let fid = fidx++
-  phasor = function( frequency=0, phase=0 ) {
-    const obj = {
-      idx : getMemory( 5 ),
-      fid,
-    }
-  
-    createProperty( obj, 'frequency', obj.idx, frequency )
-    memf[ obj.idx + 4 ] = phase
-  
-    return obj
-  }
-}
 
 // TODO: needs to accept data objects instead of index
 // index can't be an option because you need to know length,
