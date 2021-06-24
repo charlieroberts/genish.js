@@ -276,7 +276,10 @@ const factory = function( props, statics, baseidx ) {
 
   let staticidx = obj.idx + 1 + keys.length
   for( let key of statickeys ) {
-    memf[ staticidx++ ] = statics[ key ]
+    if( statics[ key ].type === 'f' )
+      memf[ staticidx++ ] = statics[ key ].value
+    else
+      memi[ staticidx++ ] = statics[ key ].value
   }
 
   return obj
@@ -343,7 +346,11 @@ let accum
   fidx += 4
   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
     const props = { incr, reset },
-          statics = { min, max, phase }
+          statics = { 
+            'min':{ value:min, type:'f' }, 
+            'max':{ value:max, type:'f' }, 
+            'phase':{ value:phase, type:'f' }, 
+          }
 
     return factory( props, statics, baseidx )
   }
@@ -355,11 +362,39 @@ let phasor
   fidx += 2
   phasor = function( frequency=1, phase=0 ) {
     const props = { frequency },
-          statics = { phase }
+          statics = { 
+            'phase':{ value:phase, type:'f' } 
+          }
 
     return factory( props, statics, baseidx )
   }
 }
+
+let peek // 24 bytes
+{
+  const baseidx = fidx 
+  fidx+=2
+  peek = function( __data=0, phase=0, interp='linear', mode='phase' ) {
+    const length = __data.length
+    const props = { phase },
+          statics = {
+            dataIndex: { value:__data.idx * 4, type:'i' },
+            length: { value:length, type:'f' },
+            interpolation: { value: Number( interp==='linear' ), type:'i' },
+            mode: { value: Number( mode==='phase'), type:'i' }
+          }
+  
+    // createProperty( obj, 'phase', obj.idx, phase )
+  
+    // memi[ obj.idx + 4 ] = __data.idx * 4
+    // memf[ obj.idx + 5 ] = length
+    // memi[ obj.idx + 6 ] = Number( interp === 'linear' )
+    // memi[ obj.idx + 7 ] = Number( mode === 'phase' )
+
+    return factory( props, statics, baseidx )
+  }
+}
+
 
 let bus
 {
@@ -395,26 +430,7 @@ let bus
 // TODO: needs to accept data objects instead of index
 // index can't be an option because you need to know length,
 // can't always assume 1024/log2.
-let peek // 24 bytes
-{
-  let fid = fidx++
-  peek = function( __data=0, phase=0, interp='linear', mode='phase' ) {
-    const length = __data.length
-    const obj = {
-      idx : getMemory( 8 ),
-      fid,
-    }
-  
-    createProperty( obj, 'phase', obj.idx, phase )
-  
-    memi[ obj.idx + 4 ] = __data.idx * 4
-    memf[ obj.idx + 5 ] = length
-    memi[ obj.idx + 6 ] = Number( interp === 'linear' )
-    memi[ obj.idx + 7 ] = Number( mode === 'phase' )
 
-    return obj
-  }
-}
 
 let cycle
 {

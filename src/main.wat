@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 92 funcref)
+  (table 94 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -126,6 +126,8 @@
     $accum_d_d
     $phasor_s
     $phasor_d
+    $peek_s
+    $peek_d
     ;; $bus
     ;; $accum
     ;; $phasor
@@ -1927,12 +1929,14 @@
     f32.store
     local.get $newphs
   )
+
+  (func $peek_s (export "peek_s") (param $loc i32) (result f32)   (f32.const 0))
   ;; needs to alternatively accept a non-normalized phase,
   ;; and interpolation needs to be optional. 
   ;; to optimize, consider placing different versions of
   ;; peek in separate functions... which wasm function gets
   ;; called would be determined by JS.
-  (func $peek (export "peek")
+  (func $peek_d (export "peek_d")
     (param $loc i32)
     (result f32)
     (local $idx i32)
@@ -1952,27 +1956,29 @@
     
     ;; get offset in memory for wavetable
     local.get $loc
-    i32.const 16
+    i32.const 8
     i32.add
     i32.load
     local.set $idx
     
     ;; get length
     local.get $loc
-    i32.const 20
+    i32.const 12
     i32.add
     f32.load
     local.set $len
 
     local.get $loc
-    i32.const 28
+    i32.const 20
     i32.add
     i32.load
     local.set $mode
     
     ;; get normalized phase
-    local.get $loc
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
     local.set $phaseN
     
     ;; set $phase in range of 0-len based on mode
@@ -1998,7 +2004,7 @@
 
     ;; get interpolation mode
     local.get $loc
-    i32.const 24
+    i32.const 16
     i32.add
     i32.load
     local.tee $interp
