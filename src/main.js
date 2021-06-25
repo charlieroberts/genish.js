@@ -568,6 +568,17 @@ let param
   }
 }
 
+let mix
+{
+  const fid = fidx
+  fidx += 8
+  mix = function( in1=0, in2=0, t=1 ) {
+    const props = { in1, in2, t }, statics = {}
+    
+    return factory( props, statics, fid)
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -716,23 +727,6 @@ let ad
 //     return obj
 //   }
 // }
-
-let mix
-{
-  const fid = fidx++
-  mix = function( in1=0, in2=0, t=1 ) {
-    const obj = {
-      idx : getMemory( 12 ),
-      fid
-    }
-  
-    createProperty( obj, 'in1', obj.idx, in1 )
-    createProperty( obj, 'in2', obj.idx + 4, in2 )
-    createProperty( obj, 't', obj.idx + 8, t )
-    
-    return obj
-  }
-}
 
 let float 
 {

@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 140 funcref)
+  (table 148 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -169,6 +169,14 @@
     $slide_d_d_s
     $slide_d_d_d
     $param_d
+    $mix_s_s_s
+    $mix_s_s_d
+    $mix_s_d_s
+    $mix_s_d_d
+    $mix_d_s_s
+    $mix_d_s_d
+    $mix_d_d_s
+    $mix_d_d_d
     ;; $ifelse
     ;; $ifelse2
     
@@ -3545,26 +3553,72 @@
   f32.load
 )
 
-  
-  (func $mix (export "mix") (param $loc i32) (result f32)
+
+  (func $mix_s_s_s (export "mix_s_s_s") )
+  (func $mix_s_s_d (export "mix_s_s_d") )
+  (func $mix_s_d_s (export "mix_s_d_s") )
+  (func $mix_s_d_d (export "mix_s_d_d") )
+  (func $mix_d_s_s (export "mix_d_s_s") )
+  (func $mix_d_s_d (export "mix_d_s_d") )
+  ;;(func $mix_d_d_s (export "mix_d_d_s") )
+  ;;(func $mix_d_d_d (export "mix_d_d_d") )
+
+  (func $mix_d_d_d (export "mix_d_d_d") (param $loc i32) (result f32)
     (local $in1 f32)
     (local $in2 f32)
     (local $t f32)
     
-    local.get $loc
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
     local.set $in1
     
-    local.get $loc
-    i32.const 16
-    i32.add
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
     local.set $in2
     
-    local.get $loc
-    i32.const 32
-    i32.add
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ) ;; fid
+    )
+    local.set $t
+    
+    (f32.add
+      (f32.mul
+        (local.get $in1)
+        (f32.sub
+          (f32.const 1)
+          (local.get $t)
+        ) 
+      )
+      (f32.mul
+        (local.get $in2)
+        (local.get $t)
+      )
+    )
+  )
+
+    (func $mix_d_d_s (export "mix_d_d_s") (param $loc i32) (result f32)
+    (local $in1 f32)
+    (local $in2 f32)
+    (local $t f32)
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $in1
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $in2
+    
+    (f32.load (i32.add (local.get $loc) (i32.const 12) ) )
     local.set $t
     
     (f32.add
