@@ -579,6 +579,23 @@ let mix
   }
 }
 
+let bang
+{
+  let fid = fidx++
+  bang = function() {
+    const obj = {
+      idx : getMemory( 2 ),
+      trigger() {
+        memf[ obj.idx + 1 ] = 1
+      },
+      fid,
+    }
+    
+    memi[ obj.idx ] = fid
+    return obj
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -640,22 +657,6 @@ let poke
     
     memi[ obj.idx + 8 ] = data.idx
   
-    return obj
-  }
-}
-
-let bang
-{
-  let fid = fidx++
-  bang = function() {
-    const obj = {
-      idx : getMemory( 1 ),
-      trigger() {
-        memf[ obj.idx ] = 1
-      },
-      fid,
-    }
-    
     return obj
   }
 }

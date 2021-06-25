@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 148 funcref)
+  (table 149 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -177,6 +177,7 @@
     $mix_d_s_d
     $mix_d_d_s
     $mix_d_d_d
+    $bang
     ;; $ifelse
     ;; $ifelse2
     
@@ -2186,6 +2187,8 @@
     (result f32)
 
     local.get $loc
+    i32.const 4
+    i32.add
     f32.load
     
     f32.const 1
@@ -2198,6 +2201,8 @@
       f32.const 0
     else
       local.get $loc
+      i32.const 4
+      i32.add
       f32.const 0
       f32.store
       
@@ -3554,14 +3559,14 @@
 )
 
 
+  ;; I guess you could have 0 to fade as a justification to fill out
+  ;; these stubs? would be same as a param in a mul going towards 0...
   (func $mix_s_s_s (export "mix_s_s_s") )
   (func $mix_s_s_d (export "mix_s_s_d") )
   (func $mix_s_d_s (export "mix_s_d_s") )
   (func $mix_s_d_d (export "mix_s_d_d") )
   (func $mix_d_s_s (export "mix_d_s_s") )
   (func $mix_d_s_d (export "mix_d_s_d") )
-  ;;(func $mix_d_d_s (export "mix_d_d_s") )
-  ;;(func $mix_d_d_d (export "mix_d_d_d") )
 
   (func $mix_d_d_d (export "mix_d_d_d") (param $loc i32) (result f32)
     (local $in1 f32)
@@ -3601,7 +3606,7 @@
     )
   )
 
-    (func $mix_d_d_s (export "mix_d_d_s") (param $loc i32) (result f32)
+  (func $mix_d_d_s (export "mix_d_d_s") (param $loc i32) (result f32)
     (local $in1 f32)
     (local $in2 f32)
     (local $t f32)
@@ -3635,8 +3640,6 @@
       )
     )
   )
-  
-
   
   (func $ad (export "ad") (param $loc i32) (result f32)
     (local $attack f32)
