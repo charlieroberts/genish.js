@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 117 funcref)
+  (table 118 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -153,7 +153,8 @@
     $counter_d_s_d
     $counter_d_d_s
     $counter_d_d_d
-    ;; $bus
+
+    $bus
     ;; $ifelse
     ;; $ifelse2
     
@@ -2563,502 +2564,6 @@
     f32.load
   )
   
-  ;; Bus- a bus adds a bunch of signals together, and then
-  ;; scales them and pans (gain/pan is TODO)
-  ;; 
-  ;; properties:
-  ;; [0] gain
-  ;; [16] pan
-  ;; 
-  ;; data:
-  ;; [32] numberOfInputs
-  ;;
-  ;; for each input in [32], there are three associated data fields:
-  ;; [33] input function id
-  ;; [34] input function data location
-  ;; [35] number of channels for input function (not currently in use)
-  (func $bus (export "bus") (param $loc i32) (result f32) 
-    (local $numInputs i32)
-    (local $out1 f32)
-    (local $i    i32)
-    (local $idx  i32)
-    
-    local.get $loc
-    local.tee $idx
-    
-    i32.const 16 ;; skip gain / pan for now
-    i32.add
-    
-    i32.load 
-    local.set $numInputs
-    
-    local.get $idx
-    i32.const 20
-    i32.add
-    local.set $idx
-    
-    local.get $numInputs
-    i32.const 0
-    i32.gt_u
-    if
-      (loop $l      
-        (call_indirect (type $sig-i32--f32) 
-          (i32.load (i32.add (local.get $idx) (i32.const 4) ) )
-          (i32.load (local.get $idx) )
-        )
-      
-        ;; add indirect output to $out
-        local.get $out1
-        f32.add
-        local.set $out1
-      
-        ;; increment i
-        local.get $i
-        i32.const 1
-        i32.add
-        local.set $i
-      
-        ;; update memory idx for next indirect call
-        local.get $idx
-        i32.const 12
-        i32.add
-        local.set $idx
-      
-        ;; check if len > i and break $l if true
-        local.get $numInputs
-        local.get $i
-        i32.gt_u
-        br_if $l
-      )
-    end
-    
-    local.get $out1
-    local.get $loc      ;; scalar value (gain)
-    call $get-property
-    f32.mul
-  )
-
-  (func $memo (export "memo") (param $loc i32) (result f32)
-    (local $lastsampletime i32)
-    (local $lastsample f32)
-    (local $inputsample f32)
-    
-    local.get $loc
-    i32.const 8
-    i32.add
-    i32.load
-    
-    global.get $clock
-    
-    i32.eq
-    if (result f32)
-      local.get $loc
-      i32.const 12
-      i32.add
-      f32.load
-    else
-      ;; store clock
-      local.get $loc
-      i32.const 8
-      i32.add
-      global.get $clock
-      i32.store
-      
-      (call_indirect (type $sig-i32--f32) 
-        (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
-        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
-      )
-      local.set $inputsample
-      
-      ;; store sample
-      (f32.store 
-        (i32.add (local.get $loc) (i32.const 12))
-        (local.get $inputsample)
-      )
-      
-      local.get $inputsample
-    end
-  )
-  
-  (func $ssd (export "ssd") (param $loc i32) (result f32) 
-    (local $prev f32)
-    
-    local.get $loc
-    i32.const 16
-    i32.add 
-    f32.load
-    local.set $prev 
-    
-    local.get $loc
-    i32.const 16
-    i32.add
-    local.get $loc
-    call $get-property
-    f32.store
-    
-    local.get $prev
-  )
-  
-  (func $delay (export "delay") (param $loc i32) (result f32) 
-    (local $input f32)
-    (local $time  f32)
-    (local $len   f32)
-    (local $read  f32)
-    (local $out   f32)
-    (local $write i32)
-    (local $idx   i32)
-    (local $table i32)
-    (local $phase f32)
-    (local $floor f32)
-    (local $ceil  f32)
-    (local $base  i32)
-    (local $incr  f32)
-    (local $fract f32)
-    
-    ;; get input to delay
-    local.get $loc
-    call $get-property
-    local.set $input
-    
-    ;; get delay time
-    i32.const 16
-    local.get $loc
-    i32.add
-    call $get-property
-    local.set $time
-    
-    ;; get delay line length
-    i32.const 32
-    local.get $loc
-    i32.add
-    f32.load
-    local.set $len
-    
-    ;; get current write index
-    i32.const 36
-    local.get $loc
-    i32.add
-    i32.load
-    local.tee $write
-    
-    ;; read index = write index + delay time
-    ;; wrapped to delay line length
-    f32.convert_i32_u
-    local.get $time
-    f32.add
-    local.set $read
-    
-    ;; wrap read TODO only wraps upper bound not lower
-    (select
-      (f32.sub (local.get $read) (local.get $len) )
-      (local.get $read)
-      (f32.ge (local.get $read) (local.get $len))
-    )
-    local.set $read
-    
-    ;; get offset in memory for wavetable
-    local.get $loc
-    i32.const 40
-    i32.add
-    local.set $idx
-    
-    ;; write input to wavetable located at $idx
-    ;; remember to multiply write index by 4!!!
-    (f32.store
-      (i32.add (i32.mul (local.get $write) (i32.const 4)) (local.get $idx))
-      (local.get $input)
-    )
-    
-    ;; now that we have read index, go ahead and
-    ;; increment write index
-    local.get $write
-    i32.const 1
-    i32.add
-    local.set $write
-    
-    ;; store the new write index
-    (i32.store
-      ;; location for storing write index
-      (i32.add 
-        (i32.const 36)
-        (local.get $loc)
-      )
-      ;; if our index equals the length of our buffer, store 0
-      ;; otherwise store current write value
-      (select
-        (i32.const 0)
-        (local.get $write)
-        (i32.eq (local.get $write) (i32.trunc_f32_u (local.get $len)))
-      )
-    )
-    
-    ;; TODO laziness --- fix
-    ;; most of the code below this point was 
-    ;; copied from $peek
-    local.get $read
-    local.tee $phase
-    
-    ;; get base index by rounding $phase down
-    i32.trunc_u/f32
-    local.set $base
-    
-    ;; multiply base index by 4 and load
-    local.get $base
-    i32.const 4
-    i32.mul
-    local.get $idx
-    i32.add
-    f32.load
-    local.set $floor 
-    
-    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
-    local.get $base
-    i32.const 1
-    i32.add
-    i32.const 1023
-    i32.and
-    i32.const 4
-    i32.mul
-    local.get $idx
-    i32.add
-    f32.load
-    local.set $ceil
-    
-    ;; get fractional part via phase - floor( phase )
-    local.get $phase
-    local.get $phase
-    f32.floor
-    f32.sub
-    local.set $fract
-    
-    ;; multiply difference between ceil and floor by fractional part and 
-    ;; add to floor
-    local.get $ceil
-    local.get $floor
-    f32.sub
-    local.get $fract
-    f32.mul
-    local.get $floor
-    f32.add  
-  )
-  
-  (func $mix (export "mix") (param $loc i32) (result f32)
-    (local $in1 f32)
-    (local $in2 f32)
-    (local $t f32)
-    
-    local.get $loc
-    call $get-property
-    local.set $in1
-    
-    local.get $loc
-    i32.const 16
-    i32.add
-    call $get-property
-    local.set $in2
-    
-    local.get $loc
-    i32.const 32
-    i32.add
-    call $get-property
-    local.set $t
-    
-    (f32.add
-      (f32.mul
-        (local.get $in1)
-        (f32.sub
-          (f32.const 1)
-          (local.get $t)
-        ) 
-      )
-      (f32.mul
-        (local.get $in2)
-        (local.get $t)
-      )
-    )
-  )
-  
-
-  
-  (func $ad (export "ad") (param $loc i32) (result f32)
-    (local $attack f32)
-    (local $decay f32)
-    (local $phase f32)
-    
-    local.get $loc
-    ;; + 32 for ad, + 4 for bang 
-    i32.const 36
-    i32.add
-    call $accum
-    local.set $phase
-    
-    local.get $loc
-    call $get-property
-    local.set $attack
-    
-    (i32.add (local.get $loc) (i32.const 16))
-    call $get-property
-    local.set $decay
-    
-    (f32.gt (local.get $phase) (f32.add (local.get $attack) (local.get $decay)))
-    if (result f32)
-      f32.const 0
-    else
-      (f32.lt (local.get $phase) (local.get $attack) )
-      if (result f32)
-        local.get $phase
-        local.get $attack
-        f32.div
-      else
-        (f32.sub
-          (f32.const 1)
-          (f32.div
-            (f32.sub (local.get $phase) (local.get $attack) )
-            (local.get $decay)
-          )
-        )
-      end 
-    end
-  )
-  
-
-
-
-
-
-;; adapted from:
-;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
-(func $noise (export "noise") (param $loc i32) (result f32)
-  (local $0 i32)
-  (local $1 i32)
-  (i32.store
-    (i32.add (local.get $loc) (i32.const 12) )
-    (local.tee $1
-      (i32.xor
-        (i32.load
-          (i32.add (local.get $loc) (i32.const 12) )
-        )
-        (local.tee $0
-          (i32.load
-            (i32.add (local.get $loc) (i32.const 8) )
-          )
-        )
-      )
-    )
-  )
-  (i32.store
-    (i32.add (local.get $loc) (i32.const 8) )
-    (i32.add
-      (local.get $1)
-      (local.get $0)
-    )
-  )
-  (f32.mul
-    (f32.add
-      (f32.mul
-        (f32.load
-          (i32.add (local.get $loc) (i32.const 4))
-        )
-        (f32.convert_i32_s
-          (local.get $0)
-        )
-      )
-      (f32.const 1)
-    )
-    (f32.const 0.5)
-  )
-)
-
-(func $slide (export "slide") (param $loc i32) (result f32)
-  (local $y f32)
-  (local $input f32)
-  (local $slideup f32)
-  (local $slidedown f32)
-  (local $filter f32)
-  (local $slideamount f32)
-
-  local.get $loc
-  call $get-property
-  local.set $input
-
-  local.get $loc
-  i32.const 16
-  i32.add
-  call $get-property
-  local.set $slideup
-
-  local.get $loc
-  i32.const 32
-  i32.add
-  call $get-property
-  local.set $slidedown
-
-  local.get $loc
-  i32.const 48
-  i32.add
-  f32.load
-  local.set $filter
-
-  (select
-    (local.get $slideup )
-    (local.get $slideup )
-    (f32.gt (local.get $input) (local.get $filter))
-  )
-  local.set $slideamount
-
-  ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
-  (f32.add
-    (local.get $filter)
-    (f32.div
-      (f32.sub (local.get $input) (local.get $filter) )
-      (local.get $slideamount)
-    )
-  )
-  (local.set $filter)
-
-  (f32.store
-    (i32.add
-      (local.get $loc)
-      (i32.const 48)
-    )
-    (local.get $filter)
-  )
-
-  local.get $filter
-)
-
-(func $float (export "float") (param $loc i32) (result f32)
-  local.get $loc
-  f32.load
-)
-
-(func $caller (export "caller") (param $loc i32) (result f32)
-  (local $offset i32)
-  local.get $loc
-  call $get-property
-  drop
-
-  ;; get offset where data is stored
-  local.get $loc
-  i32.const 8
-  i32.add
-  i32.load
-  local.tee $offset
-
-  ;; get data location function being called
-  ;; 12 is the location offset of the input property
-  ;; (i32.add
-  ;;   (local.get $loc)
-  ;;   (i32.const 12)
-  ;; )
-  ;; i32.load
-
-  ;; i32.add
-
-  ;; load output data
-  f32.load
-)
-
 
 (func $counter_s_s_s (export "counter_s_s_s") 
   (param $idx i32)
@@ -3664,6 +3169,503 @@
     (f32.const 0)
   end
 )
+  ;; Bus- a bus adds a bunch of signals together, and then
+  ;; scales them and pans (gain/pan is TODO)
+  ;; 
+  ;; properties:
+  ;; [0] gain
+  ;; [16] pan
+  ;; 
+  ;; data:
+  ;; [32] numberOfInputs
+  ;;
+  ;; for each input in [32], there are three associated data fields:
+  ;; [33] input function id
+  ;; [34] input function data location
+  ;; [35] number of channels for input function (not currently in use)
+  (func $bus (export "bus") (param $loc i32) (result f32) 
+    (local $numInputs i32)
+    (local $out1 f32)
+    (local $i    i32)
+    (local $idx  i32)
+    
+    local.get $loc
+    i32.const 12
+    i32.add
+    local.set $idx
+    
+    local.get $loc
+    i32.const 8 ;; skip gain / pan for now
+    i32.add
+    
+    i32.load 
+    local.tee $numInputs
+    
+    i32.const 0
+    i32.gt_u
+    if
+      (loop $l      
+        (call_indirect (type $sig-i32--f32) 
+          (i32.load (local.get $idx))
+          (i32.load (i32.load (local.get $idx) ) )
+        )
+      
+        ;; add indirect output to $out
+        local.get $out1
+        f32.add
+        local.set $out1
+      
+        ;; increment i
+        local.get $i
+        i32.const 1
+        i32.add
+        local.set $i
+      
+        ;; update memory idx for next indirect call
+        local.get $idx
+        i32.const 4
+        i32.add
+        local.set $idx
+      
+        ;; check if len > i and break $l if true
+        local.get $numInputs
+        local.get $i
+        i32.gt_u
+        br_if $l
+      )
+    end
+    
+    local.get $out1
+    local.get $loc      ;; scalar value (gain)
+    i32.const 4
+    i32.add 
+    f32.load
+    ;; call $get-property
+    f32.mul
+  )
+
+  (func $memo (export "memo") (param $loc i32) (result f32)
+    (local $lastsampletime i32)
+    (local $lastsample f32)
+    (local $inputsample f32)
+    
+    local.get $loc
+    i32.const 8
+    i32.add
+    i32.load
+    
+    global.get $clock
+    
+    i32.eq
+    if (result f32)
+      local.get $loc
+      i32.const 12
+      i32.add
+      f32.load
+    else
+      ;; store clock
+      local.get $loc
+      i32.const 8
+      i32.add
+      global.get $clock
+      i32.store
+      
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+      )
+      local.set $inputsample
+      
+      ;; store sample
+      (f32.store 
+        (i32.add (local.get $loc) (i32.const 12))
+        (local.get $inputsample)
+      )
+      
+      local.get $inputsample
+    end
+  )
+  
+  (func $ssd (export "ssd") (param $loc i32) (result f32) 
+    (local $prev f32)
+    
+    local.get $loc
+    i32.const 16
+    i32.add 
+    f32.load
+    local.set $prev 
+    
+    local.get $loc
+    i32.const 16
+    i32.add
+    local.get $loc
+    call $get-property
+    f32.store
+    
+    local.get $prev
+  )
+  
+  (func $delay (export "delay") (param $loc i32) (result f32) 
+    (local $input f32)
+    (local $time  f32)
+    (local $len   f32)
+    (local $read  f32)
+    (local $out   f32)
+    (local $write i32)
+    (local $idx   i32)
+    (local $table i32)
+    (local $phase f32)
+    (local $floor f32)
+    (local $ceil  f32)
+    (local $base  i32)
+    (local $incr  f32)
+    (local $fract f32)
+    
+    ;; get input to delay
+    local.get $loc
+    call $get-property
+    local.set $input
+    
+    ;; get delay time
+    i32.const 16
+    local.get $loc
+    i32.add
+    call $get-property
+    local.set $time
+    
+    ;; get delay line length
+    i32.const 32
+    local.get $loc
+    i32.add
+    f32.load
+    local.set $len
+    
+    ;; get current write index
+    i32.const 36
+    local.get $loc
+    i32.add
+    i32.load
+    local.tee $write
+    
+    ;; read index = write index + delay time
+    ;; wrapped to delay line length
+    f32.convert_i32_u
+    local.get $time
+    f32.add
+    local.set $read
+    
+    ;; wrap read TODO only wraps upper bound not lower
+    (select
+      (f32.sub (local.get $read) (local.get $len) )
+      (local.get $read)
+      (f32.ge (local.get $read) (local.get $len))
+    )
+    local.set $read
+    
+    ;; get offset in memory for wavetable
+    local.get $loc
+    i32.const 40
+    i32.add
+    local.set $idx
+    
+    ;; write input to wavetable located at $idx
+    ;; remember to multiply write index by 4!!!
+    (f32.store
+      (i32.add (i32.mul (local.get $write) (i32.const 4)) (local.get $idx))
+      (local.get $input)
+    )
+    
+    ;; now that we have read index, go ahead and
+    ;; increment write index
+    local.get $write
+    i32.const 1
+    i32.add
+    local.set $write
+    
+    ;; store the new write index
+    (i32.store
+      ;; location for storing write index
+      (i32.add 
+        (i32.const 36)
+        (local.get $loc)
+      )
+      ;; if our index equals the length of our buffer, store 0
+      ;; otherwise store current write value
+      (select
+        (i32.const 0)
+        (local.get $write)
+        (i32.eq (local.get $write) (i32.trunc_f32_u (local.get $len)))
+      )
+    )
+    
+    ;; TODO laziness --- fix
+    ;; most of the code below this point was 
+    ;; copied from $peek
+    local.get $read
+    local.tee $phase
+    
+    ;; get base index by rounding $phase down
+    i32.trunc_u/f32
+    local.set $base
+    
+    ;; multiply base index by 4 and load
+    local.get $base
+    i32.const 4
+    i32.mul
+    local.get $idx
+    i32.add
+    f32.load
+    local.set $floor 
+    
+    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
+    local.get $base
+    i32.const 1
+    i32.add
+    i32.const 1023
+    i32.and
+    i32.const 4
+    i32.mul
+    local.get $idx
+    i32.add
+    f32.load
+    local.set $ceil
+    
+    ;; get fractional part via phase - floor( phase )
+    local.get $phase
+    local.get $phase
+    f32.floor
+    f32.sub
+    local.set $fract
+    
+    ;; multiply difference between ceil and floor by fractional part and 
+    ;; add to floor
+    local.get $ceil
+    local.get $floor
+    f32.sub
+    local.get $fract
+    f32.mul
+    local.get $floor
+    f32.add  
+  )
+  
+  (func $mix (export "mix") (param $loc i32) (result f32)
+    (local $in1 f32)
+    (local $in2 f32)
+    (local $t f32)
+    
+    local.get $loc
+    call $get-property
+    local.set $in1
+    
+    local.get $loc
+    i32.const 16
+    i32.add
+    call $get-property
+    local.set $in2
+    
+    local.get $loc
+    i32.const 32
+    i32.add
+    call $get-property
+    local.set $t
+    
+    (f32.add
+      (f32.mul
+        (local.get $in1)
+        (f32.sub
+          (f32.const 1)
+          (local.get $t)
+        ) 
+      )
+      (f32.mul
+        (local.get $in2)
+        (local.get $t)
+      )
+    )
+  )
+  
+
+  
+  (func $ad (export "ad") (param $loc i32) (result f32)
+    (local $attack f32)
+    (local $decay f32)
+    (local $phase f32)
+    
+    local.get $loc
+    ;; + 32 for ad, + 4 for bang 
+    i32.const 36
+    i32.add
+    call $accum
+    local.set $phase
+    
+    local.get $loc
+    call $get-property
+    local.set $attack
+    
+    (i32.add (local.get $loc) (i32.const 16))
+    call $get-property
+    local.set $decay
+    
+    (f32.gt (local.get $phase) (f32.add (local.get $attack) (local.get $decay)))
+    if (result f32)
+      f32.const 0
+    else
+      (f32.lt (local.get $phase) (local.get $attack) )
+      if (result f32)
+        local.get $phase
+        local.get $attack
+        f32.div
+      else
+        (f32.sub
+          (f32.const 1)
+          (f32.div
+            (f32.sub (local.get $phase) (local.get $attack) )
+            (local.get $decay)
+          )
+        )
+      end 
+    end
+  )
+  
+
+
+
+
+
+;; adapted from:
+;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
+(func $noise (export "noise") (param $loc i32) (result f32)
+  (local $0 i32)
+  (local $1 i32)
+  (i32.store
+    (i32.add (local.get $loc) (i32.const 12) )
+    (local.tee $1
+      (i32.xor
+        (i32.load
+          (i32.add (local.get $loc) (i32.const 12) )
+        )
+        (local.tee $0
+          (i32.load
+            (i32.add (local.get $loc) (i32.const 8) )
+          )
+        )
+      )
+    )
+  )
+  (i32.store
+    (i32.add (local.get $loc) (i32.const 8) )
+    (i32.add
+      (local.get $1)
+      (local.get $0)
+    )
+  )
+  (f32.mul
+    (f32.add
+      (f32.mul
+        (f32.load
+          (i32.add (local.get $loc) (i32.const 4))
+        )
+        (f32.convert_i32_s
+          (local.get $0)
+        )
+      )
+      (f32.const 1)
+    )
+    (f32.const 0.5)
+  )
+)
+
+(func $slide (export "slide") (param $loc i32) (result f32)
+  (local $y f32)
+  (local $input f32)
+  (local $slideup f32)
+  (local $slidedown f32)
+  (local $filter f32)
+  (local $slideamount f32)
+
+  local.get $loc
+  call $get-property
+  local.set $input
+
+  local.get $loc
+  i32.const 16
+  i32.add
+  call $get-property
+  local.set $slideup
+
+  local.get $loc
+  i32.const 32
+  i32.add
+  call $get-property
+  local.set $slidedown
+
+  local.get $loc
+  i32.const 48
+  i32.add
+  f32.load
+  local.set $filter
+
+  (select
+    (local.get $slideup )
+    (local.get $slideup )
+    (f32.gt (local.get $input) (local.get $filter))
+  )
+  local.set $slideamount
+
+  ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
+  (f32.add
+    (local.get $filter)
+    (f32.div
+      (f32.sub (local.get $input) (local.get $filter) )
+      (local.get $slideamount)
+    )
+  )
+  (local.set $filter)
+
+  (f32.store
+    (i32.add
+      (local.get $loc)
+      (i32.const 48)
+    )
+    (local.get $filter)
+  )
+
+  local.get $filter
+)
+
+(func $float (export "float") (param $loc i32) (result f32)
+  local.get $loc
+  f32.load
+)
+
+(func $caller (export "caller") (param $loc i32) (result f32)
+  (local $offset i32)
+  local.get $loc
+  call $get-property
+  drop
+
+  ;; get offset where data is stored
+  local.get $loc
+  i32.const 8
+  i32.add
+  i32.load
+  local.tee $offset
+
+  ;; get data location function being called
+  ;; 12 is the location offset of the input property
+  ;; (i32.add
+  ;;   (local.get $loc)
+  ;;   (i32.const 12)
+  ;; )
+  ;; i32.load
+
+  ;; i32.add
+
+  ;; load output data
+  f32.load
+)
+
+
 ;; render a function for a given number
 ;; of samples to shared memory. can
 ;; replace using a for-loop in the main thread

@@ -500,26 +500,28 @@ let bus
   let fid = fidx++
   bus = function( size=10, gain = 1 ) {
     const obj = {
-      idx : getMemory( 5 + size * 3 ),
+      idx : getMemory( size + 3 ),
       fid,
       connected:[],
 
       connect( ...ugens ) {
-        ugens.forEach( ugen => {
-          const idx     = obj.idx + 5 + obj.connected.length * 3
-          memi[ idx   ] = ugen.fid
-          memi[ idx+1 ] = ugen.idx * 4
+        ugens.forEach( ugen => {          
+          const idx     = obj.idx + 3 + obj.connected.length
+          //memi[ idx   ] = ugen.fid
+          memi[ idx ] = ugen.idx * 4
         
           obj.connected.push( ugen )
         })
         
-        memi[ obj.idx + 4 ] = obj.connected.length
+        memi[ obj.idx + 2 ] = obj.connected.length
       }
     }
   
-    createProperty( obj, 'gain', obj.idx, gain )
+    //createProperty( obj, 'gain', obj.idx, gain )
 
-    memi[ obj.idx + 4 ] = 0
+    memi[ obj.idx + 2 ] = 0
+    memf[ obj.idx + 1 ] = gain
+    memi[ obj.idx ] = fid
   
     return obj
   }
