@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 118 funcref)
+  (table 119 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -155,6 +155,7 @@
     $counter_d_d_d
 
     $bus
+    $ssd
     ;; $ifelse
     ;; $ifelse2
     
@@ -3290,16 +3291,18 @@
     (local $prev f32)
     
     local.get $loc
-    i32.const 16
+    i32.const 4
     i32.add 
     f32.load
     local.set $prev 
     
     local.get $loc
-    i32.const 16
+    i32.const 4
     i32.add
-    local.get $loc
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
     f32.store
     
     local.get $prev

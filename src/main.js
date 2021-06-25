@@ -527,6 +527,37 @@ let bus
   }
 }
 
+let ssd 
+{
+  const fid = fidx++
+  ssd = function( init=0 ) {
+    const obj = {
+      idx : getMemory( 3 ),
+      fid,
+      in( input ) {
+        // must memoize to avoid infinite recursion
+        memi[ obj.idx + 2 ] = memo( input ).idx * 4
+      }
+    }
+    
+    Object.defineProperty( obj, 'out', {
+      get() {
+        let out = {
+          fid: obj.fid,
+          idx: obj.idx
+        }
+        
+        return out
+      }
+    })
+        
+    memf[ obj.idx + 1 ] = init
+    memi[ obj.idx ] = fid
+      
+    return obj
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -677,37 +708,7 @@ let ad
   }
 }
 
-let ssd 
-{
-  const fid = fidx++
-  ssd = function( init=0 ) {
-    const obj = {
-      idx : getMemory( 5 ),
-      fid,
-      in( input ) {
-        // triggers getter method
-        obj[ 0 ] = memo( input )
-      }
-    }
-    
-    Object.defineProperty( obj, 'out', {
-      get() {
-        let out = {
-          fid: obj.fid,
-          idx: obj.idx
-        }
-        
-        return out
-      }
-    })
-    
-    createProperty( obj, '0', obj.idx, 0 )
-    
-    memf[ obj.idx + 4 ] = init
-      
-    return obj
-  }
-}
+
 
 let delay
 {
