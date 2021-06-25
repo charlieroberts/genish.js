@@ -65,9 +65,7 @@ class WASMProcessor extends AudioWorkletProcessor {
         this.numChannels = 1
       } else if( msg.data.address === 'renderStereo' ) {
         this.renderLocationL = msg.data.left.loc
-        this.renderFunctionL = msg.data.left.func
         this.renderLocationR = msg.data.right.loc
-        this.renderFunctionR = msg.data.right.func
         this.numChannels = 2
       } else if( msg.data.address === 'sampleRate' ) {
         console.log( 'sample global', this.sr )
@@ -88,9 +86,7 @@ class WASMProcessor extends AudioWorkletProcessor {
       outputs[0][1].set( this.outputL )
     }else{
       this.wasm.renderStereo( 
-        this.renderFunctionL, 
         this.renderLocationL,
-        this.renderFunctionR, 
         this.renderLocationR, 
         len, 
         0

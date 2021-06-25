@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 119 funcref)
+  (table 123 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -156,6 +156,10 @@
 
     $bus
     $ssd
+    $delay_s_s
+    $delay_s_d
+    $delay_d_s
+    $delay_d_d
     ;; $ifelse
     ;; $ifelse2
     
@@ -3101,12 +3105,11 @@
   (local $newphs f32)
   (local $max f32)
   
-  ;; check phase reset flag [64]
-  ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
-    )
+  ;; check phase reset flag [8]
+  (call_indirect (type $sig-i32--f32) 
+    (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
+    (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+  )
   i32.trunc_f32_u
   i32.eqz
   if (result f32)
@@ -3308,7 +3311,11 @@
     local.get $prev
   )
   
-  (func $delay (export "delay") (param $loc i32) (result f32) 
+  (func $delay_s_s (export "delay_s_s") )
+  (func $delay_s_d (export "delay_s_d") ) 
+  (func $delay_d_d (export "delay_d_d") )
+
+  (func $delay_d_s (export "delay_d_s") (param $loc i32) (result f32) 
     (local $input f32)
     (local $time  f32)
     (local $len   f32)
@@ -3325,27 +3332,29 @@
     (local $fract f32)
     
     ;; get input to delay
-    local.get $loc
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
     local.set $input
     
     ;; get delay time
-    i32.const 16
     local.get $loc
+    i32.const 8
     i32.add
-    call $get-property
+    f32.load
     local.set $time
     
     ;; get delay line length
-    i32.const 32
     local.get $loc
+    i32.const 12
     i32.add
     f32.load
     local.set $len
     
     ;; get current write index
-    i32.const 36
     local.get $loc
+    i32.const 16
     i32.add
     i32.load
     local.tee $write
@@ -3367,7 +3376,7 @@
     
     ;; get offset in memory for wavetable
     local.get $loc
-    i32.const 40
+    i32.const 20
     i32.add
     local.set $idx
     
@@ -3389,7 +3398,7 @@
     (i32.store
       ;; location for storing write index
       (i32.add 
-        (i32.const 36)
+        (i32.const 16)
         (local.get $loc)
       )
       ;; if our index equals the length of our buffer, store 0
@@ -3408,7 +3417,7 @@
     local.tee $phase
     
     ;; get base index by rounding $phase down
-    i32.trunc_u/f32
+    i32.trunc_f32_u
     local.set $base
     
     ;; multiply base index by 4 and load
@@ -3723,9 +3732,7 @@
   ;; replace using a for-loop in the main thread
   ;; to read samples one at a time.
   (func $renderStereo (export "renderStereo") 
-    (param $leftfid i32) ;; function to call
     (param $leftloc i32) ;; memory location for function to call
-    (param $rightfid i32) ;; function to call
     (param $rightloc i32) ;; memory location for function to call
     (param $len i32) ;; number of samples to render
     (param $idx i32) ;; position in memory to write to
@@ -3739,7 +3746,7 @@
         (local.get $idx)
         (call_indirect (type $sig-i32--f32) 
           (local.get $leftloc)
-          (local.get $leftfid)
+          (i32.load (local.get $leftloc) )
         )
       )
 
@@ -3748,7 +3755,7 @@
         (i32.add (local.get $idx) (i32.const 512) )
         (call_indirect (type $sig-i32--f32) 
           (local.get $rightloc)
-          (local.get $rightfid)
+          (i32.load (local.get $rightloc) )
         )
       )
             

@@ -89,11 +89,9 @@ const play = function( ugen ) {
       address:'renderStereo',
       left: {
         loc:ugen[0].idx*4,
-        func:ugen[0].fid
       },
       right: {
         loc:ugen[1].idx*4,
-        func:ugen[1].fid
       }
     })
   }else{
@@ -558,6 +556,25 @@ let ssd
   }
 }
 
+let delay
+{
+  const baseidx = fidx
+  fidx += 4
+
+  delay = function( input=0, time=22050, maxSize=44100 ) {
+    const props = { input, time },
+    statics = {
+      maxSize: { value:maxSize, type:'f'},
+      writePos:{ value:0, type:'i'}
+    }
+
+    const obj = factory( props, statics, baseidx )
+    getMemory( maxSize )
+
+    return obj
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -710,26 +727,26 @@ let ad
 
 
 
-let delay
-{
-  const fid = fidx++
-  delay = function( input=0, time=22050, maxSize=44100 ) {
-    const obj = {
-      idx: getMemory( 1000 + maxSize ),
-      fid,
-      peek:  peek() // + 60
-    }
+// let delay
+// {
+//   const fid = fidx++
+//   delay = function( input=0, time=22050, maxSize=44100 ) {
+//     const obj = {
+//       idx: getMemory( 1000 + maxSize ),
+//       fid,
+//       peek:  peek() // + 60
+//     }
     
-    createProperty( obj, 'input', obj.idx,     input )
-    createProperty( obj, 'time',  obj.idx + 4, time )
+//     createProperty( obj, 'input', obj.idx,     input )
+//     createProperty( obj, 'time',  obj.idx + 4, time )
     
-    memf[ obj.idx + 8 ] = maxSize
-    memi[ obj.idx + 9 ] = 0 // write position
+//     memf[ obj.idx + 8 ] = maxSize
+//     memi[ obj.idx + 9 ] = 0 // write position
     
     
-    return obj
-  }
-}
+//     return obj
+//   }
+// }
 
 let mix
 {
