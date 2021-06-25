@@ -436,6 +436,65 @@ let sah
   }
 }
 
+
+let memo
+{
+  const fid = fidx
+  fidx += 1
+  memo = function( input=0 ) {
+    const props = { input }
+    const statics = {
+      lastClock:  { value:MAX, type:'i' },
+      lastSample: { value:0,   type:'f' }
+    }
+    
+    return factory( props, statics, fid )
+  }
+}
+
+let caller 
+{
+  const fid = fidx
+  fidx += 1
+  caller = function( input, dataOffset ) {
+    const props =   { input }
+    const statics = { dataOffset: { value:dataOffset, type:'i' } }
+    
+    return factory( props, statics, fid )
+  }
+}
+
+let counter
+{
+  const fid = fidx
+  fidx += 8
+
+  counter = function( incr=0, reset=0, max=1, phase=0 ) {
+    
+    const props = { incr,reset,max }
+    const statics = { 
+      phase: { value:phase, type:'f' },
+      wrap:  { value:0, type:'f' },
+    }
+    
+    const obj = factory( props, statics, fid )
+
+    // return memoized object because output and .wrap
+    // might often both be used
+    const __memo = memo( obj )
+
+    Object.defineProperty( __memo, 'wrap', {
+      get() {
+        // 52 is wrap offset
+        const out =  caller( __memo, 5 )
+        return out
+      }
+    })
+  
+    return __memo
+  }
+}
+
 let bus
 {
   let fid = fidx++
@@ -588,23 +647,6 @@ let clamp
   }
 }
 
-let memo
-{
-  let fid = fidx++
-  memo = function( input=0 ) {
-    const obj = {
-      idx : getMemory( 6 ),
-      fid
-    }
-  
-    createProperty( obj, 'input', obj.idx, input )
-    memi[ obj.idx + 4 ] = MAX // last clock time
-    memf[ obj.idx + 5 ] = 0   // last sample taken
-    
-    return obj
-  }
-}
-
 let ad
 {
   let fid = fidx++
@@ -722,56 +764,60 @@ let slide
   }
 }
 
-let counter
-{
-  const fid = fidx++
-  counter = function( incr=0, reset=0, max=1, phase=0 ) {
+
+// let counter
+// {
+//   const fid = fidx++
+//   counter = function( incr=0, reset=0, max=1, phase=0 ) {
     
-    const obj = {
-      idx : getMemory( 14 ),
-      fid,
-    }
+//     const obj = {
+//       idx : getMemory( 14 ),
+//       fid,
+//     }
 
-    memf[ obj.idx + 12 ] = phase
-    memf[ obj.idx + 13 ] = 0
+//     memf[ obj.idx + 12 ] = phase
+//     memf[ obj.idx + 13 ] = 0
 
-    // return memoized object because output and .wrap
-    // might often both be used
-    const __memo = memo( obj )
+//     // return memoized object because output and .wrap
+//     // might often both be used
+//     const __memo = memo( obj )
 
-    Object.defineProperty( __memo, 'wrap', {
-      get() {
-        const out =  caller( __memo, 52 )
-        return out
-      }
-    })
+//     Object.defineProperty( __memo, 'wrap', {
+//       get() {
+//         // 52 is wrap offset
+//         const out =  caller( __memo, 52 )
+//         return out
+//       }
+//     })
 
-    createProperty( __memo, 'incr',  obj.idx,     incr )
-    createProperty( __memo, 'reset', obj.idx + 4, reset )
-    createProperty( __memo, 'max',   obj.idx + 8, max )
+//     createProperty( __memo, 'incr',  obj.idx,     incr )
+//     createProperty( __memo, 'reset', obj.idx + 4, reset )
+//     createProperty( __memo, 'max',   obj.idx + 8, max )
   
-    return __memo
-  }
-}
+//     return __memo
+//   }
+// }
+
+
 
 // helps with functions have extra outputs that depend on the
 // function being called to generate (like counter.wrap).
-let caller 
-{
-  const fid = fidx++
-  caller = function( input, dataOffset ) {
-    const obj = {
-      idx : getMemory( 5 ),
-      fid
-    }
+// let caller 
+// {
+//   const fid = fidx++
+//   caller = function( input, dataOffset ) {
+//     const obj = {
+//       idx : getMemory( 5 ),
+//       fid
+//     }
 
-    createProperty( obj, 'input',  obj.idx, input )
+//     createProperty( obj, 'input',  obj.idx, input )
     
-    memi[ obj.idx + 4 ] = (input.input.idx * 4) + dataOffset
+//     memi[ obj.idx + 4 ] = (input.input.idx * 4) + dataOffset
 
-    return obj
-  }
-}
+//     return obj
+//   }
+// }
 
 let float 
 {

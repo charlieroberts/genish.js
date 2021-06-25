@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 104 funcref)
+  (table 117 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -119,7 +119,7 @@
     $max_d_s
     $max_d_d
 
-    ;; other
+    ;; other (21)
     $accum_s_s
     $accum_s_d
     $accum_d_s
@@ -138,13 +138,24 @@
     $sah_d_s_s
     $sah_d_s_d
     $sah_d_d_s
-    ;;$sah_d_d_d
+    $sah_d_d_d
+    ;; TODO list memo twice for bug when static version
+    ;; isn't provided; fix
+    $memo
+    $memo
+    $caller
+    $caller
+    $counter_s_s_s
+    $counter_s_s_d
+    $counter_s_d_s
+    $counter_s_d_d
+    $counter_d_s_s
+    $counter_d_s_d
+    $counter_d_d_s
+    $counter_d_d_d
     ;; $bus
-    ;; $cycle
-    ;; $cycle_s
     ;; $ifelse
     ;; $ifelse2
-    ;; $round
     
     ;; $poke
     ;; $bang
@@ -154,8 +165,6 @@
     ;; $ssd
     ;; $delay
     ;; $mix
-    ;; $sah
-    ;; $noise
     ;; $slide
     ;; $counter
     ;; $caller
@@ -204,50 +213,6 @@
     (f32.store (i32.add (local.get $idx) (i32.const 4) ) (local.get $val) )
     (local.get $val)
   )
-
-  ;; (func $pow (export "pow") (param $loc i32) (result f32)
-  ;;   (local $x f32) (local $y f32)
-  ;;   (local $out f32)
-  ;;   (local $index f32)
-
-  ;;   local.get $loc
-  ;;   call $get-property
-  ;;   local.set $x
-
-  ;;   i32.const 16
-  ;;   local.get $loc
-  ;;   i32.add
-  ;;   call $get-property
-  ;;   local.set $y
-
-  ;;   f32.const 1
-  ;;   local.set $out
-  ;;   f32.const 1
-  ;;   local.set $index
-
-  ;;   (block $b0
-  ;;     (loop $l0
-  ;;       (f32.mul 
-  ;;         (local.get $out)
-  ;;         (local.get $x)
-  ;;       )
-  ;;       local.set $out
-
-  ;;       (f32.add 
-  ;;         (local.get $index)
-  ;;         (f32.const 1)
-  ;;       )
-  ;;       local.tee $index
-  ;;       local.get $y
-  ;;       f32.gt
-  ;;       br_if 1
-
-  ;;       br 0
-  ;;     )
-  ;;   )
-
-  ;;   local.get $out
-  ;; )
   
   ;; basic accumulator with variable range
   ;; TODO correct this table it's wrong
@@ -2459,6 +2424,7 @@
     f32.add
   )
 
+  ;; how many of these do we actually need to fill in?
   (func $sah_s_s_s (param $loc i32) (result f32) (f32.const 0) )
   (func $sah_s_s_d (param $loc i32) (result f32) (f32.const 0) )
   (func $sah_s_d_s (param $loc i32) (result f32) (f32.const 0) )
@@ -2489,6 +2455,72 @@
     i32.const 12
     i32.add
     f32.load
+    local.set $threshold
+    
+    local.get $loc
+    i32.const 20
+    i32.add
+    f32.load
+    local.set $lastcontrol
+    
+    (f32.gt
+      (local.get $controlinput)
+      (local.get $threshold)
+    )
+    f32.convert_i32_u
+    
+    local.tee $trigger
+    local.get $lastcontrol
+    f32.ne
+    
+    if
+      local.get $trigger
+      i32.trunc_f32_u
+      if
+        local.get $loc
+        i32.const 16
+        i32.add
+        local.get $valueinput
+        f32.store
+      end
+      
+      local.get $loc
+      i32.const 20
+      i32.add
+      local.get $trigger
+      f32.store
+    end
+    
+    local.get $loc
+    i32.const 16
+    i32.add
+    f32.load
+  )
+
+  (func $sah_d_d_d (export "sah_d_d_d") (param $loc i32) (result f32)
+    (local $valueinput f32)
+    (local $controlinput f32)
+    (local $threshold f32)
+    (local $lastvalue f32)
+    (local $lastcontrol f32)
+    (local $trigger f32)
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $valueinput
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $controlinput
+        
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ) ;; fid
+    )
     local.set $threshold
     
     local.get $loc
@@ -2612,7 +2644,7 @@
     (local $inputsample f32)
     
     local.get $loc
-    i32.const 16
+    i32.const 8
     i32.add
     i32.load
     
@@ -2621,24 +2653,26 @@
     i32.eq
     if (result f32)
       local.get $loc
-      i32.const 20
+      i32.const 12
       i32.add
       f32.load
     else
       ;; store clock
       local.get $loc
-      i32.const 16
+      i32.const 8
       i32.add
       global.get $clock
       i32.store
       
-      local.get $loc
-      call $get-property
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+      )
       local.set $inputsample
       
       ;; store sample
       (f32.store 
-        (i32.add (local.get $loc) (i32.const 20))
+        (i32.add (local.get $loc) (i32.const 12))
         (local.get $inputsample)
       )
       
@@ -3006,7 +3040,7 @@
 
   ;; get offset where data is stored
   local.get $loc
-  i32.const 16
+  i32.const 8
   i32.add
   i32.load
   local.tee $offset
@@ -3024,6 +3058,16 @@
   ;; load output data
   f32.load
 )
+
+
+(func $counter_s_s_s (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_s_s_d (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_s_d_s (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_s_d_d (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_d_s_s (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_d_s_d (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_d_d_s (param $loc i32) (result f32) (f32.const 0) )
+(func $counter_d_d_d (param $loc i32) (result f32) (f32.const 0) )
 
 (func $counter (export "counter") 
   (param $idx i32)
