@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 123 funcref)
+  (table 140 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -160,6 +160,15 @@
     $delay_s_d
     $delay_d_s
     $delay_d_d
+    $slide_s_s_s
+    $slide_s_s_d
+    $slide_s_d_s
+    $slide_s_d_d
+    $slide_d_s_s
+    $slide_d_s_d
+    $slide_d_d_s
+    $slide_d_d_d
+    $param_d
     ;; $ifelse
     ;; $ifelse2
     
@@ -3459,6 +3468,83 @@
     local.get $floor
     f32.add  
   )
+
+  (func $slide_s_s_s (export "slide_s_s_s") )
+  (func $slide_s_s_d (export "slide_s_s_d") )
+  (func $slide_s_d_s (export "slide_s_d_s") )
+  (func $slide_s_d_d (export "slide_s_d_d") )
+  ;; (func $slide_d_s_s (export "slide_d_s_s") )
+  (func $slide_d_s_d (export "slide_d_s_d") )
+  (func $slide_d_d_s (export "slide_d_d_s") )
+  (func $slide_d_d_d (export "slide_d_d_d") )
+
+(func $slide_d_s_s (export "slide_d_s_s") (param $loc i32) (result f32)
+  (local $y f32)
+  (local $input f32)
+  (local $slideup f32)
+  (local $slidedown f32)
+  (local $filter f32)
+  (local $slideamount f32)
+
+  (call_indirect (type $sig-i32--f32) 
+    (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+    (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+  )
+  local.set $input
+
+  local.get $loc
+  i32.const 8
+  i32.add
+  f32.load
+  local.set $slideup
+
+  local.get $loc
+  i32.const 12
+  i32.add
+  f32.load
+  local.set $slidedown
+
+  local.get $loc
+  i32.const 16
+  i32.add
+  f32.load
+  local.set $filter
+
+  (select
+    (local.get $slideup )
+    (local.get $slideup )
+    (f32.gt (local.get $input) (local.get $filter))
+  )
+  local.set $slideamount
+
+  ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
+  (f32.add
+    (local.get $filter)
+    (f32.div
+      (f32.sub (local.get $input) (local.get $filter) )
+      (local.get $slideamount)
+    )
+  )
+  (local.set $filter)
+
+  (f32.store
+    (i32.add
+      (local.get $loc)
+      (i32.const 16)
+    )
+    (local.get $filter)
+  )
+
+  local.get $filter
+)
+
+(func $param_d (export "param_d") (param $loc i32) (result f32)
+  local.get $loc
+  i32.const 4
+  i32.add
+  f32.load
+)
+
   
   (func $mix (export "mix") (param $loc i32) (result f32)
     (local $in1 f32)
@@ -3587,63 +3673,7 @@
   )
 )
 
-(func $slide (export "slide") (param $loc i32) (result f32)
-  (local $y f32)
-  (local $input f32)
-  (local $slideup f32)
-  (local $slidedown f32)
-  (local $filter f32)
-  (local $slideamount f32)
 
-  local.get $loc
-  call $get-property
-  local.set $input
-
-  local.get $loc
-  i32.const 16
-  i32.add
-  call $get-property
-  local.set $slideup
-
-  local.get $loc
-  i32.const 32
-  i32.add
-  call $get-property
-  local.set $slidedown
-
-  local.get $loc
-  i32.const 48
-  i32.add
-  f32.load
-  local.set $filter
-
-  (select
-    (local.get $slideup )
-    (local.get $slideup )
-    (f32.gt (local.get $input) (local.get $filter))
-  )
-  local.set $slideamount
-
-  ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
-  (f32.add
-    (local.get $filter)
-    (f32.div
-      (f32.sub (local.get $input) (local.get $filter) )
-      (local.get $slideamount)
-    )
-  )
-  (local.set $filter)
-
-  (f32.store
-    (i32.add
-      (local.get $loc)
-      (i32.const 48)
-    )
-    (local.get $filter)
-  )
-
-  local.get $filter
-)
 
 (func $float (export "float") (param $loc i32) (result f32)
   local.get $loc
@@ -3727,7 +3757,7 @@
   local.get $len
 )
 
-;; render a function for a given number
+  ;; render a function for a given number
   ;; of samples to shared memory. can
   ;; replace using a for-loop in the main thread
   ;; to read samples one at a time.

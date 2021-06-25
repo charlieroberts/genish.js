@@ -166,56 +166,6 @@ const getMemory = function( amt ) {
 
 let fidx = 0
 
-const createProperty_old = function( obj, name, idx, start ) {
-  let value
-  Object.defineProperty( obj, name, {
-    get() { return value },
-    set(v){ 
-      if( isNaN( v ) ) {
-        if( v.type !== undefined && v.type === 'param' ) {
-          memi[ idx ] = 2
-          memi[ idx + 1 ] = v.idx * 4
-        }else{
-          memi[ idx ] = 1
-          memi[ idx + 2 ] = v.fid
-          memi[ idx + 3 ] = v.idx * 4
-        }
-      }else{
-        memf[ idx ] = 0          
-        memf[ idx + 1 ] = v
-      }
-      value = v
-    }
-  })
-  
-  obj[ name ] = start
-}
-
-const createProperty = function( obj, name, idx, start ) {
-  let value
-  Object.defineProperty( obj, name, {
-    get() { return value },
-    set(v){ 
-      if( isNaN( v ) ) {
-        if( v.type !== undefined && v.type === 'param' ) {
-          memi[ idx ] = 2
-          memi[ idx + 1 ] = v.idx * 4
-        }else{
-          memi[ idx ] = 1
-          memi[ idx + 2 ] = v.fid
-          memi[ idx + 3 ] = v.idx * 4
-        }
-      }else{
-        memf[ idx ] = 0          
-        memf[ idx + 1 ] = v
-      }
-      value = v
-    }
-  })
-  
-  obj[ name ] = start
-}
-
 const factory = function( props, statics, baseidx ) {
   const obj = {},
         keys = Object.keys( props ),
@@ -575,6 +525,49 @@ let delay
   }
 }
 
+let slide
+{
+  const fid = fidx
+  fidx += 8
+  slide = function( input=0, slideUp=1000, slideDown=1000 ) {
+    const props = { input, slideUp, slideDown },
+          statics = {
+            output: { value:0, type:'f' }
+          }
+    
+    return factory( props, statics, fid)
+  }
+}
+
+let param
+{
+  const baseidx = fidx++
+  param = init => {
+    const obj = {
+      idx: getMemory(2),
+      fid: baseidx
+    }
+    
+    let value = init
+    Object.defineProperty( obj, 'value', {
+      get() { return value },
+      set(v) {
+        if( isNaN(v) ) {
+          throw Error('Params can only have numberic values; you assigned:', v )
+        }else{
+          value = v
+          memf[ obj.idx + 1 ] = value
+        }
+      }
+    })
+    
+    memf[ obj.idx + 1 ] = init
+    memi[ obj.idx ] = obj.fid
+    
+    return obj
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -619,30 +612,6 @@ const data = function( __data, type='float' ) {
     }
   }
 
-  return obj
-}
-
-const param = init => {
-  const obj = {
-    type: 'param',
-    idx: getMemory(1)
-  }
-  
-  let value = init
-  Object.defineProperty( obj, 'value', {
-    get() { return value },
-    set(v) {
-      if( isNaN(v) ) {
-        throw Error('Params can only have numberic values; you assigned:', v )
-      }else{
-        value = v
-        memf[ obj.idx ] = value
-      }
-    }
-  })
-  
-  memf[ obj.idx ] = init
-  
   return obj
 }
 
@@ -765,80 +734,6 @@ let mix
   }
 }
 
-let slide
-{
-  const fid = fidx++
-  slide = function( input=0, slideUp=1000, slideDown=1000 ) {
-    const obj = {
-      idx : getMemory( 13 ),
-      fid
-    }
-    
-    createProperty( obj, 'input', obj.idx, input )
-    createProperty( obj, 'slideUp', obj.idx + 4, slideUp )
-    createProperty( obj, 'slideDown', obj.idx + 8, slideDown )
-    
-    memf[ obj.idx + 12 ] = 0 // held output value
-    
-    return obj
-  }
-}
-
-
-// let counter
-// {
-//   const fid = fidx++
-//   counter = function( incr=0, reset=0, max=1, phase=0 ) {
-    
-//     const obj = {
-//       idx : getMemory( 14 ),
-//       fid,
-//     }
-
-//     memf[ obj.idx + 12 ] = phase
-//     memf[ obj.idx + 13 ] = 0
-
-//     // return memoized object because output and .wrap
-//     // might often both be used
-//     const __memo = memo( obj )
-
-//     Object.defineProperty( __memo, 'wrap', {
-//       get() {
-//         // 52 is wrap offset
-//         const out =  caller( __memo, 52 )
-//         return out
-//       }
-//     })
-
-//     createProperty( __memo, 'incr',  obj.idx,     incr )
-//     createProperty( __memo, 'reset', obj.idx + 4, reset )
-//     createProperty( __memo, 'max',   obj.idx + 8, max )
-  
-//     return __memo
-//   }
-// }
-
-
-
-// helps with functions have extra outputs that depend on the
-// function being called to generate (like counter.wrap).
-// let caller 
-// {
-//   const fid = fidx++
-//   caller = function( input, dataOffset ) {
-//     const obj = {
-//       idx : getMemory( 5 ),
-//       fid
-//     }
-
-//     createProperty( obj, 'input',  obj.idx, input )
-    
-//     memi[ obj.idx + 4 ] = (input.input.idx * 4) + dataOffset
-
-//     return obj
-//   }
-// }
-
 let float 
 {
   const fid = fidx++
@@ -903,9 +798,9 @@ let pan
 // let atan2 = binop()
 
 function setupMemory( buffer ) {
-  memf = new Float32Array( buffer )
+  memf   = new Float32Array( buffer )
   memf64 = new Float64Array( buffer )
-  memi = new Int32Array( buffer )  
+  memi   = new Int32Array( buffer )  
   
   // for output buffer
   getMemory( 128 )
