@@ -440,7 +440,7 @@ let sah
 let memo
 {
   const fid = fidx
-  fidx += 1
+  fidx += 2
   memo = function( input=0 ) {
     const props = { input }
     const statics = {
@@ -455,7 +455,7 @@ let memo
 let caller 
 {
   const fid = fidx
-  fidx += 1
+  fidx += 2
   caller = function( input, dataOffset ) {
     const props =   { input }
     const statics = { dataOffset: { value:dataOffset, type:'i' } }
