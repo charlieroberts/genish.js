@@ -598,7 +598,8 @@ let bang
 
 let ad
 {
-  let fid = fidx++
+  let fid = fidx
+  fidx += 4
   ad = function( attack=44100, decay=44100 ) {
     // const obj = {
     //   idx : getMemory( 4 ),
@@ -631,22 +632,27 @@ let ad
 
 let ifelse
 {
-  let fid = fidx++,
-      fid2 = fidx++
+  const baseidx = fidx
+  fidx += 8
 
-  ifelse = function( condition=1, t=1, f=0, shouldProcess=false ) {
-    const obj = {
-      idx : getMemory( 12 ),
-      fid,
-    }
-
-    if( shouldProcess ) obj.fid = fid2
-  
-    createProperty( obj, 'condition', obj.idx, condition )
-    createProperty( obj, 'true', obj.idx + 4, t )
-    createProperty( obj, 'false', obj.idx + 8, f ) 
+  ifelse = function( condition=1, t=1, f=0 ) {
+    const props = { condition, "true":t, "false":f }
+    const statics = {}
     
-    return obj
+    return factory( props, statics, baseidx )
+  }
+}
+
+let ifelse2
+{
+  const baseidx = fidx
+  fidx += 8
+
+  ifelse2 = function( condition=1, t=1, f=0 ) {
+    const props = { condition, "true":t, "false":f }
+    const statics = {}
+    
+    return factory( props, statics, baseidx )
   }
 }
 
@@ -785,17 +791,7 @@ let pan
 
     return obj
   }
-}
-
-// let sin = monop()
-// let cos = monop()
-// let tan = monop()
-// let asin = monop()
-// let acos = monop()
-// let atan = monop()
-// let tanh = monop()
-// let pow  = binop()
-// let atan2 = binop()
+} 
 
 function setupMemory( buffer ) {
   memf   = new Float32Array( buffer )

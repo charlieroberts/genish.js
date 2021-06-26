@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 153 funcref)
+  (table 161 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -119,7 +119,7 @@
     $max_d_s
     $max_d_d
 
-    ;; other (21)
+    ;; other (starts at 86, 21)
     $accum_s_s
     $accum_s_d
     $accum_d_s
@@ -182,6 +182,14 @@
     $ad_s_d
     $ad_d_s
     $ad_d_d
+    $ifelse_s_s_s
+    $ifelse_s_s_d
+    $ifelse_s_d_s
+    $ifelse_s_d_d
+    $ifelse_d_s_s
+    $ifelse_d_s_d
+    $ifelse_d_d_s
+    $ifelse_d_d_d
     ;; $ifelse
     ;; $ifelse2
     
@@ -202,34 +210,7 @@
     ;; $atan2
   )
   
-  ;; this is used to lookup all property values that might be
-  ;; subject to modulation. we check the memory value at $idx, if it
-  ;; is 0 then the property is not modulated, and we return 
-  ;; the float found at $idx + 1. If the memory value != 0, 
-  ;; we call the modulation function with id $idx + 2 and pass it the memmory
-  ;; location $idx + 3.
-  (func $get-property (param $idx i32) (result f32)
-    (local $type i32)
-    (i32.load (local.get $idx) )
-    local.tee $type
-    i32.eqz
-    if (result f32)
-      (f32.load (i32.add (local.get $idx) (i32.const 4) ) )
-    else
-      local.get $type
-      i32.const 1
-      i32.eq
-      if (result f32)
-        (call_indirect (type $sig-i32--f32) 
-          (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data
-          (i32.load (i32.add (local.get $idx) (i32.const 8) ) )  ;; function id
-        )
-      else
-        (f32.load (i32.load (i32.add (local.get $idx) (i32.const 4)) ) )
-      end
-    end
-    ;; last element on stack will be result from if block
-  )
+  (func $get-property (param $idx i32) (result f32) f32.const 0 )
   
   ;; store value, no return
   (func $set-property (param $idx i32) (param $val f32)
@@ -422,7 +403,8 @@
     call $_acos
   )
 
- (func $atan_s (export "atan_s") (param $loc i32) (result f32)
+ (func $atan_s (export "atan_s") (param $loc i32) (result f32) 
+
     local.get $loc
     i32.const 4
     i32.add
@@ -1380,31 +1362,6 @@
     f32.max
   )
   
-  ;; only runs the "true" expression, the false expression
-  ;; does not calculate samples.
-  (func $ifelse (export "ifelse") (param $loc i32) (result f32)
-    (select
-      (i32.const 16)
-      (i32.const 32)
-      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
-    )
-
-    local.get $loc
-    i32.add 
-    call $get-property
-  )
-
-
-
-  ;; both expressions calculate samples
-  (func $ifelse2 (export "ifelse2") (param $loc i32) (result f32)
-    (select
-      (call $get-property (i32.add (i32.const 16) (local.get $loc) ) )
-      (call $get-property (i32.add (i32.const 32) (local.get $loc) ) )
-      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
-    )
-  )
-  
   ;; 0-4 incr value or function id
   ;; 4-8 incr data idx (optional)
   ;; 8-12 reset value or function id
@@ -2177,949 +2134,949 @@
     )    
   )
 
-(func $cycle_d (export "cycle_d") (param $idx i32) (result f32)
-    (local $newphs f32)
-    (local $phase f32)
-    (local $floor f32)
-    (local $ceil f32)
-    (local $base i32)
-    (local $incr f32)
-    (local $fract f32)
-    
-    ;; load phase [64]
-    local.get $idx
-    i32.const 8
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    ;;(call $get-property (local.get $idx) )
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
-    )
-    global.get $sr
-    f32.div
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 8
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap)
-    (f32.lt (local.get $newphs) (f32.const 1.0))
-    ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
-    ;;i32.and
-    if (result f32)
-      (local.get $newphs)
-    else
-      (f32.sub 
-        (local.get $newphs) 
-        (f32.const 1.0) 
+  (func $cycle_d (export "cycle_d") (param $idx i32) (result f32)
+      (local $newphs f32)
+      (local $phase f32)
+      (local $floor f32)
+      (local $ceil f32)
+      (local $base i32)
+      (local $incr f32)
+      (local $fract f32)
+      
+      ;; load phase [64]
+      local.get $idx
+      i32.const 8
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      ;;(call $get-property (local.get $idx) )
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
       )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs
-    
-    ;; set $phase in range of 0-len
-    f32.const 1024
-    f32.mul
-    local.tee $phase
-    
-    ;; get base index by rounding $phase down
-    i32.trunc_f32_u
-    local.set $base
-    
-    ;; multiply base index by 4 and load
-    local.get $base
-    i32.const 4
-    i32.mul
-    i32.const 1024
-    i32.add
-    f32.load
-    local.set $floor 
-    
-    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
-    local.get $base
-    i32.const 1
-    i32.add
-    i32.const 1023
-    i32.and
-    i32.const 4
-    i32.mul
-    i32.const 1024
-    i32.add
-    f32.load
-    local.set $ceil
-    
-    ;; get fractional part via phase - floor( phase )
-    local.get $phase
-    local.get $phase
-    f32.floor
-    f32.sub
-    local.set $fract
-    
-    ;; multiply difference between ceil and floor by fractional part and 
-    ;; add to floor
-    local.get $ceil
-    local.get $floor
-    f32.sub
-    local.get $fract
-    f32.mul
-    local.get $floor
-    f32.add
-  )
+      global.get $sr
+      f32.div
+      f32.add
+      local.set $newphs
 
-  (func $cycle_s (export "cycle_s") (param $idx i32) (result f32)
-    (local $newphs f32)
-    (local $phase f32)
-    (local $floor f32)
-    (local $ceil f32)
-    (local $base i32)
-    (local $incr f32)
-    (local $fract f32)
-    
-    ;; load phase [64]
-    local.get $idx
-    i32.const 8
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    ;;(call $get-property (local.get $idx) )
-    local.get $idx
-    i32.const 4
-    i32.add
-    f32.load
-    global.get $sr
-    f32.div
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 8
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap)
-    (f32.lt (local.get $newphs) (f32.const 1.0))
-    ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
-    ;;i32.and
-    if (result f32)
-      (local.get $newphs)
-    else
-      (f32.sub 
-        (local.get $newphs) 
-        (f32.const 1.0) 
-      )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs
-    
-    ;; set $phase in range of 0-len
-    f32.const 1024
-    f32.mul
-    local.tee $phase
-    
-    ;; get base index by rounding $phase down
-    i32.trunc_f32_u
-    local.set $base
-    
-    ;; multiply base index by 4 and load
-    local.get $base
-    i32.const 4
-    i32.mul
-    i32.const 1024
-    i32.add
-    f32.load
-    local.set $floor 
-    
-    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
-    local.get $base
-    i32.const 1
-    i32.add
-    i32.const 1023
-    i32.and
-    i32.const 4
-    i32.mul
-    i32.const 1024
-    i32.add
-    f32.load
-    local.set $ceil
-    
-    ;; get fractional part via phase - floor( phase )
-    local.get $phase
-    local.get $phase
-    f32.floor
-    f32.sub
-    local.set $fract
-    
-    ;; multiply difference between ceil and floor by fractional part and 
-    ;; add to floor
-    local.get $ceil
-    local.get $floor
-    f32.sub
-    local.get $fract
-    f32.mul
-    local.get $floor
-    f32.add
-  )
-
-  ;; how many of these do we actually need to fill in?
-  (func $sah_s_s_s (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_s_s_d (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_s_d_s (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_s_d_d (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_d_s_s (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_d_s_d (param $loc i32) (result f32) (f32.const 0) )
-  (func $sah_d_d_s (export "sah_d_d_s") (param $loc i32) (result f32)
-    (local $valueinput f32)
-    (local $controlinput f32)
-    (local $threshold f32)
-    (local $lastvalue f32)
-    (local $lastcontrol f32)
-    (local $trigger f32)
-    
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
-    )
-    local.set $valueinput
-    
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
-    )
-    local.set $controlinput
-        
-    local.get $loc
-    i32.const 12
-    i32.add
-    f32.load
-    local.set $threshold
-    
-    local.get $loc
-    i32.const 20
-    i32.add
-    f32.load
-    local.set $lastcontrol
-    
-    (f32.gt
-      (local.get $controlinput)
-      (local.get $threshold)
-    )
-    f32.convert_i32_u
-    
-    local.tee $trigger
-    local.get $lastcontrol
-    f32.ne
-    
-    if
-      local.get $trigger
-      i32.trunc_f32_u
-      if
-        local.get $loc
-        i32.const 16
-        i32.add
-        local.get $valueinput
-        f32.store
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 8
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap)
+      (f32.lt (local.get $newphs) (f32.const 1.0))
+      ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
+      ;;i32.and
+      if (result f32)
+        (local.get $newphs)
+      else
+        (f32.sub 
+          (local.get $newphs) 
+          (f32.const 1.0) 
+        )
+        local.tee $newphs 
       end
+      
+      f32.store
+      local.get $newphs
+      
+      ;; set $phase in range of 0-len
+      f32.const 1024
+      f32.mul
+      local.tee $phase
+      
+      ;; get base index by rounding $phase down
+      i32.trunc_f32_u
+      local.set $base
+      
+      ;; multiply base index by 4 and load
+      local.get $base
+      i32.const 4
+      i32.mul
+      i32.const 1024
+      i32.add
+      f32.load
+      local.set $floor 
+      
+      ;; add one to base index, constrain to 0-1023, multiply by 4, and load
+      local.get $base
+      i32.const 1
+      i32.add
+      i32.const 1023
+      i32.and
+      i32.const 4
+      i32.mul
+      i32.const 1024
+      i32.add
+      f32.load
+      local.set $ceil
+      
+      ;; get fractional part via phase - floor( phase )
+      local.get $phase
+      local.get $phase
+      f32.floor
+      f32.sub
+      local.set $fract
+      
+      ;; multiply difference between ceil and floor by fractional part and 
+      ;; add to floor
+      local.get $ceil
+      local.get $floor
+      f32.sub
+      local.get $fract
+      f32.mul
+      local.get $floor
+      f32.add
+    )
+
+    (func $cycle_s (export "cycle_s") (param $idx i32) (result f32)
+      (local $newphs f32)
+      (local $phase f32)
+      (local $floor f32)
+      (local $ceil f32)
+      (local $base i32)
+      (local $incr f32)
+      (local $fract f32)
+      
+      ;; load phase [64]
+      local.get $idx
+      i32.const 8
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      ;;(call $get-property (local.get $idx) )
+      local.get $idx
+      i32.const 4
+      i32.add
+      f32.load
+      global.get $sr
+      f32.div
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 8
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap)
+      (f32.lt (local.get $newphs) (f32.const 1.0))
+      ;;(i32.eqz (i32.load (i32.add (local.get $idx) (i32.const 41) ) ) )
+      ;;i32.and
+      if (result f32)
+        (local.get $newphs)
+      else
+        (f32.sub 
+          (local.get $newphs) 
+          (f32.const 1.0) 
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs
+      
+      ;; set $phase in range of 0-len
+      f32.const 1024
+      f32.mul
+      local.tee $phase
+      
+      ;; get base index by rounding $phase down
+      i32.trunc_f32_u
+      local.set $base
+      
+      ;; multiply base index by 4 and load
+      local.get $base
+      i32.const 4
+      i32.mul
+      i32.const 1024
+      i32.add
+      f32.load
+      local.set $floor 
+      
+      ;; add one to base index, constrain to 0-1023, multiply by 4, and load
+      local.get $base
+      i32.const 1
+      i32.add
+      i32.const 1023
+      i32.and
+      i32.const 4
+      i32.mul
+      i32.const 1024
+      i32.add
+      f32.load
+      local.set $ceil
+      
+      ;; get fractional part via phase - floor( phase )
+      local.get $phase
+      local.get $phase
+      f32.floor
+      f32.sub
+      local.set $fract
+      
+      ;; multiply difference between ceil and floor by fractional part and 
+      ;; add to floor
+      local.get $ceil
+      local.get $floor
+      f32.sub
+      local.get $fract
+      f32.mul
+      local.get $floor
+      f32.add
+    )
+
+    ;; how many of these do we actually need to fill in?
+    (func $sah_s_s_s (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_s_s_d (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_s_d_s (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_s_d_d (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_d_s_s (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_d_s_d (param $loc i32) (result f32) (f32.const 0) )
+    (func $sah_d_d_s (export "sah_d_d_s") (param $loc i32) (result f32)
+      (local $valueinput f32)
+      (local $controlinput f32)
+      (local $threshold f32)
+      (local $lastvalue f32)
+      (local $lastcontrol f32)
+      (local $trigger f32)
+      
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+      )
+      local.set $valueinput
+      
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+      )
+      local.set $controlinput
+          
+      local.get $loc
+      i32.const 12
+      i32.add
+      f32.load
+      local.set $threshold
       
       local.get $loc
       i32.const 20
       i32.add
-      local.get $trigger
-      f32.store
-    end
-    
-    local.get $loc
-    i32.const 16
-    i32.add
-    f32.load
-  )
-
-  (func $sah_d_d_d (export "sah_d_d_d") (param $loc i32) (result f32)
-    (local $valueinput f32)
-    (local $controlinput f32)
-    (local $threshold f32)
-    (local $lastvalue f32)
-    (local $lastcontrol f32)
-    (local $trigger f32)
-    
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
-    )
-    local.set $valueinput
-    
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
-    )
-    local.set $controlinput
-        
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ) ;; fid
-    )
-    local.set $threshold
-    
-    local.get $loc
-    i32.const 20
-    i32.add
-    f32.load
-    local.set $lastcontrol
-    
-    (f32.gt
-      (local.get $controlinput)
-      (local.get $threshold)
-    )
-    f32.convert_i32_u
-    
-    local.tee $trigger
-    local.get $lastcontrol
-    f32.ne
-    
-    if
-      local.get $trigger
-      i32.trunc_f32_u
+      f32.load
+      local.set $lastcontrol
+      
+      (f32.gt
+        (local.get $controlinput)
+        (local.get $threshold)
+      )
+      f32.convert_i32_u
+      
+      local.tee $trigger
+      local.get $lastcontrol
+      f32.ne
+      
       if
+        local.get $trigger
+        i32.trunc_f32_u
+        if
+          local.get $loc
+          i32.const 16
+          i32.add
+          local.get $valueinput
+          f32.store
+        end
+        
         local.get $loc
-        i32.const 16
+        i32.const 20
         i32.add
-        local.get $valueinput
+        local.get $trigger
         f32.store
       end
       
       local.get $loc
+      i32.const 16
+      i32.add
+      f32.load
+    )
+
+    (func $sah_d_d_d (export "sah_d_d_d") (param $loc i32) (result f32)
+      (local $valueinput f32)
+      (local $controlinput f32)
+      (local $threshold f32)
+      (local $lastvalue f32)
+      (local $lastcontrol f32)
+      (local $trigger f32)
+      
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+      )
+      local.set $valueinput
+      
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+      )
+      local.set $controlinput
+          
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ) ;; fid
+      )
+      local.set $threshold
+      
+      local.get $loc
       i32.const 20
       i32.add
-      local.get $trigger
+      f32.load
+      local.set $lastcontrol
+      
+      (f32.gt
+        (local.get $controlinput)
+        (local.get $threshold)
+      )
+      f32.convert_i32_u
+      
+      local.tee $trigger
+      local.get $lastcontrol
+      f32.ne
+      
+      if
+        local.get $trigger
+        i32.trunc_f32_u
+        if
+          local.get $loc
+          i32.const 16
+          i32.add
+          local.get $valueinput
+          f32.store
+        end
+        
+        local.get $loc
+        i32.const 20
+        i32.add
+        local.get $trigger
+        f32.store
+      end
+      
+      local.get $loc
+      i32.const 16
+      i32.add
+      f32.load
+    )
+    
+
+  (func $counter_s_s_s (export "counter_s_s_s") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
+    
+    ;; check phase reset flag [64]
+    ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
+    local.get $idx
+    i32.const 8
+    i32.add
+    f32.load
+    i32.trunc_f32_u
+    i32.eqz
+    if (result f32)
+      ;; get max [32]
+      local.get $idx
+      i32.const 12
+      i32.add
+      f32.load
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      local.get $idx
+      i32.const 4
+      i32.add
+      f32.load
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
       f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
     end
-    
-    local.get $loc
-    i32.const 16
-    i32.add
-    f32.load
   )
-  
 
-(func $counter_s_s_s (export "counter_s_s_s") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [64]
-  ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
-  local.get $idx
-  i32.const 8
-  i32.add
-  f32.load
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
+  (func $counter_s_s_d (export "counter_s_s_d") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
+    
+    ;; check phase reset flag [64]
+    ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
     local.get $idx
-    i32.const 12
+    i32.const 8
     i32.add
     f32.load
-    local.set $max
-    
-    ;; load phase [48]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    local.get $idx
-    i32.const 4
-    i32.add
-    f32.load
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
+    i32.trunc_f32_u
+    i32.eqz
     if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
+      ;; get max [32]
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
       )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      local.get $idx
+      i32.const 4
+      i32.add
+      f32.load
+      f32.add
+      local.set $newphs
 
-(func $counter_s_s_d (export "counter_s_s_d") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [64]
-  ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
-  local.get $idx
-  i32.const 8
-  i32.add
-  f32.load
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
-    )
-    local.set $max
-    
-    ;; load phase [48]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    local.get $idx
-    i32.const 4
-    i32.add
-    f32.load
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
-    if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
     else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
-      )
-      local.tee $newphs 
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
     end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
-
-(func $counter_s_d_s (export "counter_s_d_s") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [8]
-  (call_indirect (type $sig-i32--f32) 
-    (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
-    (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
   )
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [12]
-    local.get $idx
-    i32.const 12
-    i32.add
-    f32.load
-    local.set $max
-    
-    ;; load phase [16]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [4] and add to current phase
-    ;; to obtain new phase
-    local.get $idx
-    i32.const 4
-    i32.add
-    f32.load
-    f32.add
-    local.set $newphs
 
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
+  (func $counter_s_d_s (export "counter_s_d_s") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
     
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
+    ;; check phase reset flag [8]
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+    )
+    i32.trunc_f32_u
+    i32.eqz
     if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
-      )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
+      ;; get max [12]
+      local.get $idx
+      i32.const 12
+      i32.add
+      f32.load
+      local.set $max
+      
+      ;; load phase [16]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [4] and add to current phase
+      ;; to obtain new phase
+      local.get $idx
+      i32.const 4
+      i32.add
+      f32.load
+      f32.add
+      local.set $newphs
 
-(func $counter_s_d_d (export "counter_s_d_d") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [8]
-  (call_indirect (type $sig-i32--f32) 
-    (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
-    (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
+    end
   )
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [12]
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
-    )
-    local.set $max
-    
-    ;; load phase [16]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [4] and add to current phase
-    ;; to obtain new phase
-    local.get $idx
-    i32.const 4
-    i32.add
-    f32.load
-    f32.add
-    local.set $newphs
 
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
+  (func $counter_s_d_d (export "counter_s_d_d") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
     
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
+    ;; check phase reset flag [8]
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+    )
+    i32.trunc_f32_u
+    i32.eqz
     if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
+      ;; get max [12]
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
       )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
+      local.set $max
+      
+      ;; load phase [16]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [4] and add to current phase
+      ;; to obtain new phase
+      local.get $idx
+      i32.const 4
+      i32.add
+      f32.load
+      f32.add
+      local.set $newphs
 
-(func $counter_d_s_s (export "counter_d_s_s") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [64]
-  ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
-  local.get $idx
-  i32.const 8
-  i32.add
-  f32.load
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
-    local.get $idx
-    i32.const 12
-    i32.add
-    f32.load
-    local.set $max
-    
-    ;; load phase [48]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
-    )
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
-    if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
     else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
-      )
-      local.tee $newphs 
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
     end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
-
-(func $counter_d_s_d (export "counter_d_s_d") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [64]
-  ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
-  local.get $idx
-  i32.const 8
-  i32.add
-  f32.load
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
-    )
-    local.set $max
-    
-    ;; load phase [48]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
-    )
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
-    if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
-      )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
-
-(func $counter_d_d_s (export "counter_d_d_s") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [8]
-  (call_indirect (type $sig-i32--f32) 
-    (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
-    (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
   )
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
-    local.get $idx
-    i32.const 12
-    i32.add
-    f32.load
-    local.set $max
-    
-    ;; load phase [48]
-    local.get $idx
-    i32.const 16
-    i32.add
-    f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
-    )
-    f32.add
-    local.set $newphs
 
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
+  (func $counter_d_s_s (export "counter_d_s_s") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
     
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
+    ;; check phase reset flag [64]
+    ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
+    local.get $idx
+    i32.const 8
+    i32.add
+    f32.load
+    i32.trunc_f32_u
+    i32.eqz
     if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
+      ;; get max [32]
+      local.get $idx
+      i32.const 12
+      i32.add
+      f32.load
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
       )
-      local.tee $newphs 
-    end
-    
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
+      f32.add
+      local.set $newphs
 
-(func $counter_d_d_d (export "counter_d_d_d") 
-  (param $idx i32)
-  (result f32)
-  (local $newphs f32)
-  (local $max f32)
-  
-  ;; check phase reset flag [8]
-  (call_indirect (type $sig-i32--f32) 
-    (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
-    (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
+    end
   )
-  i32.trunc_f32_u
-  i32.eqz
-  if (result f32)
-    ;; get max [32]
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
-    )
-    local.set $max
+
+  (func $counter_d_s_d (export "counter_d_s_d") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
     
-    ;; load phase [48]
+    ;; check phase reset flag [64]
+    ;;(call $get-property (i32.add (local.get $idx) (i32.const 16) ) )
     local.get $idx
-    i32.const 16
+    i32.const 8
     i32.add
     f32.load
-    
-    ;; get phase increment [0] and add to current phase
-    ;; to obtain new phase
-    (call_indirect (type $sig-i32--f32) 
-      (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
-      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
-    )
-    f32.add
-    local.set $newphs
-
-    ;; push phase idx for set-property to the stack
-    local.get $idx
-    i32.const 16
-    i32.add
-    
-    ;; wrap phase if needed
-    ;; no branch if condition is true so use that for
-    ;; the most common result (phase increments with no wrap).
-    ;; also, set wrap flag to either 1 or 0
-    (f32.lt (local.get $newphs) (local.get $max))
+    i32.trunc_f32_u
+    i32.eqz
     if (result f32)
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
-      (local.get $newphs)
-    else
-      (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
-      (f32.sub 
-        (local.get $newphs) 
-        (local.get $max)
+      ;; get max [32]
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
       )
-      local.tee $newphs 
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
+      )
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
     end
+  )
+
+  (func $counter_d_d_s (export "counter_d_d_s") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
     
-    f32.store
-    local.get $newphs 
-  else
-    ;; reset.value [68] to 0
-    ;; (call $set-property 
-    ;;   (i32.add (local.get $idx) (i32.const 16) ) 
-    ;;   (f32.const 0) 
-    ;; )
-    ;; set phase.value to $min [65]
-    (f32.store
-      (i32.add (local.get $idx) (i32.const 16)) 
-      (f32.const 0.0)
-    ) 
-    (f32.const 0)
-  end
-)
+    ;; check phase reset flag [8]
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+    )
+    i32.trunc_f32_u
+    i32.eqz
+    if (result f32)
+      ;; get max [32]
+      local.get $idx
+      i32.const 12
+      i32.add
+      f32.load
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
+      )
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
+    end
+  )
+
+  (func $counter_d_d_d (export "counter_d_d_d") 
+    (param $idx i32)
+    (result f32)
+    (local $newphs f32)
+    (local $max f32)
+    
+    ;; check phase reset flag [8]
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $idx) (i32.const 8) ) ) ) ;; fid
+    )
+    i32.trunc_f32_u
+    i32.eqz
+    if (result f32)
+      ;; get max [32]
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 12) ) ) ) ;; fid
+      )
+      local.set $max
+      
+      ;; load phase [48]
+      local.get $idx
+      i32.const 16
+      i32.add
+      f32.load
+      
+      ;; get phase increment [0] and add to current phase
+      ;; to obtain new phase
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $idx) (i32.const 4) ) ) ) ;; fid
+      )
+      f32.add
+      local.set $newphs
+
+      ;; push phase idx for set-property to the stack
+      local.get $idx
+      i32.const 16
+      i32.add
+      
+      ;; wrap phase if needed
+      ;; no branch if condition is true so use that for
+      ;; the most common result (phase increments with no wrap).
+      ;; also, set wrap flag to either 1 or 0
+      (f32.lt (local.get $newphs) (local.get $max))
+      if (result f32)
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 0) )
+        (local.get $newphs)
+      else
+        (f32.store (i32.add (local.get $idx) (i32.const 20) ) (f32.const 1) ) 
+        (f32.sub 
+          (local.get $newphs) 
+          (local.get $max)
+        )
+        local.tee $newphs 
+      end
+      
+      f32.store
+      local.get $newphs 
+    else
+      ;; reset.value [68] to 0
+      ;; (call $set-property 
+      ;;   (i32.add (local.get $idx) (i32.const 16) ) 
+      ;;   (f32.const 0) 
+      ;; )
+      ;; set phase.value to $min [65]
+      (f32.store
+        (i32.add (local.get $idx) (i32.const 16)) 
+        (f32.const 0.0)
+      ) 
+      (f32.const 0)
+    end
+  )
   ;; Bus- a bus adds a bunch of signals together, and then
   ;; scales them and pans (gain/pan is TODO)
   ;; 
@@ -3407,81 +3364,81 @@
     f32.add  
   )
 
+  ;; TODO
   (func $slide_s_s_s (export "slide_s_s_s") )
   (func $slide_s_s_d (export "slide_s_s_d") )
   (func $slide_s_d_s (export "slide_s_d_s") )
   (func $slide_s_d_d (export "slide_s_d_d") )
-  ;; (func $slide_d_s_s (export "slide_d_s_s") )
   (func $slide_d_s_d (export "slide_d_s_d") )
   (func $slide_d_d_s (export "slide_d_d_s") )
   (func $slide_d_d_d (export "slide_d_d_d") )
 
-(func $slide_d_s_s (export "slide_d_s_s") (param $loc i32) (result f32)
-  (local $y f32)
-  (local $input f32)
-  (local $slideup f32)
-  (local $slidedown f32)
-  (local $filter f32)
-  (local $slideamount f32)
+  (func $slide_d_s_s (export "slide_d_s_s") (param $loc i32) (result f32)
+    (local $y f32)
+    (local $input f32)
+    (local $slideup f32)
+    (local $slidedown f32)
+    (local $filter f32)
+    (local $slideamount f32)
 
-  (call_indirect (type $sig-i32--f32) 
-    (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
-    (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
-  )
-  local.set $input
-
-  local.get $loc
-  i32.const 8
-  i32.add
-  f32.load
-  local.set $slideup
-
-  local.get $loc
-  i32.const 12
-  i32.add
-  f32.load
-  local.set $slidedown
-
-  local.get $loc
-  i32.const 16
-  i32.add
-  f32.load
-  local.set $filter
-
-  (select
-    (local.get $slideup )
-    (local.get $slideup )
-    (f32.gt (local.get $input) (local.get $filter))
-  )
-  local.set $slideamount
-
-  ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
-  (f32.add
-    (local.get $filter)
-    (f32.div
-      (f32.sub (local.get $input) (local.get $filter) )
-      (local.get $slideamount)
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
-  )
-  (local.set $filter)
+    local.set $input
 
-  (f32.store
-    (i32.add
-      (local.get $loc)
-      (i32.const 16)
+    local.get $loc
+    i32.const 8
+    i32.add
+    f32.load
+    local.set $slideup
+
+    local.get $loc
+    i32.const 12
+    i32.add
+    f32.load
+    local.set $slidedown
+
+    local.get $loc
+    i32.const 16
+    i32.add
+    f32.load
+    local.set $filter
+
+    (select
+      (local.get $slideup )
+      (local.get $slideup )
+      (f32.gt (local.get $input) (local.get $filter))
     )
-    (local.get $filter)
+    local.set $slideamount
+
+    ;;filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
+    (f32.add
+      (local.get $filter)
+      (f32.div
+        (f32.sub (local.get $input) (local.get $filter) )
+        (local.get $slideamount)
+      )
+    )
+    (local.set $filter)
+
+    (f32.store
+      (i32.add
+        (local.get $loc)
+        (i32.const 16)
+      )
+      (local.get $filter)
+    )
+
+    local.get $filter
   )
 
-  local.get $filter
-)
-
-(func $param_d (export "param_d") (param $loc i32) (result f32)
-  local.get $loc
-  i32.const 4
-  i32.add
-  f32.load
-)
+  (func $param_d (export "param_d") (param $loc i32) (result f32)
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+  )
 
 
   ;; I guess you could have 0 to fade as a justification to fill out
@@ -3566,10 +3523,7 @@
     )
   )
   
-  (func $ad_s_d (export "ad_s_d"))
-  (func $ad_d_s (export "ad_d_s"))
-  (func $ad_d_d (export "ad_d_d"))
-  
+  ;; TODO don't call out to accum_s_d? 
   (func $ad_s_s (export "ad_s_s") (param $loc i32) (result f32)
     (local $attack f32)
     (local $decay f32)
@@ -3612,138 +3566,305 @@
       end 
     end
   )
-  
 
-
-
-
-
-;; adapted from:
-;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
-(func $noise (export "noise") (param $loc i32) (result f32)
-  (local $0 i32)
-  (local $1 i32)
-  (i32.store
-    (i32.add (local.get $loc) (i32.const 12) )
-    (local.tee $1
-      (i32.xor
-        (i32.load
-          (i32.add (local.get $loc) (i32.const 12) )
+  (func $ad_s_d (export "ad_s_d") (param $loc i32) (result f32)
+    (local $attack f32)
+    (local $decay f32)
+    (local $phase f32)
+    
+    local.get $loc
+    i32.const 20 ;; + 12 for ad, + 8 for bang 
+    i32.add
+    call $accum_s_d
+    local.set $phase
+    
+    local.get $loc
+    i32.const 4
+    i32.add
+    f32.load
+    local.set $attack
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $decay
+    
+    ;; if env is over (phase is > than attack + decay )
+    (f32.gt (local.get $phase) (f32.add (local.get $attack) (local.get $decay)))
+    if (result f32)
+      f32.const 0
+    else
+      (f32.lt (local.get $phase) (local.get $attack) )
+      if (result f32)
+        local.get $phase
+        local.get $attack
+        f32.div
+      else
+        (f32.sub
+          (f32.const 1)
+          (f32.div
+            (f32.sub (local.get $phase) (local.get $attack) )
+            (local.get $decay)
+          )
         )
-        (local.tee $0
+      end 
+    end
+  )
+
+  (func $ad_d_s (export "ad_d_s") (param $loc i32) (result f32)
+    (local $attack f32)
+    (local $decay f32)
+    (local $phase f32)
+    
+    local.get $loc
+    i32.const 20 ;; + 12 for ad, + 8 for bang 
+    i32.add
+    call $accum_s_d
+    local.set $phase
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $attack
+    
+    (i32.add (local.get $loc) (i32.const 8))
+    f32.load
+    local.set $decay
+    
+    ;; if env is over (phase is > than attack + decay )
+    (f32.gt (local.get $phase) (f32.add (local.get $attack) (local.get $decay)))
+    if (result f32)
+      f32.const 0
+    else
+      (f32.lt (local.get $phase) (local.get $attack) )
+      if (result f32)
+        local.get $phase
+        local.get $attack
+        f32.div
+      else
+        (f32.sub
+          (f32.const 1)
+          (f32.div
+            (f32.sub (local.get $phase) (local.get $attack) )
+            (local.get $decay)
+          )
+        )
+      end 
+    end
+  )
+
+  (func $ad_d_d (export "ad_d_d") (param $loc i32) (result f32)
+    (local $attack f32)
+    (local $decay f32)
+    (local $phase f32)
+    
+    local.get $loc
+    i32.const 20 ;; + 12 for ad, + 8 for bang 
+    i32.add
+    call $accum_s_d
+    local.set $phase
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $attack
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $decay
+    
+    ;; if env is over (phase is > than attack + decay )
+    (f32.gt (local.get $phase) (f32.add (local.get $attack) (local.get $decay)))
+    if (result f32)
+      f32.const 0
+    else
+      (f32.lt (local.get $phase) (local.get $attack) )
+      if (result f32)
+        local.get $phase
+        local.get $attack
+        f32.div
+      else
+        (f32.sub
+          (f32.const 1)
+          (f32.div
+            (f32.sub (local.get $phase) (local.get $attack) )
+            (local.get $decay)
+          )
+        )
+      end 
+    end
+  )
+
+  (func $ifelse_s_s_s (export "ifelse_s_s_s") (result f32) f32.const 0)
+  (func $ifelse_s_s_d (export "ifelse_s_s_d") (result f32) f32.const 0)
+  (func $ifelse_s_d_s (export "ifelse_s_d_s") (result f32) f32.const 0)
+  (func $ifelse_s_d_d (export "ifelse_s_d_d") (result f32) f32.const 0)
+  (func $ifelse_d_s_d (export "ifelse_d_s_d") (result f32) f32.const 0)
+  (func $ifelse_d_d_s (export "ifelse_d_d_s") (result f32) f32.const 0)
+  (func $ifelse_d_s_s (export "ifelse_d_s_s") (result f32) f32.const 0)
+
+  ;; only runs the "true" expression, the false expression
+  ;; does not calculate samples.
+  (func $ifelse_d_d_d (export "ifelse") (param $loc i32) (result f32)
+    (select
+      (i32.const 8)
+      (i32.const 12)
+      (i32.trunc_f32_u     
+        (call_indirect (type $sig-i32--f32) 
+          (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+          (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+        )
+      )
+    )
+
+    local.get $loc
+    i32.add
+    local.set $loc
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (local.get $loc) ) ;; data location
+      (i32.load (i32.load (local.get $loc) ) ) ;; fid
+    )
+  )
+
+  ;; both expressions calculate samples
+  (func $ifelse2 (export "ifelse2") (param $loc i32) (result f32)
+    (select
+      (call $get-property (i32.add (i32.const 16) (local.get $loc) ) )
+      (call $get-property (i32.add (i32.const 32) (local.get $loc) ) )
+      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
+    )
+  )
+
+  ;; adapted from:
+  ;; https://www.musicdsp.org/en/latest/Synthesis/216-fast-whitenoise-generator.html
+  (func $noise (export "noise") (param $loc i32) (result f32)
+    (local $0 i32)
+    (local $1 i32)
+    (i32.store
+      (i32.add (local.get $loc) (i32.const 12) )
+      (local.tee $1
+        (i32.xor
           (i32.load
-            (i32.add (local.get $loc) (i32.const 8) )
+            (i32.add (local.get $loc) (i32.const 12) )
+          )
+          (local.tee $0
+            (i32.load
+              (i32.add (local.get $loc) (i32.const 8) )
+            )
           )
         )
       )
     )
-  )
-  (i32.store
-    (i32.add (local.get $loc) (i32.const 8) )
-    (i32.add
-      (local.get $1)
-      (local.get $0)
-    )
-  )
-  (f32.mul
-    (f32.add
-      (f32.mul
-        (f32.load
-          (i32.add (local.get $loc) (i32.const 4))
-        )
-        (f32.convert_i32_s
-          (local.get $0)
-        )
-      )
-      (f32.const 1)
-    )
-    (f32.const 0.5)
-  )
-)
-
-
-
-(func $float (export "float") (param $loc i32) (result f32)
-  local.get $loc
-  f32.load
-)
-
-(func $caller (export "caller") (param $loc i32) (result f32)
-  (local $offset i32)
-  local.get $loc
-  call $get-property
-  drop
-
-  ;; get offset where data is stored
-  local.get $loc
-  i32.const 8
-  i32.add
-  i32.load
-  local.tee $offset
-
-  ;; get data location function being called
-  ;; 12 is the location offset of the input property
-  ;; (i32.add
-  ;;   (local.get $loc)
-  ;;   (i32.const 12)
-  ;; )
-  ;; i32.load
-
-  ;; i32.add
-
-  ;; load output data
-  f32.load
-)
-
-
-;; render a function for a given number
-;; of samples to shared memory. can
-;; replace using a for-loop in the main thread
-;; to read samples one at a time.
-(func $render (export "render") 
-  (param $loc i32) ;; memory location for function to call
-  (param $len i32) ;; number of samples to render
-  (param $idx i32) ;; position in memory to write to
-  (result     i32) ;; return number of samples rendered
-  (local $i   i32) ;; iterator for loop
-  (local $fid i32)
-  
-  (loop $l
-    ;; store call fnc and store output at $idx
-    (f32.store 
-      (local.get $idx)
-      (call_indirect (type $sig-i32--f32) 
-        (local.get $loc)
-        (i32.load (local.get $loc) )
+    (i32.store
+      (i32.add (local.get $loc) (i32.const 8) )
+      (i32.add
+        (local.get $1)
+        (local.get $0)
       )
     )
-          
-    ;; increment i
-    local.get $i
-    i32.const 1
-    i32.add
-    local.set $i
-    
-    ;; update idx to next storage position
-    local.get $idx
-    i32.const 4
-    i32.add
-    local.set $idx
+    (f32.mul
+      (f32.add
+        (f32.mul
+          (f32.load
+            (i32.add (local.get $loc) (i32.const 4))
+          )
+          (f32.convert_i32_s
+            (local.get $0)
+          )
+        )
+        (f32.const 1)
+      )
+      (f32.const 0.5)
+    )
+  )
 
-    global.get $clock
-    i32.const 1
-    i32.add 
-    global.set $clock
+  (func $float (export "float") (param $loc i32) (result f32)
+    local.get $loc
+    f32.load
+  )
+
+  (func $caller (export "caller") (param $loc i32) (result f32)
+    (local $offset i32)
+    local.get $loc
+    call $get-property
+    drop
+
+    ;; get offset where data is stored
+    local.get $loc
+    i32.const 8
+    i32.add
+    i32.load
+    local.tee $offset
+
+    ;; get data location function being called
+    ;; 12 is the location offset of the input property
+    ;; (i32.add
+    ;;   (local.get $loc)
+    ;;   (i32.const 12)
+    ;; )
+    ;; i32.load
+
+    ;; i32.add
+
+    ;; load output data
+    f32.load
+  )
+
+
+  ;; render a function for a given number
+  ;; of samples to shared memory. can
+  ;; replace using a for-loop in the main thread
+  ;; to read samples one at a time.
+  (func $render (export "render") 
+    (param $loc i32) ;; memory location for function to call
+    (param $len i32) ;; number of samples to render
+    (param $idx i32) ;; position in memory to write to
+    (result     i32) ;; return number of samples rendered
+    (local $i   i32) ;; iterator for loop
+    (local $fid i32)
     
-    ;; check if i > len and break $l if true
+    (loop $l
+      ;; store call fnc and store output at $idx
+      (f32.store 
+        (local.get $idx)
+        (call_indirect (type $sig-i32--f32) 
+          (local.get $loc)
+          (i32.load (local.get $loc) )
+        )
+      )
+            
+      ;; increment i
+      local.get $i
+      i32.const 1
+      i32.add
+      local.set $i
+      
+      ;; update idx to next storage position
+      local.get $idx
+      i32.const 4
+      i32.add
+      local.set $idx
+
+      global.get $clock
+      i32.const 1
+      i32.add 
+      global.set $clock
+      
+      ;; check if i > len and break $l if true
+      local.get $len
+      local.get $i
+      i32.gt_u 
+      br_if $l
+    )
+    
     local.get $len
-    local.get $i
-    i32.gt_u 
-    br_if $l
   )
-  
-  local.get $len
-)
 
   ;; render a function for a given number
   ;; of samples to shared memory. can
