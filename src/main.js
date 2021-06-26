@@ -596,6 +596,39 @@ let bang
   }
 }
 
+let ad
+{
+  let fid = fidx++
+  ad = function( attack=44100, decay=44100 ) {
+    // const obj = {
+    //   idx : getMemory( 4 ),
+    //   fid,
+    //   bang: bang()
+    // }
+    
+    // // accum memory location is +36 bytes (32 for ad, 4 for bang)
+    // obj.accum = accum(1, obj.bang, 0, MAX, attack+decay )
+  
+    // createProperty( obj, 'attack', obj.idx,     attack )
+    // createProperty( obj, 'decay',  obj.idx + 4, decay )
+    const obj = factory({ attack, decay }, {}, fid )
+    obj.bang = bang()
+    obj.accum = accum( 1, obj.bang, 0, MAX, 0 )
+    obj.trigger = obj.bang.trigger
+    // let trigger = obj.bang.trigger
+    // Object.defineProperty( obj, 'trigger', {
+    //   get() { return trigger },
+    //   set(v) {
+    //     obj.accum.reset = trigger = v
+    //   }
+    // })
+
+    memi[ obj.idx ] = fid
+
+    return obj
+  }
+}
+
 let ifelse
 {
   let fid = fidx++,
@@ -674,34 +707,6 @@ let clamp
     createProperty( obj, 'min', obj.idx + 4, min )
     createProperty( obj, 'max', obj.idx + 8, max )
     
-    return obj
-  }
-}
-
-let ad
-{
-  let fid = fidx++
-  ad = function( attack=44100, decay=44100 ) {
-    const obj = {
-      idx : getMemory( 8 ),
-      fid,
-      bang: bang()
-    }
-    
-    // accum memory location is +36 bytes (32 for ad, 4 for bang)
-    obj.accum = accum(1, obj.bang, 0, MAX, attack+decay )
-  
-    createProperty( obj, 'attack', obj.idx,     attack )
-    createProperty( obj, 'decay',  obj.idx + 4, decay )
-  
-    let trigger = obj.bang.trigger
-    Object.defineProperty( obj, 'trigger', {
-      get() { return trigger },
-      set(v) {
-        env.accum.reset = trigger = v
-      }
-    })
-
     return obj
   }
 }
