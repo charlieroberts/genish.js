@@ -47,7 +47,8 @@ window.onload = function() {
         'intro',
         'thereminish',  
         'oneDelayLine',
-        'slicingAndDicing', 
+        'slicingAndDicing',
+        'bandlimitedFM'
 
 /*       
         'sequencing', 

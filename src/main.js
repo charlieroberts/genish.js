@@ -20,8 +20,9 @@ window.utilities = {
   sampleRate: null,
   
   clear() {
-    memf.fill( 0, memclear )
+    memf.fill( 0, memclear-50 )
     m = memclear
+    // pokeindex =   getMemory( 50 )
     play([ add(0,0), add(0,0) ])
   },
 
@@ -290,7 +291,8 @@ const add = binop(),
       ltp = binop(),
       min = binop(),
       max = binop(),
-      pow = binop()
+      pow = binop(),
+      mod = binop()
   
 let accum
 {
@@ -311,9 +313,9 @@ let accum
 let phasor
 {
   const baseidx = fidx
-  fidx += 2
-  phasor = function( frequency=1, phase=0 ) {
-    const props = { frequency },
+  fidx += 4
+  phasor = function( frequency=1, reset=0, phase=0 ) {
+    const props = { frequency, reset },
           statics = { 
             'phase':{ value:phase, type:'f' } 
           }
@@ -602,28 +604,10 @@ let ad
   let fid = fidx
   fidx += 4
   ad = function( attack=44100, decay=44100 ) {
-    // const obj = {
-    //   idx : getMemory( 4 ),
-    //   fid,
-    //   bang: bang()
-    // }
-    
-    // // accum memory location is +36 bytes (32 for ad, 4 for bang)
-    // obj.accum = accum(1, obj.bang, 0, MAX, attack+decay )
-  
-    // createProperty( obj, 'attack', obj.idx,     attack )
-    // createProperty( obj, 'decay',  obj.idx + 4, decay )
     const obj = factory({ attack, decay }, {}, fid )
     obj.bang = bang()
     obj.accum = accum( 1, obj.bang, 0, MAX, 0 )
     obj.trigger = obj.bang.trigger
-    // let trigger = obj.bang.trigger
-    // Object.defineProperty( obj, 'trigger', {
-    //   get() { return trigger },
-    //   set(v) {
-    //     obj.accum.reset = trigger = v
-    //   }
-    // })
 
     memi[ obj.idx ] = fid
 
@@ -685,18 +669,18 @@ const data = function( __data, type='float' ) {
 
 let poke
 { 
-  let fid = fidx++
-  poke = function( data, value, index ) {
-    const obj = {
-      idx: getMemory( 9 ),
-      fid
-    }
+  const baseidx = fidx
+  fidx += 4
+  poke = function( value, index ) {
+    const props = { value,index },
+          statics = {}
     
-    createProperty( obj, 'value', obj.idx, x )
-    createProperty( obj, 'index', obj.idx + 4, y )
-    
-    memi[ obj.idx + 8 ] = data.idx
-  
+    const obj = factory( props, statics, baseidx )
+    memi[ pokeindex + pokecounter ] = obj.idx * 4
+    //memi[ pokeindex + pokecounter + 1 ] = 
+
+    pokecounter += 1
+
     return obj
   }
 }
@@ -717,29 +701,6 @@ let clamp
     return obj
   }
 }
-
-
-
-// let delay
-// {
-//   const fid = fidx++
-//   delay = function( input=0, time=22050, maxSize=44100 ) {
-//     const obj = {
-//       idx: getMemory( 1000 + maxSize ),
-//       fid,
-//       peek:  peek() // + 60
-//     }
-    
-//     createProperty( obj, 'input', obj.idx,     input )
-//     createProperty( obj, 'time',  obj.idx + 4, time )
-    
-//     memf[ obj.idx + 8 ] = maxSize
-//     memi[ obj.idx + 9 ] = 0 // write position
-    
-    
-//     return obj
-//   }
-// }
 
 let float 
 {
@@ -794,6 +755,8 @@ let pan
   }
 } 
 
+let pokeindex
+let pokecounter = 0
 function setupMemory( buffer ) {
   memf   = new Float32Array( buffer )
   memf64 = new Float64Array( buffer )
@@ -806,11 +769,13 @@ function setupMemory( buffer ) {
   // allocated for the right channel if the instrument
   // is mono
   getMemory( 128 )
+  pokeindex = getMemory( 50 )
 
   utilities.createWavetables()
 
   // store index for clearing memory
   memclear = m
+
 }
 
 window.node = node
