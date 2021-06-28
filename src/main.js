@@ -289,7 +289,8 @@ const add = binop(),
       gtp = binop(),
       ltp = binop(),
       min = binop(),
-      max = binop()
+      max = binop(),
+      pow = binop()
   
 let accum
 {
@@ -433,8 +434,8 @@ let counter
 
     Object.defineProperty( __memo, 'wrap', {
       get() {
-        // 52 is wrap offset
-        const out =  caller( __memo, 5 )
+        // address of wrap static
+        const out =  caller( __memo, (obj.idx * 4) + 20 )
         return out
       }
     })

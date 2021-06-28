@@ -27,7 +27,7 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 161 funcref)
+  (table 169 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -40,7 +40,7 @@
     $abs_d
     $sqrt_s
     $sqrt_d
-    $sin_s
+    $sin_s ;; 10
     $sin_d
     $cos_s
     $cos_d
@@ -50,7 +50,7 @@
     $asin_d
     $acos_s
     $acos_d
-    $atan_s
+    $atan_s ;; 20
     $atan_d
 
     ;; binops (16*4 = 64)
@@ -62,7 +62,7 @@
     $sub_s_d
     $sub_d_s
     $sub_d_d
-    $mul_s_s
+    $mul_s_s ;; 30
     $mul_s_d
     $mul_d_s
     $mul_d_d
@@ -72,7 +72,7 @@
     $div_d_d
     $and_s_s
     $and_s_d
-    $and_d_s
+    $and_d_s ;; 40
     $and_d_d
     $or_s_s
     $or_s_d
@@ -82,7 +82,7 @@
     $gt_s_d
     $gt_d_s
     $gt_d_d
-    $gte_s_s
+    $gte_s_s ;; 50
     $gte_s_d
     $gte_d_s
     $gte_d_d
@@ -92,7 +92,7 @@
     $lt_d_d
     $lte_s_s
     $lte_s_d
-    $lte_d_s
+    $lte_d_s ;; 60
     $lte_d_d
     $eq_s_s
     $eq_s_d
@@ -102,7 +102,7 @@
     $neq_s_d
     $neq_d_s
     $neq_d_d
-    $gtp_s_s
+    $gtp_s_s ;; 70
     $gtp_s_d
     $gtp_d_s
     $gtp_d_d
@@ -112,15 +112,19 @@
     $ltp_d_d
     $min_s_s
     $min_s_d
-    $min_d_s
+    $min_d_s ;; 80
     $min_d_d
     $max_s_s
     $max_s_d
     $max_d_s
     $max_d_d
+    $pow_s_s
+    $pow_s_d
+    $pow_d_s
+    $pow_d_d
 
     ;; other (starts at 86, 21)
-    $accum_s_s
+    $accum_s_s ;; 90
     $accum_s_d
     $accum_d_s
     $accum_d_d
@@ -130,7 +134,7 @@
     $peek_d
     $cycle_s
     $cycle_d
-    $noise
+    $noise     ;; 100
     $sah_s_s_s
     $sah_s_s_d
     $sah_s_d_s
@@ -142,7 +146,7 @@
     ;; TODO list memo twice for bug when static version
     ;; isn't provided; fix
     $memo
-    $memo
+    $memo      ;; 110
     $caller
     $caller
     $counter_s_s_s
@@ -152,7 +156,7 @@
     $counter_d_s_s
     $counter_d_s_d
     $counter_d_d_s
-    $counter_d_d_d
+    $counter_d_d_d ;; 120
 
     $bus
     $ssd
@@ -163,7 +167,7 @@
     $slide_s_s_s
     $slide_s_s_d
     $slide_s_d_s
-    $slide_s_d_d
+    $slide_s_d_d ;; 130
     $slide_d_s_s
     $slide_d_s_d
     $slide_d_d_s
@@ -173,7 +177,7 @@
     $mix_s_s_d
     $mix_s_d_s
     $mix_s_d_d
-    $mix_d_s_s
+    $mix_d_s_s ;; 140
     $mix_d_s_d
     $mix_d_d_s
     $mix_d_d_d
@@ -183,13 +187,25 @@
     $ad_d_s
     $ad_d_d
     $ifelse_s_s_s
-    $ifelse_s_s_d
+    $ifelse_s_s_d ;; 150
     $ifelse_s_d_s
     $ifelse_s_d_d
     $ifelse_d_s_s
     $ifelse_d_s_d
     $ifelse_d_d_s
     $ifelse_d_d_d
+    $ifelse2_s_s_s
+    $ifelse2_s_s_d
+    $ifelse2_s_d_s
+    $ifelse2_s_d_d ;; 160
+    $ifelse2_d_s_s
+    $ifelse2_d_s_d
+    $ifelse2_d_d_s
+    $ifelse2_d_d_d
+    $pow_s_s
+    $pow_s_d
+    $pow_d_s
+    $pow_d_d
     ;; $ifelse
     ;; $ifelse2
     
@@ -3710,6 +3726,14 @@
 
   ;; only runs the "true" expression, the false expression
   ;; does not calculate samples.
+  ;; TODO is this possible to code using our current d vs s scheme?
+  ;; with non-dynamic arguments there's no way to know whether the final
+  ;; line should be a call or a value lookup... it's all based on the
+  ;; results of evaluting the conditional.
+  ;; d_s_s would also be simple to implement. everything else...
+  ;; tricky! could probably do with another if statement that calls
+  ;; or looks up based on which value is chosen (set a flag), would need a regular
+  ;; branching if statement though.
   (func $ifelse_d_d_d (export "ifelse") (param $loc i32) (result f32)
     (select
       (i32.const 8)
@@ -3731,14 +3755,144 @@
       (i32.load (i32.load (local.get $loc) ) ) ;; fid
     )
   )
+  (func $ifelse2_s_s_s (export "ifelse2_s_s_s") (result f32) f32.const 0)
+  (func $ifelse2_s_s_d (export "ifelse2_s_s_d") (result f32) f32.const 0)
+  (func $ifelse2_s_d_s (export "ifelse2_s_d_s") (result f32) f32.const 0)
+  (func $ifelse2_s_d_d (export "ifelse2_s_d_d") (result f32) f32.const 0)
+  (func $ifelse2_d_s_d (export "ifelse2_d_s_d") (result f32) f32.const 0)
+  (func $ifelse2_d_d_s (export "ifelse2_d_d_s") (result f32) f32.const 0)
+  (func $ifelse2_d_s_s (export "ifelse2_d_s_s") (result f32) f32.const 0)
 
   ;; both expressions calculate samples
-  (func $ifelse2 (export "ifelse2") (param $loc i32) (result f32)
+  (func $ifelse2_d_d_d (export "ifelse2_d_d_d") (param $loc i32) (result f32)
     (select
-      (call $get-property (i32.add (i32.const 16) (local.get $loc) ) )
-      (call $get-property (i32.add (i32.const 32) (local.get $loc) ) )
-      (i32.trunc_f32_u (call $get-property (local.get $loc) ) )
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+      )
+      (call_indirect (type $sig-i32--f32) 
+        (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ;; data location
+        (i32.load (i32.load (i32.add (local.get $loc) (i32.const 12) ) ) ) ;; fid
+      )
+      (i32.trunc_f32_u 
+        (call_indirect (type $sig-i32--f32) 
+          (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+          (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+        )
+      )
     )
+  )
+
+  (func $pow_s_s (export "pow_s_s") (param $loc i32) (result f32) f32.const 0 )
+  (func $pow_s_d (export "pow_s_d") (param $loc i32) (result f32) f32.const 0 )
+
+  (func $pow_d_s (export "pow_d_s") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+    (local $out f32)
+    (local $index i32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $x
+
+    (f32.load (i32.add (local.get $loc) (i32.const 8)) )
+    local.set $y
+    
+    f32.const 1
+    local.set $out
+    i32.const 1
+    local.set $index
+
+    local.get $y
+    f32.const 0
+    f32.eq
+    if $i0
+      f32.const 1
+      return
+    end
+    
+    (block $b0
+      (loop $l0
+        (f32.mul 
+          (local.get $out)
+          (local.get $x)
+        )
+        local.set $out
+
+        (i32.add 
+          (local.get $index)
+          (i32.const 1)
+        )
+        local.tee $index
+        local.get $y
+        i32.trunc_f32_s
+        i32.gt_u
+        br_if 1
+
+        br 0
+      )
+    )
+
+    local.get $out
+  )
+
+  (func $pow_d_d (export "pow_d_d") (param $loc i32) (result f32)
+    (local $x f32)
+    (local $y f32)
+    (local $out f32)
+    (local $index i32)
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $x
+
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+    local.set $y
+    
+    f32.const 1
+    local.set $out
+    i32.const 1
+    local.set $index
+
+    local.get $y
+    f32.const 0
+    f32.eq
+    if $i0
+      f32.const 1
+      return
+    end
+    
+    (block $b0
+      (loop $l0
+        (f32.mul 
+          (local.get $out)
+          (local.get $x)
+        )
+        local.set $out
+
+        (i32.add 
+          (local.get $index)
+          (i32.const 1)
+        )
+        local.tee $index
+        local.get $y
+        i32.trunc_f32_s
+        i32.gt_u
+        br_if 1
+
+        br 0
+      )
+    )
+
+    local.get $out
   )
 
   ;; adapted from:
@@ -3791,26 +3945,17 @@
 
   (func $caller (export "caller") (param $loc i32) (result f32)
     (local $offset i32)
-    local.get $loc
-    call $get-property
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
     drop
 
-    ;; get offset where data is stored
+    ;; get address where data is stored
     local.get $loc
     i32.const 8
     i32.add
     i32.load
-    local.tee $offset
-
-    ;; get data location function being called
-    ;; 12 is the location offset of the input property
-    ;; (i32.add
-    ;;   (local.get $loc)
-    ;;   (i32.const 12)
-    ;; )
-    ;; i32.load
-
-    ;; i32.add
 
     ;; load output data
     f32.load
