@@ -48,14 +48,13 @@ window.onload = function() {
         'thereminish',  
         'oneDelayLine',
         'slicingAndDicing',
-        'bandlimitedFM'
+        'bandlimitedFM',
+        'sync'
 
 /*       
         'sequencing', 
-        'hardsync',
         'bitcrusher',
         'enveloping',
-        'bandlimitedFM',
         'biquad',
         'zeroDelay',
         'zeroDelayLadder',

@@ -20,9 +20,10 @@ window.utilities = {
   sampleRate: null,
   
   clear() {
-    memf.fill( 0, memclear-50 )
+    memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
+    memf.fill( 0, memclear )
     m = memclear
-    // pokeindex =   getMemory( 50 )
+    pokeindex =   getMemory( 50 )
     play([ add(0,0), add(0,0) ])
   },
 
@@ -113,7 +114,7 @@ fetch( '../dist/main.wasm')
 async function go() {
   if( !audioContext ) {
     try {
-      audioContext = new AudioContext({ latencyHint:0 })
+      audioContext = new AudioContext({ latencyHint:.1 })
       await audioContext.resume()
       await audioContext.audioWorklet.addModule( '../src/module.js' )
       
@@ -517,8 +518,8 @@ let delay
   delay = function( input=0, time=22050, maxSize=44100 ) {
     const props = { input, time },
     statics = {
-      maxSize: { value:maxSize, type:'f'},
-      writePos:{ value:0, type:'i'}
+      maxSize: { value:maxSize, type:'i'},
+      readPos:{ value:0, type:'f'}
     }
 
     const obj = factory( props, statics, baseidx )
@@ -603,9 +604,9 @@ let ad
 {
   let fid = fidx
   fidx += 4
-  ad = function( attack=44100, decay=44100 ) {
+  ad = function( attack=44100, decay=44100, __bang=null ) {
     const obj = factory({ attack, decay }, {}, fid )
-    obj.bang = bang()
+    obj.bang = __bang === null ? bang() : __bang
     obj.accum = accum( 1, obj.bang, 0, MAX, 0 )
     obj.trigger = obj.bang.trigger
 
@@ -649,7 +650,7 @@ const data = function( __data, type='float' ) {
       // load file, return promise
       obj = utilities.loadSample( __data )
     }
-  }else{ 
+  }else if( typeof __data === 'object' ){ 
     // array of data should be passed, 
     // copy into memory and return obj
     obj = { 
@@ -660,7 +661,12 @@ const data = function( __data, type='float' ) {
     if( type === 'float' ) {
       memf.set( __data, obj.idx )
     }else{
-      memf.set( __data, obj.idx )
+      memi.set( __data, obj.idx )
+    }
+  }else{
+    obj = { 
+      idx: getMemory( __data ),
+      length: __data
     }
   }
 
@@ -671,15 +677,16 @@ let poke
 { 
   const baseidx = fidx
   fidx += 4
-  poke = function( value, index ) {
+  poke = function( data, value=0, index=0 ) {
     const props = { value,index },
-          statics = {}
+          statics = {
+            data: { value:data.idx * 4, type:'i' }
+          }
     
     const obj = factory( props, statics, baseidx )
-    memi[ pokeindex + pokecounter ] = obj.idx * 4
-    //memi[ pokeindex + pokecounter + 1 ] = 
+    memi[ pokememoryindex + pokecounter ] = obj.idx * 4
 
-    pokecounter += 1
+    pokecounter++
 
     return obj
   }
@@ -702,21 +709,8 @@ let clamp
   }
 }
 
-let float 
-{
-  const fid = fidx++
-  float = function( idx ) {
-    const obj = {
-      idx,
-      fid
-    }
-
-    return obj
-  }
-}
-
-// TODO be sure to include information on how pan value
-// is automatically memoized. 
+// TODO be sure to include information on how mono pan
+// input is automatically memoized. 
 // There is only one extra indirect call here (the mul).
 // I think that's fine.
 let pan
@@ -755,24 +749,27 @@ let pan
   }
 } 
 
-let pokeindex
+let pokememoryindex = 1000
+let pokelength = 50
 let pokecounter = 0
-function setupMemory( buffer ) {
+function setupMemory( buffer, __pokelength=50 ) {
   memf   = new Float32Array( buffer )
   memf64 = new Float64Array( buffer )
   memi   = new Int32Array( buffer )  
   
   // for output buffer
   getMemory( 128 )
-  // for right buffer if stereo
+  // for right buffer if stereo 
   // TODO: fix so that there is no memory
   // allocated for the right channel if the instrument
   // is mono
   getMemory( 128 )
-  pokeindex = getMemory( 50 )
+
+  pokelength = __pokelength
+  pokememoryindex = getMemory( pokelength )
 
   utilities.createWavetables()
-
+  
   // store index for clearing memory
   memclear = m
 
