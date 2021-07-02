@@ -168,8 +168,8 @@ const getMemory = function( amt ) {
 
 let fidx = 0
 
-const factory = function( props, statics, baseidx ) {
-  const obj = {},
+const factory = function( props, statics, baseidx, name ) {
+  const obj = { name },
         keys = Object.keys( props ),
         statickeys = Object.keys( statics )
 
@@ -229,71 +229,85 @@ const factory = function( props, statics, baseidx ) {
 
   let staticidx = obj.idx + 1 + keys.length
   for( let key of statickeys ) {
-    if( statics[ key ].type === 'f' )
-      memf[ staticidx++ ] = statics[ key ].value
-    else
-      memi[ staticidx++ ] = statics[ key ].value
+    const idx = staticidx
+    Object.defineProperty( obj, key, {
+      get() {
+        const out = statics[ key ].type === 'f'
+          ? out = memf[ idx ]
+          : out = memi[ idx ]
+        
+        return out
+      },
+      set(v) {
+        if( statics[ key ].type === 'f' )
+          memf[ staticidx++ ] = v
+        else
+          memi[ staticidx++ ] = v
+      }
+    })
+    obj[ key ] = statics[ key ].value
   }
 
+  obj.__flags = flags
   return obj
 }
 
-const monop = function() {
+const monop = function( name ) {
   const baseidx = fidx
   fidx += 2
   const fnc = function( x ) {
     const props = { '0':x },
           statics = {}
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, name )
   }
 
   return fnc
 }
 
-const binop = function() {
+const binop = function( name ) {
   const baseidx = fidx
   fidx += 4
   const fnc = function( x,y ) {
     const props = { '0':x, '1':y },
           statics = {}
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, name )
   }
 
   return fnc
 }
 
-const floor = monop(),
-      ceil  = monop(),
-      round = monop(),
-      abs   = monop(),
-      sqrt  = monop(),
-      sin   = monop(),
-      cos   = monop(),
-      tan   = monop(),
-      asin  = monop(),
-      acos  = monop(),
-      atan  = monop()
+const floor = monop( 'floor' ),
+      ceil  = monop( 'ceil' ),
+      round = monop( 'round' ),
+      abs   = monop( 'abs' ),
+      sqrt  = monop( 'sqrt' ),
+      sin   = monop( 'sin' ),
+      cos   = monop( 'cos' ),
+      tan   = monop( 'tan' ),
+      asin  = monop( 'asin' ),
+      acos  = monop( 'acos' ),
+      atan  = monop( 'atan' )
 
-const add = binop(),
-      sub = binop(),
-      mul = binop(),
-      div = binop(),
-      and = binop(),
-      or  = binop(),
-      gt  = binop(),
-      gte = binop(),
-      lt  = binop(),
-      lte = binop(),
-      eq  = binop(),
-      neq = binop(),
-      gtp = binop(),
-      ltp = binop(),
-      min = binop(),
-      max = binop(),
-      pow = binop(),
-      mod = binop()
+const add = binop( 'add' ),
+      sub = binop( 'sub' ),
+      mul = binop( 'mul' ),
+      div = binop( 'div' ),
+      and = binop( 'and' ),
+      or  = binop( 'or' ),
+      gt  = binop( 'gt' ),
+      gte = binop( 'gte' ),
+      lt  = binop( 'lt' ),
+      lte = binop( 'lte' ),
+      eq  = binop( 'eq' ),
+      neq = binop( 'neq' ),
+      gtp = binop( 'gtp' ),
+      ltp = binop( 'ltp' ),
+      min = binop( 'min' ),
+      max = binop( 'max' ),
+      pow = binop( 'pow' ),
+      mod = binop( 'mod' )
   
 let accum
 {
@@ -307,7 +321,7 @@ let accum
             'phase':{ value:phase, type:'f' }, 
           }
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'accum' )
   }
 }
 
@@ -321,7 +335,7 @@ let phasor
             'phase':{ value:phase, type:'f' } 
           }
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'phasor' )
   }
 }
 
@@ -339,7 +353,7 @@ let peek
             mode: { value: Number( mode==='phase'), type:'i' }
           }
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'peek' )
   }
 }
 
@@ -353,7 +367,7 @@ let cycle
             'phase':{ value:phase, type:'f' } 
           }
 
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'cycle' )
   }
 }
 
@@ -369,7 +383,7 @@ let noise
             b: { value:0xefcdab89, type:'i'}
           }
     
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'noise' )
   }
 }
 
@@ -384,7 +398,7 @@ let sah
             control:{ value:0, type:'f'}
           }
   
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'sah' )
   }
 }
 
@@ -400,7 +414,7 @@ let memo
       lastSample: { value:0,   type:'f' }
     }
     
-    return factory( props, statics, fid )
+    return factory( props, statics, fid, 'memo' )
   }
 }
 
@@ -412,7 +426,7 @@ let caller
     const props =   { input }
     const statics = { dataOffset: { value:dataOffset, type:'i' } }
     
-    return factory( props, statics, fid )
+    return factory( props, statics, fid, 'caller' )
   }
 }
 
@@ -429,7 +443,7 @@ let counter
       wrap:  { value:0, type:'f' },
     }
     
-    const obj = factory( props, statics, fid )
+    const obj = factory( props, statics, fid, 'counter' )
 
     // return memoized object because output and .wrap
     // might often both be used
@@ -455,6 +469,7 @@ let bus
       idx : getMemory( size + 3 ),
       fid,
       connected:[],
+      name:'bus',
 
       connect( ...ugens ) {
         ugens.forEach( ugen => {          
@@ -486,6 +501,7 @@ let ssd
     const obj = {
       idx : getMemory( 3 ),
       fid,
+      name:'ssd',
       in( input ) {
         // must memoize to avoid infinite recursion
         memi[ obj.idx + 2 ] = memo( input ).idx * 4
@@ -496,7 +512,8 @@ let ssd
       get() {
         let out = {
           fid: obj.fid,
-          idx: obj.idx
+          idx: obj.idx,
+          name:'ssd_out'
         }
         
         return out
@@ -522,7 +539,7 @@ let delay
       readPos:{ value:0, type:'f'}
     }
 
-    const obj = factory( props, statics, baseidx )
+    const obj = factory( props, statics, baseidx, 'delay' )
     getMemory( maxSize )
 
     return obj
@@ -539,7 +556,7 @@ let slide
             output: { value:0, type:'f' }
           }
     
-    return factory( props, statics, fid)
+    return factory( props, statics, fid, 'slide' )
   }
 }
 
@@ -549,7 +566,8 @@ let param
   param = init => {
     const obj = {
       idx: getMemory(2),
-      fid: baseidx
+      fid: baseidx,
+      name:'param'
     }
     
     let value = init
@@ -579,7 +597,7 @@ let mix
   mix = function( in1=0, in2=0, t=1 ) {
     const props = { in1, in2, t }, statics = {}
     
-    return factory( props, statics, fid)
+    return factory( props, statics, fid, 'mix' )
   }
 }
 
@@ -593,6 +611,7 @@ let bang
         memf[ obj.idx + 1 ] = 1
       },
       fid,
+      name:'bang'
     }
     
     memi[ obj.idx ] = fid
@@ -605,7 +624,7 @@ let ad
   let fid = fidx
   fidx += 4
   ad = function( attack=44100, decay=44100, __bang=null ) {
-    const obj = factory({ attack, decay }, {}, fid )
+    const obj = factory({ attack, decay }, {}, fid, 'ad' )
     obj.bang = __bang === null ? bang() : __bang
     obj.accum = accum( 1, obj.bang, 0, MAX, 0 )
     obj.trigger = obj.bang.trigger
@@ -625,7 +644,7 @@ let ifelse
     const props = { condition, "true":t, "false":f }
     const statics = {}
     
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'ifelse' )
   }
 }
 
@@ -638,7 +657,7 @@ let ifelse2
     const props = { condition, "true":t, "false":f }
     const statics = {}
     
-    return factory( props, statics, baseidx )
+    return factory( props, statics, baseidx, 'ifelse2' )
   }
 }
 
@@ -649,13 +668,15 @@ const data = function( __data, type='float' ) {
     if( utilities[ __data ] === undefined ) {
       // load file, return promise
       obj = utilities.loadSample( __data )
+      obj.name = 'data'
     }
   }else if( typeof __data === 'object' ){ 
     // array of data should be passed, 
     // copy into memory and return obj
     obj = { 
       idx : getMemory( __data.length ),
-      length: __data.length
+      length: __data.length,
+      name:'data'
     }
   
     if( type === 'float' ) {
@@ -666,7 +687,8 @@ const data = function( __data, type='float' ) {
   }else{
     obj = { 
       idx: getMemory( __data ),
-      length: __data
+      length: __data,
+      name:'data'
     }
   }
 
@@ -683,7 +705,7 @@ let poke
             data: { value:data.idx * 4, type:'i' }
           }
     
-    const obj = factory( props, statics, baseidx )
+    const obj = factory( props, statics, baseidx, 'poke' )
     memi[ pokememoryindex + pokecounter ] = obj.idx * 4
 
     pokecounter++
@@ -698,7 +720,8 @@ let clamp
   clamp = function( input=0, min=0,max=1 ) {
     const obj = {
       idx : getMemory( 12 ),
-      fid
+      fid,
+      name:'clamp'
     }
   
     createProperty( obj, 'input', obj.idx, input )
@@ -731,6 +754,7 @@ let pan
     const obj = {
       left:  mul( left,  p1 = peek( utilities.panL, pan )),
       right: mul( right, p2 = peek( utilities.panR, pan )),
+      name: 'pan'
     }
 
     let value = pan
