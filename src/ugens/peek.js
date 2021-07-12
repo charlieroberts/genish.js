@@ -25,6 +25,7 @@ const compile = function( obj, offset=0 ) {
   if( obj.__flags[0] ) {
     const index_compiled = gen.compile( obj.index, memlength )
     memlength += index_compiled.memlength
+    offset += index_compiled.memlength
     index_prop = `  ${index_compiled.string}`
   }else{
     index_prop = `  f32.const ${obj.index}`
