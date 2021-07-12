@@ -22,15 +22,17 @@ gen.init().then( ()=> {
 
   describe( 'in combo tests', ()=> {
     it( 'adding two accums with an incr of .1 should yield .2 on sample #2', async ()=> {
+      const mem = makeMemory()
       let answer = .3,
           graph  = add( accum(.1), accum(.2) ),
           func   = gen.function( graph ),
           wat    = gen.module( func )
 
-      const wasm = await gen.assemble( wat )
+      const wasm = await gen.assemble( wat, mem )
 
-      wasm.render()
-      const result = decimate( wasm.render(), 1000 )
+      wasm.render( graph.idx * 4 )
+
+      const result = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
       assert.equal( result, answer )
     })

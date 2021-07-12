@@ -10,17 +10,17 @@ const opcategories = {
 const blocks = {
   arithmetic( x_prop, y_prop, op ) {
     const out = `${x_prop}
-      ${y_prop}
-      f32.${op}
+${y_prop}
+f32.${op}
 ` 
     return out  
   },
   
   logic( x_prop, y_prop, op ) {
     const out = `${x_prop}
-    ${y_prop}
-    f32.${op}
-    f32.convert_i32_u
+${y_prop}
+f32.${op}
+f32.convert_i32_u
 ` 
     return out  
   }
@@ -41,17 +41,17 @@ for( let optype in opcategories ) {
       if( obj.__flags[0] ) {
         x_compiled = gen.compile( obj[0], memlength + offset )
         memlength += x_compiled.memlength
-        x_prop = `  ${x_compiled.string}`
+        x_prop = `${x_compiled.string}`
       }else{
-        x_prop = `  f32.const ${obj[0]}`
+        x_prop = `f32.const ${obj[0]}`
       }
     
       if( obj.__flags[1] ) {
         y_compiled = gen.compile( obj[1], memlength + offset )
         memlength += y_compiled.memlength
-        y_prop = `  ${y_compiled.string}`
+        y_prop = `${y_compiled.string}`
       }else{
-        y_prop = `  f32.const ${obj[1]}`
+        y_prop = `f32.const ${obj[1]}`
       }
     
       const out = {

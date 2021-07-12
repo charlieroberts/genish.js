@@ -1,5 +1,7 @@
-const front = `(module
-  (import "env" "memory" (memory $mem 5 5 shared))
+const front = function( memAmount = 50) {
+
+const code = `(module
+  (import "env" "memory" (memory $mem ${memAmount} ${memAmount} shared))
   (import "env" "_logi" (func $_logi (param i32) ) ) 
   (import "env" "_logf" (func $_logf (param f32) ) ) 
 
@@ -9,7 +11,15 @@ const front = `(module
   (global $clock (mut i32) (i32.const 0))
 `
 
-const back = `
+return code
+
+}
+
+const back = function() {
+  const code = `
 )`
+
+  return code
+}
 
 export { front, back }

@@ -1,25 +1,30 @@
 let gen
 
 const accum = function( obj, offset=0 ) {
-  let memlength = obj.__memoryLength * 4,
-      incr_prop = null,
+  let memlength     = obj.__memoryLength * 4,
+      incr_prop     = null,
       incr_compiled = null,
-      resetblock = null
-
-  console.log( memlength )
+      resetblock    = null
 
   const phase_offset = 20,
-        phase_id = '$phase'+obj.idx,
-        memory_loc = '$memory'+obj.idx,
-        phase_loc = '$phaseloc'+obj.idx,
-        out_id   = '$accumout'+obj.idx
+        phase_id     = '$phase'+obj.idx,
+        memory_loc   = '$memory'+obj.idx,
+        phase_loc    = '$phaseloc'+obj.idx,
+        out_id       = '$accumout'+obj.idx
 
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
-    memlength += incr_compiled.memlength
-    incr_prop = `  ${incr_compiled.string}`
+    memlength     += incr_compiled.memlength
+    offset        += incr_compiled.memlength
+    incr_prop     = `${incr_compiled.string}`
   }else{
-    incr_prop = `  f32.const ${obj.incr}`
+    incr_prop = `f32.const ${obj.incr}`
+  }
+
+  if( obj.__flags[1] ) {
+    const reset_compiled = gen.compile( obj.reset, memlength + offset )
+    memlength            += reset_compiled.memlength
+    offset               += reset_compiled.memlength
   }
 
   gen.addLocal(`(local ${memory_loc} i32)`)
@@ -66,8 +71,6 @@ local.get ${out_id}
 `
 
   if( obj.__flags[1] ) {
-    const reset_compiled = gen.compile( obj.reset, memlength + offset )
-    memlength += reset_compiled.memlength
     resetBlock = 
 `
 ${ reset_compiled.string }\n

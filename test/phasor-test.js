@@ -25,7 +25,7 @@ gen.init().then( ()=> {
             expected = 0,
             graph    = phasor( 110 ),
             func     = gen.function( graph ),
-            wat      = gen.module( func, true ),
+            wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
