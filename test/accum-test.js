@@ -1,5 +1,5 @@
 import {
-  cycle, setupMemory, utilities
+  accum, setupMemory
 } from '../src/main.js'
 
 import gen from '../src/gen.js'
@@ -14,17 +14,17 @@ const makeMemory = function( memoryAmount = 50 ) {
   })
 
   setupMemory( mem.buffer )
-  utilities.createWavetables()
 
   return mem
 }
 
 gen.init().then( ()=> {
-  describe( 'a cycle', ()=>{
-    it( 'should return 0 on first execution with any frequency (110 Hz here)', async () => {
+
+  describe( 'an accum', ()=>{
+    it( 'should return 0 on first execution', async () => {
       const mem      = makeMemory(),
             expected = 0,
-            graph    = cycle( 110 ),
+            graph    = accum(.5),
             func     = gen.function( graph ),
             wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),
@@ -33,18 +33,38 @@ gen.init().then( ()=> {
       assert.strictEqual( actual, expected )    
     })
 
-    it( 'should increase over first two samples', async () => {
+    it( 'should ramp to .4 with an increment of .1 after five executions', async () => {
       const mem      = makeMemory(),
-            graph    = cycle( 110 ),
+            expected = .4,
+            graph    = accum(.1),
             func     = gen.function( graph ),
-            wat      = gen.module( func, true ),
-            wasm     = await gen.assemble( wat, mem ),
-            sample1  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-            sample2  = decimate( wasm.render( graph.idx * 4 ), 1000 )
+            wat      = gen.module( func ),
+            wasm     = await gen.assemble( wat, mem )
 
-      console.log( sample1, sample2, sample2 > sample1 )
-      assert( sample2 > sample1 )
+      wasm.render( graph.idx * 4 )
+      wasm.render( graph.idx * 4 )
+      wasm.render( graph.idx * 4 )
+      wasm.render( graph.idx * 4 )
+
+      const actual = decimate( wasm.render( graph.idx * 4 ), 1000 )
+
+      assert.strictEqual( actual, expected )    
     })
+
+    it( 'should return to its min value of 0 on the 11th execution with an increment of .1', async () => {
+      const mem      = makeMemory(),
+            expected = 0,
+            graph    = accum(.1),
+            func     = gen.function( graph ),
+            wat      = gen.module( func ),
+            wasm     = await gen.assemble( wat, mem )
+
+      for( let i = 0; i < 10; i++ ) wasm.render( graph.idx * 4 )
+      const actual = decimate( wasm.render( graph.idx * 4 ), 1000 )
+
+      assert.strictEqual( actual, expected )    
+    })
+
   //   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
   //     let answer = .0,
   //         p      = param( 0 ),

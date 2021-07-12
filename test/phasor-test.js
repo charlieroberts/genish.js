@@ -1,21 +1,52 @@
-/* global describe it */
-var assert = require('assert')
-var genlib = require( '../dist/index.js' )
+import {
+  phasor, setupMemory
+} from '../src/main.js'
 
-var gen = genlib.gen
-var phasor = genlib.phasor
+import gen from '../src/gen.js'
+import assert from 'assert'
 
-describe( 'phasor', ()=>{
-  it( 'should ramp to 0 with an frequency of 4410 after five executions', ()=> {
-    let answer = 0,
-        graph  = phasor( 4410 ),
-        out    = gen.createCallback( graph, 512 ),
-        result = 0
+// account for floating point errors
+const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
-    for( let i = 0; i < 5; i++ ) out()
+const makeMemory = function( memoryAmount = 50 ) {
+  const mem = new WebAssembly.Memory({ 
+    initial:memoryAmount, maximum:memoryAmount, shared:true 
+  })
 
-    result = out().toFixed( 2 )
+  setupMemory( mem.buffer )
 
-    assert.equal( result, answer )
+  return mem
+}
+
+gen.init().then( ()=> {
+  describe( 'a phasor', ()=>{
+    it( 'should return 0 on first execution with any frequency (110 Hz here)', async () => {
+      const mem      = makeMemory(),
+            expected = 0,
+            graph    = phasor( 110 ),
+            func     = gen.function( graph ),
+            wat      = gen.module( func, true ),
+            wasm     = await gen.assemble( wat, mem ),
+            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+
+      assert.strictEqual( actual, expected )    
+    })
+
+    // it( 'should return 1 with a frequency of 11025 after 5 samples', async () => {
+    //   const mem      = makeMemory(),
+    //         expected = 1
+    //         graph    = phasor( 11025 ),
+    //         func     = gen.function( graph ),
+    //         wat      = gen.module( func ),
+    //         wasm     = await gen.assemble( wat, mem ),
+    //         sample1  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+    //         sample2  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+    //         sample3  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+    //         sample4  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+    //         actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+
+    //   console.log( sample1, sample2, sample3, sample4, actual )
+    //   assert.strictEqual( actual, expected )    
+    // })
   })
 })

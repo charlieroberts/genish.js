@@ -11,11 +11,11 @@ let audioContext = null,
 
 const MAX = 0x7FFFFFFF
 
-logm = function() {
+const logm = function() {
   console.log( m, memclear )
 }
 
-window.utilities = {
+const utilities = {
   buffers: {},
   sampleRate: null,
   
@@ -23,7 +23,7 @@ window.utilities = {
     memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
     memf.fill( 0, memclear )
     m = memclear
-    pokeindex =   getMemory( 50 )
+    pokeindex = getMemory( 50 )
     play([ add(0,0), add(0,0) ])
   },
 
@@ -80,35 +80,35 @@ window.utilities = {
 
     utilities.panL = data( bufferL )
     utilities.panR = data( bufferR )
-  }
-}
+  },
 
-const play = function( ugen ) {
-  window.out = ugen
-
-  if( Array.isArray( ugen ) ) {
-    node.port.postMessage({
-      address:'renderStereo',
-      left: {
-        loc:ugen[0].idx*4,
-      },
-      right: {
-        loc:ugen[1].idx*4,
-      }
-    })
-  }else{
-    node.port.postMessage({
-      address:'render',
-      loc:ugen.idx*4
-    })
+  play( ugen ) {
+    window.out = ugen
+  
+    if( Array.isArray( ugen ) ) {
+      node.port.postMessage({
+        address:'renderStereo',
+        left: {
+          loc:ugen[0].idx*4,
+        },
+        right: {
+          loc:ugen[1].idx*4,
+        }
+      })
+    }else{
+      node.port.postMessage({
+        address:'render',
+        loc:ugen.idx*4
+      })
+    }
   }
 }
 
 // get wasm as bytes, start downloading as soon as
 // page loads
-fetch( '../dist/main.wasm')
-  .then( response => response.arrayBuffer() )
-  .then( bytes => wasmbytes = bytes )
+// fetch( '../dist/main.wasm')
+//   .then( response => response.arrayBuffer() )
+//   .then( bytes => wasmbytes = bytes )
 
 // wait for user interaction event in page...
 async function go() {
@@ -233,8 +233,8 @@ const factory = function( props, statics, baseidx, name ) {
     Object.defineProperty( obj, key, {
       get() {
         const out = statics[ key ].type === 'f'
-          ? out = memf[ idx ]
-          : out = memi[ idx ]
+          ? memf[ idx ]
+          : memi[ idx ]
         
         return out
       },
@@ -249,6 +249,8 @@ const factory = function( props, statics, baseidx, name ) {
   }
 
   obj.__flags = flags
+  obj.__memoryLength = keys.length + Object.keys( statickeys ).length 
+
   return obj
 }
 
@@ -343,17 +345,20 @@ let peek
 {
   const baseidx = fidx 
   fidx+=2
-  peek = function( __data=0, phase=0, interp='linear', mode='phase' ) {
+  peek = function( __data=0, index=0, interp='linear', mode='phase' ) {
     const length = __data.length
-    const props = { phase },
+    const props = { index },
           statics = {
             dataIndex: { value:__data.idx * 4, type:'i' },
-            length: { value:length, type:'f' },
+            length: { value:length-1, type:'f' },
             interpolation: { value: Number( interp==='linear' ), type:'i' },
             mode: { value: Number( mode==='phase'), type:'i' }
           }
 
-    return factory( props, statics, baseidx, 'peek' )
+    const obj = factory( props, statics, baseidx, 'peek' )
+    obj.data = __data
+
+    return obj
   }
 }
 
@@ -776,12 +781,14 @@ let pan
 let pokememoryindex = 1000
 let pokelength = 50
 let pokecounter = 0
+
+
 function setupMemory( buffer, __pokelength=50 ) {
   memf   = new Float32Array( buffer )
   memf64 = new Float64Array( buffer )
   memi   = new Int32Array( buffer )  
   
-  // for output buffer
+  /*() for output buffer
   getMemory( 128 )
   // for right buffer if stereo 
   // TODO: fix so that there is no memory
@@ -796,9 +803,26 @@ function setupMemory( buffer, __pokelength=50 ) {
   
   // store index for clearing memory
   memclear = m
+  */
 
 }
 
-window.node = node
-window.context = audioContext
-window.onclick = go
+//setupMemory( new ArrayBuffer( 32 * 4096) )
+
+//window.onclick = go
+
+export {
+  floor, ceil, round, abs, sqrt, sin, cos,
+  tan, asin, acos, atan,
+
+  add, sub, mul, div, and, or, gt, gte, lt, lte,
+  eq, neq, gtp, ltp, min, max, pow, mod,
+
+  accum, phasor, peek, cycle, noise, sah, memo,
+  caller, counter, bus, ssd, delay, slide, param,
+  mix, bang, ad, ifelse, ifelse2, poke, 
+  
+  data,
+
+  utilities, memf, memi, getMemory, setupMemory
+}
