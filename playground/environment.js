@@ -1,7 +1,10 @@
-var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContext,
+import { cycle_compiled,add,accum,mul } from '../src/main.js'
+import utilities from '../src/utilities.js'
+
+var cm, cmconsole, exampleCode, AudioContext = AudioContext,
 isStereo = false, jsdsp, shouldUseJSDSP = false
 
-window.onload = function() {
+window.onload = async function() {
   cm = CodeMirror( document.querySelector('#editor'), {
     mode:   'javascript',
     value:  'loading...',
@@ -11,7 +14,40 @@ window.onload = function() {
     matchBrackets:true
   })
 
+  window.cycle = cycle_compiled
   cm.setSize( null, '100%' )
+
+  window.onclick = ()=> utilities.startWorkletNode( ()=> {
+    //let prev = add( cycle_compiled(110), cycle_compiled(330) )
+    //let prev = add( accum(110/44100), accum(330/44100) )
+
+    // let prev = accum(110/44100)//add( accum(110/44100), accum(330/44100) )
+    // let i
+    // for( i = 0; i < 50; i++ ) {
+    //   prev = add( prev, accum( (110 + 55 * (i+1)) / 44100 ) )
+    // }
+    // let prev = cycle(110)//add( accum(110/44100), accum(330/44100) )
+    // let i
+    // for( i = 0; i < 50; i++ ) {
+    //   prev = add( prev, cycle( (110 + 55 * (i+1)) ) )
+    // }
+    //const c = mul(cycle_compiled(165),.005)
+    //let prev = add( add( cycle_compiled(110), cycle_compiled(330)), cycle_compiled(550) )
+    let baseFreq = 55
+    let prev = cycle_compiled( baseFreq )
+    baseFreq *= 1.00125
+    let count = 3000
+    let i = 1
+    for( i = 1; i < count; i++ ) {
+      prev = add( prev, cycle_compiled(baseFreq) )
+      baseFreq *= 1.001
+    }
+    prev = mul( prev, 1/count)
+    window.memi = utilities.memi
+    window.memf = utilities.memf
+    window.graph = prev
+    return prev
+  })
 
   // cmconsole = CodeMirror( document.querySelector('#console'), {
   //   mode:'javascript',

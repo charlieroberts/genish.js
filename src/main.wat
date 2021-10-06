@@ -214,7 +214,6 @@
     $poke_s_d
     $poke_d_s
     $poke_d_d
-    ;; $ifelse2
     
     ;; $clamp
     ;; $tanh

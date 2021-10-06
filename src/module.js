@@ -11,7 +11,6 @@ class WASMProcessor extends AudioWorkletProcessor {
     
     this.port.onmessage = async (msg) => {
       if( msg.data.address === 'memory' ) {
-        console.log( 'processor:', this )
         // XXX replace with actual sampling rate at some point...
         this.sr = new WebAssembly.Global({value:'f32', mutable:false}, msg.data.sr )
         this.clock = new WebAssembly.Global({ value:'i32', mutable:true}, 1 )

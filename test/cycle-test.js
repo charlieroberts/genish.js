@@ -1,5 +1,5 @@
 import {
-  cycle, setupMemory, utilities
+  cycle, setupMemory, utilities, accum, peek
 } from '../src/main.js'
 
 import gen from '../src/gen.js'
@@ -21,21 +21,28 @@ const makeMemory = function( memoryAmount = 50 ) {
 
 gen.init().then( ()=> {
   describe( 'a cycle', ()=>{
-    it( 'should return 0 on first execution with any frequency (110 Hz here)', async () => {
-      const mem      = makeMemory(),
-            expected = 0,
-            graph    = cycle( 110 ),
-            func     = gen.function( graph ),
-            wat      = gen.module( func ),
-            wasm     = await gen.assemble( wat, mem ),
-            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+    // it( 'should return 0 on first execution with any frequency (110 Hz here)', async () => {
+    //   const mem      = makeMemory(),
+    //         expected = 0,
+    //         graph    = cycle( 110 ),
+    //         func     = gen.function( graph ),
+    //         wat      = gen.module( func ),
+    //         wasm     = await gen.assemble( wat, mem ),
+    //         actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
-      assert.strictEqual( actual, expected )    
-    })
+    //   assert.strictEqual( actual, expected )    
+    // })
 
     it( 'should increase over first two samples', async () => {
+      debugger
       const mem      = makeMemory(),
-            graph    = cycle( 110 ),
+            graph    = cycle( .1 ),
+            // graph    = peek(
+            //   utilities.sinedata,
+            //   accum( .1 ),
+            //   'linear',
+            //   'phase'
+            // ),
             func     = gen.function( graph ),
             wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),

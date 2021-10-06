@@ -88,6 +88,7 @@ ${incrblock}
 `
   }
 
+  memlength += 4
   const out = {
     string: obj.__flags[1] ? resetblock : incrblock,
     memlength

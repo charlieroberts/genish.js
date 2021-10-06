@@ -1,7 +1,21 @@
 let gen
 
+const dynamicData = function( data_offset, data_loc, memory_loc ) {
+  return `i32.get ${memory_loc}
+  i32.const ${data_offset}
+i32.add
+i32.load
+local.set ${data_loc}\n`
+}
+
+const staticData = function( data, data_loc ) {
+  return `i32.const ${data.idx * 4}
+local.set ${data_loc}
+`
+}
+
 const compile = function( obj, offset=0 ) {
-  let memlength = obj.__memoryLength,
+  let memlength = obj.__memoryLength * 4,
       index_prop
 
   const data_offset = 8,
@@ -23,9 +37,10 @@ const compile = function( obj, offset=0 ) {
           : ``
 
   if( obj.__flags[0] ) {
-    const index_compiled = gen.compile( obj.index, memlength )
+    const index_compiled = gen.compile( obj.index, offset )
     memlength += index_compiled.memlength
-    offset += index_compiled.memlength
+    // XXX why isn't the line below needed?
+    // offset += index_compiled.memlength 
     index_prop = `  ${index_compiled.string}`
   }else{
     index_prop = `  f32.const ${obj.index}`
@@ -91,19 +106,27 @@ const compile = function( obj, offset=0 ) {
     gen.addLocal( `(local ${fract_id} f32)` )
   }
 
+const dataBlock = obj.data.__static 
+  ? staticData( obj.data, data_loc, memory_loc )
+  : dynamicData( 8, data_loc )
+
+const dataLengthBlock = obj.data.__static === false
+  ? `(i32.add (local.get ${memory_loc}) (i32.const ${data_length_offset}))
+  f32.load
+  local.set ${data_length_val}`
+  : `f32.const ${obj.data.length}
+  local.set ${data_length_val}  
+  `
+
   const block = 
 `i32.const ${offset}
 local.get $loc
 i32.add
-local.tee ${memory_loc}
-i32.const ${data_offset}
-i32.add
-i32.load
-local.set ${data_loc}
+local.set ${memory_loc}
 
-(i32.add (local.get ${memory_loc}) (i32.const ${data_length_offset}))
-f32.load
-local.set ${data_length_val}
+${dataBlock}
+
+${dataLengthBlock}
 
 ;; get normalized index
 ${index_prop}
@@ -124,7 +147,7 @@ i32.add
 f32.load
 ${interpolation}
 `
-
+  memlength += 4
   return { string:block, memlength }
 }
 

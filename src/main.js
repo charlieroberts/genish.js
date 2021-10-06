@@ -1,258 +1,10 @@
-/* 
-ugen memory layout
-[0] = function id
-[1] = data
-*/
+import utilities from './utilities.js'
 
-let audioContext = null, 
-    node = null, 
-    wasmbytes = null,
-    memf, memi, memf64, memi64
-
-const MAX = 0x7FFFFFFF
-
-const logm = function() {
-  console.log( m, memclear )
-}
-
-const utilities = {
-  buffers: {},
-  sampleRate: null,
-  
-  clear() {
-    memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
-    memf.fill( 0, memclear )
-    m = memclear
-    pokeindex = getMemory( 50 )
-    play([ add(0,0), add(0,0) ])
-  },
-
-  loadSample( soundFilePath ) {
-    const isLoaded = utilities.buffers[ soundFilePath ] !== undefined
-
-    const req = new XMLHttpRequest()
-    req.open( 'GET', soundFilePath, true )
-    req.responseType = 'arraybuffer' 
-    
-    const promise = new Promise( (resolve,reject) => {
-      if( !isLoaded ) {
-        req.onload = function() {
-          var audioData = req.response
-
-          utilities.ctx.decodeAudioData( audioData, buffer => {
-            utilities.buffers[ soundFilePath ] = buffer.getChannelData(0)
-            
-            resolve( data( utilities.buffers[ soundFilePath ] ) )
-          })
-        }
-      }else{
-        setTimeout( ()=> {
-          resolve( data( utilities.buffers[ soundFilePath ] ) )
-        }, 0 )
-      }
-    })
-
-    if( !isLoaded ) req.send()
-
-    return promise
-  },
-  
-  createWavetables() {  
-    /* sine */
-    let sinebuffer = new Float32Array( 1024 )
-
-    for( let i = 0, l = sinebuffer.length; i < l; i++ ) {
-      sinebuffer[ i ] = Math.sin( ( i / l ) * ( Math.PI * 2 ) )
-    }
-
-    utilities.sinedata = data( sinebuffer )
-
-    /* pan */ 
-    let bufferL = new Float32Array( 1024 ),
-        bufferR = new Float32Array( 1024 )
-
-    const angToRad = Math.PI / 180
-    for( let i = 0; i < 1024; i++ ) { 
-      let pan = i * ( 90 / 1024 )
-      bufferL[i] = Math.cos( pan * angToRad ) 
-      bufferR[i] = Math.sin( pan * angToRad )
-    }
-
-    utilities.panL = data( bufferL )
-    utilities.panR = data( bufferR )
-  },
-
-  play( ugen ) {
-    window.out = ugen
-  
-    if( Array.isArray( ugen ) ) {
-      node.port.postMessage({
-        address:'renderStereo',
-        left: {
-          loc:ugen[0].idx*4,
-        },
-        right: {
-          loc:ugen[1].idx*4,
-        }
-      })
-    }else{
-      node.port.postMessage({
-        address:'render',
-        loc:ugen.idx*4
-      })
-    }
-  }
-}
-
-// get wasm as bytes, start downloading as soon as
-// page loads
-// fetch( '../dist/main.wasm')
-//   .then( response => response.arrayBuffer() )
-//   .then( bytes => wasmbytes = bytes )
-
-// wait for user interaction event in page...
-async function go() {
-  if( !audioContext ) {
-    try {
-      audioContext = new AudioContext({ latencyHint:.1 })
-      await audioContext.resume()
-      await audioContext.audioWorklet.addModule( '../src/module.js' )
-      
-      utilities.sampleRate = audioContext.sampleRate
-      utilities.ctx = audioContext
-      samplerate = utilities.sampleRate
-
-      // TODO: how to know ahead of time if stereo? some type 
-      // of init function?
-      const numChannels = 2
-      node = new AudioWorkletNode( 
-        audioContext, 
-        'wasm-test',
-        { 
-          channelInterpretation:'discrete', 
-          channelCount: numChannels, 
-          outputChannelCount:[ numChannels ] 
-        }
-      )
-
-      utilities.node = node
-
-      // send wasm over messageport to worklet
-      node.port.postMessage({
-        address:'memory',
-        wasm:wasmbytes,
-        sr: audioContext.sampleRate
-      })
-            
-      let arr
-      node.port.onmessage = msg => {
-        arr = msg.data.memory
-        setupMemory( arr )
-        node.connect( audioContext.destination )
-      }
-      
-      window.onclick = null  
-    } catch(e) {
-      console.error( e )
-    }
-  }
-}
-
-let m = 0
-let memclear = 0
-const getMemory = function( amt ) {
-  let idx = m
-  m += amt
-  return idx
-}
+// convenience
+const getMemory = utilities.getMemory,
+      factory   = utilities.factory
 
 let fidx = 0
-
-const factory = function( props, statics, baseidx, name ) {
-  const obj = { name },
-        keys = Object.keys( props ),
-        statickeys = Object.keys( statics )
-
-  // function id, properties, statics
-  obj.idx = getMemory( 1 + keys.length + statickeys.length )
-
-  // initial binary signature
-  const initSig = Object.values( props ).reduce(
-    (accum,val) => accum + ( isNaN(val) ? 1 : 0 ), 
-    '0b'
-  )
-  
-  // array of bits to twiddle
-  const flags = Object.values( props ).map( v => isNaN  ( v ) ? 1 : 0 )
-
-  let __fid = Object.values( props ).length >= 1 
-    ? baseidx + Number( initSig )
-    : baseidx
-
-  Object.defineProperty( obj, 'fid', { 
-    get() { return __fid },
-    set(v) {
-      __fid = v
-      memi[ obj.idx ] = __fid
-    }
-  })
-  
-  obj.fid = __fid
-
-  for( let i = 0; i < keys.length; i++ ) {
-    const key = keys[ i ]
-    const idx = obj.idx + 1 + i
-
-    let value = props[ key ]
-    Object.defineProperty( obj, key, {
-      get() { return value },
-      set( v ) {
-        // is this a number or a ugen?
-        const isUgen = isNaN( v ) ? 1 : 0
-        // set flag for determining function signature
-        flags[ i ] = isUgen
-        // get number for signature
-        const sig = Number( flags.reduce( (accum,val)=>accum+val, '0b') )
-
-        obj.fid = baseidx + sig
-
-        if( isUgen ) {
-          memi[ idx ] = v.idx * 4
-        }else{
-          memf[ idx ] = v
-        }
-      }
-    })
-
-    obj[ key ] = props[ key ]
-  }
-
-  let staticidx = obj.idx + 1 + keys.length
-  for( let key of statickeys ) {
-    const idx = staticidx
-    Object.defineProperty( obj, key, {
-      get() {
-        const out = statics[ key ].type === 'f'
-          ? memf[ idx ]
-          : memi[ idx ]
-        
-        return out
-      },
-      set(v) {
-        if( statics[ key ].type === 'f' )
-          memf[ staticidx++ ] = v
-        else
-          memi[ staticidx++ ] = v
-      }
-    })
-    obj[ key ] = statics[ key ].value
-  }
-
-  obj.__flags = flags
-  obj.__memoryLength = keys.length + Object.keys( statickeys ).length 
-
-  return obj
-}
 
 const monop = function( name ) {
   const baseidx = fidx
@@ -323,7 +75,9 @@ let accum
             'phase':{ value:phase, type:'f' }, 
           }
 
-    return factory( props, statics, baseidx, 'accum' )
+    const obj = factory( props, statics, baseidx, 'accum' )
+
+    return obj
   }
 }
 
@@ -352,11 +106,31 @@ let peek
             dataIndex: { value:__data.idx * 4, type:'i' },
             length: { value:length-1, type:'f' },
             interpolation: { value: Number( interp==='linear' ), type:'i' },
-            mode: { value: Number( mode==='phase'), type:'i' }
+            mode: { value: Number( mode==='phase' ), type:'i' }
           }
 
     const obj = factory( props, statics, baseidx, 'peek' )
+
     obj.data = __data
+
+    return obj
+  }
+}
+
+let cycle_compiled
+{
+  const baseidx = fidx
+  fidx+=2
+  cycle_compiled = function( frequency ) {
+    const props = { frequency },
+          statics = {
+            dataIndex: { value:utilities.sinedata.idx * 4, type:'i' },
+            length: { value:1023, type:'f' },
+            interpolation: { value: 1, type:'i' },
+            mode: { value: 1, type:'i' }
+          }
+
+    const obj = factory( props, statics, baseidx-2, 'cycle' )
 
     return obj
   }
@@ -471,7 +245,7 @@ let bus
   let fid = fidx++
   bus = function( size=10, gain = 1 ) {
     const obj = {
-      idx : getMemory( size + 3 ),
+      idx : utilities.getMemory( size + 3 ),
       fid,
       connected:[],
       name:'bus',
@@ -679,16 +453,18 @@ const data = function( __data, type='float' ) {
     // array of data should be passed, 
     // copy into memory and return obj
     obj = { 
-      idx : getMemory( __data.length ),
+      idx : getMemory( __data.length + 1 ),
       length: __data.length,
       name:'data'
     }
   
     if( type === 'float' ) {
-      memf.set( __data, obj.idx )
+      utilities.memf.set( __data, obj.idx )
     }else{
-      memi.set( __data, obj.idx )
+      utilities.memi.set( __data, obj.idx )
     }
+
+    utilities.memf[ obj.idx + __data.length ] = __data.length 
   }else{
     obj = { 
       idx: getMemory( __data ),
@@ -778,38 +554,17 @@ let pan
   }
 } 
 
+const wobble = function( baseFreq, modFreq, modGain ) {
+  const mod   = mul( cycle( modFreq ), modGain )
+  const graph = cycle( add( baseFreq, mod ) )
+
+  return graph
+}
+
+
 let pokememoryindex = 1000
 let pokelength = 50
 let pokecounter = 0
-
-
-function setupMemory( buffer, __pokelength=50 ) {
-  memf   = new Float32Array( buffer )
-  memf64 = new Float64Array( buffer )
-  memi   = new Int32Array( buffer )  
-  
-  /*() for output buffer
-  getMemory( 128 )
-  // for right buffer if stereo 
-  // TODO: fix so that there is no memory
-  // allocated for the right channel if the instrument
-  // is mono
-  getMemory( 128 )
-
-  pokelength = __pokelength
-  pokememoryindex = getMemory( pokelength )
-
-  utilities.createWavetables()
-  
-  // store index for clearing memory
-  memclear = m
-  */
-
-}
-
-//setupMemory( new ArrayBuffer( 32 * 4096) )
-
-//window.onclick = go
 
 export {
   floor, ceil, round, abs, sqrt, sin, cos,
@@ -824,5 +579,5 @@ export {
   
   data,
 
-  utilities, memf, memi, getMemory, setupMemory
+  cycle_compiled, wobble
 }

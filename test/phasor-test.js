@@ -32,21 +32,20 @@ gen.init().then( ()=> {
       assert.strictEqual( actual, expected )    
     })
 
-    // it( 'should return 1 with a frequency of 11025 after 5 samples', async () => {
-    //   const mem      = makeMemory(),
-    //         expected = 1
-    //         graph    = phasor( 11025 ),
-    //         func     = gen.function( graph ),
-    //         wat      = gen.module( func ),
-    //         wasm     = await gen.assemble( wat, mem ),
-    //         sample1  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-    //         sample2  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-    //         sample3  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-    //         sample4  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-    //         actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+    it( 'should return .75 with a frequency of 11025 after 4 samples', async () => {
+      const mem      = makeMemory(),
+            expected = .75,
+            graph    = phasor( 11025 ),
+            func     = gen.function( graph ),
+            wat      = gen.module( func ),
+            wasm     = await gen.assemble( wat, mem ),
+            sample1  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+            sample2  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+            sample3  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
+            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
-    //   console.log( sample1, sample2, sample3, sample4, actual )
-    //   assert.strictEqual( actual, expected )    
-    // })
+      console.log( sample1, sample2, sample3, actual )
+      assert.strictEqual( actual, expected )    
+    })
   })
 })
