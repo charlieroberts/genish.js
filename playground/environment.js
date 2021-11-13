@@ -31,10 +31,10 @@ window.onload = function() {
     if( name === undefined || name === null ) {
       name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
     }
-    if( dat !== undefined ) {
+    /*if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
-    }
+    }*/
     var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
 
     return cb
@@ -56,7 +56,7 @@ window.onload = function() {
         'zeroDelayLadder',
         'slicingAndDicing', 
         'oneDelayLine',
-        'combFilter',
+        'combfilter',
         'freeverb',
         'gigaverb',
         'gardenOfDelays', 
@@ -130,7 +130,7 @@ CodeMirror.keyMap.playground =  {
   },
   'Ctrl-.'( cm ) {
     utilities.clear()
-    if( dat !== undefined ) {
+    if( dat !== undefined && dat.GUI.__all__ !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
     }
