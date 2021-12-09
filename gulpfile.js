@@ -16,13 +16,13 @@ gulp.task( 'js', function() {
     .pipe( source('gen.lib.js') )
     .pipe( gulp.dest('./dist') )
     //.pipe( uglify() )
-    //.pipe( gulp.dest('./dist') )
-    .pipe(
-      notify({
-        message:'Build has been completed',
-        onLast:true
-      })
-    )
+    // notify() doesn't work in linux?
+    //.pipe(
+    //  notify({
+    //    message:'Build has been completed',
+    //    onLast:true
+    //  })
+    //)
 
   // transpile (but don't browserify) for use with node.js tests
   return gulp.src( './js/**.js' )

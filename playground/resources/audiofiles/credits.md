@@ -1,0 +1,2 @@
+- [amen break sample - CC0](https://freesound.org/people/gowers/sounds/202537/)
+- [dead presidents sample - CC attribution](https://freesound.org/people/tim.kahn/sounds/93924/)
