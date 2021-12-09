@@ -75,6 +75,10 @@ module.exports = ( x, y=1, properties ) => {
     //}
   }else if( x instanceof Float32Array ) {
     buffer = x
+  }else if( x instanceof Uint8Array ) {
+    buffer = x
+  }else if( x instanceof AudioBuffer ) {
+    buffer = x.getChannelData(0)
   }
   
   ugen = Object.create( proto ) 
