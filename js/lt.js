@@ -21,8 +21,6 @@ let proto = {
     gen.memo[ this.name ] = this.name
 
     return [this.name, out]
-    
-    return out
   }
 }
 
