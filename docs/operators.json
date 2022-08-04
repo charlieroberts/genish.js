@@ -1,0 +1,10 @@
+[
+    {
+        "op": "add",
+        "inputs":[
+            "input1", "input2"
+        ]
+
+
+    }
+]
