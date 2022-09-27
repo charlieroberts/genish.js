@@ -7,7 +7,10 @@
     "gulp-wat2wasm": "^1.1.0"
   },
   "dependencies": {
-    "codemirror": "^5.61.1"
+    "binaryen": "^106.0.0",
+    "codemirror": "^5.61.1",
+    "math.js": "^1.1.46",
+    "mathjs": "^10.5.0"
   },
   "repository": {
     "type": "git",

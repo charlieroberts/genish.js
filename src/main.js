@@ -80,12 +80,78 @@ window.utilities = {
 
     utilities.panL = data( bufferL )
     utilities.panR = data( bufferR )
+  },
+
+  async playOffline( graph ) {
+    const ctx = new OfflineAudioContext( 2, 44100 * 60, 44100 )
+
+    try {
+      await ctx.audioWorklet.addModule( '../src/module.js' )
+      
+      utilities.sampleRate = ctx.sampleRate
+      utilities.ctx = ctx
+      samplerate = utilities.sampleRate
+
+      // TODO: how to know ahead of time if stereo? some type 
+      // of init function?
+      const numChannels = 2
+      node = new AudioWorkletNode( 
+        ctx,
+        'wasm-test',
+        { 
+          channelInterpretation:'discrete', 
+          channelCount: numChannels, 
+          outputChannelCount:[ numChannels ] 
+        }
+      )
+
+      utilities.node = node
+
+      // send wasm over messageport to worklet
+      node.port.postMessage({
+        address:'memory',
+        wasm:wasmbytes,
+        sr: ctx.sampleRate
+      })
+            
+      let arr
+      node.port.onmessage = msg => {
+        arr = msg.data.memory
+        setupMemory( arr )
+        node.connect( ctx.destination )
+      }
+    }catch (e) { console.log(e) }
+
+    //let sines = [], count = 100
+    //for( let i = 0; i < count; i++ ) {
+    //  let s = cycle( 440 )
+    //  sines.push( s )
+    //}
+
+    //const b = bus( count )
+    //console.log( b, b.connect )
+    //b.connect( ...sines )
+
+    setTimeout( ()=> {
+    graph = graph()
+    let start = performance.now()
+
+    play( graph, node )
+    ctx.startRendering()
+    ctx.oncomplete = e => { 
+      let end = performance.now()
+      if( true ) console.log( 'genish sine rendering time:', end - start )
+      //tests.sine_genish.times.push( end - start )
+
+      //run()
+    }
+    }, 100 )
   }
 }
 
-const play = function( ugen ) {
+const play = function( ugen, __node ) {
   window.out = ugen
-
+  const node = __node
   if( Array.isArray( ugen ) ) {
     node.port.postMessage({
       address:'renderStereo',
@@ -106,11 +172,59 @@ const play = function( ugen ) {
 
 // get wasm as bytes, start downloading as soon as
 // page loads
-fetch( '../dist/main.wasm')
+fetch( '../dist/main3.wasm')
   .then( response => response.arrayBuffer() )
   .then( bytes => wasmbytes = bytes )
 
 // wait for user interaction event in page...
+//async function go() {
+//  if( !audioContext ) {
+//    try {
+//      audioContext = new AudioContext({ latencyHint:.1 })
+//      await audioContext.resume()
+//      await audioContext.audioWorklet.addModule( '../src/module.js' )
+      
+//      utilities.sampleRate = audioContext.sampleRate
+//      utilities.ctx = audioContext
+//      samplerate = utilities.sampleRate
+
+//      // TODO: how to know ahead of time if stereo? some type 
+//      // of init function?
+//      const numChannels = 2
+//      node = new AudioWorkletNode( 
+//        audioContext, 
+//        'wasm-test',
+//        { 
+//          channelInterpretation:'discrete', 
+//          channelCount: numChannels, 
+//          outputChannelCount:[ numChannels ] 
+//        }
+//      )
+
+//      utilities.node = node
+
+//      // send wasm over messageport to worklet
+//      node.port.postMessage({
+//        address:'memory',
+//        wasm:wasmbytes,
+//        sr: audioContext.sampleRate
+//      })
+            
+//      let arr
+//      node.port.onmessage = msg => {
+//        arr = msg.data.memory
+//        setupMemory( arr )
+//        node.connect( audioContext.destination )
+//      }
+      
+//      window.onclick = null  
+//    } catch(e) {
+//      console.error( e )
+//    }
+//  }
+//}
+
+/*
 async function go() {
   if( !audioContext ) {
     try {
@@ -157,7 +271,7 @@ async function go() {
     }
   }
 }
-
+*/
 let m = 0
 let memclear = 0
 const getMemory = function( amt ) {
@@ -801,4 +915,4 @@ function setupMemory( buffer, __pokelength=50 ) {
 
 window.node = node
 window.context = audioContext
-window.onclick = go
+//window.onclick = go
