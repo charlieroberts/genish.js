@@ -54,7 +54,7 @@ window.onload = function() {
   // make worklet only the first time window is clicked
   // and trigger gong every time window is clicked
   let init = false
-  window.onclick = ()=> {
+  window.onpointerdown = ()=> {
     if( init === false ) {
       utilities.playWorklet( synth, 'fmsynth', true ) 
       init = true
