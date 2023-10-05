@@ -36,7 +36,8 @@ module.exports = ( _props ) => {
     if( usingWorklet === true && ugen.node !== null ) {
       ugen.node.port.postMessage({ key:'set', idx:ugen.memory.value.idx, value:ugen.max })
     }else{
-      gen.memory.heap[ ugen.memory.value.idx ] = ugen.max 
+      if( gen.memory && gen.memory.heap )
+        gen.memory.heap[ ugen.memory.value.idx ] = ugen.max 
     }
   }
 
