@@ -3,8 +3,6 @@
 let gen     = require( './gen' ),
     windows = require( './windows' ),
     data    = require( './data' ),
-    peek    = require( './peek' ),
-    phasor  = require( './phasor' ),
     defaults = {
       type:'triangular', length:1024, alpha:.15, shift:0, reverse:false 
     }
