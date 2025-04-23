@@ -283,6 +283,75 @@ registerProcessor( '${name}', ${name}Processor)`
     }
   },
 
+  makeWorklet( graph, name, debug=false, mem=44100 * 1, __eval=false, kernel=false ) {
+    const [ url, codeString, inputs, params, numChannels ] = utilities.createWorkletProcessor( graph, name, debug, mem, __eval, kernel )
+
+    const nodePromise = new Promise( (resolve,reject) => {
+      utilities.ctx.audioWorklet.addModule( url ).then( ()=> {
+        const workletNode = new AudioWorkletNode( utilities.ctx, name, { channelInterpretation:'discrete', channelCount: numChannels, outputChannelCount:[ numChannels ] })
+
+        workletNode.callbacks = {}
+        workletNode.onmessage = function( event ) {
+          if( event.data.message === 'return' ) {
+            workletNode.callbacks[ event.data.idx ]( event.data.value )
+
+
+            delete workletNode.callbacks[ event.data.idx ]
+          }
+        }
+
+        workletNode.getMemoryValue = function( idx, cb ) {
+          this.workletCallbacks[ idx ] = cb
+          this.workletNode.port.postMessage({ key:'get', idx: idx })
+        }
+        
+        workletNode.port.postMessage({ key:'init', memory:gen.memory.heap })
+        utilities.workletNode = workletNode
+
+        utilities.registeredForNodeAssignment.forEach( ugen => ugen.node = workletNode )
+        utilities.registeredForNodeAssignment.length = 0
+
+        // assign all params as properties of node for easier reference 
+        for( let dict of inputs.values() ) {
+          const name = Object.keys( dict )[0]
+          const param = workletNode.parameters.get( name )
+      
+          Object.defineProperty( workletNode, name, {
+            set( v ) {
+              param.value = v
+            },
+            get() {
+              return param.value
+            }
+          })
+        }
+
+        for( let ugen of params.values() ) {
+          const name = ugen.name
+          const param = workletNode.parameters.get( name )
+          ugen.waapi = param 
+          // initialize?
+          param.value = ugen.defaultValue
+
+          Object.defineProperty( workletNode, name, {
+            set( v ) {
+              param.value = v
+            },
+            get() {
+              return param.value
+            }
+          })
+        }
+
+        resolve( workletNode )
+      })
+
+    })
+
+    return nodePromise
+  },
+
+
   playWorklet( graph, name, debug=false, mem=44100 * 60, __eval=false, kernel=false ) {
     utilities.clear()
 
