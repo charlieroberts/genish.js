@@ -98,6 +98,7 @@ const library = {
   ifelse:   require( './ifelseif.js' ),
   bang:     require( './bang.js' ),
   and:      require( './and.js' ),
+  or:       require( './or.js' ),
   pan:      require( './pan.js' ),
   eq:       require( './eq.js' ),
   neq:      require( './neq.js' ),
