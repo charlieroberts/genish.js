@@ -10,16 +10,19 @@
     "memory-helper": "^1.1.1"
   },
   "devDependencies": {
-    "benchmark": "^2.1.0",
-    "browserify": "^16.5.2",
-    "codemirror": "^5.9.0",
-    "glob-parent": "^5.1.2",
-    "gulp": "^4.0.2",
-    "gulp-buffer": "^0.0.2",
-    "gulp-mocha": "^8.0.0",
-    "mocha": "^10.0.0",
-    "nanoid": "^3.3.4",
-    "vinyl-source-stream": "^1.1.0"
+    "browserify": "^16.2.0",
+    "codemirror": "^5.48.0",
+    "gulp": "^3.9.1",
+    "gulp-beautify": "^3.0.0",
+    "gulp-json-validator": "^1.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^1.0.0",
+    "gulp-uglify": "^3.0.0",
+    "serialize-javascript": "^1.5.0",
+    "tern": "^0.24.1",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0"
   },
   "scripts": {
     "test": "mocha test/*.js"
