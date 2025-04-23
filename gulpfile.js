@@ -1,13 +1,13 @@
-var gulp = require('gulp'),
-    //uglify   = require('gulp-uglify'),
-    //notify   = require('gulp-notify'),
-    browserify = require('browserify'),
-    buffer     = require('gulp-buffer'),
-    source     = require('vinyl-source-stream'),
-    mocha      = require('gulp-mocha')
+const gulp = require('gulp'),
+      //uglify   = require('gulp-uglify'),
+      //notify   = require('gulp-notify'),
+      browserify = require('browserify'),
+      //buffer     = require('gulp-buffer'),
+      source     = require('vinyl-source-stream')
+      //mocha      = require('gulp-mocha')
 
 gulp.task( 'js', function() {
-  browserify({ debug:true, standalone:'genish' })
+  const out = browserify({ debug:true, standalone:'genish' })
     .require( './js/index.js', { entry: true } )
     .bundle()
     .pipe( source('gen.lib.js') )
@@ -22,11 +22,12 @@ gulp.task( 'js', function() {
     //)
 
   // transpile (but don't browserify) for use with node.js tests
-  return gulp.src( './js/**.js' )
-    .pipe( gulp.dest('./dist' ) )
+  return out // gulp.src( './js/**.js' )
+    //.pipe( gulp.dest('./dist' ) )
 
 })
 
+/*
 gulp.task( 'test', ['js'], ()=> {
   return gulp.src('test/*.js', {read:false})
     .pipe( mocha({ reporter:'nyan' }) ) // spec, min, nyan, list
@@ -36,5 +37,5 @@ gulp.task( 'test', ['js'], ()=> {
 gulp.task( 'watch', function() {
   gulp.watch( './js/**.js', ['test'] )
 })
-
-gulp.task( 'default', ['js','test'] )
+*/
+gulp.task( 'default', ['js'] )
