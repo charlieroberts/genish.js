@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang=en>
+  <head>
+    <meta charset='utf-8'>
+    <script src='../dist/gen.lib.js'></script>
+    <script src="http://unpkg.com/tone"></script>
+  </head>
+  <body>
+    <p style="width:25em;" > 
+    <span style="font-weight:bold">Click/touch in the page to begin</span>. 
+    This example shows how you can use the "input" ugen to link genish and Tone.js. 
+    If you open your developer's console, you should see the generated callback function. 
+    </p>
+  </body>
+  <script>
+
+    const click = async function() {
+      // tell tone.js to use the genish AudioContext
+      Tone.setContext( utilities.ctx )
+      // start tone
+      await Tone.start()
+
+      // make a Tone.js oscillator
+      const osc = new Tone.Oscillator()
+      osc.frequency.value = 2 
+
+      // increase oscillator gain for frequency modulation
+      const gain = new Tone.Gain(40)
+      osc.connect( gain )
+
+      utilities.makeWorklet( 
+        cycle( add( 220, input('freqMod', 0, 0 ) ) ), 
+        'test', // this name isn't really important
+        true    // print generated code to developers console
+      ).then( node => {
+        gain.connect( node, 0, 0 )
+        osc.start()
+        node.connect( utilities.ctx.destination )
+
+        console.log( 'playing...' )
+      })
+
+      window.removeEventListener( 'click', click )
+    }
+
+    window.onload = ()=> {
+      window.addEventListener( 'click', click )
+
+      genish.export( window )
+
+      // audio context will be stored in utilities.ctx
+      utilities.createContext()
+    }
+
+  </script>
+</html>
+
+
+
