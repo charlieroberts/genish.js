@@ -25,36 +25,41 @@ const utilities = {
     if( gen.graph !== null ) gen.free( gen.graph )
   },
 
-  createContext( bufferSize = 2048 ) {
-    const AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
-    
-    // tell polyfill global object and buffersize
-    AWPF( window, bufferSize )
+  createContext( bufferSize = 2048, __AC=null ) {
+    if( __AC === null ) {
+      const AC = typeof AudioContext === 'undefined' ? webkitAudioContext : AudioContext
+      
+      // tell polyfill global object and buffersize
+      AWPF( window, bufferSize )
 
-    const start = () => {
-      if( typeof AC !== 'undefined' ) {
-        this.ctx = new AC({ latencyHint:.0125 })
+      const start = () => {
+        if( typeof AC !== 'undefined' ) {
+          this.ctx = new AC({ latencyHint:.0125 })
 
-        gen.samplerate = this.ctx.sampleRate
+          gen.samplerate = this.ctx.sampleRate
 
-        if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
-          window.removeEventListener( 'touchstart', start )
-        }else{
-          window.removeEventListener( 'mousedown', start )
-          window.removeEventListener( 'keydown', start )
+          if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
+            window.removeEventListener( 'touchstart', start )
+          }else{
+            window.removeEventListener( 'mousedown', start )
+            window.removeEventListener( 'keydown', start )
+          }
+
+          const mySource = utilities.ctx.createBufferSource()
+          mySource.connect( utilities.ctx.destination )
+          mySource.start()
         }
-
-        const mySource = utilities.ctx.createBufferSource()
-        mySource.connect( utilities.ctx.destination )
-        mySource.start()
       }
-    }
 
-    if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
-      window.addEventListener( 'touchstart', start )
+      if( document && document.documentElement && 'ontouchstart' in document.documentElement ) {
+        window.addEventListener( 'touchstart', start )
+      }else{
+        window.addEventListener( 'mousedown', start )
+        window.addEventListener( 'keydown', start )
+      }
     }else{
-      window.addEventListener( 'mousedown', start )
-      window.addEventListener( 'keydown', start )
+      this.ctx = __AC
+      gen.samplerate = this.ctx.sampleRate
     }
 
     return this
@@ -243,11 +248,13 @@ class ${name}Processor extends AudioWorkletProcessor {
 
   process( inputs, outputs, parameters ) {
     if( this.initialized === true ) {
+
       const output = outputs[0]
       ${inputsString}
       const len    = channel0.length
       const memory = this.memory ${parameterDereferences}${inputDereferences}${memberString}
       ${kernel ? 'const kernel = this.kernel' : '' }
+
 
       for( let i = 0; i < len; ++i ) {
         ${kernel ? 'kernel( memory )\n' : prettyCallback}
