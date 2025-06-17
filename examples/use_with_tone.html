@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <script src='../dist/gen.lib.js'></script>
-    <script src="https://unpkg.com/tone"></script>
+    <script src="http://unpkg.com/tone"></script>
   </head>
   <body>
     <p style="width:25em;" > 
@@ -15,10 +15,10 @@
   <script>
 
     const click = async function() {
+      await Tone.start()
       // tell tone.js to use the genish AudioContext
       Tone.setContext( utilities.ctx )
       // start tone
-      await Tone.start()
 
       // make a Tone.js oscillator
       const osc = new Tone.Oscillator()
