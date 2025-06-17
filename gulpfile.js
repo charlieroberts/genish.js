@@ -7,11 +7,16 @@ const gulp = require('gulp'),
       //mocha      = require('gulp-mocha')
 
 gulp.task( 'js', function() {
-  const out = browserify({ debug:true, standalone:'genish' })
+  let out = null
+  try {
+  out = browserify({ debug:true, standalone:'genish' })
     .require( './js/index.js', { entry: true } )
     .bundle()
     .pipe( source('gen.lib.js') )
     .pipe( gulp.dest('./dist') )
+  }catch( e ) {
+    console.log( e )
+  }
     //.pipe( uglify() )
     // notify() doesn't work in linux?
     //.pipe(
