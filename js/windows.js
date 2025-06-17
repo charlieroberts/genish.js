@@ -80,7 +80,14 @@ const windows = module.exports = {
     return Math.pow( index / length, alpha )
   },
 
+  rexponential( length, index, alpha ) {
+    return Math.pow( index / length, alpha )
+  },
+
   linear( length, index ) {
     return index / length
   }
 }
+
+windows.expodec = windows.rexponential
+windows.rexpodec = windows.exponential
