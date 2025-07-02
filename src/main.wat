@@ -948,64 +948,57 @@
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
     
-    i32.eq
-    f32.reinterpret_i32
+
+    f32.eq
+    f32.convert_i32_u
   )
   (func $eq_s_d (export "eq_s_d") (param $loc i32) (result f32)
     local.get $loc
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
 
-    i32.eq
-    f32.reinterpret_i32
+    f32.eq
+    f32.convert_i32_u
   )
   (func $eq_d_s (export "eq_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
-    i32.reinterpret_f32
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
 
-    i32.eq
-    f32.reinterpret_i32
+    f32.eq
+    f32.convert_i32_u
   )
   (func $eq_d_d (export "eq_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
-    i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
 
-    i32.eq
-    f32.reinterpret_i32
+    f32.eq
+    f32.convert_i32_u
   )
 
    (func $neq_s_s (export "neq_s_s") (param $loc i32) (result f32)
