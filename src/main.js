@@ -151,7 +151,7 @@ window.utilities = {
 
 const play = function( ugen, __node ) {
   window.out = ugen
-  const node = __node
+  const node = __node || utilities.node
   if( Array.isArray( ugen ) ) {
     node.port.postMessage({
       address:'renderStereo',
@@ -172,57 +172,57 @@ const play = function( ugen, __node ) {
 
 // get wasm as bytes, start downloading as soon as
 // page loads
-fetch( '../dist/main3.wasm')
+fetch( '../dist/main2.wasm')
   .then( response => response.arrayBuffer() )
   .then( bytes => wasmbytes = bytes )
 
 // wait for user interaction event in page...
-//async function go() {
-//  if( !audioContext ) {
-//    try {
-//      audioContext = new AudioContext({ latencyHint:.1 })
-//      await audioContext.resume()
-//      await audioContext.audioWorklet.addModule( '../src/module.js' )
+async function go() {
+  if( !audioContext ) {
+    try {
+      audioContext = new AudioContext({ latencyHint:.1 })
+      await audioContext.resume()
+      await audioContext.audioWorklet.addModule( '../src/module.js' )
       
-//      utilities.sampleRate = audioContext.sampleRate
-//      utilities.ctx = audioContext
-//      samplerate = utilities.sampleRate
+      utilities.sampleRate = audioContext.sampleRate
+      utilities.ctx = audioContext
+      samplerate = utilities.sampleRate
 
-//      // TODO: how to know ahead of time if stereo? some type 
-//      // of init function?
-//      const numChannels = 2
-//      node = new AudioWorkletNode( 
-//        audioContext, 
-//        'wasm-test',
-//        { 
-//          channelInterpretation:'discrete', 
-//          channelCount: numChannels, 
-//          outputChannelCount:[ numChannels ] 
-//        }
-//      )
+      // TODO: how to know ahead of time if stereo? some type 
+      // of init function?
+      const numChannels = 2
+      node = new AudioWorkletNode( 
+        audioContext, 
+        'wasm-test',
+        { 
+          channelInterpretation:'discrete', 
+          channelCount: numChannels, 
+          outputChannelCount:[ numChannels ] 
+        }
+      )
 
-//      utilities.node = node
+      utilities.node = node
 
-//      // send wasm over messageport to worklet
-//      node.port.postMessage({
-//        address:'memory',
-//        wasm:wasmbytes,
-//        sr: audioContext.sampleRate
-//      })
+      // send wasm over messageport to worklet
+      node.port.postMessage({
+        address:'memory',
+        wasm:wasmbytes,
+        sr: audioContext.sampleRate
+      })
             
-//      let arr
-//      node.port.onmessage = msg => {
-//        arr = msg.data.memory
-//        setupMemory( arr )
-//        node.connect( audioContext.destination )
-//      }
+      let arr
+      node.port.onmessage = msg => {
+        arr = msg.data.memory
+        setupMemory( arr )
+        node.connect( audioContext.destination )
+      }
       
-//      window.onclick = null  
-//    } catch(e) {
-//      console.error( e )
-//    }
-//  }
-//}
+      window.onclick = null  
+    } catch(e) {
+      console.error( e )
+    }
+  }
+}
 
 /*
 async function go() {
@@ -320,6 +320,7 @@ const factory = function( props, statics, baseidx, name ) {
     let value = props[ key ]
     Object.defineProperty( obj, key, {
       get() { return value },
+      configurable:true,
       set( v ) {
         // is this a number or a ugen?
         const isUgen = isNaN( v ) ? 1 : 0
@@ -887,6 +888,20 @@ let pan
   }
 } 
 
+// NON-CORE
+let seq = function( values, durations, rate=1 ) {
+  const del       = ssd( 0 ),
+        clockd    = counter( del.out, 0, durations.length ),
+        __durs    = peek( data(durations), clockd, 'none', 'samples' ),
+        clock     = counter( rate, 0, __durs ),
+        stepper   = counter( clock.wrap, 0, values.length ),
+        ugen      = peek( data(values), stepper, 'none', 'samples' )
+
+  del.in( clock.wrap )
+
+  return ugen
+}
+
 let pokememoryindex = 1000
 let pokelength = 50
 let pokecounter = 0
@@ -915,4 +930,4 @@ function setupMemory( buffer, __pokelength=50 ) {
 
 window.node = node
 window.context = audioContext
-//window.onclick = go
+window.onclick = go
