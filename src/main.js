@@ -7,7 +7,7 @@ ugen memory layout
 let audioContext = null, 
     node = null, 
     wasmbytes = null,
-    memf, memi, memf64, memi64
+    memf, memi, memf64, memi64, buffer
 
 const MAX = 0x7FFFFFFF
 
@@ -22,8 +22,10 @@ window.utilities = {
   clear() {
     memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
     memf.fill( 0, memclear )
-    m = memclear
-    pokeindex =   getMemory( 50 )
+    m = 0
+    //pokememoryindex = getMemory( 50 )
+    setupMemory( buffer )
+    
     play([ add(0,0), add(0,0) ])
   },
 
@@ -213,6 +215,7 @@ async function go() {
       let arr
       node.port.onmessage = msg => {
         arr = msg.data.memory
+        buffer = arr
         setupMemory( arr )
         node.connect( audioContext.destination )
       }
@@ -791,20 +794,33 @@ const data = function( __data, type='float' ) {
     obj = { 
       idx : getMemory( __data.length ),
       length: __data.length,
-      name:'data'
+      name:'data',
+      get( index=0 ) {
+        return type === 'float' ?  memf[ obj.idx + index ] : memi[ obj.idx + index ]
+      },
+      set( value, index=0 ) {
+        if( type === 'float' ) {
+          memf.set( __data, obj.idx+index )
+        }else{
+          memi.set( __data, obj.idx+index )
+        }
+      },
+      peek( index=0 ) {
+        return peek( obj, index, 'none', 'samples' )
+      },
+      poke( index=0, value ) {
+        return poke( obj, value, index )
+      }
     }
-  
-    if( type === 'float' ) {
-      memf.set( __data, obj.idx )
-    }else{
-      memi.set( __data, obj.idx )
-    }
+
+    obj.set( __data )
   }else{
+    // only passing length for blank array
     obj = { 
       idx: getMemory( __data ),
       length: __data,
       name:'data'
-    }
+    } 
   }
 
   return obj
@@ -925,7 +941,6 @@ function setupMemory( buffer, __pokelength=50 ) {
   
   // store index for clearing memory
   memclear = m
-
 }
 
 window.node = node
