@@ -25,7 +25,6 @@
   (type $sig-i32--i32 (func (param $loc i32) (result i32) ) )
   ;; no return
   (type $sig-i32 (func (param $loc i32) ) )
-
   
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
@@ -1707,7 +1706,7 @@
     call $_atan2
   )
 
-  (func $pow (export "pow") (param $loc i32) (result f32)
+  (func $powr (export "powr") (param $loc i32) (result f32)
     local.get $loc
     call $get-property
     
@@ -3926,7 +3925,7 @@
   (func $ifelse_s_s_s (export "ifelse_s_s_s") (result f32) f32.const 0)
   (func $ifelse_s_s_d (export "ifelse_s_s_d") (result f32) f32.const 0)
   (func $ifelse_s_d_s (export "ifelse_s_d_s") (result f32) f32.const 0)
-  (func $ifelse_s_d_d (export "ifelse_s_d_  d") (result f32) f32.const 0)
+  (func $ifelse_s_d_d (export "ifelse_s_d_d") (result f32) f32.const 0)
   (func $ifelse_d_s_d (export "ifelse_d_s_d") (result f32) f32.const 0)
   (func $ifelse_d_d_s (export "ifelse_d_d_s") (param $loc i32) (result f32)
     (i32.trunc_f32_u     
