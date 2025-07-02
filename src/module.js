@@ -43,6 +43,8 @@ class WASMProcessor extends AudioWorkletProcessor {
         .then( wasm => {
           this.wasm = wasm.instance.exports
           this.memory = memory.buffer
+
+          console.log( 'WASM:', this.wasm )
           
           this.port.postMessage({
             address:'memory',
@@ -78,20 +80,22 @@ class WASMProcessor extends AudioWorkletProcessor {
   process(inputs, outputs, parameters) {
     const len = outputs[0][0].length
     const output = outputs[0][0]
-    if( this.numChannels === 1 ) {
-      this.wasm.render( this.renderLocation, len, 0 )
-      outputs[0][0].set( this.outputL )
-      outputs[0][1].set( this.outputL )
-    }else{
-      this.wasm.renderStereo(
-        this.renderLocationL,
-        this.renderLocationR,
-        len,
-        0
-      )
+    if( this.wasm !== null ) {
+      if( this.numChannels === 1 ) {
+        this.wasm.render( this.renderLocation, len, 0 )
+        outputs[0][0].set( this.outputL )
+        outputs[0][1].set( this.outputL )
+      }else{
+        this.wasm.renderStereo(
+          this.renderLocationL,
+          this.renderLocationR,
+          len,
+          0
+        )
 
-      outputs[0][0].set( this.outputL )
-      outputs[0][1].set( this.outputR )
+        outputs[0][0].set( this.outputL )
+        outputs[0][1].set( this.outputR )
+      }
     }
     
     return true
