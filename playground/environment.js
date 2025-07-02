@@ -48,8 +48,11 @@ window.onload = function() {
         'thereminish',  
         'oneDelayLine',
         'slicingAndDicing',
-        'bandlimitedFM',
-        'sync'
+        'sequencing',
+        'bitcrusher'
+
+        //'bandlimitedFM',
+        //'sync'
 
 /*       
         'sequencing', 
@@ -111,6 +114,7 @@ CodeMirror.keyMap.playground =  {
 
       var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
 
+      console.log( 'code:', code )
       var func = new Function( code )
 
       func()
@@ -133,10 +137,10 @@ CodeMirror.keyMap.playground =  {
   },
   'Ctrl-.'( cm ) {
     utilities.clear()
-    if( dat !== undefined ) {
+    /*if( dat !== undefined ) {
       dat.GUI.__all__.forEach( v => v.destroy() )
       dat.GUI.__all__.length = 0
-    }
+    }*/
     //cmconsole.setValue('// silencio.\n' )
   },
 }
