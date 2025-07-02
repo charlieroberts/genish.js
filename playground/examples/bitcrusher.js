@@ -17,8 +17,7 @@ data( './resources/audiofiles/amen.wav' ).then( amen => {
   // read our audiofile
   audio = peek(
     amen, 
-    // XXX not sure why I need a increment of .5 here and not 1? hmmmm.
-    accum( .5, 0, 0, amen.length ), 
+    accum( 1, 0, 0, amen.length ), 
     'linear', 'samples'
   )
   
@@ -32,6 +31,10 @@ data( './resources/audiofiles/amen.wav' ).then( amen => {
     hold.out  // ... otherwise, repeat the last stored sample
   )
   
+  // memoize sample so it can be used in the ssd and also
+  // in the final audio output without recalculation
+  sample = memo( sample )
+ 
   // store the current sample for repeating
   hold.in( sample )
   
