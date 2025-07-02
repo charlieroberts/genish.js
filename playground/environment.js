@@ -49,7 +49,8 @@ window.onload = function() {
         'oneDelayLine',
         'slicingAndDicing',
         'sequencing',
-        'bitcrusher'
+        'bitcrusher',
+        'sync'
 
         //'bandlimitedFM',
         //'sync'
