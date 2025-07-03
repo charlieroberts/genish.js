@@ -618,64 +618,64 @@
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
     
     i32.and
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $and_s_d (export "and_s_d") (param $loc i32) (result f32)
     local.get $loc
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     i32.and
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $and_d_s (export "and_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     i32.and
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $and_d_d (export "and_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     i32.and
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
   (func $or_s_s (export "or_s_s") (param $loc i32) (result f32)
@@ -683,16 +683,16 @@
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
     
     i32.or
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $or_s_d (export "or_s_d") (param $loc i32) (result f32)
     local.get $loc
@@ -708,39 +708,39 @@
     i32.reinterpret_f32
 
     i32.or
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $or_d_s (export "or_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     )
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     i32.or
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $or_d_d (export "or_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
     ) 
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
+    i32.trunc_f32_s
 
     i32.or
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
   (func $gt_s_s (export "gt_s_s") (param $loc i32) (result f32)
@@ -753,7 +753,7 @@
     i32.add
     f32.load
     f32.gt
-    f32.reinterpret_i32
+    f32.convert_i32_u
 
   )
   (func $gt_s_d (export "gt_s_d") (param $loc i32) (result f32)
@@ -766,7 +766,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.gt
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $gt_d_s (export "gt_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -779,7 +779,7 @@
     f32.load
     f32.gt
 
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $gt_d_d (export "gt_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -791,7 +791,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.gt
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
   (func $gte_s_s (export "gte_s_s") (param $loc i32) (result f32)
@@ -804,7 +804,7 @@
     i32.add
     f32.load
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $gte_s_d (export "gte_s_d") (param $loc i32) (result f32)
     local.get $loc
@@ -816,7 +816,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $gte_d_s (export "gte_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -828,7 +828,7 @@
     i32.add
     f32.load
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $gte_d_d (export "gte_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -840,7 +840,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
   (func $lt_s_s (export "lt_s_s") (param $loc i32) (result f32)
@@ -853,7 +853,7 @@
     i32.add
     f32.load
     f32.lt
-    f32.reinterpret_i32
+    f32.convert_i32_u
 
   )
   (func $lt_s_d (export "lt_s_d") (param $loc i32) (result f32)
@@ -866,7 +866,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.lt
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $lt_d_s (export "lt_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -879,7 +879,7 @@
     f32.load
     f32.lt
 
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $lt_d_d (export "lt_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -891,7 +891,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.lt
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
   (func $lte_s_s (export "lte_s_s") (param $loc i32) (result f32)
@@ -904,7 +904,7 @@
     i32.add
     f32.load
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $lte_s_d (export "lte_s_d") (param $loc i32) (result f32)
     local.get $loc
@@ -916,7 +916,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $lte_d_s (export "lte_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -928,7 +928,7 @@
     i32.add
     f32.load
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $lte_d_d (export "lte_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -940,7 +940,7 @@
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
     f32.ge
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
    (func $eq_s_s (export "eq_s_s") (param $loc i32) (result f32)
@@ -954,7 +954,6 @@
     i32.add
     f32.load
     
-
     f32.eq
     f32.convert_i32_u
   )
@@ -1006,32 +1005,28 @@
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
 
     local.get $loc
     i32.const 8
     i32.add
     f32.load
-    i32.reinterpret_f32
     
-    i32.ne
-    f32.reinterpret_i32
+    f32.ne
+    f32.convert_i32_u
   )
   (func $neq_s_d (export "neq_s_d") (param $loc i32) (result f32)
     local.get $loc
     i32.const 4
     i32.add
     f32.load
-    i32.reinterpret_f32
 
     (call_indirect (type $sig-i32--f32) 
       (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data
       (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; function id
     )
-    i32.reinterpret_f32
 
-    i32.ne
-    f32.reinterpret_i32
+    f32.ne
+    f32.convert_i32_u
   )
   (func $neq_d_s (export "neq_d_s") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -1047,7 +1042,7 @@
     i32.reinterpret_f32
 
     i32.ne
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
   (func $neq_d_d (export "neq_d_d") (param $loc i32) (result f32)
     (call_indirect (type $sig-i32--f32) 
@@ -1063,7 +1058,7 @@
     i32.reinterpret_f32
 
     i32.ne
-    f32.reinterpret_i32
+    f32.convert_i32_u
   )
 
  
