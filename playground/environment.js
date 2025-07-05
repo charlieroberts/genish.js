@@ -50,7 +50,8 @@ window.onload = function() {
         'slicingAndDicing',
         'sequencing',
         'bitcrusher',
-        'sync'
+        'sync',
+        'freeverb'
 
         //'bandlimitedFM',
         //'sync'
