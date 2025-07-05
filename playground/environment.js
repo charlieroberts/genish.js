@@ -51,7 +51,8 @@ window.onload = function() {
         'sequencing',
         'bitcrusher',
         'sync',
-        'freeverb'
+        'freeverb',
+        'fmfeedback'
 
         //'bandlimitedFM',
         //'sync'
