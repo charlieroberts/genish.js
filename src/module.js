@@ -14,6 +14,9 @@ class WASMProcessor extends AudioWorkletProcessor {
         //console.log( 'processor:', this )
         // XXX replace with actual sampling rate at some point...
         this.sr = new WebAssembly.Global({value:'f32', mutable:false}, msg.data.sr )
+        this.sine = new WebAssembly.Global({value:'i32', mutable:false}, msg.data.sinebuffer )
+        this.panl = new WebAssembly.Global({value:'i32', mutable:false}, msg.data.panlbuffer )
+        this.panr = new WebAssembly.Global({value:'i32', mutable:false}, msg.data.panrbuffer )
         this.clock = new WebAssembly.Global({ value:'i32', mutable:true}, 1 )
         
         WebAssembly.instantiate( 
@@ -23,7 +26,8 @@ class WASMProcessor extends AudioWorkletProcessor {
               memory, sr:this.sr, 
               fmax:0x7fffffff,
               _logi:function( n ) { console.log(n) }, 
-              _logf:function( n ) { console.log(n) } 
+              _logf:function( n ) { console.log(n) },
+              sine:this.sine, panl:this.panl, panr:this.panr
             },
             math: { 
               sin:  Math.sin,
@@ -44,8 +48,6 @@ class WASMProcessor extends AudioWorkletProcessor {
           this.wasm = wasm.instance.exports
           this.memory = memory.buffer
 
-          console.log( 'WASM:', this.wasm )
-          
           this.port.postMessage({
             address:'memory',
             memory:this.memory
