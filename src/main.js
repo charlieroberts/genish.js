@@ -15,16 +15,45 @@ logm = function() {
   console.log( m, memclear )
 }
 
+let pokememoryindex = 256 
+let pokelength = 50
+let pokecounter = 0
+function setupMemory( buffer, __pokelength=50 ) {
+  memf   = new Float32Array( buffer )
+  memf64 = new Float64Array( buffer )
+  memi   = new Int32Array( buffer )  
+  
+  // for output buffer
+  getMemory( 128 )
+  // for right buffer if stereo 
+  // TODO: fix so that there is no memory
+  // allocated for the right channel if the instrument
+  // is mono
+  getMemory( 128 )
+
+  pokelength = __pokelength
+  pokememoryindex = getMemory( pokelength )
+
+  console.log( 'PMI:', pokememoryindex )
+
+  utilities.createWavetables()
+
+  // store index for clearing memory
+  memclear = m
+}
+
 window.utilities = {
   buffers: {},
   sampleRate: null,
   
   clear() {
-    memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
-    memf.fill( 0, memclear )
+    //memf.fill( 0, pokememoryindex, pokememoryindex + pokelength)
+    //memf.fill( 0, memclear )
+    memf.fill(0)
     m = 0
     //pokememoryindex = getMemory( 50 )
     setupMemory( buffer )
+    pokecounter = 0
     
     play([ add(0,0), add(0,0) ])
   },
@@ -32,12 +61,13 @@ window.utilities = {
   loadSample( soundFilePath ) {
     const isLoaded = utilities.buffers[ soundFilePath ] !== undefined
 
-    const req = new XMLHttpRequest()
-    req.open( 'GET', soundFilePath, true )
-    req.responseType = 'arraybuffer' 
-    
     const promise = new Promise( (resolve,reject) => {
       if( !isLoaded ) {
+
+        const req = new XMLHttpRequest()
+        req.open( 'GET', soundFilePath, true )
+        req.responseType = 'arraybuffer' 
+        
         req.onload = function() {
           var audioData = req.response
 
@@ -47,14 +77,14 @@ window.utilities = {
             resolve( data( utilities.buffers[ soundFilePath ] ) )
           })
         }
+
+        req.send()
       }else{
         setTimeout( ()=> {
           resolve( data( utilities.buffers[ soundFilePath ] ) )
         }, 0 )
       }
     })
-
-    if( !isLoaded ) req.send()
 
     return promise
   },
@@ -135,18 +165,18 @@ window.utilities = {
     //b.connect( ...sines )
 
     setTimeout( ()=> {
-    graph = graph()
-    let start = performance.now()
+      graph = graph()
+      let start = performance.now()
 
-    play( graph, node )
-    ctx.startRendering()
-    ctx.oncomplete = e => { 
-      let end = performance.now()
-      if( true ) console.log( 'genish sine rendering time:', end - start )
-      //tests.sine_genish.times.push( end - start )
+      play( graph, node )
+      ctx.startRendering()
+      ctx.oncomplete = e => { 
+        let end = performance.now()
+        if( true ) console.log( 'genish sine rendering time:', end - start )
+        //tests.sine_genish.times.push( end - start )
 
-      //run()
-    }
+        //run()
+      }
     }, 100 )
   }
 }
@@ -209,7 +239,15 @@ async function go() {
       node.port.postMessage({
         address:'memory',
         wasm:wasmbytes,
-        sr: audioContext.sampleRate
+        sr: audioContext.sampleRate,
+        // TODO this is um messy
+        // two 128 audio output channels, 50 poke slots
+        sinebuffer: (256+50)*4,
+        // + 1024 slots for sine buffer
+        panlbuffer: (256+50+1024)*4,
+        // + 1024 slots for panl buffer
+        panrbuffer: (256+50+2048)*4
+        // see setupMemory function for details
       })
             
       let arr
@@ -918,30 +956,7 @@ let seq = function( values, durations, rate=1 ) {
   return ugen
 }
 
-let pokememoryindex = 1000
-let pokelength = 50
-let pokecounter = 0
-function setupMemory( buffer, __pokelength=50 ) {
-  memf   = new Float32Array( buffer )
-  memf64 = new Float64Array( buffer )
-  memi   = new Int32Array( buffer )  
-  
-  // for output buffer
-  getMemory( 128 )
-  // for right buffer if stereo 
-  // TODO: fix so that there is no memory
-  // allocated for the right channel if the instrument
-  // is mono
-  getMemory( 128 )
 
-  pokelength = __pokelength
-  pokememoryindex = getMemory( pokelength )
-
-  utilities.createWavetables()
-  
-  // store index for clearing memory
-  memclear = m
-}
 
 window.node = node
 window.context = audioContext

@@ -13,6 +13,9 @@
   (import "math" "atan2" (func $_atan2 (param f32) (param f32) (result f32) ) )
 
   (global $sr (import "env" "sr") f32)
+  (global $sine (import "env" "sine") i32)
+  (global $panl (import "env" "panl") i32)
+  (global $panr (import "env" "panr") i32)
   (global $fmax (import "env" "fmax") f32)  
   (export "memory" (memory $mem) )
   (global $clock (mut i32) (i32.const 0))
@@ -2078,11 +2081,7 @@
       local.get $floor ;; no interpolation
     end
   )
-  ;; needs to alternatively accept a non-normalized phase,
-  ;; and interpolation needs to be optional. 
-  ;; to optimize, consider placing different versions of
-  ;; peek in separate functions... which wasm function gets
-  ;; called would be determined by JS.
+  
   (func $peek_d (export "peek_d")
     (param $loc i32)
     (result f32)
@@ -2115,6 +2114,7 @@
     f32.load
     local.set $len
 
+    ;; use normalized phase or sample count?
     local.get $loc
     i32.const 20
     i32.add
@@ -2380,7 +2380,9 @@
       local.get $base
       i32.const 4
       i32.mul
-      i32.const 1024
+
+      global.get $sine
+      (;i32.const 1024;)
       i32.add
       f32.load
       local.set $floor 
@@ -2393,7 +2395,9 @@
       i32.and
       i32.const 4
       i32.mul
-      i32.const 1024
+
+      global.get $sine
+      (;i32.const 1024;)
       i32.add
       f32.load
       local.set $ceil
@@ -2480,7 +2484,14 @@
       local.get $base
       i32.const 4
       i32.mul
-      i32.const 1024
+      ;; 1024 if presumably the location of the wavetable in memory
+      ;; but this needs to be adjustable / dynamic somehow I think?
+      ;; I'm already having errors where I accidentally move the wavetable
+      ;; in memory and it creates artifacts in the sine wave...
+
+      ;; location of sine buffer in memory
+      global.get $sine
+      (;i32.const 1224;)
       i32.add
       f32.load
       local.set $floor 
@@ -2493,7 +2504,8 @@
       i32.and
       i32.const 4
       i32.mul
-      i32.const 1024
+      global.get $sine
+      (;i32.const 1224;)
       i32.add
       f32.load
       local.set $ceil
@@ -4281,6 +4293,7 @@
   (func $processPokes (export "processPokes") 
     (local $idx i32)
     (local $i i32)
+    ;; 1024 shouldn't be a hard value
     i32.const 1024    
     local.set $idx 
 
@@ -4311,6 +4324,7 @@
       local.set $idx
       
       ;; check if i > len and break $l if true
+      ;; 50 should not be a hard value!!!
       i32.const 50
       local.get $i
       i32.ge_u 
