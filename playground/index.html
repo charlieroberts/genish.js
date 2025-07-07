@@ -1,14 +1,16 @@
-<html>
+<!doctype html>
+<html lang=en>
   <head>
+    <meta charset=utf-8>
     <title>Genish.js Playground</title>
     <script src="../node_modules/codemirror/lib/codemirror.js"></script>
     <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
     <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
     <script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="./dat.gui.js"></script>
     <script src="../src/main.js"></script>
     <script src="./environment.js"></script>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
 <style>
 .CodeMirror-highlight {
   background:red
@@ -25,6 +27,8 @@ body {
   width:100%; 
   height:2em; 
   background:#272822; 
+  top:0;
+  position:sticky;
   border-bottom:1px solid #666;
 }
 
@@ -56,8 +60,7 @@ h1 {
 
 #header span { font-size: .8em; }
 
-#editor { width:100%; box-sizing: border; display:inline-block; height:calc( 100% - 2em); border-right:1px solid #666  }
-/* #console{ width:40%; box-sizing:border; display:inline-block; background:grey; position:absolute; height:calc( 100% - 2em ); } */
+#editor { width:100%; position:absolute; box-sizing: border; display:block; height:calc( 100% - 2em)  }
 
 .dg { z-index:100 !important }
 #reference a{ color: #ccc !important; margin-left: 2em }
@@ -86,20 +89,11 @@ h1 {
         <option>bit crushing / sample reduction</option>
         <option>hard/soft sync</option>
         <option>schroeder/moorer reverberation (freeverb)</option>
-        <option>FM feedback -> band-limited saw</option> 
-        <!--<option>hard/soft oscillator sync</option>
-
-        <option>hard sync</option>
+        <option>FM feedback - band-limited saw</option> 
         <option>enveloping</option>
-        <option>FM feedback -> band-limited saw</option> 
-        <option>biquad filter</option>
-        <option>zero-delay (virtual analog) filter</option>
-        <option>zero-delay (virtual analog) ladder filter</option>
-        <option>comb filter w/ feedback</option>
-        <option>schroeder/moorer reverberation (freeverb)</option>
-        <option>gigaverb</option>
-        <option>garden of earthly delays</option>
-        <option>karplus strong</option> -->
+        <option>virtual analog filter (two-pole)</option>
+        <option>virtual analog filter (four-pole, ladder-style)</option>
+        <option>karplus strong</option>
       </select>
       
       <span id='reference'><a href='../docs/index.html'>reference</a>

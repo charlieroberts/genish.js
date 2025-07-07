@@ -13,35 +13,6 @@ window.onload = function() {
 
   cm.setSize( null, '100%' )
 
-  // cmconsole = CodeMirror( document.querySelector('#console'), {
-  //   mode:'javascript',
-  //   value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
-  //   readOnly:'nocursor',
-  //   theme:'monokai'
-  // })     
-
-  // cmconsole.setSize( null, '100%' )
-  // genish.export( window )
-
-  // utilities.createContext( 2048 )
-  // utilities.console = cmconsole
-  // utilities.editor  = cm
-
-  // window.play = function( v, name, debug, mem, __eval=false, kernel=false ) { //, memType=Float32Array ) {
-  //   if( name === undefined || name === null ) {
-  //     name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
-  //   }
-  //   if( dat !== undefined ) {
-  //     dat.GUI.__all__.forEach( v => v.destroy() )
-  //     dat.GUI.__all__.length = 0
-  //   }
-  //   var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
-
-  //   return cb
-  // }
-
-  //Babel.registerPlugin( 'jsdsp', jsdsp )
-
   let select = document.querySelector( 'select' ),
       files = [
         'intro',
@@ -52,24 +23,11 @@ window.onload = function() {
         'bitcrusher',
         'sync',
         'freeverb',
-        'fmfeedback'
-
-        //'bandlimitedFM',
-        //'sync'
-
-/*       
-        'sequencing', 
-        'bitcrusher',
+        'fmfeedback',
         'enveloping',
-        'biquad',
-        'zeroDelay',
-        'zeroDelayLadder',
-        'combFilter',
-        'freeverb',
-        'gigaverb',
-        'gardenOfDelays', 
-        'karplusStrong'
-*/
+        'twopoleva',
+        'fourpoleva',
+        'karplus'
       ]
   
   let currentFile = 'intro'
@@ -90,13 +48,6 @@ window.onload = function() {
   }
   
   loadexample( 'intro' )
-
-  //let jsdspBtn = document.querySelector( '#jsdsp' ) 
-
-  //jsdspBtn.addEventListener( 'change', v => {
-  //  shouldUseJSDSP = v.target.checked
-  //  askForReload()
-  //})
 
   const askForReload = ()=> {
     let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'
