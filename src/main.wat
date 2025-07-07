@@ -11,6 +11,7 @@
   (import "math" "atan"  (func $_atan  (param f32) (result f32) ) )
   (import "math" "tanh"  (func $_tanh  (param f32) (result f32) ) )
   (import "math" "atan2" (func $_atan2 (param f32) (param f32) (result f32) ) )
+  (;(import "math" "exp"   (func $_exp   (param f32) (result f32) ) );)
 
   (global $sr (import "env" "sr") f32)
   (global $sine (import "env" "sine") i32)
@@ -3411,7 +3412,187 @@
   
   (func $delay_s_s (export "delay_s_s") )
   (func $delay_s_d (export "delay_s_d") ) 
-  (func $delay_d_d (export "delay_d_d") )
+  (;(func $delay_d_d (export "delay_d_d") );)
+
+  (func $delay_d_d (export "delay_d_d") (param $loc i32) (result f32) 
+    (local $input f32)
+    (local $time  f32)
+    (local $len   i32)
+    (local $read  f32)
+    (local $out   f32)
+    (local $write i32)
+    (local $idx   i32)
+    (local $table i32)
+    (local $phase f32)
+    (local $floor f32)
+    (local $ceil  f32)
+    (local $base  i32)
+    (local $incr  f32)
+    (local $fract f32)
+    (local $next  i32)
+    
+    ;; get input to delay
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 4) ) ) ) ;; fid
+    )
+    local.set $input
+    
+    (call_indirect (type $sig-i32--f32) 
+      (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ;; data location
+      (i32.load (i32.load (i32.add (local.get $loc) (i32.const 8) ) ) ) ;; fid
+    )
+
+    ;; get delay time
+    (;local.get $loc;)
+    (;i32.const 8;)
+    (;i32.add;)
+    (;f32.load;)
+    local.set $time
+    
+
+    ;; get delay line length
+    local.get $loc
+    i32.const 12
+    i32.add
+    i32.load
+    local.set $len
+    
+    ;; get current read index
+    local.get $loc
+    i32.const 16
+    i32.add
+    f32.load
+    local.tee $read
+    
+    ;; write index = read index + delay time
+    ;; wrapped to delay line length
+    ;;f32.convert_i32_u
+    local.get $time
+    f32.add
+    i32.trunc_f32_u
+    local.set $write
+    
+    ;; wrap write TODO only wraps upper bound not lower
+    (select
+      (i32.sub (local.get $write) (local.get $len) )
+      (local.get $write)
+      (i32.ge_u (local.get $write) (local.get $len))
+    )
+    local.set $write
+    
+    ;; get offset in memory for wavetable
+    local.get $loc
+    i32.const 20
+    i32.add
+    local.set $idx
+    
+    ;; write input to wavetable located at $idx
+    ;; remember to multiply write index by 4!!!
+    (f32.store
+      (i32.add (i32.mul (local.get $write) (i32.const 4)) (local.get $idx))
+      (local.get $input)
+    )
+    
+    ;; TODO laziness --- fix
+    ;; most of the code below this point was 
+    ;; copied from $peek
+    local.get $read
+    local.tee $phase
+    
+    ;; get base index by rounding $phase down
+    i32.trunc_f32_u
+    local.set $base
+    
+    ;; multiply base index by 4 and load
+    local.get $base
+    i32.const 4
+    i32.mul
+    local.get $idx
+    i32.add
+    f32.load
+    local.set $floor 
+    
+    ;; add one to base index, constrain to 0-1023, multiply by 4, and load
+    ;; local.get $base
+    ;; i32.const 1
+    ;; i32.add
+    ;; i32.const 1023
+    ;; i32.and
+    ;; i32.const 4
+    ;; i32.mul
+    ;; local.get $idx
+    ;; i32.add
+    ;; f32.load
+    ;; local.set $ceil
+
+ 
+    local.get $base
+    i32.const 1
+    i32.add
+    local.tee $next
+
+    local.get $len
+    i32.lt_u
+    if (result f32)
+      local.get $next
+      i32.const 4
+      i32.mul
+      local.get $idx
+      i32.add
+      f32.load
+    else
+      ;; $idx is 0 index for table
+      local.get $idx
+      f32.load
+    end
+    
+    local.set $ceil
+    
+    ;; get fractional part via phase - floor( phase )
+    local.get $phase
+    local.get $phase
+    f32.floor
+    f32.sub
+    local.set $fract
+    
+    ;; multiply difference between ceil and floor by fractional part and 
+    ;; add to floor
+    local.get $ceil
+    local.get $floor
+    f32.sub
+    local.get $fract
+    f32.mul
+    local.get $floor
+    f32.add
+    local.set $out
+
+    ;; now that we have read index, go ahead and
+    ;; increment write index
+    local.get $read 
+    f32.const 1
+    f32.add
+    local.set $read 
+    
+    ;; store the new write index
+    (f32.store
+      ;; location for storing write index
+      (i32.add 
+        (i32.const 16)
+        (local.get $loc)
+      )
+      ;; if our index equals the length of our buffer, store 0
+      ;; otherwise store current write value
+      (select
+        (f32.const 0)
+        (local.get $read) 
+        (i32.ge_u (i32.trunc_f32_u(local.get $read)) (local.get $len))
+      )
+    )
+     
+    local.get $out
+  )
+
 
   (func $delay_d_s (export "delay_d_s") (param $loc i32) (result f32) 
     (local $input f32)
