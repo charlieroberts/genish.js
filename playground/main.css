@@ -1,0 +1,86 @@
+body { 
+  margin: 0;
+  box-sizing:border;
+  background:black;
+  color:#ccc;
+  font-family: Helvetica Neue, sans-serif;
+  tab-size:2;
+}
+
+::highlight(comments){ background:none; color:grey; }
+::highlight(numbers) { color:cyan; }
+::highlight(keywords){ color:#f0f; }
+
+
+#header { 
+  width:100%; 
+  height:2em; 
+  background:black; 
+  top:0;
+  position:sticky;
+  border-bottom:1px solid #aaa;
+  z-index:10;
+}
+
+select{ 
+  display:inline-block;
+  background:black;
+  color: #ccc;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  border-radius:0px;
+  border-color: #555;
+}
+
+h1 {
+  font-family: monospace;
+  font-size: 1.5em;
+  font-weight: normal;
+  padding-left:.5em;
+  padding-top:.25em;
+  padding-right: 3em;
+  height:1.5em;
+  vertical-align:middle;
+  display:inline-block;
+  margin:0
+}
+
+#header span { font-size: .8em; }
+#reference a{ color: #ccc !important; margin-left: 2em }
+
+/* main editor class */
+.bitty-editor { 
+  /* choose font and size */
+  font-family:   'Roboto Mono', monospace; 
+  font-size:     14px;
+  /* fill viewport with editor */
+  height:        calc(100% - 2em);
+  /* provide scrollbars if needed */
+  overflow-y:    auto;
+  /* preserve whitespace */
+  white-space:   pre-wrap;
+  outline: none;
+  padding-left:3rem;
+  counter-reset: line; 
+}
+
+.bitty-editor div { 
+  /* ensure all divs are block elements to prevent collapse when empty*/
+  display:  block; 
+  position: relative; 
+}
+
+.bitty-editor div::before {
+  content:           counter(line); 
+  counter-increment: line; 
+  position:          absolute; 
+  /* should accommodate up to 999 lines, otherwise tweak as needed */
+  right:             calc(100% + .75rem); 
+  opacity:           0.5; 
+}
+
+/* for when text is selected */
+::selection {
+  background:#444;
+  color:white;
+}
