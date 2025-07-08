@@ -3,72 +3,12 @@
   <head>
     <meta charset=utf-8>
     <title>Genish.js Playground</title>
-    <script src="../node_modules/codemirror/lib/codemirror.js"></script>
-    <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="../node_modules/codemirror/theme/monokai.css">
-    <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
-    <script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="../src/main.js"></script>
-    <script src="./environment.js"></script>
+    <script src='https://cdn.jsdelivr.net/gh/charlieroberts/bitty@highlight/bitty.js' defer></script>
+    <script src='../src/main.js'></script>
+    <script src='./environment.js' defer></script>
+    <link href="./main.css" rel="stylesheet">
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
 <style>
-.CodeMirror-highlight {
-  background:red
-}
-
-body { 
-  margin: 0;
-  box-sizing:border;
-  color:#ddd;
-  font-family: Helvetica Neue, sans-serif;
-}
-
-#header { 
-  width:100%; 
-  height:2em; 
-  background:#272822; 
-  top:0;
-  position:sticky;
-  border-bottom:1px solid #666;
-}
-
-select{ 
-  display:inline-block;
-  background: #222;
-  color: #ccc;
-  -webkit-border-radius:0px;
-  -moz-border-radius:0px;
-  border-radius:0px;
-  border-color: #555;
-}
-
-h1 {
-  font-family: monospace;
-  font-size: 1.5em;
-  font-weight: normal;
-  padding-left:.5em;
-  padding-top:.25em;
-  padding-right: 3em;
-  height:1.5em;
-  vertical-align:middle;
-  display:inline-block;
-  margin:0
-}
-
-#jsdspHelp { font-size:1.2em !important; cursor: pointer; color:white }
-#jsdspHelp:hover { color:red }
-
-#header span { font-size: .8em; }
-
-#editor { width:100%; position:absolute; box-sizing: border; display:block; height:calc( 100% - 2em)  }
-
-.dg { z-index:100 !important }
-#reference a{ color: #ccc !important; margin-left: 2em }
-
-.CodeMirror-matchingbracket {
-  text-decoration:none !important;
-  background: rgba(255,255,255,.25)
-}
 </style>
 
   </head>
@@ -100,7 +40,7 @@ h1 {
 
     </div>
 
-    <div id='editor'></div>
+    <div class="bitty-editor" contenteditable="true" spellcheck="false"></div>
   </body>
 
 </html>

@@ -35,7 +35,6 @@ Only one graph can be played at a time in this playground. There are a
 few different demos to try, accessible via the menu at the top of the
 page.
 
-
 /************************************
 ******* non-bandlimited saw *********
 ************************************/

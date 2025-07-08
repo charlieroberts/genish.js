@@ -2,18 +2,19 @@ var cm, cmconsole, exampleCode, AudioContext = AudioContext || webkitAudioContex
 isStereo = false, jsdsp, shouldUseJSDSP = false
 
 window.onload = function() {
-  cm = CodeMirror( document.querySelector('#editor'), {
-    mode:   'javascript',
-    value:  'loading...',
-    keyMap: 'playground',
-    autofocus: true,
-    theme:'monokai',
-    matchBrackets:true
+  const b = bitty.create({ 
+    flashTime: 100,
+    value:'loading...'
   })
 
-  cm.setSize( null, '100%' )
+  b.subscribe( 'run', eval )
+  b.subscribe( 'keydown', e => {
+    if( e.ctrlKey && e.key === '.' ) {
+      utilities.clear( true )
+    }
+  })
 
-  let select = document.querySelector( 'select' ),
+  const select = document.querySelector( 'select' ),
       files = [
         'intro',
         'thereminish',  
@@ -36,122 +37,24 @@ window.onload = function() {
     loadexample( currentFile )
   }
   
-  let loadexample = function( filename ) {
-    var req = new XMLHttpRequest()
+  const loadexample = function( filename ) {
+    const req = new XMLHttpRequest()
       req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.dsp.js' : '.js'), true )
       req.onload = function() {
-        var js = req.responseText
-        cm.setValue( js )
+        b.value = req.responseText 
       }
   
     req.send()
   }
   
   loadexample( 'intro' )
-
-  const askForReload = ()=> {
-    let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'
-    if( window.confirm( msg ) ) {
-      loadexample( currentFile )
-    }
-  }
 }
 
-CodeMirror.keyMap.playground =  {
-  fallthrough:'default',
+window.bitty.rules = {
+  keywords: /\b(new|if|else|do|while|switch|for|of|continue|break|return|typeof|function|var|const|let|\.length)(?=[^\w])/g,
 
-  'Ctrl-Enter'( cm ) {
-    try {
-      var selectedCode = getSelectionCodeColumn( cm, false )
+  numbers: /\b(\d+)/g,
 
-      flash( cm, selectedCode.selection )
-
-      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
-
-      console.log( 'code:', code )
-      var func = new Function( code )
-
-      func()
-    } catch (e) {
-      console.log( e )
-    }
-  },
-  'Alt-Enter'( cm ) {
-    try {
-      var selectedCode = getSelectionCodeColumn( cm, true )
-
-      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
-
-      var func = new Function( code )
-
-      func()
-    } catch (e) {
-      console.log( e )
-    }
-  },
-  'Ctrl-.'( cm ) {
-    utilities.clear()
-    /*if( dat !== undefined ) {
-      dat.GUI.__all__.forEach( v => v.destroy() )
-      dat.GUI.__all__.length = 0
-    }*/
-    //cmconsole.setValue('// silencio.\n' )
-  },
-}
-
-var getSelectionCodeColumn = function( cm, findBlock ) {
-  var pos = cm.getCursor(), 
-  text = null
-
-  if( !findBlock ) {
-    text = cm.getDoc().getSelection()
-
-    if ( text === "") {
-      text = cm.getLine( pos.line )
-    }else{
-      pos = { start: cm.getCursor('start'), end: cm.getCursor('end') }
-      //pos = null
-    }
-  }else{
-    var startline = pos.line, 
-    endline = pos.line,
-    pos1, pos2, sel
-
-    while ( startline > 0 && cm.getLine( startline ) !== "" ) { startline-- }
-    while ( endline < cm.lineCount() && cm.getLine( endline ) !== "" ) { endline++ }
-
-    pos1 = { line: startline, ch: 0 }
-    pos2 = { line: endline, ch: 0 }
-
-    text = cm.getRange( pos1, pos2 )
-
-    pos = { start: pos1, end: pos2 }
-  }
-
-  if( pos.start === undefined ) {
-    var lineNumber = pos.line,
-    start = 0,
-    end = text.length
-
-    pos = { start:{ line:lineNumber, ch:start }, end:{ line:lineNumber, ch: end } }
-  }
-
-  return { selection: pos, code: text }
-}
-
-var flash = function(cm, pos) {
-  var sel,
-  cb = function() { sel.clear() }
-
-  if (pos !== null) {
-    if( pos.start ) { // if called from a findBlock keymap
-      sel = cm.markText( pos.start, pos.end, { className:"CodeMirror-highlight" } );
-    }else{ // called with single line
-      sel = cm.markText( { line: pos.line, ch:0 }, { line: pos.line, ch:null }, { className: "CodeMirror-highlight" } )
-    }
-  }else{ // called with selected block
-    sel = cm.markText( cm.getCursor(true), cm.getCursor(false), { className: "CodeMirror-highlight" } );
-  }
-
-  window.setTimeout(cb, 250);
+  strings: /(".*?"|'.*?'|\`(.|\n)*?\`)/g,
+  comments: /(\/\/.*|\/\*(.|\n)*?\*\/)/g
 }
