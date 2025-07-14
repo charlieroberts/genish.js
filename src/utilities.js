@@ -202,12 +202,13 @@ const utilities = {
         },
         set(v) {
           if( statics[ key ].type === 'f' )
-            memf[ staticidx++ ] = v
+            memf[ idx ] = v
           else
-            memi[ staticidx++ ] = v
+            memi[ idx ] = v
         }
       })
       obj[ key ] = statics[ key ].value
+      staticidx++
     }
   
     obj.__flags = flags
@@ -222,7 +223,7 @@ const utilities = {
     // get wasm as bytes, start downloading as soon as
     // page loads
 
-    const response = await fetch( '../test2.wasm')
+    const response  = await fetch( '../test2.wasm')
     const wasmbytes =  await response.arrayBuffer()
 
     if( !audioContext ) {
