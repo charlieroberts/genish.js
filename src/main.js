@@ -150,12 +150,25 @@ let cycle
   }
 }
 
+let param
+{
+  const baseidx = fidx++
+  param = value  => {
+    const props = {},
+          statics = {
+            value:{ value, type:'f' }
+          }
+  
+    return factory( props, statics, baseidx, 'param' )
+  }
+}
+
 let noise
 {
   const baseidx = fidx
   fidx++
   noise = function( seed=0 ) {
-    const props = {},
+    const props   = {},
           statics = {
             a: { value:2 / 0xffffffff, type:'f'},
             seed: { value:0x67452301 + seed, type:'i' },
@@ -339,7 +352,7 @@ let slide
   }
 }
 
-let param
+/*let param
 {
   const baseidx = fidx++
   param = init => {
@@ -367,7 +380,7 @@ let param
     
     return obj
   }
-}
+}*/
 
 let mix
 {
