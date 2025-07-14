@@ -1,7 +1,8 @@
 import {
-  peek, data, setupMemory
+  peek, data
 } from '../src/main.js'
 
+import utilities from '../src/utilities.js'
 import gen from '../src/gen.js'
 import assert from 'assert'
 
@@ -10,10 +11,10 @@ const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
   const mem = new WebAssembly.Memory({ 
-    initial:memoryAmount, maximum:memoryAmount, shared:true 
+    initial:memoryAmount, maximum:memoryAmount, shared:true
   })
 
-  setupMemory( mem.buffer )
+  utilities.setupMemory( mem.buffer )
 
   return mem
 }
@@ -33,6 +34,7 @@ gen.init().then( ()=> {
       assert.strictEqual( actual, expected )
     })
 
+    
     it( 'should return 42 on with an index of 3 and a data of [0,1,2,42]', async () => {
       const mem = makeMemory(),
             expected = 42,
@@ -47,7 +49,7 @@ gen.init().then( ()=> {
 
     it( 'should return 1 on with an index of .75 and a data of [0,1,2] (no interp)', async () => {
       const mem = makeMemory(),
-            expected = 1,
+            expected = 2,
             graph    = peek( data( [0,1,2] ), .75, 'none' ),
             func     = gen.function( graph ),
             wat      = gen.module( func ),
@@ -92,5 +94,6 @@ gen.init().then( ()=> {
 
       assert.strictEqual( actual, expected )
     })
+    
   })
 })

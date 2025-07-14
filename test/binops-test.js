@@ -1,8 +1,8 @@
 import {
-  setupMemory,
   add, sub, mul, div, min, max, eq, neq, and, gt, gte, lt, lte
 } from '../src/main.js'
 
+import utilities from '../src/utilities.js'
 import gen from '../src/gen.js'
 import assert from 'assert'
 
@@ -11,10 +11,10 @@ const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
   const mem = new WebAssembly.Memory({ 
-    initial:memoryAmount, maximum:memoryAmount, shared:true 
+    initial:memoryAmount, maximum:memoryAmount, shared:true
   })
 
-  setupMemory( mem.buffer )
+  utilities.setupMemory( mem.buffer )
 
   return mem
 }

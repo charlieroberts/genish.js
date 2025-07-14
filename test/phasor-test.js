@@ -1,7 +1,8 @@
 import {
-  phasor, setupMemory
+  phasor
 } from '../src/main.js'
 
+import utilities from '../src/utilities.js'
 import gen from '../src/gen.js'
 import assert from 'assert'
 
@@ -10,10 +11,10 @@ const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
   const mem = new WebAssembly.Memory({ 
-    initial:memoryAmount, maximum:memoryAmount, shared:true 
+    initial:memoryAmount, maximum:memoryAmount, shared:true
   })
 
-  setupMemory( mem.buffer )
+  utilities.setupMemory( mem.buffer )
 
   return mem
 }
@@ -44,7 +45,7 @@ gen.init().then( ()=> {
             sample3  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
             actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
-      console.log( sample1, sample2, sample3, actual )
+      //console.log( sample1, sample2, sample3, actual )
       assert.strictEqual( actual, expected )    
     })
   })
