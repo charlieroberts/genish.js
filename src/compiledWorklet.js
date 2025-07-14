@@ -4,7 +4,7 @@ class WASMProcessor extends AudioWorkletProcessor {
     this.wasm = null
     
     const memory = new WebAssembly.Memory({ 
-      initial:500, maximum:500, shared:true 
+      initial:50, maximum:50, shared:true 
     })
     
     this.port.onmessage = async (msg) => {
@@ -18,8 +18,8 @@ class WASMProcessor extends AudioWorkletProcessor {
           {
             env: { 
               memory, sr:this.sr, 
-              _logi:function( n ) { console.log(n) }, 
-              _logf:function( n ) { console.log(n) } 
+              _logi:function( n ) { console.log(n); return n }, 
+              _logf:function( n ) { console.log(n); return n } 
             },
             math: { 
               sin:  Math.sin,
