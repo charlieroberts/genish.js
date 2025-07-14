@@ -19,16 +19,16 @@ const compile = function( obj, offset=0 ) {
       index_prop
 
   const data_offset = 8,
-        phase_id = '$phase'+obj.idx,
-        floor_id = '$floor'+obj.idx,
-        ceil_id = '$ceil'+obj.idx,
-        base_id = '$base'+obj.idx,
-        next_id = '$next'+obj.idx,
-        incr_id = '$incr'+obj.idx,
-        fract_id = '$fract'+obj.idx,
-        memory_loc = '$memory'+obj.idx,
-        data_loc =  '$data_loc'+obj.idx,
-        data_length_val = '$data_length_val'+obj.idx,
+        phase_id = '$peekphase_'+obj.idx,
+        floor_id = '$peekfloor_'+obj.idx,
+        ceil_id = '$peekceil_'+obj.idx,
+        base_id = '$peekbase_'+obj.idx,
+        next_id = '$peeknext_'+obj.idx,
+        incr_id = '$peekincr_'+obj.idx,
+        fract_id = '$peekfract_'+obj.idx,
+        memory_loc = '$peekmemory_'+obj.idx,
+        data_loc =  '$peekdata_loc_'+obj.idx,
+        data_length_val = '$peekdata_length_val_'+obj.idx,
         data_length_offset = 12,
 
         phase_prop = obj.__statics.mode.value === 1
@@ -47,6 +47,7 @@ const compile = function( obj, offset=0 ) {
   }
 
   const linearInterpolationBlock = `
+  ;; peek: interpolate
   local.set ${floor_id} 
 
   local.get ${base_id}
@@ -73,14 +74,14 @@ const compile = function( obj, offset=0 ) {
   
   local.set ${ceil_id}
 
-  ;; get fractional part via phase - floor( phase )
+  ;; peek: get fractional part via phase - floor( phase )
   local.get ${phase_id}
   local.get ${phase_id}
   f32.floor
   f32.sub
   local.set ${fract_id}
   
-  ;; multiply diff between ceil/floor by fractional part and add to floor
+  ;; peek: multiply diff between ceil/floor by fractional part and add to floor
   local.get ${ceil_id}
   local.get ${floor_id}
   f32.sub
@@ -131,7 +132,8 @@ local.set ${data_length_val}
   `
 
   const block = 
-`i32.const ${offset}
+`;;;;;;;; peek ;;;;;;;;
+i32.const ${offset}
 local.get $loc
 i32.add
 local.set ${memory_loc}
@@ -140,25 +142,27 @@ ${dataBlock}
 
 ${dataLengthBlock}
 
-;; get normalized index
+;; peek: get normalized index
 ${index_prop}
 
-;; set $phase in range of 0-len based on mode
+;; peek: set $phase in range of 0-len based on mode
 ${phase_prop}
 local.tee ${phase_id}
 
-;; codegen get base index by rounding $phase if not interpolating
+;; peek: codegen get base index by rounding $phase if not interpolating
 ;; otherwise truncate to get floor 
 ${baseIndexBlock}
 local.tee ${base_id}
 
-;; multiply base index by 4 and load
+;; peek: multiply base index by 4 and load
 i32.const 4
 i32.mul
 local.get ${data_loc}
 i32.add
 f32.load
 ${interpolation}
+
+;;;;;;;; end peek ;;;;;;;;
 `
   memlength += 4
   return { string:block, memlength }
