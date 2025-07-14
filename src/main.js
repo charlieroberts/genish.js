@@ -186,10 +186,13 @@ let sah
   sah = function( input=0, control=0, threshold=.9 ) {
     const props = { input, control, threshold },
           statics = {
-            output: { value:0, type:'f'},
-            control:{ value:0, type:'f'}
+            output: { value:0, type:'f' },
+            lastcontrol: { value:0, type:'f' }
           }
   
+    if( typeof input === 'number' ) {
+      statics.output.value = input
+    }
     return factory( props, statics, baseidx, 'sah' )
   }
 }
