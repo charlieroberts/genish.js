@@ -32,7 +32,8 @@ class WASMProcessor extends AudioWorkletProcessor {
               pow:  Math.pow,
               atan2: Math.atan2,
               pi:   Math.PI, 
-              twopi:Math.PI * 2 
+              twopi:Math.PI * 2,
+              random: Math.random
             }
           } 
         )
