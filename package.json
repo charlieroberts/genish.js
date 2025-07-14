@@ -6,11 +6,10 @@
     "binaryen": "^103.0.0",
     "gulp": "^4.0.2",
     "gulp-wat2wasm": "^1.1.0",
-    "wabt": "^1.0.24"
+    "wabt": "1.0.37-nightly.20250619"
   },
   "dependencies": {
-    "codemirror": "^5.61.1",
-    "mocha": "^9.0.2"
+    "codemirror": "^5.61.1"
   },
   "repository": {
     "type": "git",
