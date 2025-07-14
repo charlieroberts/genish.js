@@ -6,8 +6,8 @@ import utilities from '../utilities.js'
 const compile = function( obj, offset=0 ) {
   const out = peek(
     utilities.sinedata,
-    accum( obj.frequency / utilities.memi[ utilities.sridx ] ),
-    'none',
+    accum( div(obj.frequency, utilities.memi[ utilities.sridx ] ) ),
+    'linear',
     'phase'
   )
 
