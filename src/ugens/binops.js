@@ -1,5 +1,7 @@
 let gen
 
+// use arrays for times when gen name is different from wat name
+// TODO: why is eq / neq in both arithmetic and logic?
 const opcategories = {
         arithmetic:[ 'add','sub','mul','div','min','max', 'eq', ['neq','ne'] ],
         logic : ['eq', ['neq','ne'], 'gt', ['gte','ge'], 'lt', ['lte','le'] ],
@@ -16,6 +18,8 @@ f32.${op}
     return out  
   },
   
+  // TODO: only difference is float conversion at end
+  // this could be refactored
   logic( x_prop, y_prop, op ) {
     const out = `${x_prop}
 ${y_prop}
@@ -37,7 +41,7 @@ for( let optype in opcategories ) {
           x_prop,
           y_compiled,
           y_prop
-    
+
       if( obj.__flags[0] ) {
         x_compiled = gen.compile( obj[0], memlength + offset )
         memlength += x_compiled.memlength
