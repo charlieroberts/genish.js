@@ -1,7 +1,7 @@
 let gen
 
 const dynamicData = function( data_offset, data_loc, memory_loc ) {
-  return `i32.get ${memory_loc}
+  return `local.get ${memory_loc}
   i32.const ${data_offset}
 i32.add
 i32.load
@@ -31,7 +31,7 @@ const compile = function( obj, offset=0 ) {
         data_length_val = '$data_length_val'+obj.idx,
         data_length_offset = 12,
 
-        phase_prop = obj.mode === 1
+        phase_prop = obj.__statics.mode.value === 1
           ? `local.get ${data_length_val} 
   f32.mul`
           : ``
@@ -108,14 +108,26 @@ const compile = function( obj, offset=0 ) {
 
 const dataBlock = obj.data.__static 
   ? staticData( obj.data, data_loc, memory_loc )
-  : dynamicData( 8, data_loc )
+  : dynamicData( 8, data_loc, memory_loc )
 
+// if interpolating, truncate to get base index, interpolation
+// will be performed between baseIndex and baseIndex + 1. Otherwise
+// for no interpolation round to nearest index number
+const baseIndexBlock = obj.__statics.interpolation.value === 1
+  ? `i32.trunc_f32_u`
+  : `f32.nearest
+i32.trunc_f32_u`
+
+// if the length of data can dynamically change, look it up at runtime,
+// otherwise just compile in the length of the array
 const dataLengthBlock = obj.data.__static === false
   ? `(i32.add (local.get ${memory_loc}) (i32.const ${data_length_offset}))
-  f32.load
-  local.set ${data_length_val}`
+f32.load
+local.set ${data_length_val}`
   : `f32.const ${obj.data.length}
-  local.set ${data_length_val}  
+f32.const 1
+f32.sub
+local.set ${data_length_val}  
   `
 
   const block = 
@@ -135,8 +147,9 @@ ${index_prop}
 ${phase_prop}
 local.tee ${phase_id}
 
-;; get base index by rounding $phase down
-i32.trunc_f32_u
+;; codegen get base index by rounding $phase if not interpolating
+;; otherwise truncate to get floor 
+${baseIndexBlock}
 local.tee ${base_id}
 
 ;; multiply base index by 4 and load
