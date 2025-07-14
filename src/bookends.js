@@ -6,6 +6,7 @@ const code = `(module
   (import "env" "_logi" (func $_logi (param i32)  (result i32) ) ) 
   (import "env" "_logf" (func $_logf (param f32)  (result f32) ) ) 
 
+  (import "math" "random"   (func $_random (result f32) ) )
 
   (global $sr (import "env" "sr") f32)
   (export "memory" (memory $mem) )
