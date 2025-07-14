@@ -19,6 +19,9 @@ const gen = {
     phasor: ( await import( './ugens/phasor.js' ) ).default,
     peek:   ( await import( './ugens/peek.js' )   ).default,
     cycle:  ( await import( './ugens/cycle.js' )  ).default,
+    param:  ( await import( './ugens/param.js' )  ).default,
+    noise:  ( await import( './ugens/noise.js' )  ).default,
+    sah:    ( await import( './ugens/sah.js'   )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -47,7 +50,8 @@ const gen = {
     })
 
     for( let key in gen.__ugens ) {
-      gen.ugens[ key ] = gen.__ugens[ key ]( gen )
+      let ugen = gen.__ugens[ key ]( gen )
+      gen.ugens[ key ] = ugen
     }
 
     const binops = gen.__binops( gen )
@@ -58,7 +62,10 @@ const gen = {
 
   // main compile function
   compile( ugen, offset ) {
-    if( ugen.name === undefined ) console.log( 'ugen:', ugen )
+    //if( Number.isNaN( ugen) ) return ''
+    if( ugen.name === undefined ) {
+      throw Error('ugen is not defined.', ugen )
+    }
     return gen.ugens[ ugen.name ]( ugen, offset )
   },
 
@@ -136,11 +143,11 @@ const gen = {
     const modobj = this.__wabt.parseWat( 
       'gen', 
       wat, 
-      { mutable_globals:true, threads:true, bulk_memory:true } 
+      { threads:true } 
     )
     
     try {
-      modobj.validate()
+      modobj.validate({ threads:true })
     }catch(err) {
       console.error( err )
       return
@@ -162,7 +169,9 @@ const gen = {
         wasmblob.buffer, 
         {
           env: { 
-            memory, sr, _logi:console.log, _logf:console.log
+            memory, sr, 
+            _logi: n => { console.log(n); return n }, 
+            _logf: n => { console.log(n); return n }
           },
           math: { 
             sin:  Math.sin,
