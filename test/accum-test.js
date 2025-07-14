@@ -1,7 +1,5 @@
-import {
-  accum, setupMemory
-} from '../src/main.js'
-
+import { accum } from '../src/main.js'
+import utilities from '../src/utilities.js'
 import gen from '../src/gen.js'
 import assert from 'assert'
 
@@ -10,16 +8,15 @@ const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
   const mem = new WebAssembly.Memory({ 
-    initial:memoryAmount, maximum:memoryAmount, shared:true 
+    initial:memoryAmount, maximum:memoryAmount, shared:true
   })
 
-  setupMemory( mem.buffer )
+  utilities.setupMemory( mem.buffer )
 
   return mem
 }
 
 gen.init().then( ()=> {
-
   describe( 'an accum', ()=>{
     it( 'should return 0 on first execution', async () => {
       const mem      = makeMemory(),
