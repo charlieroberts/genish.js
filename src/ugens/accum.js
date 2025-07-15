@@ -32,6 +32,9 @@ const accum = function( obj, offset=0 ) {
   gen.addLocal(`(local ${phase_loc} i32)`)
   gen.addLocal(`(local ${phase_id} f32)`) 
   gen.addLocal(`(local ${out_id} f32)`)
+  
+  const name = obj.__memoName 
+  gen.addLocal(`(local $${name} f32)` )
 
   const getReset = function() {
     const resetBlock = 
@@ -88,6 +91,7 @@ end
 
 f32.store
 local.get ${out_id}
+local.tee $${name}
 
 ;;;;;;;; end accum ;;;;;;;;
 `

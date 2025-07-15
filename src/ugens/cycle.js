@@ -11,9 +11,9 @@ const compile = function( obj, offset=0 ) {
     'phase'
   )
 
-  const str = gen.compile( out, offset )
+  out.__memoName = obj.__memoName
 
-  return str
+  return gen.compile( out, offset )
 }
 
 const module = __gen => {

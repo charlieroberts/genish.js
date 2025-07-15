@@ -3,7 +3,7 @@ let gen
 import { accum, div } from '../main.js'
 
 // TODO: use actual samplerate
-const compile = function( obj ) {
+const compile = function( obj, offset = 0 ) {
   const out = accum(
     div(
       obj.frequency,
@@ -12,6 +12,8 @@ const compile = function( obj ) {
     obj.reset
   )
 
+  out.__memoName = obj.__memoName
+  
   return gen.compile( out )
 }
 

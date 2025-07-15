@@ -16,12 +16,13 @@ const gen = {
   // paths to all ugen templates
   __ugens : {
     accum:  ( await import( './ugens/accum.js' )  ).default,
-    phasor: ( await import( './ugens/phasor.js' ) ).default,
-    peek:   ( await import( './ugens/peek.js' )   ).default,
+    phasor: ( await import( './ugens/phasor.js')  ).default,
+    peek:   ( await import( './ugens/peek.js'  )  ).default,
     cycle:  ( await import( './ugens/cycle.js' )  ).default,
     param:  ( await import( './ugens/param.js' )  ).default,
     noise:  ( await import( './ugens/noise.js' )  ).default,
     sah:    ( await import( './ugens/sah.js'   )  ).default,
+    memo:   ( await import( './ugens/memo.js'  )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -60,20 +61,43 @@ const gen = {
     return p
   },
 
+  // TODO add memoization step here?
   // main compile function
   compile( ugen, offset ) {
     //if( Number.isNaN( ugen) ) return ''
     if( ugen.name === undefined ) {
       throw Error('ugen is not defined.', ugen )
     }
-    return gen.ugens[ ugen.name ]( ugen, offset )
+    let out = null
+    const name = ugen.__memoName
+
+    if( this.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
+      //console.log( 'memoing: ' + name, ugen )
+      const compiled = gen.ugens[ ugen.name ]( ugen, offset )
+      out = this.__memo[ name ] = compiled
+    }else if( ugen.__shouldMemo === true ){
+      //console.log( 'memo!:', ugen )
+      out = {
+        string:`local.get $${name}`,
+        memlength: 0
+      }
+    }else{
+      out = gen.ugens[ ugen.name ]( ugen, offset )
+    }
+
+    return out
   },
 
   function( ugen, name='render' ) {
     this.__locals.length = 0
+
+    // TODO I think this is memo init is OK to do here, but maybe
+    // it needs to be explicity done by the end- user? will there be
+    // other ways to compile a function?
+    this.__memo = {}
     
     let str = `\n(func $${name} (export "${name}") (param $loc i32) (result f32)\n `
-    
+   
     let body = gen.compile( ugen, 0 )
 
     this.__locals.forEach( v => {

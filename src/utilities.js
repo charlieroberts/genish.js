@@ -16,6 +16,8 @@ const utilities = {
     return idx
   },
 
+  shouldMemo: true,
+
   setupMemory( buffer, __pokelength=50 ) {
     this.memf = memf   = new Float32Array( buffer )
     this.memi = memi   = new Int32Array( buffer )
@@ -215,6 +217,13 @@ const utilities = {
     obj.__props = props
     obj.__statics = statics
     obj.__memoryLength = keys.length + Object.keys( statickeys ).length 
+    obj.__shouldMemo = false
+    obj.__memoName =  '_' + obj.idx + '_out'
+
+    obj.memo = ()=> {
+      obj.__shouldMemo = true
+      return obj
+    }
   
     return obj
   },

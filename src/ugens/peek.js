@@ -98,6 +98,7 @@ const compile = function( obj, offset=0 ) {
   gen.addLocal( `(local ${phase_id} f32)` )
   gen.addLocal( `(local ${base_id} i32)` )
   gen.addLocal( `(local ${data_length_val} f32)` )
+  gen.addLocal( `(local $${obj.__memoName} f32)` )
 
   if( obj.interpolation === 1 ) {
     gen.addLocal( `(local ${floor_id} f32)` )
@@ -162,6 +163,7 @@ i32.add
 f32.load
 ${interpolation}
 
+local.tee $${obj.__memoName}
 ;;;;;;;; end peek ;;;;;;;;
 `
   memlength += 4
