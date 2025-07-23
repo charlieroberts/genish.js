@@ -7,6 +7,8 @@ import assert from 'assert'
 const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
+  utilities.resetMemory()
+
   const mem = new WebAssembly.Memory({ 
     initial:memoryAmount, maximum:memoryAmount, shared:true
   })

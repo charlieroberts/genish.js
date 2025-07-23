@@ -1,9 +1,10 @@
 import {
-  cycle, phasor, accum, add, mul, peek, cycle_compiled
+  cycle, phasor, accum, add, mul, peek, cycle_compiled, param, noise, sah, data, memo 
 } from '../main.js'
 
-import utilities from '../utilities.js'
+import poke from '../ugens/poke.js'
 
+import utilities from '../utilities.js'
 import gen from '../gen.js'
 
 // account for floating point errors
@@ -15,38 +16,54 @@ const makeMemory = function( memoryAmount = 50 ) {
   })
 
   utilities.setupMemory( mem.buffer )
-  utilities.createWavetables()
+  //utilities.createWavetables()
 
   return mem
 }
 
 await gen.init()
 
-const mem      = makeMemory(500)
+const mem = makeMemory(50)
 
 /*
-let baseFreq = 55
-let prev = cycle_compiled( baseFreq )
-baseFreq *= 1.00125
-let count = 3000
-let i = 1
-for( i = 1; i < count; i++ ) {
-  prev = add( prev, cycle_compiled(baseFreq) )
-  baseFreq *= 1.001
-}
-graph = mul( prev, 1/count)
+const Sine = gen.factory( (freq=110,gain=.1) => mul( cycle_compiled( freq ), gain ) )
+const Bus  = gen.factory( (gain, ...ugens) => {
+  let out = ugens[0]
+  for( let i = 1; i < ugens.length; i++ ) {
+    out = add( out, ugens[1] )
+  }
+  return mul( gain,out )
+})
 */
 
-const Sine = gen.factory( (freq=110,gain=.1) => mul( cycle_compiled( freq ), gain ) )
-const s = Sine(330,.1)
-//console.log( s )
+const _poke = poke( gen )
+/*
+const d = data([.5]),
+      e = data(24),
+      idx = accum(.002)
 
-const func = gen.function( s ),//Sine.compile(),
-      wat  = gen.module( func, false, 500 )
+_poke( d, idx, 0 )
+ 
+const graph =  peek( d, 0, 0, 0 )
+*/
+
+/*
+const  d = data(1024),
+       c = accum(.005)
+
+_poke( d, c, 0 )
+const graph = peek( d, 0, 0, 0 )
+*/
+const d = data(1024),
+      c = accum(.005),
+      i1 = accum(1,0,0,1024),
+      i2 = accum(1,0,0,1024)
+
+_poke( d,c,i1 )
+const graph = peek(d,i2,0,0)
+
+const func = gen.function( graph ),
+      wat  = gen.module( func, false, 50 )
 
 gen.write( wat, 'test.wat' )
-// const wasm     = await gen.assemble( wat, mem )
 
-// for( let i = 0; i < 10; i++ ) {
-//   console.log( wasm.render( graph.idx * 4 )  )
-// }

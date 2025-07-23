@@ -1,5 +1,5 @@
 import {
-  phasor
+  noise
 } from '../src/main.js'
 
 import utilities from '../src/utilities.js'
@@ -22,33 +22,20 @@ const makeMemory = function( memoryAmount = 50 ) {
 }
 
 gen.init().then( ()=> {
-  describe( 'a phasor', ()=>{
-    it( 'should return 0 on first execution with any frequency (110 Hz here)', async () => {
+  describe( 'noise', ()=>{
+    it( 'should return different values', async () => {
       const mem      = makeMemory(),
             expected = 0,
-            graph    = phasor( 110 ),
-            func     = gen.function( graph ),
-            wat      = gen.module( func ),
-            wasm     = await gen.assemble( wat, mem ),
-            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
-
-      assert.strictEqual( actual, expected )    
-    })
-
-    it( 'should return .75 with a frequency of 11025 after 4 samples', async () => {
-      const mem      = makeMemory(),
-            expected = .75,
-            graph    = phasor( 11025 ),
+            graph    = noise(3),
             func     = gen.function( graph ),
             wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),
             sample1  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
             sample2  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
             sample3  = decimate( wasm.render( graph.idx * 4 ), 1000 ),
-            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+            sample4  = decimate( wasm.render( graph.idx * 4 ), 1000 )
 
-      //console.log( sample1, sample2, sample3, actual )
-      assert.strictEqual( actual, expected )    
+      assert.notStrictEqual( sample1, sample2 )    
     })
   })
 })

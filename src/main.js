@@ -104,7 +104,8 @@ let peek
     const props = { index },
           statics = {
             dataIndex: { value:__data.idx * 4, type:'i' },
-            length: { value:length-1, type:'f' },
+            // TODO this was length-1 but why???
+            length: { value:length, type:'f' },
             interpolation: { value: Number( interp==='linear' ), type:'i' },
             mode: { value: Number( mode==='phase' ), type:'i' }
           }
@@ -183,11 +184,11 @@ let sah
 {
   const baseidx = fidx
   fidx += 8
-  sah = function( input=0, control=0, threshold=.9 ) {
+  sah = function( input=0, control=0, threshold=.9 ) { // 0, 4, 8
     const props = { input, control, threshold },
           statics = {
-            output: { value:0, type:'f' },
-            lastcontrol: { value:0, type:'f' }
+            output: { value:0, type:'f' }, // 12
+            lastcontrol: { value:0, type:'f' } // 16
           }
   
     if( typeof input === 'number' ) {
@@ -240,10 +241,11 @@ let counter
     
     const obj = factory( props, statics, fid, 'counter' )
 
-    // return memoized object because output and .wrap
+    // TODO return memoized object because output and .wrap
     // might often both be used
-    const __memo = memo( obj )
+    //const __memo = memo( obj )
 
+    /*
     Object.defineProperty( __memo, 'wrap', {
       get() {
         // address of wrap static
@@ -251,8 +253,9 @@ let counter
         return out
       }
     })
+    */
   
-    return __memo
+    return obj// __memo
   }
 }
 
@@ -289,7 +292,24 @@ let bus
   }
 }
 
-let ssd 
+let ssd
+{
+  const fid = fidx++
+  ssd = function() {
+    const obj = {
+      idx: utilities.getMemory( 1 ),
+      fid,
+      name:'history',
+      __input: null,
+      __data: data(1),
+      in( input ) { obj.__input = input } 
+    }
+    obj.out = obj //peek( obj.__data, 0, 0, 0 )
+
+    return obj
+  }
+}
+/*let ssd 
 {
   const fid = fidx++
   ssd = function( init=0 ) {
@@ -320,7 +340,7 @@ let ssd
       
     return obj
   }
-}
+}*/
 
 let delay
 {
@@ -469,7 +489,8 @@ const data = function( __data, type='float' ) {
     // array of data should be passed, 
     // copy into memory and return obj
     obj = { 
-      idx : getMemory( __data.length + 1 ),
+      __static:true,
+      idx : getMemory( __data.length ),
       length: __data.length,
       name:'data'
     }
@@ -480,9 +501,11 @@ const data = function( __data, type='float' ) {
       utilities.memi.set( __data, obj.idx )
     }
 
-    utilities.memf[ obj.idx + __data.length ] = __data.length 
+    //utilities.memf[ obj.idx + __data.length ] = __data.length 
   }else{
+
     obj = { 
+      __static: true,
       idx: getMemory( __data ),
       length: __data,
       name:'data'
@@ -503,7 +526,7 @@ let poke
           }
     
     const obj = factory( props, statics, baseidx, 'poke' )
-    memi[ pokememoryindex + pokecounter ] = obj.idx * 4
+    //memi[ pokememoryindex + pokecounter ] = obj.idx * 4
 
     pokecounter++
 

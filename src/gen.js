@@ -4,25 +4,28 @@ import fs from 'fs'
 const gen = {
   // top / bottom of module
   __bookends: ( await import('./bookends.js') ),
-  //__assemble: (await import('https://cdn.jsdelivr.net/npm/wassemble@0.0.2/wassemble.mjs')).default,
 
   // pokes get added to this array and
   // then processed after the rest of compilation
   // has taken place
+  __memo  : {},
   __pokes : [],
   __locals: [],
   __functions: [],
 
   // paths to all ugen templates
   __ugens : {
-    accum:  ( await import( './ugens/accum.js' )  ).default,
-    phasor: ( await import( './ugens/phasor.js')  ).default,
-    peek:   ( await import( './ugens/peek.js'  )  ).default,
-    cycle:  ( await import( './ugens/cycle.js' )  ).default,
-    param:  ( await import( './ugens/param.js' )  ).default,
-    noise:  ( await import( './ugens/noise.js' )  ).default,
-    sah:    ( await import( './ugens/sah.js'   )  ).default,
-    memo:   ( await import( './ugens/memo.js'  )  ).default,
+    accum:  ( await import( './ugens/accum.js'   )  ).default,
+    phasor: ( await import( './ugens/phasor.js'  )  ).default,
+    peek:   ( await import( './ugens/peek.js'    )  ).default,
+    cycle:  ( await import( './ugens/cycle.js'   )  ).default,
+    param:  ( await import( './ugens/param.js'   )  ).default,
+    noise:  ( await import( './ugens/noise.js'   )  ).default,
+    sah:    ( await import( './ugens/sah.js'     )  ).default,
+    memo:   ( await import( './ugens/memo.js'    )  ).default,
+    poke:   ( await import( './ugens/poke.js'    )  ).default,
+    history:( await import( './ugens/history.js' )  ).default,
+    counter:( await import( './ugens/counter.js' )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -71,12 +74,10 @@ const gen = {
     let out = null
     const name = ugen.__memoName
 
-    if( this.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
-      //console.log( 'memoing: ' + name, ugen )
+    if( gen.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
       const compiled = gen.ugens[ ugen.name ]( ugen, offset )
       out = this.__memo[ name ] = compiled
     }else if( ugen.__shouldMemo === true ){
-      //console.log( 'memo!:', ugen )
       out = {
         string:`local.get $${name}`,
         memlength: 0
@@ -89,32 +90,60 @@ const gen = {
   },
 
   function( ugen, name='render' ) {
-    this.__locals.length = 0
+    gen.__locals.length = 0
 
-    // TODO I think this is memo init is OK to do here, but maybe
-    // it needs to be explicity done by the end- user? will there be
+    // TODO I think memo init is OK to do here, but maybe
+    // it needs to be explicity done by the end-user? will there be
     // other ways to compile a function?
-    this.__memo = {}
+    gen.__memo = {}
     
     let str = `\n(func $${name} (export "${name}") (param $loc i32) (result f32)\n `
    
     let body = gen.compile( ugen, 0 )
 
-    this.__locals.forEach( v => {
-      str += v + '\n'
+    let bodystr = body.string
+
+    const hasPokes = gen.__pokes.length > 0
+    if( hasPokes === true ) {
+      //ugen.memo()
+    }
+
+    if( hasPokes ) {
+      bodystr += this.processPokes()
+      //gen.addLocal(`(local $${ugen.__memoName} f32)`)
+    }
+
+    let locals = ''
+    gen.__locals.forEach( v => {
+      locals += v + '\n'
     })
 
-    str += body.string
-    str +=`)\n`
+    str += locals
+    str += bodystr
+    if( hasPokes ) {
+      //str += `local.get $${ugen.__memoName}\n`
+    }
+    str += `)\n`
 
-    this.__functions.push( name )
+    gen.__functions.push( name )
     
     const out = {
       string:str,
       memlength: body.memlength 
     }
 
+    gen.__pokes = []
     return out
+  },
+
+  processPokes() {
+    let str = ''
+
+    for( let poke of this.__pokes ) {
+      str += poke().string
+    }
+    
+    return str
   },
 
   __functionTable() {
@@ -140,11 +169,13 @@ const gen = {
       str += functions.string
     }
 
+    
     str += gen.__bookends.back()
 
     if( print ) console.log( str )
 
     this.__functions.length = 0
+
     return str
   },
 
@@ -167,7 +198,7 @@ const gen = {
     const modobj = this.__wabt.parseWat( 
       'gen', 
       wat, 
-      { threads:true } 
+      { threads:true  } 
     )
     
     try {
@@ -176,11 +207,11 @@ const gen = {
       console.error( err )
       return
     }
-    const wasmblob = modobj.toBinary({ log:false })
+    const wasmblob = modobj.toBinary({ log:false, write_debug_names:true })
       
     if( memory === null ) {
       memory = new WebAssembly.Memory({ 
-        initial:memoryAmount, maximum:memoryAmount, shared:true 
+        initial:5, maximum:5, shared:true 
       })
     }
     
@@ -193,7 +224,7 @@ const gen = {
         wasmblob.buffer, 
         {
           env: { 
-            memory, sr, 
+            memory, sr, clock, 
             _logi: n => { console.log(n); return n }, 
             _logf: n => { console.log(n); return n }
           },

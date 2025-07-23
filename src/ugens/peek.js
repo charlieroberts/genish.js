@@ -18,8 +18,7 @@ const compile = function( obj, offset=0 ) {
   let memlength = obj.__memoryLength * 4,
       index_prop
 
-  const data_offset = 8,
-        phase_id = '$peekphase_'+obj.idx,
+  const phase_id = '$peekphase_'+obj.idx,
         floor_id = '$peekfloor_'+obj.idx,
         ceil_id = '$peekceil_'+obj.idx,
         base_id = '$peekbase_'+obj.idx,
@@ -41,9 +40,9 @@ const compile = function( obj, offset=0 ) {
     memlength += index_compiled.memlength
     // XXX why isn't the line below needed?
     // offset += index_compiled.memlength 
-    index_prop = `  ${index_compiled.string}`
+    index_prop = `${index_compiled.string}`
   }else{
-    index_prop = `  f32.const ${obj.index}`
+    index_prop = `f32.const ${obj.index}`
   }
 
   const linearInterpolationBlock = `
@@ -120,17 +119,25 @@ const baseIndexBlock = obj.__statics.interpolation.value === 1
   : `f32.nearest
 i32.trunc_f32_u`
 
+// TODO wtf is going on here when can data length be dynamic?
+// if that needs to work we need to figure out how to correctly calculate
+// data_length_offset... right now it's set to 12 for i-don't-know-what-reason
+// but it doesn't matter atm because the data length is never dynamic...
+ 
 // if the length of data can dynamically change, look it up at runtime,
-// otherwise just compile in the length of the array
-const dataLengthBlock = obj.data.__static === false
+// otherwise just compile in the length of the array.
+// ALSO, set the datalength to 0 if there's only one index in the data,
+// otherwise it should be length - 1
+let dataLengthBlock = obj.data.__static === false
   ? `(i32.add (local.get ${memory_loc}) (i32.const ${data_length_offset}))
-f32.load
-local.set ${data_length_val}`
-  : `f32.const ${obj.data.length}
+f32.load\n`
+  : obj.data.length <= 1 
+    ? 'f32.const 0.0\n'
+    : `f32.const ${obj.data.length}
 f32.const 1
-f32.sub
-local.set ${data_length_val}  
-  `
+f32.sub\n`
+
+dataLengthBlock += `local.set ${data_length_val}\n`
 
   const block = 
 `;;;;;;;; peek ;;;;;;;;
@@ -138,14 +145,10 @@ i32.const ${offset}
 local.get $loc
 i32.add
 local.set ${memory_loc}
-
 ${dataBlock}
-
 ${dataLengthBlock}
-
 ;; peek: get normalized index
 ${index_prop}
-
 ;; peek: set $phase in range of 0-len based on mode
 ${phase_prop}
 local.tee ${phase_id}
@@ -162,7 +165,6 @@ local.get ${data_loc}
 i32.add
 f32.load
 ${interpolation}
-
 local.tee $${obj.__memoName}
 ;;;;;;;; end peek ;;;;;;;;
 `

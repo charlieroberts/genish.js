@@ -7,7 +7,7 @@ const accum = function( obj, offset=0 ) {
       resetblock    = null,
       reset_compiled= null
 
-  const phase_offset = 20,
+  const phase_offset = 16,
         phase_id     = '$accumphase'+obj.idx,
         memory_loc   = '$accummemoryloc'+obj.idx,
         phase_loc    = '$accumphaseloc'+obj.idx,
@@ -24,8 +24,8 @@ const accum = function( obj, offset=0 ) {
 
   if( obj.__flags[1] ) {
     reset_compiled = gen.compile( obj.reset, memlength + offset )
-    memlength            += reset_compiled.memlength
-    offset               += reset_compiled.memlength
+    memlength      += reset_compiled.memlength
+    offset         += reset_compiled.memlength
   }
 
   gen.addLocal(`(local ${memory_loc} i32)`)
@@ -55,7 +55,7 @@ const accum = function( obj, offset=0 ) {
   const incrblock = 
 `
 ${obj.__flags[1] === 0 ? `;;;;;;;; begin accum ;;;;;;;;` : '' }
-i32.const ${offset}
+i32.const ${offset+obj.idx*4}
 local.get $loc
 i32.add
 local.tee ${memory_loc}
@@ -66,9 +66,7 @@ i32.add
 local.tee ${phase_loc}
 f32.load
 local.tee ${out_id}
-
 ${obj.__flags[1] ? getReset() : '' }
-
 ;; accum: phase increment
 ${incr_prop}
 f32.add
@@ -95,8 +93,6 @@ local.tee $${name}
 
 ;;;;;;;; end accum ;;;;;;;;
 `
-
-
 
   memlength += 4
   const out = {

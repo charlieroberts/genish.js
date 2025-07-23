@@ -1,4 +1,4 @@
-import { cycle_compiled,add,accum,mul } from '../src/main.js'
+import { cycle_compiled,add,accum,mul, param, noise, phasor, sah, memo, data, poke, peek } from '../src/main.js'
 import utilities from '../src/utilities.js'
 
 var cm, cmconsole, exampleCode, AudioContext = AudioContext,
@@ -18,22 +18,9 @@ window.onload = async function() {
   cm.setSize( null, '100%' )
 
   window.onclick = ()=> utilities.startWorkletNode( ()=> {
-    //let prev = add( cycle_compiled(110), cycle_compiled(330) )
-    //let prev = add( accum(110/44100), accum(330/44100) )
-
-    // let prev = accum(110/44100)//add( accum(110/44100), accum(330/44100) )
-    // let i
-    // for( i = 0; i < 50; i++ ) {
-    //   prev = add( prev, accum( (110 + 55 * (i+1)) / 44100 ) )
-    // }
-    // let prev = cycle(110)//add( accum(110/44100), accum(330/44100) )
-    // let i
-    // for( i = 0; i < 50; i++ ) {
-    //   prev = add( prev, cycle( (110 + 55 * (i+1)) ) )
-    // }
-    //const c = mul(cycle_compiled(165),.005)
-    //let prev = add( add( cycle_compiled(110), cycle_compiled(330)), cycle_compiled(550) )
-    let baseFreq = 55
+    window.memi = utilities.memi
+    window.memf = utilities.memf
+    /*let baseFreq = 55
     let prev = cycle_compiled( baseFreq )
     baseFreq *= 1.00125
     let count = 3000
@@ -41,42 +28,35 @@ window.onload = async function() {
     for( i = 1; i < count; i++ ) {
       prev = add( prev, cycle_compiled(baseFreq) )
       baseFreq *= 1.001
+    }*/
+    const Sine = (freq=110,gain=.1) => mul( cycle_compiled( freq ), gain ) 
+    const Bus  = (gain, ...ugens) => {
+      let out = ugens[0]
+      for( let i = 1; i < ugens.length; i++ ) {
+        out = add( out, ugens[1] )
+      }
+      return mul( gain, out )
     }
-    prev = mul( prev, 1/count)
-    window.memi = utilities.memi
-    window.memf = utilities.memf
-    window.graph = prev
-    return prev
+    //window.graph = cycle( add(220, sah( mul(n,50), n, .9995 ))) 
+
+    //window.graph = cycle( add(220, sah( mul( noise(3), 50 ), noise(3), .9995 ))) 
+    
+    /*const  d = data(1),
+           c = accum(.005)
+
+    poke( d, c, 0 )
+    window.graph = peek( d, 0, 0, 0 )*/
+    const d = data(1024),
+      c = accum(.005),
+      i1 = accum(1,0,0,1024),
+      i2 = accum(1,0,0,1024)
+
+      poke( d,c,i1 )
+      const graph = peek(d,i2,0,0)
+
+    
+    return window.graph
   })
-
-  // cmconsole = CodeMirror( document.querySelector('#console'), {
-  //   mode:'javascript',
-  //   value:'// genish playground, v0.0.1: https://github.com/charlieroberts/genish.js',
-  //   readOnly:'nocursor',
-  //   theme:'monokai'
-  // })     
-
-  // cmconsole.setSize( null, '100%' )
-  // genish.export( window )
-
-  // utilities.createContext( 2048 )
-  // utilities.console = cmconsole
-  // utilities.editor  = cm
-
-  // window.play = function( v, name, debug, mem, __eval=false, kernel=false ) { //, memType=Float32Array ) {
-  //   if( name === undefined || name === null ) {
-  //     name = 'ugen' + ( Math.round( Math.random() * 100000 ) )
-  //   }
-  //   if( dat !== undefined ) {
-  //     dat.GUI.__all__.forEach( v => v.destroy() )
-  //     dat.GUI.__all__.length = 0
-  //   }
-  //   var cb = utilities.playWorklet( v, name, debug, mem, __eval, kernel ) 
-
-  //   return cb
-  // }
-
-  //Babel.registerPlugin( 'jsdsp', jsdsp )
 
   let select = document.querySelector( 'select' ),
       files = [

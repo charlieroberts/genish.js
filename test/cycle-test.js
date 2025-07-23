@@ -12,6 +12,8 @@ import assert from 'assert'
 const decimate = ( value, amount ) => Math.floor( value * amount ) / amount
 
 const makeMemory = function( memoryAmount = 50 ) {
+  utilities.resetMemory()
+
   const mem = new WebAssembly.Memory({ 
     initial:memoryAmount, maximum:memoryAmount, shared:true
   })
@@ -38,13 +40,7 @@ gen.init().then( ()=> {
 
     it( 'should increase over first two samples', async () => {
       const mem      = makeMemory(),
-            graph    = cycle( .1 ),
-             //graph    = peek(
-             //  utilities.sinedata,
-             //  accum( .1 ),
-             //  'linear',
-             //  'phase'
-             //),
+            graph    = cycle( 1 ),
             func     = gen.function( graph ),
             wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),

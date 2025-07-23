@@ -15,7 +15,7 @@ gen.addLocal(`(local $${obj.__memoName} f32)` )
 
 let value_prop, value_compiled
 if( obj.__flags[0] ) {
-  value_compiled = gen.compile( obj.input, memlength + offset )
+  value_compiled = gen.compile( obj.input )
   memlength += value_compiled.memlength
   value_prop = `${value_compiled.string}`
 }else{
@@ -24,7 +24,7 @@ if( obj.__flags[0] ) {
 
 let trigger_prop, trigger_compiled
 if( obj.__flags[1] ) {
-  trigger_compiled = gen.compile( obj.control, memlength + offset )
+  trigger_compiled = gen.compile( obj.control )
   memlength += trigger_compiled.memlength
   trigger_prop = `${trigger_compiled.string}`
 }else{
@@ -33,7 +33,7 @@ if( obj.__flags[1] ) {
 
 let th_prop, th_compiled
 if( obj.__flags[2] ) {
-  th_compiled = gen.compile( obj.threshold, memlength + offset )
+  th_compiled = gen.compile( obj.threshold )
   memlength += th_compiled.memlength
   th_prop = `${th_compiled.string}`
 }else{
@@ -42,7 +42,7 @@ if( obj.__flags[2] ) {
 
 const template = `
   ;;;;;;;; sample and hold ;;;;;;;;
-  i32.const ${offset}
+  i32.const ${(obj.idx*4)+offset}
   local.get $loc
   i32.add
   local.set ${memory_loc}
@@ -58,7 +58,7 @@ const template = `
   
   ;; sah: load last control signal value
   local.get ${memory_loc}
-  i32.const 20
+  i32.const 16
   i32.add
   f32.load
   local.set $lastcontrol_${idx}
@@ -83,7 +83,7 @@ const template = `
     ;; if trigger store value
     if
       local.get ${memory_loc}
-      i32.const 16
+      i32.const 12
       i32.add
       local.get $valueinput_${idx}
       f32.store
@@ -91,7 +91,7 @@ const template = `
     
     ;; sah: store current trigger value
     local.get ${memory_loc}
-    i32.const 20
+    i32.const 16
     i32.add
     local.get $trigger_${idx}
     f32.store
@@ -100,7 +100,7 @@ const template = `
   ;; sah: get stored value, this will already be
   ;; set to new sample if threshold was exceeded
   local.get ${memory_loc}
-  i32.const 16
+  i32.const 12
   i32.add
   f32.load
 

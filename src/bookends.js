@@ -2,7 +2,6 @@ const front = function( memAmount = 50) {
 
 const code = `(module
   (import "env" "memory" (memory $mem ${memAmount} ${memAmount} shared))
-  ;;(import "env" "memory" (memory $mem ${memAmount} ${memAmount} ))
   (import "env" "_logi" (func $_logi (param i32)  (result i32) ) ) 
   (import "env" "_logf" (func $_logf (param f32)  (result f32) ) ) 
 

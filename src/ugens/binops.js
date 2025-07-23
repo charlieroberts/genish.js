@@ -43,7 +43,7 @@ for( let optype in opcategories ) {
           y_prop
 
       if( obj.__flags[0] ) {
-        x_compiled = gen.compile( obj[0], memlength + offset )
+        x_compiled = gen.compile( obj[0] )//, memlength + offset )
         memlength += x_compiled.memlength
         x_prop = `${x_compiled.string}`
       }else{
@@ -51,7 +51,7 @@ for( let optype in opcategories ) {
       }
     
       if( obj.__flags[1] ) {
-        y_compiled = gen.compile( obj[1], memlength + offset )
+        y_compiled = gen.compile( obj[1] ) //, memlength + offset )
         memlength += y_compiled.memlength
         y_prop = `${y_compiled.string}`
       }else{

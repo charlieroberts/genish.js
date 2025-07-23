@@ -16,6 +16,8 @@ const utilities = {
     return idx
   },
 
+  resetMemory() { m = 0 },
+
   shouldMemo: true,
 
   setupMemory( buffer, __pokelength=50 ) {
@@ -134,9 +136,13 @@ const utilities = {
     const obj = { name },
           keys = Object.keys( props ),
           statickeys = Object.keys( statics )
+
+    // dynamic version needs to store function id for 
+    // each ugen, with compiled ugens this is unnecessary
+    const IS_DYNAMIC = 0
   
     // function id, properties, statics
-    obj.idx = utilities.getMemory( 1 + keys.length + statickeys.length )
+    obj.idx = utilities.getMemory( IS_DYNAMIC + keys.length + statickeys.length )
   
     // initial binary signature
     const initSig = Object.values( props ).reduce(
@@ -151,19 +157,22 @@ const utilities = {
       ? baseidx + Number( initSig )
       : baseidx
   
-    Object.defineProperty( obj, 'fid', { 
-      get() { return __fid },
-      set(v) {
-        __fid = v
-        memi[ obj.idx ] = __fid
-      }
-    })
+    if( IS_DYNAMIC ) {
+      Object.defineProperty( obj, 'fid', { 
+        get() { return __fid },
+        set(v) {
+          __fid = v
+          memi[ obj.idx ] = __fid
+        }
+      })
+    }
     
     obj.fid = __fid
-  
+
+    const offset = obj.offset || 0
     for( let i = 0; i < keys.length; i++ ) {
       const key = keys[ i ]
-      const idx = obj.idx + 1 + i
+      const idx = obj.idx + IS_DYNAMIC + i + offset
   
       let value = props[ key ]
       Object.defineProperty( obj, key, {
@@ -191,9 +200,9 @@ const utilities = {
       obj[ key ] = props[ key ]
     }
   
-    let staticidx = obj.idx + 1 + keys.length
+    let staticidx = obj.idx + IS_DYNAMIC + keys.length
     for( let key of statickeys ) {
-      const idx = staticidx
+      const idx = staticidx+offset
       Object.defineProperty( obj, key, {
         get() {
           const out = statics[ key ].type === 'f'
@@ -216,9 +225,9 @@ const utilities = {
     obj.__flags = flags
     obj.__props = props
     obj.__statics = statics
-    obj.__memoryLength = keys.length + Object.keys( statickeys ).length 
+    obj.__memoryLength = keys.length + Object.keys( statickeys ).length + IS_DYNAMIC
     obj.__shouldMemo = false
-    obj.__memoName =  '_' + obj.idx + '_out'
+    obj.__memoName =  obj.name + '_' + obj.idx + '_memo'
 
     obj.memo = ()=> {
       obj.__shouldMemo = true
@@ -271,12 +280,12 @@ const utilities = {
         node.port.onmessage = msg => {
           arr = msg.data.memory
           utilities.setupMemory( arr )
-          utilities.createWavetables()
+          //utilities.createWavetables()
 
           const graph = graphfnc()
           node.port.postMessage({
             address:'render',
-            loc:graph.idx * 4,
+            loc:0//graph.idx * 4,
           })
 
           node.connect( audioContext.destination )

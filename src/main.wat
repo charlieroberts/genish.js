@@ -158,6 +158,9 @@
     $memo      
     $caller
     $caller
+    ;; TODO counter actually has four inputs; currently
+    ;; only incr, min, and reset are supported but max
+    ;; should be as well. argggghhhh... 20 permutations :(
     $counter_s_s_s
     $counter_s_s_d ;; 120
     $counter_s_d_s
