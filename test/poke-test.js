@@ -90,7 +90,6 @@ gen.init().then( ()=> {
         wasm.render(0)
       }
 
-      debugger
       let result = true
       for( let i = 0; i < 64; i++ ) {
         if( memf[d.idx + i] !== i ) {
