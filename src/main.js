@@ -4,6 +4,8 @@ import utilities from './utilities.js'
 const getMemory = utilities.getMemory,
       factory   = utilities.factory
 
+const isCompiled = true
+
 let fidx = 0
 
 const monop = function( name ) {
@@ -236,26 +238,55 @@ let counter
     const props = { incr,reset,max }
     const statics = { 
       phase: { value:phase, type:'f' },
-      wrap:  { value:0, type:'f' },
+      __wrap:  { value:0, type:'f' },
     }
     
-    const obj = factory( props, statics, fid, 'counter' )
+    let obj = factory( props, statics, fid, 'counter' )
 
-    // TODO return memoized object because output and .wrap
-    // might often both be used
-    //const __memo = memo( obj )
+    if( isCompiled ) {
+      obj.memo()
 
-    /*
-    Object.defineProperty( __memo, 'wrap', {
-      get() {
-        // address of wrap static
-        const out =  caller( __memo, (obj.idx * 4) + 20 )
-        return out
-      }
-    })
-    */
+      // need a special compilation stage for the 'wrap' instance variable
+      // first, we ensure that counter has already been compiled into graph,
+      // if not we compile it. then we add the string that grabs the wrap
+      // value from memory.
+      Object.defineProperty( obj, 'wrap', {
+        get() {
+          let string = `(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+16})))`
+          let memlength = 1
+          /*if( gen.__memo[ obj.__memoName ] === undefined ) {
+            const c = gen.compile( obj, 0 )
+            string = c.string +'\n' + string
+            memlength += c.memlength
+          }*/
+
+          const wrapobj = {
+            memlength,
+            string,
+            name:'counter.wrap',
+            requires:obj
+          }
+
+          return wrapobj
+        }
+      })
+    }else{
+      // TODO return memoized object because output and .wrap
+      // might often both be used
+      const __memo = memo( obj )
+      
+      Object.defineProperty( __memo, 'wrap', {
+        get() {
+          // address of wrap static
+          const out =  caller( __memo, (obj.idx * 4) + 20 )
+          return out
+        }
+      })
+      
+      obj = __memo
+    }
   
-    return obj// __memo
+    return obj
   }
 }
 
