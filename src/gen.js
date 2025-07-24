@@ -26,6 +26,7 @@ const gen = {
     poke:   ( await import( './ugens/poke.js'    )  ).default,
     history:( await import( './ugens/history.js' )  ).default,
     counter:( await import( './ugens/counter.js' )  ).default,
+    mix:    ( await import( './ugens/mix.js'     )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -67,24 +68,45 @@ const gen = {
   // TODO add memoization step here?
   // main compile function
   compile( ugen, offset ) {
-    //if( Number.isNaN( ugen) ) return ''
-    if( ugen.name === undefined ) {
-      throw Error('ugen is not defined.', ugen )
-    }
-    let out = null
+    if( ugen.name === undefined ) throw Error('ugen is not defined.', ugen )
+
+    let out = null, prereq = null
     const name = ugen.__memoName
 
-    if( gen.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
+    // check if this is a property of a ugen, like counter.wrap
+    // in which case it requires its parent to be compiled
+    // parent must use 'set' for final value / memoization,
+    // not tee, as the property string will also return a float
+    if( ugen.requires !== undefined && gen.__memo[ ugen.requires.__memoName ] === undefined ) {
+      prereq = gen.compile( ugen.requires, offset )
+      const prereqarray = prereq.string.split('\n')
+      if( prereqarray.length > 2 ) {
+        const idx = prereqarray.length > 1 ? prereqarray.length - 2 : 0
+        if( idx >= 0 )
+          prereqarray[ idx ] = prereqarray[ idx ].replace( '.tee', '.set' )
+      }
+      prereq.string = prereqarray.join('\n')
+    }
+
+    if( typeof ugen.string === 'string' ) {
+      // if pre-compiled, like counter.wrap
+      out = ugen
+    } else if( gen.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
+      // if not already memo'd but should be...
       const compiled = gen.ugens[ ugen.name ]( ugen, offset )
       out = this.__memo[ name ] = compiled
     }else if( ugen.__shouldMemo === true ){
+      // memo found
       out = {
         string:`local.get $${name}`,
         memlength: 0
       }
     }else{
+      // default compilation, no memoing
       out = gen.ugens[ ugen.name ]( ugen, offset )
     }
+
+    if( prereq !== null ) out.string = prereq.string + '\n' + out.string
 
     return out
   },
