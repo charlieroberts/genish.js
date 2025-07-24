@@ -583,6 +583,21 @@ let clamp
   }
 }
 
+
+let wrap 
+{
+  const baseidx = fidx
+  fidx += 8
+  wrap = function( input=0, min=0, max=1 ) {
+    const props = { input, min, max },
+          statics = {} 
+
+    const obj = factory( props, statics, baseidx, 'wrap' )
+
+    return obj
+  }
+}
+
 // TODO be sure to include information on how mono pan
 // input is automatically memoized. 
 // There is only one extra indirect call here (the mul).
@@ -647,7 +662,7 @@ export {
   caller, counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, 
   
-  data,
+  data,wrap, 
 
   cycle_compiled, wobble
 }

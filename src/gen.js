@@ -27,6 +27,7 @@ const gen = {
     history:( await import( './ugens/history.js' )  ).default,
     counter:( await import( './ugens/counter.js' )  ).default,
     mix:    ( await import( './ugens/mix.js'     )  ).default,
+    wrap:   ( await import( './ugens/wrap.js'    )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
