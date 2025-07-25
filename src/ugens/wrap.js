@@ -9,6 +9,7 @@ const wrap = function( obj, offset=0 ) {
   gen.addLocal(`(local $wrapinput_${idx} f32)`)
   gen.addLocal(`(local $wrapmax_${idx} f32)`)
   gen.addLocal(`(local ${memory_loc} i32)`)
+  gen.addLocal(`(local $maxwrapped_${idx} f32)`)
 
   if( obj.__flags[0] ) {
     const input_compiled = gen.compile( obj.input, offset )
@@ -38,7 +39,8 @@ const wrap = function( obj, offset=0 ) {
     max_prop = `f32.const ${obj.max}`
   }
 
-
+  // TODO for max we could just inline static values instead
+  // of assigning to a local...
   const template = `
 ${input_prop}
 local.set $wrapinput_${idx}
@@ -50,6 +52,12 @@ local.set $wrapmax_${idx}
   (f32.sub (local.get $wrapinput_${idx}) (local.get $wrapmax_${idx}) )
   (local.get $wrapinput_${idx})
   (f32.ge (local.get $wrapinput_${idx}) (local.get $wrapmax_${idx}) )
+)
+local.set $maxwrapped_${idx}
+(select
+  (f32.add (local.get $maxwrapped_${idx}) (local.get $wrapmax_${idx}))
+  (local.get $maxwrapped_${idx})
+  (f32.lt (local.get $maxwrapped_${idx}) (f32.const 0.0) )
 )
 `
 
