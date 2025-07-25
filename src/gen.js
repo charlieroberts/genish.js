@@ -29,6 +29,7 @@ const gen = {
     mix:    ( await import( './ugens/mix.js'     )  ).default,
     wrap:   ( await import( './ugens/wrap.js'    )  ).default,
     delay:  ( await import( './ugens/delay.js'   )  ).default,
+    ifelse: ( await import( './ugens/ifelse.js'  )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
