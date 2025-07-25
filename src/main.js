@@ -386,7 +386,7 @@ let delay
     }
 
     const obj = factory( props, statics, baseidx, 'delay' )
-    getMemory( maxSize )
+    //getMemory( maxSize )
 
     return obj
   }
