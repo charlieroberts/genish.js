@@ -30,8 +30,6 @@ gen.init().then( ()=> {
             func     = gen.function( graph ),
             wat      = gen.module( func )
 
-      //gen.write( wat, './trash/mix.wat' )
-
       const wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( 0 ), 1000 )
 
@@ -65,6 +63,20 @@ gen.init().then( ()=> {
 
       assert.strictEqual( actual, expected )    
     })
+
+    it( 'should return .5, with inputs -.5,0,1', async () => {
+      const mem      = makeMemory(),
+            expected = .5,
+            graph    = wrap(-.5,0,1),
+            func     = gen.function( graph ),
+            wat      = gen.module( func )
+
+      const wasm     = await gen.assemble( wat, mem ),
+            actual   = decimate( wasm.render( 0 ), 1000 )
+
+      assert.strictEqual( actual, expected )    
+    })
+    // TODO need to test min once feature is added
     
   })
 })
