@@ -1,5 +1,15 @@
-import __wabt from 'wabt'
-import fs from 'fs'
+let __wabt = null
+let fs = null
+
+const isBrowser = typeof window !== 'undefined'
+
+if( !isBrowser ) {
+  import('wabt').then( m =>{ __wabt = m.default;  })
+  import('fs').then( m => fs = m.default )
+}
+
+//const __wabt = null
+//const fs = null
 
 const gen = {
   // top / bottom of module
@@ -14,7 +24,7 @@ const gen = {
   __functions: [],
 
   // paths to all ugen templates
-  __ugens : {
+ __ugens : {
     accum:  ( await import( './ugens/accum.js'   )  ).default,
     phasor: ( await import( './ugens/phasor.js'  )  ).default,
     peek:   ( await import( './ugens/peek.js'    )  ).default,
@@ -30,14 +40,18 @@ const gen = {
     wrap:   ( await import( './ugens/wrap.js'    )  ).default,
     delay:  ( await import( './ugens/delay.js'   )  ).default,
     ifelse: ( await import( './ugens/ifelse.js'  )  ).default,
+    slide:  ( await import( './ugens/slide.js'   )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
+  __monops: ( await import( './ugens/monops.js' ) ).default,
 
   ugens: {},
 
   addLocal( local ) {
-    this.__locals.push( local )
+    if( this.__locals.indexOf( local ) === -1 ) {
+      this.__locals.push( local )
+    }
   },
 
   // clear memory used for compilation
@@ -51,8 +65,13 @@ const gen = {
 
   init() {
     const p = new Promise(( resolve, reject ) => {
-      __wabt().then( wabt => {
-        this.__wabt = wabt
+      // switch out commented line below when using node
+      // wabt library. TODO I guess we should just compile wabt
+      // into the system?
+ 
+      (!isBrowser ? __wabt : WabtModule )().then( wabt => {
+      //WabtModule().then( wabt => {
+        gen.__wabt = wabt
         resolve()
       })
     })
@@ -64,6 +83,10 @@ const gen = {
 
     const binops = gen.__binops( gen )
     Object.assign( gen.ugens, binops )
+    const monops = gen.__monops( gen )
+    Object.assign( gen.ugens, monops )
+
+    console.log( gen.ugens )
 
     return p
   },
@@ -219,6 +242,28 @@ const gen = {
     fs.writeFileSync( name, wat )
   },
 
+  blob( wat, memory, shouldPrint ) {
+    
+    if( shouldPrint ) console.log( wat )
+
+    const modobj = gen.__wabt.parseWat( 
+      'gen', 
+      wat, 
+      { threads:true  } 
+    )
+    
+    try {
+      modobj.validate({ threads:true })
+    }catch(err) {
+      console.error( err )
+      return
+    }
+    const wasmblob = modobj.toBinary({ log:false, write_debug_names:false })
+
+    return wasmblob
+  },
+
+  // TODO refactor to use .blob() ? 
   assemble( wat, memory=null ) {
     const modobj = this.__wabt.parseWat( 
       'gen', 
@@ -237,6 +282,7 @@ const gen = {
     if( memory === null ) {
       memory = new WebAssembly.Memory({ 
         initial:5, maximum:5, shared:true 
+
       })
     }
     
