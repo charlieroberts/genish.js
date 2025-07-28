@@ -1,13 +1,10 @@
 let gen
 
 const poke = function( data, value, index ) {
-
   const memory_loc   = '$pokememoryloc_'+gen.__pokes.length
-  if( typeof value === 'object' )
-    value.memo()
-
-  if( typeof index === 'object' )
-    index.memo()
+  
+  if( typeof value === 'object' ) value.memo()
+  if( typeof index === 'object' ) index.memo()
 
   const post = function() {
     let inputcompiled, indexcompiled
@@ -52,8 +49,17 @@ f32.store
 
     return ugen
   }
+  // use id that will identify this poke and prevent it from being pushed
+  // multiple times
+  const pokeidx = data.idx + (typeof index === 'object' ? index.idx : index )
+  post.idx = pokeidx
 
-  gen.__pokes.push( post )
+  // only push once!
+  const pokeFound = gen.__pokes.findIndex( v => v.idx === post.idx ) !== -1
+
+  if( !pokeFound ) {
+    gen.__pokes.push( post )
+  }
 
   return post
 }
