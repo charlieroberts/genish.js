@@ -35,6 +35,10 @@ const compile = function( obj, offset=0 ) {
   f32.mul`
           : ``
 
+  // only run full peek if index isn't a constant
+  // TODO this assumes index is an integer... is there
+  // a use case when that would not be true and interpolation
+  // or truncation would be required?
   if( obj.__flags[0] ) {
     const index_compiled = gen.compile( obj.index, offset )
     memlength += index_compiled.memlength
@@ -42,7 +46,16 @@ const compile = function( obj, offset=0 ) {
     // offset += index_compiled.memlength 
     index_prop = `${index_compiled.string}`
   }else{
-    index_prop = `f32.const ${obj.index}`
+
+    //index_prop = `f32.const ${obj.index}`
+    const string = `;;;;;;;; peek const ;;;;;;;;
+local.get $loc
+i32.const ${(obj.data.idx + obj.index)* 4}
+i32.add
+f32.load
+;;;;;;;; end peek const ;;;;;;;;
+`
+    return { string, memlength }
   }
 
   const linearInterpolationBlock = `
