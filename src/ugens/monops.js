@@ -6,23 +6,24 @@ const callops = [ 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'tanh', ['noise',
       nativeops = [ 'floor', 'ceil', 'abs', ['round', 'nearest'] ],
       monops = {}
 
-const allops = callops.concat( nativeops ).flat()
+const allops = callops.concat( nativeops )
 
 for( let __op of allops ) {
   const changeName = Array.isArray( __op )
   const op = changeName ? __op[ 1 ] : __op
-  monops[ op ] = function( obj, offset=0 ) {
+  monops[ changeName ? __op[0] : __op ] = function( obj, offset=0 ) {
     let memlength = 4,
         input_compiled
 
+    let string = ''
     if( obj.__flags[0] ) {
       input_compiled = gen.compile( obj[0] )//, memlength + offset )
       memlength += input_compiled.memlength
+      string = `${input_compiled.string}\n`
     }else{
-      input_prop = `f32.const ${obj[0]}`
+      string = obj[0] === undefined ? '' : `f32.const ${value}`
     }
 
-    let string = `${input_compiled.string}\n`
     if( callops.flat().indexOf( op ) !== -1 ) {
       string += `call $_${op}\n`
     }else{
