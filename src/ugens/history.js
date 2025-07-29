@@ -7,7 +7,7 @@ let __poke = null
 // TODO: use actual samplerate
 const compile = function( obj, offset = 0 ) {
   // triggers compilation of poke in current ugen
-  __poke( obj.__data, obj.__input, 0+offset  )
+  __poke( obj.__data, obj.__input, offset  )
 
   const out = peek( obj.__data, 0, 0, 0 ) 
   out.__memoName = obj.__memoName
