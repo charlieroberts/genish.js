@@ -33,10 +33,11 @@ window.onload = async function() {
     const func     = gen.function( graph ),
           wat      = gen.module( func, false, 5 )
 
+    if( shouldPrintWat ) console.log( wat )
+
     const blob = gen.blob( wat, window.mem, false )
     window.node = await startWorkletNode( blob.buffer, window.mem, false, false )
 
-    if( shouldPrintWat ) console.log( wat )
     return window.node
   }
 
