@@ -208,7 +208,7 @@ let memo
   memo = function( input=0 ) {
     const props = { input }
     const statics = {
-      lastClock:  { value:MAX, type:'i' },
+      lastClock:  { value:999999, type:'i' },
       lastSample: { value:0,   type:'f' }
     }
     
@@ -335,7 +335,7 @@ let ssd
       __data: data(1),
       in( input ) { obj.__input = input } 
     }
-    obj.out = obj //peek( obj.__data, 0, 0, 0 )
+    obj.out = obj 
 
     return obj
   }
@@ -399,7 +399,7 @@ let slide
   slide = function( input=0, slideUp=1000, slideDown=1000 ) {
     const props = { input, slideUp, slideDown },
           statics = {
-            output: { value:0, type:'f' }
+            //output: { value:0, type:'f' }
           }
     
     return factory( props, statics, fid, 'slide' )
@@ -651,7 +651,7 @@ let pokememoryindex = 1000
 let pokelength = 50
 let pokecounter = 0
 
-export {
+const exports = {
   floor, ceil, round, abs, sqrt, sin, cos,
   tan, asin, acos, atan,
 
@@ -665,4 +665,20 @@ export {
   data,wrap, 
 
   cycle_compiled, wobble
+}
+
+export {
+  floor, ceil, round, abs, sqrt, sin, cos,
+  tan, asin, acos, atan,
+
+  add, sub, mul, div, and, or, gt, gte, lt, lte,
+  eq, neq, gtp, ltp, min, max, pow, mod,
+
+  accum, phasor, peek, cycle, noise, sah, memo,
+  caller, counter, bus, ssd, delay, slide, param,
+  mix, bang, ad, ifelse, ifelse2, poke, 
+  
+  data,wrap, 
+
+  cycle_compiled, wobble, exports
 }
