@@ -1,8 +1,7 @@
 import { data } from './main.js'
+//import gen from './gen.js'
 
-let audioContext = null, 
-    node = null, 
-    memf, memi,
+let memf, memi,
     m = 0,
     memclear = 0
 
@@ -16,7 +15,7 @@ const utilities = {
     return idx
   },
 
-  resetMemory() { m = 0 },
+  resetMemory( start = 0 ) { m = start },
 
   shouldMemo: true,
 
@@ -237,66 +236,7 @@ const utilities = {
     return obj
   },
 
-  async startWorkletNode( graphfnc ) {
-    // get wasm as bytes, start downloading as soon as
-    // page loads
-
-    const response  = await fetch( '../test2.wasm')
-    const wasmbytes =  await response.arrayBuffer()
-
-    if( !audioContext ) {
-      try {
-        audioContext = new AudioContext()
-        await audioContext.resume()
-        await audioContext.audioWorklet.addModule( '../src/compiledWorklet.js' )
-        
-        utilities.sampleRate = audioContext.sampleRate
-        utilities.ctx = audioContext
-        const samplerate = utilities.sampleRate
   
-        // TODO: how to know ahead of time if stereo? some type 
-        // of init function?
-        const numChannels = 2
-        node = new AudioWorkletNode( 
-          audioContext, 
-          'wasm-test',
-          { 
-            channelInterpretation:'discrete', 
-            channelCount: numChannels, 
-            outputChannelCount:[ numChannels ] 
-          }
-        )
-  
-        utilities.node = node
-  
-        // send wasm over messageport to worklet
-        node.port.postMessage({
-          address:'memory',
-          wasm:wasmbytes,
-          sr: audioContext.sampleRate
-        })
-              
-        let arr
-        node.port.onmessage = msg => {
-          arr = msg.data.memory
-          utilities.setupMemory( arr )
-          //utilities.createWavetables()
-
-          const graph = graphfnc()
-          node.port.postMessage({
-            address:'render',
-            loc:0//graph.idx * 4,
-          })
-
-          node.connect( audioContext.destination )
-        }
-        
-        window.onclick = null  
-      } catch(e) {
-        console.error( e )
-      }
-    }
-  }
 }
 
 export default utilities
