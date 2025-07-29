@@ -15,6 +15,8 @@ const compile = function( obj, offset=0 ) {
   filter = add( y1.out, div( sub( obj.input, y1.out ), slideAmount ) ).memo() 
 
   y1.in( filter )
+  
+  filter.__shouldMemo = obj.__shouldMemo
   filter.__memoName = obj.__memoName
 
   return gen.compile( filter, offset )

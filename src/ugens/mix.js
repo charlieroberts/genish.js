@@ -14,6 +14,7 @@ const compile = function( obj, offset = 0 ) {
     )
   )
 
+  ugen.__shouldMemo = obj.__shouldMemo 
   ugen.__memoName = obj.__memoName
 
   return gen.compile( ugen, offset )

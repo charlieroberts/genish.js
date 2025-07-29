@@ -12,6 +12,7 @@ const compile = function( obj, offset = 0 ) {
     obj.reset
   )
 
+  out.__shouldMemo = obj.__shouldMemo
   out.__memoName = obj.__memoName
   
   return gen.compile( out )

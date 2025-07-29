@@ -11,6 +11,7 @@ const compile = function( obj, offset=0 ) {
     'phase'
   )
 
+  out.__shouldMemo = obj.__shouldMemo
   out.__memoName = obj.__memoName
 
   return gen.compile( out, offset )
