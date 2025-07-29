@@ -73,7 +73,7 @@ gen.init().then( ()=> {
             func     = gen.function( add(graph, mul(a,0)) ),
             wat      = gen.module( func, false, 1 )
 
-      gen.write( wat, './trash/history.wat' )
+      //gen.write( wat, './trash/history.wat' )
 
       const wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( 0 ), 1000 ),
