@@ -31,6 +31,8 @@ const counter = function( obj, offset=0 ) {
     offset         += reset_compiled.memlength
   }
 
+  // TODO needs dynamic maximum e.g. for sequencing
+
   const name = '$'+obj.__memoName 
 
   gen.addLocal(`(local ${name} f32)` )
