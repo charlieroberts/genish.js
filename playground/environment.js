@@ -1,215 +1,72 @@
-import { cycle_compiled,add,accum,mul, param, noise, phasor, sah, memo, data, poke, peek } from '../src/main.js'
+import gen from '../src/gen.js'
 import utilities from '../src/utilities.js'
-
-var cm, cmconsole, exampleCode, AudioContext = AudioContext,
-isStereo = false, jsdsp, shouldUseJSDSP = false
+import { exports } from '../src/main.js'
+import startWorkletNode from '../src/startWorklet.js'
+import { download } from './download.js'
 
 window.onload = async function() {
-  cm = CodeMirror( document.querySelector('#editor'), {
-    mode:   'javascript',
-    value:  'loading...',
-    keyMap: 'playground',
-    autofocus: true,
-    theme:'monokai',
-    matchBrackets:true
+  await gen.init()
+
+  window.node = null
+  window.mem = new WebAssembly.Memory({ 
+    initial:5, maximum:5, shared:true
+  })
+  window.memf = new Float32Array( mem.buffer )
+  window.memi = new Int32Array( mem.buffer )
+
+  utilities.setupMemory( mem.buffer )
+  utilities.createWavetables()
+
+  Object.assign( window, exports )
+  
+  const b = bitty.create({ 
+    flashColor:'white',
+    flashTime: 100,
+    value: `play( accum(.005) )`
+  })
+  window.editor = b
+
+  window.play = async function( graph, shouldPrintWat=false ) {
+    if( window.node !== null ) window.clear()
+
+    window.graph = graph
+    const func     = gen.function( graph ),
+          wat      = gen.module( func, false, 5 )
+
+    const blob = gen.blob( wat, window.mem, false )
+    window.node = await startWorkletNode( blob.buffer, window.mem, false, false )
+
+    if( shouldPrintWat ) console.log( wat )
+    return window.node
+  }
+
+  window.clear = function() {
+    window.node.port.postMessage({ address:'stop' })
+    window.node.disconnect()
+    window.node = null
+
+    // 0-1024 is samplerate (1) + cycle wavetable (1024)
+    // will need to increase to include pan wavetables
+    utilities.resetMemory( 1025 )
+  }
+
+  // problems accessing window scope when using eval...
+  b.subscribe( 'run', txt => ( new Function( txt ))() ); 
+
+  b.subscribe( 'keydown', e => {
+    if( e.ctrlKey && e.key === '.' ) {
+      clear( true )
+    }
   })
 
-  window.cycle = cycle_compiled
-  cm.setSize( null, '100%' )
-
-  window.onclick = ()=> utilities.startWorkletNode( ()=> {
-    window.memi = utilities.memi
-    window.memf = utilities.memf
-    /*let baseFreq = 55
-    let prev = cycle_compiled( baseFreq )
-    baseFreq *= 1.00125
-    let count = 3000
-    let i = 1
-    for( i = 1; i < count; i++ ) {
-      prev = add( prev, cycle_compiled(baseFreq) )
-      baseFreq *= 1.001
-    }*/
-    const Sine = (freq=110,gain=.1) => mul( cycle_compiled( freq ), gain ) 
-    const Bus  = (gain, ...ugens) => {
-      let out = ugens[0]
-      for( let i = 1; i < ugens.length; i++ ) {
-        out = add( out, ugens[1] )
-      }
-      return mul( gain, out )
-    }
-    //window.graph = cycle( add(220, sah( mul(n,50), n, .9995 ))) 
-
-    //window.graph = cycle( add(220, sah( mul( noise(3), 50 ), noise(3), .9995 ))) 
-    
-    /*const  d = data(1),
-           c = accum(.005)
-
-    poke( d, c, 0 )
-    window.graph = peek( d, 0, 0, 0 )*/
-    const d = data(1024),
-      c = accum(.005),
-      i1 = accum(1,0,0,1024),
-      i2 = accum(1,0,0,1024)
-
-      poke( d,c,i1 )
-      const graph = peek(d,i2,0,0)
-
-    
-    return window.graph
-  })
-
-  let select = document.querySelector( 'select' ),
-      files = [
-        'intro',
-        'thereminish',  
-        'oneDelayLine',
-        'slicingAndDicing',
-        'bandlimitedFM',
-        'sync'
-
-/*       
-        'sequencing', 
-        'bitcrusher',
-        'enveloping',
-        'biquad',
-        'zeroDelay',
-        'zeroDelayLadder',
-        'combFilter',
-        'freeverb',
-        'gigaverb',
-        'gardenOfDelays', 
-        'karplusStrong'
-*/
-      ]
-  
-  let currentFile = 'intro'
-  select.onchange = function( e ) {
-    currentFile = files[ select.selectedIndex ] 
-    loadexample( currentFile )
-  }
-  
-  let loadexample = function( filename ) {
-    var req = new XMLHttpRequest()
-      req.open( 'GET', './examples/'+filename+ (shouldUseJSDSP ? '.dsp.js' : '.js'), true )
-      req.onload = function() {
-        var js = req.responseText
-        cm.setValue( js )
-      }
-  
-    req.send()
-  }
-  
-  loadexample( 'intro' )
-
-  //let jsdspBtn = document.querySelector( '#jsdsp' ) 
-
-  //jsdspBtn.addEventListener( 'change', v => {
-  //  shouldUseJSDSP = v.target.checked
-  //  askForReload()
-  //})
-
-  const askForReload = ()=> {
-    let msg = 'You are switching to using ' + ( shouldUseJSDSP ? '.jsdsp' : '.js' ) + '; do you want to reload the current demo using the new format?'
-    if( window.confirm( msg ) ) {
-      loadexample( currentFile )
-    }
-  }
+  window.download = download
 }
 
-CodeMirror.keyMap.playground =  {
-  fallthrough:'default',
+window.bitty.rules = {
+  keywords: /\b(new|if|else|do|while|switch|for|of|continue|break|return|typeof|function|var|const|let|\.length)(?=[^\w])/g,
 
-  'Ctrl-Enter'( cm ) {
-    try {
-      var selectedCode = getSelectionCodeColumn( cm, false )
+  numbers: /\b(\d+)/g,
 
-      flash( cm, selectedCode.selection )
-
-      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
-
-      var func = new Function( code )
-
-      func()
-    } catch (e) {
-      console.log( e )
-    }
-  },
-  'Alt-Enter'( cm ) {
-    try {
-      var selectedCode = getSelectionCodeColumn( cm, true )
-
-      var code = shouldUseJSDSP ? Babel.transform(selectedCode.code, { presets: [], plugins:['jsdsp'] }).code : selectedCode.code
-
-      var func = new Function( code )
-
-      func()
-    } catch (e) {
-      console.log( e )
-    }
-  },
-  'Ctrl-.'( cm ) {
-    utilities.clear()
-    if( dat !== undefined ) {
-      dat.GUI.__all__.forEach( v => v.destroy() )
-      dat.GUI.__all__.length = 0
-    }
-    //cmconsole.setValue('// silencio.\n' )
-  },
-}
-
-var getSelectionCodeColumn = function( cm, findBlock ) {
-  var pos = cm.getCursor(), 
-  text = null
-
-  if( !findBlock ) {
-    text = cm.getDoc().getSelection()
-
-    if ( text === "") {
-      text = cm.getLine( pos.line )
-    }else{
-      pos = { start: cm.getCursor('start'), end: cm.getCursor('end') }
-      //pos = null
-    }
-  }else{
-    var startline = pos.line, 
-    endline = pos.line,
-    pos1, pos2, sel
-
-    while ( startline > 0 && cm.getLine( startline ) !== "" ) { startline-- }
-    while ( endline < cm.lineCount() && cm.getLine( endline ) !== "" ) { endline++ }
-
-    pos1 = { line: startline, ch: 0 }
-    pos2 = { line: endline, ch: 0 }
-
-    text = cm.getRange( pos1, pos2 )
-
-    pos = { start: pos1, end: pos2 }
-  }
-
-  if( pos.start === undefined ) {
-    var lineNumber = pos.line,
-    start = 0,
-    end = text.length
-
-    pos = { start:{ line:lineNumber, ch:start }, end:{ line:lineNumber, ch: end } }
-  }
-
-  return { selection: pos, code: text }
-}
-
-var flash = function(cm, pos) {
-  var sel,
-  cb = function() { sel.clear() }
-
-  if (pos !== null) {
-    if( pos.start ) { // if called from a findBlock keymap
-      sel = cm.markText( pos.start, pos.end, { className:"CodeMirror-highlight" } );
-    }else{ // called with single line
-      sel = cm.markText( { line: pos.line, ch:0 }, { line: pos.line, ch:null }, { className: "CodeMirror-highlight" } )
-    }
-  }else{ // called with selected block
-    sel = cm.markText( cm.getCursor(true), cm.getCursor(false), { className: "CodeMirror-highlight" } );
-  }
-
-  window.setTimeout(cb, 250);
+  strings: /(".*?"|'.*?'|\`(.|\n)*?\`)/g,
+  comments: /(\/\/.*|\/\*(.|\n)*?\*\/)/g
 }
