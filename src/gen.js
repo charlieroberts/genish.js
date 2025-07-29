@@ -30,7 +30,6 @@ const gen = {
     peek:   ( await import( './ugens/peek.js'    )  ).default,
     cycle:  ( await import( './ugens/cycle.js'   )  ).default,
     param:  ( await import( './ugens/param.js'   )  ).default,
-    noise:  ( await import( './ugens/noise.js'   )  ).default,
     sah:    ( await import( './ugens/sah.js'     )  ).default,
     memo:   ( await import( './ugens/memo.js'    )  ).default,
     poke:   ( await import( './ugens/poke.js'    )  ).default,
