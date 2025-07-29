@@ -1,11 +1,19 @@
-const front = function( memAmount = 50) {
+const front = function( memAmount = 5 ) {
 
 const code = `(module
   (import "env" "memory" (memory $mem ${memAmount} ${memAmount} shared))
   (import "env" "_logi" (func $_logi (param i32)  (result i32) ) ) 
   (import "env" "_logf" (func $_logf (param f32)  (result f32) ) ) 
 
-  (import "math" "random"   (func $_random (result f32) ) )
+  (import "math" "random"  (func $_random (result f32) ) )
+  (import "math" "sin"     (func $_sin   (param f32) (result f32) ) )
+  (import "math" "cos"     (func $_cos   (param f32) (result f32) ) )
+  (import "math" "tan"     (func $_tan   (param f32) (result f32) ) )
+  (import "math" "asin"    (func $_asin  (param f32) (result f32) ) )
+  (import "math" "acos"    (func $_acos  (param f32) (result f32) ) )
+  (import "math" "atan"    (func $_atan  (param f32) (result f32) ) )
+  (import "math" "tanh"    (func $_tanh  (param f32) (result f32) ) )
+  ;;(import "math" "atan2"   (func $_atan2 (param f32) (param f32) (result f32) ) )
 
   (global $sr (import "env" "sr") f32)
   (export "memory" (memory $mem) )
