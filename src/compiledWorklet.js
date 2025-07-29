@@ -1,23 +1,24 @@
 class WASMProcessor extends AudioWorkletProcessor {
   constructor() {
     super()
-    this.wasm = null
-    
-    const memory = new WebAssembly.Memory({ 
-      initial:50, maximum:50, shared:true 
-    })
+    this.wasm       = null
+    this.debug      = false
+    this.shouldPlay = true
     
     this.port.onmessage = async (msg) => {
       if( msg.data.address === 'memory' ) {
         // XXX replace with actual sampling rate at some point...
-        this.sr = new WebAssembly.Global({value:'f32', mutable:false}, msg.data.sr )
-        this.clock = new WebAssembly.Global({ value:'i32', mutable:true}, 1 )
+        this.sr    = new WebAssembly.Global({ value:'f32', mutable:false }, msg.data.sr )
+        this.clock = new WebAssembly.Global({ value:'i32', mutable:true  }, 1 )
+
+        this.debug = msg.data.debug || false
         
         WebAssembly.instantiate( 
           msg.data.wasm, 
           {
             env: { 
-              memory, sr:this.sr, 
+              memory:msg.data.memory, 
+              sr:this.sr, 
               _logi:function( n ) { console.log(n); return n }, 
               _logf:function( n ) { console.log(n); return n } 
             },
@@ -38,28 +39,24 @@ class WASMProcessor extends AudioWorkletProcessor {
           } 
         )
         .then( wasm => {
-          this.wasm = wasm.instance.exports
-          this.memory = memory.buffer
+          this.wasm   = wasm.instance.exports
+          this.memory = msg.data.memory.buffer
           
+          // send message back to main thread to let it know initialization
+          // is complete, typically the main thread will then send a message
+          // back to begin rendering
           this.port.postMessage({
-            address:'memory',
-            memory:this.memory
+            address:'initialized',
           })
-          
-          //this.wasm.create_sin_table()
-          
-          // buffer, byteOffset, length
-          //this.outputL = new Float32Array( memory.buffer, 0, 256 )
-          //this.outputR = new Float32Array( memory.buffer, 512, 128 )
-          // this.output = new Float32Array( memory.buffer, 0, 256 )
-          // this.outputL = this.output.subarray( 0, 128 )
-          // this.outputR = this.output.subarray( 128, 256 )
-
         })
       } else if( msg.data.address === 'render' ) {
         this.renderLocation = msg.data.loc
-        //this.renderFunction = msg.data.func
+        // setting the numChannels property turns on rendering in the
+        // audioworklet's process method...
         this.numChannels = 1
+      } else if( msg.data.address === 'stop' ) {
+        // needed for garbage collection and to free up cpu resources
+        this.shouldPlay = false
       }
     }
   }
@@ -69,13 +66,14 @@ class WASMProcessor extends AudioWorkletProcessor {
     const output = outputs[0][0]
     if( this.numChannels === 1 ) {
       for( let i = 0; i < len; i++ ) {
+        if( this.debug ) debugger
         const l = this.wasm.render( this.renderLocation )
         outputs[0][0][i] = l
         outputs[0][1][i] = l
       }
     }
     
-    return true
+    return this.shouldPlay
   }
 }
 
