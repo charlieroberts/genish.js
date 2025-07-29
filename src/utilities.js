@@ -10,12 +10,18 @@ const utilities = {
   sampleRate: null,
 
   getMemory( amt ) {
+    if( m + amt > memf.length ) {
+      throw( `Your memory request of ${amt} blocks would exceed the max memory size of ${memf.length} available blocks. Please allocate more memory in your call to TODO` )
+    }
     let idx = m
     m += amt
     return idx
   },
 
-  resetMemory( start = 0 ) { m = start },
+  resetMemory( start = 0 ) { 
+    m = start
+    memf.fill( 0, start )
+  },
 
   shouldMemo: true,
 
