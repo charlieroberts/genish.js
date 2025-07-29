@@ -3,7 +3,7 @@ import utilities from './utilities.js'
 let audioContext = null
 let node = null
 
-const startWorkletNode = async function( wasmbuffer,  mem, shouldPrint=false, shouldDebug=false, path='../src/compiledWorklet.js' ) {
+const startWorkletNode = async function( wasmbuffer,  mem, shouldPrint=false, shouldDebug=false, path='../src/compiledWorklet.js', isStereo=false ) {
   if( audioContext === null ) {
     try {
       audioContext = new AudioContext()
@@ -47,10 +47,18 @@ const startWorkletNode = async function( wasmbuffer,  mem, shouldPrint=false, sh
   let arr
   node.port.onmessage = msg => {
     if( msg.data.address === 'initialized' ) { 
-      node.port.postMessage({
-        address:'render',
-        loc:0//graph.idx * 4,
-      })
+
+      if( !isStereo ) {
+        node.port.postMessage({
+          address:'render',
+          loc:0//graph.idx * 4,
+        })
+      }else{
+        node.port.postMessage({
+          address:'renderStereo',
+          loc:0//graph.idx * 4,
+        })
+      }
 
       if( typeof node.oninit === 'function' ) {
         node.oninit( node )

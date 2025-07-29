@@ -85,8 +85,6 @@ const gen = {
     const monops = gen.__monops( gen )
     Object.assign( gen.ugens, monops )
 
-    console.log( gen.ugens )
-
     return p
   },
 
@@ -139,25 +137,28 @@ const gen = {
   function( ugen, name='render' ) {
     gen.__locals.length = 0
 
+    const isStereo = Array.isArray( ugen )
+
     // TODO I think memo init is OK to do here, but maybe
     // it needs to be explicity done by the end-user? will there be
     // other ways to compile a function?
     gen.__memo = {}
     
-    let str = `\n(func $${name} (export "${name}") (param $loc i32) (result f32)\n `
+    let str = `\n(func $${name} (export "${name}") (param $loc i32) (result ${isStereo ?'f32 f32' : 'f32'})\n `
    
-    let body = gen.compile( ugen, 0 )
+    let body = null
+    if( isStereo ){ 
+      body = gen.compile( ugen[0], 0 ).string + '\n' + gen.compile( ugen[1], 0 ).string
+    }else{
+      body = gen.compile( ugen, 0 ).string
+    }
 
-    let bodystr = body.string
+    let bodystr = body
 
     const hasPokes = gen.__pokes.length > 0
-    if( hasPokes === true ) {
-      //ugen.memo()
-    }
 
     if( hasPokes ) {
       bodystr += this.processPokes()
-      //gen.addLocal(`(local $${ugen.__memoName} f32)`)
     }
 
     let locals = ''
@@ -167,9 +168,7 @@ const gen = {
 
     str += locals
     str += bodystr
-    if( hasPokes ) {
-      //str += `local.get $${ugen.__memoName}\n`
-    }
+    
     str += `)\n`
 
     gen.__functions.push( name )

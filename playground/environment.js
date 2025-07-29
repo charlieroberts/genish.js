@@ -36,7 +36,7 @@ window.onload = async function() {
     if( shouldPrintWat ) console.log( wat )
 
     const blob = gen.blob( wat, window.mem, false )
-    window.node = await startWorkletNode( blob.buffer, window.mem, false, false )
+    window.node = await startWorkletNode( blob.buffer, window.mem, false, false, '../src/compiledWorklet.js', Array.isArray(graph) )
 
     return window.node
   }
@@ -61,6 +61,23 @@ window.onload = async function() {
   })
 
   window.download = download
+
+  initMenu()
+}
+
+const demos = [
+  'intro.js',
+  'thereminish.js'
+]
+
+const initMenu = function() {
+  const menu = document.getElementsByTagName('select')[0]
+  menu.onchange = e => {
+    const idx = e.target.selectedIndex
+    const file = fetch( './examples/'+demos[ idx ] )
+      .then( response => response.text() ) 
+      .then( text => editor.value = text )
+  }
 }
 
 window.bitty.rules = {

@@ -54,6 +54,9 @@ class WASMProcessor extends AudioWorkletProcessor {
         // setting the numChannels property turns on rendering in the
         // audioworklet's process method...
         this.numChannels = 1
+      } else if( msg.data.address === 'renderStereo' ) {
+        this.renderLocation = msg.data.loc
+        this.numChannels = 2
       } else if( msg.data.address === 'stop' ) {
         // needed for garbage collection and to free up cpu resources
         this.shouldPlay = false
@@ -70,6 +73,13 @@ class WASMProcessor extends AudioWorkletProcessor {
         const l = this.wasm.render( this.renderLocation )
         outputs[0][0][i] = l
         outputs[0][1][i] = l
+      }
+    }else if( this.numChannels === 2 ) {
+      for( let i = 0; i < len; i++ ) {
+        if( this.debug ) debugger
+        const out = this.wasm.render( this.renderLocation )
+        outputs[0][0][i] = out[0]
+        outputs[0][1][i] = out[1]
       }
     }
     
