@@ -333,7 +333,9 @@ let ssd
       name:'history',
       __input: null,
       __data: data(1),
-      in( input ) { obj.__input = input } 
+      // TODO should the input always be memo'd? that seems like
+      // it would fit the most common use case...
+      in( input ) { obj.__input = input.memo() } 
     }
     obj.out = obj 
 
@@ -399,7 +401,7 @@ let slide
   slide = function( input=0, slideUp=1000, slideDown=1000 ) {
     const props = { input, slideUp, slideDown },
           statics = {
-            //output: { value:0, type:'f' }
+            output: { value:0, type:'f' }
           }
     
     return factory( props, statics, fid, 'slide' )
