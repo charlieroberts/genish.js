@@ -15,7 +15,7 @@ const monop = function( name ) {
     const props = { '0':x },
           statics = {}
 
-    return factory( props, statics, baseidx, name )
+    return { name, '0':x }//factory( props, statics, baseidx, name )
   }
 
   return fnc
@@ -28,7 +28,7 @@ const binop = function( name ) {
     const props = { '0':x, '1':y },
           statics = {}
 
-    return factory( props, statics, baseidx, name )
+    return { name, '0':x, '1':y }//factory( props, statics, baseidx, name )
   }
 
   return fnc
@@ -77,7 +77,8 @@ let accum
             'phase':{ value:phase, type:'f' }, 
           }
 
-    const obj = factory( props, statics, baseidx, 'accum' )
+    //const obj = factory( props, statics, baseidx, 'accum' )
+    const obj = { incr, reset, min, max, phase, name:'accum' } 
 
     return obj
   }
@@ -93,7 +94,7 @@ let phasor
             'phase':{ value:phase, type:'f' } 
           }
 
-    return factory( props, statics, baseidx, 'phasor' )
+    return { frequency, reset, phase, name:'phasor' }//factory( props, statics, baseidx, 'phasor', true )
   }
 }
 
@@ -112,9 +113,15 @@ let peek
             mode: { value: Number( mode==='phase' ), type:'i' }
           }
 
-    const obj = factory( props, statics, baseidx, 'peek' )
+    const obj = { 
+      name:'peek', 
+      index, 
+      interpolation:Number( interp==='linear' ), 
+      mode: Number( mode === 'phase' ),
+      data: __data
+    }//factory( props, statics, baseidx, 'peek' )
 
-    obj.data = __data
+    //obj.data = __data
 
     return obj
   }
@@ -162,7 +169,7 @@ let param
             value:{ value, type:'f' }
           }
   
-    return factory( props, statics, baseidx, 'param' )
+    return { name:'param', value }//factory( props, statics, baseidx, 'param' )
   }
 }
 

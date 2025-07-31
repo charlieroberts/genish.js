@@ -15,7 +15,7 @@ local.set ${data_loc}
 }
 
 const compile = function( obj, offset=0 ) {
-  let memlength = obj.__memoryLength * 4,
+  let memlength = 0, 
       index_prop
 
   const phase_id = '$peekphase_'+obj.idx,
@@ -30,11 +30,12 @@ const compile = function( obj, offset=0 ) {
         data_length_val = '$peekdata_length_val_'+obj.idx,
         data_length_offset = 12,
 
-        phase_prop = obj.__statics.mode.value === 1
+        phase_prop = obj.mode === 1
           ? `local.get ${data_length_val} 
   f32.mul`
           : ``
 
+  obj.__flags = [ isNaN( obj.index ) ]
   // only run full peek if index isn't a constant
   // TODO this assumes index is an integer... is there
   // a use case when that would not be true and interpolation
@@ -127,7 +128,7 @@ const dataBlock = obj.data.__static
 // if interpolating, truncate to get base index, interpolation
 // will be performed between baseIndex and baseIndex + 1. Otherwise
 // for no interpolation round to nearest index number
-const baseIndexBlock = obj.__statics.interpolation.value === 1
+const baseIndexBlock = obj.interpolation === 1
   ? `i32.trunc_f32_u`
   : `f32.nearest
 i32.trunc_f32_u`

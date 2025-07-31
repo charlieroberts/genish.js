@@ -26,7 +26,7 @@ window.onload = async function() {
   })
   window.editor = b
 
-  window.play = async function( graph, shouldPrintWat=false ) {
+  window.play = async function( graph, shouldPrintWat=false, shouldDebug=false ) {
     if( window.node !== null ) window.clear()
 
     window.graph = graph
@@ -36,7 +36,7 @@ window.onload = async function() {
     if( shouldPrintWat ) console.log( wat )
 
     const blob = gen.blob( wat, window.mem, false )
-    window.node = await startWorkletNode( blob.buffer, window.mem, false, false, '../src/compiledWorklet.js', Array.isArray(graph) )
+    window.node = await startWorkletNode( blob.buffer, window.mem, false, shouldDebug, '../src/compiledWorklet.js', Array.isArray(graph) )
 
     return window.node
   }

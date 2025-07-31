@@ -1,17 +1,26 @@
+import {cycle} from '../main.js'
+import utilities from '../utilities.js'
 let gen
 
 const accum = function( obj, offset=0 ) {
+
+  // TODO we should only ask for the memory we need?
+  // we don't need any numbers that get compiled into place.
+  // so, really we just need a number for phase I think
+  obj.idx = utilities.getMemory( 1 )
+  obj.__memoryLength = 1
+  obj.__flags = [ isNaN(obj.incr),isNaN(obj.reset) ]
+
   let memlength     = obj.__memoryLength * 4,
       incr_prop     = null,
       incr_compiled = null,
       resetblock    = null,
       reset_compiled= null
 
-  const phase_offset = 16,
+  const phase_offset = 0,
         phase_id     = '$accumphase'+obj.idx,
         memory_loc   = '$accummemoryloc'+obj.idx,
-        phase_loc    = '$accumphaseloc'+obj.idx,
-        out_id       = '$accumout'+obj.idx
+        phase_loc    = '$accumphaseloc'+obj.idx
 
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
@@ -28,13 +37,11 @@ const accum = function( obj, offset=0 ) {
     offset         += reset_compiled.memlength
   }
 
-  gen.addLocal(`(local ${memory_loc} i32)`)
   gen.addLocal(`(local ${phase_loc} i32)`)
   gen.addLocal(`(local ${phase_id} f32)`) 
-  gen.addLocal(`(local ${out_id} f32)`)
   
-  const name = obj.__memoName 
-  gen.addLocal(`(local $${name} f32)` )
+  const name = '$'+obj.__memoName 
+  gen.addLocal(`(local ${name} f32)` )
 
   const getReset = function() {
     const resetBlock = 
@@ -47,25 +54,23 @@ const accum = function( obj, offset=0 ) {
       (f32.const ${obj.min})   
     ) 
     (f32.const ${obj.min})
-    local.set ${out_id}
+    local.set ${name}
   end
   `
     return resetBlock 
   }
+
   const incrblock = 
 `
 ${obj.__flags[1] === 0 ? `;;;;;;;; begin accum ;;;;;;;;` : '' }
 i32.const ${offset+obj.idx*4}
 local.get $loc
 i32.add
-local.tee ${memory_loc}
+local.tee ${phase_loc}
 
 ;; accum: load phase
-i32.const ${ phase_offset }
-i32.add
-local.tee ${phase_loc}
 f32.load
-local.tee ${out_id}
+local.tee ${name}
 ${obj.__flags[1] ? getReset() : '' }
 ;; accum: phase increment
 ${incr_prop}
@@ -88,13 +93,13 @@ local.tee ${phase_id}
 end
 
 f32.store
-local.get ${out_id}
-local.tee $${name}
+local.get ${name}
 
 ;;;;;;;; end accum ;;;;;;;;
 `
 
   memlength += 4
+
   const out = {
     string: obj.__flags[1] ? resetblock : incrblock,
     memlength

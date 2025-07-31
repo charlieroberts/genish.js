@@ -6,13 +6,13 @@ single-sample feedback. In this demo, the callbacks are used to
 generate audio, but the library could also be used for modeling
 physical systems.
 
-The code display on the right side of the screen shows the 
-callback generated; calling this function once will output a single
+You can add a true argument to any call to "play()" to see the 
+generated webassembly function in the developers console. 
+calling this function once will output a single
 sample (potentially stereo) of data. The idea of genish.js is to 
 provide a higher level kit for building these types of functions.
 
 genish.js is inspired by gen~ for Max/MSP: https://cycling74.com/max7/
-
 
 ---=== GETTING STARTED ===---
 
@@ -34,7 +34,6 @@ link in the header of the playground.
 Only one graph can be played at a time in this playground. There are a
 few different demos to try, accessible via the menu at the top of the
 page.
-
 
 /************************************
 ******* non-bandlimited saw *********
@@ -98,7 +97,7 @@ play( mul( cycle( frequency ), .1 ) )
 // ssd is equivalent to history in gen~, a single-sample delay
 // (the history name is used by the window object in js...)
 // an argument to ssd sets its initial value
-sampler = ssd(.1) 
+sampler = ssd(1) 
  
 // generate a sawtooth wave using our last sample output to
 // scale its frequency
@@ -107,7 +106,7 @@ out = phasor( mul( 1000, sampler.out ) )
 // record the output to process the next sample
 sampler.in( out )
  
-play( mul( out, .1 ) )
+play( mul( out, 1 ), true )
 
 /**********************************************************
 ******* using data with peek (linear interpolation) *******
@@ -199,16 +198,16 @@ echo = delay( gain, 11025, 22050 )
 play( [gain, echo] ) 
 
 /****** 100 sine oscillators  *******/
- 
-let size = 100
-b = bus( size, 1/size )
- 
+
+// if you play with these numbers, make
+// sure the final frequency doesn't get
+// to high! (not above half the sampling rate)
+let size = 500
 let baseFreq = 80
+let out = cycle( baseFreq )
 for( let i = 0; i < size; i++) {
-  b.connect(
-    cycle( baseFreq )
-  )
-  baseFreq *= 1.035
+  baseFreq *= 1.01
+  out = add( out, cycle( baseFreq ) )
 }
- 
-play( b )
+console.log( 'final freq:', baseFreq )
+play( mul( out, 1/size ) )

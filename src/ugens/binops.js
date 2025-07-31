@@ -36,11 +36,14 @@ for( let optype in opcategories ) {
     const changeName = Array.isArray( __op )
     const op = changeName ? __op[0] : __op
     binops[ op ] = function( obj, offset ) {
-      let memlength = 2 * 4,
+      let memlength = 0,
           x_compiled, 
           x_prop,
           y_compiled,
           y_prop
+
+      obj.__memoryLength = 0
+      obj.__flags = [ isNaN(obj[0]),isNaN(obj[1]) ]
 
       if( obj.__flags[0] ) {
         x_compiled = gen.compile( obj[0] )//, memlength + offset )

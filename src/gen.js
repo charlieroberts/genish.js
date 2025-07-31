@@ -148,7 +148,8 @@ const gen = {
    
     let body = null
     if( isStereo ){ 
-      body = gen.compile( ugen[0], 0 ).string + '\n' + gen.compile( ugen[1], 0 ).string
+      const ugen1 = gen.compile( ugen[0], 0 )
+      body = ugen1.string + '\n' + gen.compile( ugen[1], ugen1.memlength ).string
     }else{
       body = gen.compile( ugen, 0 ).string
     }
@@ -256,7 +257,7 @@ const gen = {
       console.error( err )
       return
     }
-    const wasmblob = modobj.toBinary({ log:false, write_debug_names:false })
+    const wasmblob = modobj.toBinary({ log:false, write_debug_names:true })
 
     return wasmblob
   },

@@ -19,15 +19,17 @@ const utilities = {
   },
 
   resetMemory( start = 0 ) { 
-    m = start
-    memf.fill( 0, start )
+    if( utilities.memf !== undefined ) {
+      m = start
+      utilities.memf.fill( 0, start )
+    }
   },
 
   shouldMemo: true,
 
   setupMemory( buffer, __pokelength=50 ) {
-    this.memf = memf   = new Float32Array( buffer )
-    this.memi = memi   = new Int32Array( buffer )
+    utilities.memf = memf   = new Float32Array( buffer )
+    utilities.memi = memi   = new Int32Array( buffer )
 
     utilities.sridx = utilities.getMemory( 1 )
     memi[ utilities.sridx ] = 44100
@@ -137,7 +139,7 @@ const utilities = {
     }
   },
 
-  factory( props, statics, baseidx, name ) {
+  factory( props, statics, baseidx, name, isComposite=false ) {
     const obj = { name },
           keys = Object.keys( props ),
           statickeys = Object.keys( statics )
