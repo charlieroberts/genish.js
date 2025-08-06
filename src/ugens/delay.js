@@ -11,8 +11,7 @@ const compile = function( obj, offset=0 ) {
   __poke( d, obj.input, writeidx )
   const out = peek(
     d,
-    //abs( sub( writeidx, obj.time ) ),
-    writeidx,//wrap( sub( writeidx, obj.time ), 0, obj.maxSize ), 
+    wrap( sub( writeidx, obj.time ), 0, obj.maxSize ), 
     0,
     0
   )

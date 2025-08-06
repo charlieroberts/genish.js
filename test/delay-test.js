@@ -30,8 +30,6 @@ gen.init().then( ()=> {
             func     = gen.function( graph ),
             wat      = gen.module( func )
 
-      gen.write( wat, './trash/delay.wat' )
-
       const wasm     = await gen.assemble( wat, mem )
       const actual   = decimate( wasm.render( 0 ), 1000 )
 
@@ -48,7 +46,7 @@ gen.init().then( ()=> {
 
       const wasm     = await gen.assemble( wat, mem )
 
-      wasm.render(0); wasm.render(0); wasm.render(0);
+      wasm.render(0); wasm.render(0);wasm.render(0);
       const actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )    
@@ -60,8 +58,6 @@ gen.init().then( ()=> {
             graph    = delay(1,3,5),
             func     = gen.function( graph ),
             wat      = gen.module( func )
-
-      gen.write( wat, './trash/delay.wat' )
 
       const wasm     = await gen.assemble( wat, mem )
 

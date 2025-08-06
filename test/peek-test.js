@@ -24,30 +24,37 @@ const makeMemory = function( memoryAmount = 50 ) {
 gen.init().then( ()=> {
 
   describe( 'a peek', ()=>{
+    
+    
     it( 'should return 42 on with an index of 0 and a data of [42]', async () => {
       const mem = makeMemory(),
             expected = 42,
             graph    = peek( data([ 42 ]), 0, 'none', 'samples' ),
             func     = gen.function( graph ),
-            wat      = gen.module( func ),
-            wasm     = await gen.assemble( wat, mem ),
+            wat      = gen.module( func )
+
+      const wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )
     })
 
     
+    
     it( 'should return 42 on with an index of 3 and a data of [0,1,2,42]', async () => {
       const mem = makeMemory(),
             expected = 42,
             graph    = peek( data( [0,1,2,42] ), 3, 'none', 'samples' ),
             func     = gen.function( graph ),
-            wat      = gen.module( func ),
-            wasm     = await gen.assemble( wat, mem ),
+            wat      = gen.module( func )
+
+      gen.write( wat, './trash/peek.wat' ) 
+      const wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )
     })
+    
 
     // TODO: the rest of the tests use linear interpolation, which currently doesn't work with static
     // indexes. I don't know what the use case for static indexes with interpolation is so I'm
@@ -58,12 +65,19 @@ gen.init().then( ()=> {
             expected = 2,
             graph    = peek( data( [0,1,2] ), param(.75), 'none' ),
             func     = gen.function( graph ),
-            wat      = gen.module( func ),
-            wasm     = await gen.assemble( wat, mem ),
+            wat      = gen.module( func )
+
+      //gen.write( wat, './trash/peek.wat' ) 
+
+      //const memf = new Float32Array( mem.buffer )
+      //console.log( memf[0], memf[1], memf[2], memf[3], memf[4], memf[5] )
+
+      const wasm     = await gen.assemble( wat, mem ),
             actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )
     })
+    
 
     it( 'should return .5 with an index of .5 and a data of [0,1] (linear interp)', async () => {
       const mem      = makeMemory(),
@@ -101,5 +115,6 @@ gen.init().then( ()=> {
       assert.strictEqual( actual, expected )
     })
     
+   /* */
   })
 })

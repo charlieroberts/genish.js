@@ -9,7 +9,7 @@ const accum = function( obj, offset=0 ) {
   // so, really we just need a number for phase I think
   obj.idx = utilities.getMemory( 1 )
   obj.__memoryLength = 1
-  obj.__flags = [ isNaN(obj.incr),isNaN(obj.reset) ]
+  obj.__flags = [ isNaN(obj.incr), isNaN(obj.reset) ]
 
   let memlength     = obj.__memoryLength * 4,
       incr_prop     = null,
@@ -40,7 +40,7 @@ const accum = function( obj, offset=0 ) {
   gen.addLocal(`(local ${phase_loc} i32)`)
   gen.addLocal(`(local ${phase_id} f32)`) 
   
-  const name = '$'+obj.__memoName 
+  const name = obj.__memoName 
   gen.addLocal(`(local ${name} f32)` )
 
   const getReset = function() {
@@ -59,6 +59,8 @@ const accum = function( obj, offset=0 ) {
   `
     return resetBlock 
   }
+
+  offset = 0
 
   const incrblock = 
 `

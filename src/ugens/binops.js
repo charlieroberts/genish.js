@@ -64,8 +64,8 @@ for( let optype in opcategories ) {
       let string = blocks[ optype ]( x_prop, y_prop, changeName ? __op[1] : op )
       if( obj.__shouldMemo ) {
         const name = obj.__memoName 
-        gen.addLocal(`(local $${name} f32)` )
-        string += `local.tee $${name}\n`
+        gen.addLocal(`(local ${name} f32)` )
+        string += `local.tee ${name}\n`
       }
 
       const out = {

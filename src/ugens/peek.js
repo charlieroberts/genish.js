@@ -1,5 +1,11 @@
 let gen
 
+let __uid = 0
+
+const getUID = function() {
+  return __uid++
+}
+
 const dynamicData = function( data_offset, data_loc, memory_loc ) {
   return `local.get ${memory_loc}
   i32.const ${data_offset}
@@ -17,6 +23,10 @@ local.set ${data_loc}
 const compile = function( obj, offset=0 ) {
   let memlength = 0, 
       index_prop
+
+  obj.data = gen.compile( obj.data )
+  obj.idx = obj.data.idx + '_' + getUID()
+  obj.__memoName = '$peek_'+obj.idx+'_memo'
 
   const phase_id = '$peekphase_'+obj.idx,
         floor_id = '$peekfloor_'+obj.idx,
@@ -48,16 +58,16 @@ const compile = function( obj, offset=0 ) {
     index_prop = `${index_compiled.string}`
   }else{
 
-    //index_prop = `f32.const ${obj.index}`
     const string = `;;;;;;;; peek const ;;;;;;;;
 local.get $loc
-i32.const ${(obj.data.idx + obj.index)* 4}
+i32.const ${(obj.data.idx + obj.index) * 4}
 i32.add
 f32.load
 ;;;;;;;; end peek const ;;;;;;;;
 `
     return { string, memlength }
   }
+
 
   const linearInterpolationBlock = `
   ;; peek: interpolate
@@ -106,12 +116,12 @@ f32.load
 
   const interpolation = obj.interpolation === 1 ? linearInterpolationBlock : '' 
 
-  gen.addLocal( `(local ${memory_loc} i32)` )
+  //gen.addLocal( `(local ${memory_loc} i32)` )
   gen.addLocal( `(local ${data_loc} i32)` )
   gen.addLocal( `(local ${phase_id} f32)` )
   gen.addLocal( `(local ${base_id} i32)` )
   gen.addLocal( `(local ${data_length_val} f32)` )
-  gen.addLocal( `(local $${obj.__memoName} f32)` )
+  gen.addLocal( `(local ${obj.__memoName} f32)` )
 
   if( obj.interpolation === 1 ) {
     gen.addLocal( `(local ${floor_id} f32)` )
@@ -123,7 +133,7 @@ f32.load
 
 const dataBlock = obj.data.__static 
   ? staticData( obj.data, data_loc, memory_loc )
-  : dynamicData( 8, data_loc, memory_loc )
+  : dynamicData( 0, data_loc, memory_loc )
 
 // if interpolating, truncate to get base index, interpolation
 // will be performed between baseIndex and baseIndex + 1. Otherwise
@@ -155,10 +165,10 @@ dataLengthBlock += `local.set ${data_length_val}\n`
 
   const block = 
 `;;;;;;;; peek ;;;;;;;;
-i32.const ${offset}
-local.get $loc
-i32.add
-local.set ${memory_loc}
+;;i32.const ${offset}
+;;local.get $loc
+;;i32.add
+;;local.set ${memory_loc}
 ${dataBlock}
 ${dataLengthBlock}
 ;; peek: get normalized index
@@ -179,7 +189,7 @@ local.get ${data_loc}
 i32.add
 f32.load
 ${interpolation}
-local.tee $${obj.__memoName}
+local.tee ${obj.__memoName}
 ;;;;;;;; end peek ;;;;;;;;
 `
   memlength += 4

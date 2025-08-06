@@ -26,6 +26,7 @@ gen.init().then( ()=> {
   const _poke = poke( gen )
 
   describe( 'a poke', ()=>{
+    
     it( 'should put 42.0 in to memory', async () => {
       const mem = makeMemory(),
             expected = 42,
@@ -36,13 +37,15 @@ gen.init().then( ()=> {
             wat      = gen.module( func, false, 1 ),
             wasm     = await gen.assemble( wat, mem )
 
+      //gen.write( wat, './trash/poke.wat' )
+
       const actual   = decimate( wasm.render( 0 ), 1000 ),
             again    = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( again, expected )
     })
+    /* */
 
-    
     it( 'should fill 64 numbers', async () => {
       const mem      = makeMemory(),
             d        = data( 64 ),
@@ -51,8 +54,12 @@ gen.init().then( ()=> {
             p        = _poke( d, valuep, indexp ),
             graph    = add(0,0), 
             func     = gen.function( graph ),
-            wat      = gen.module( func, false, 1 ),
-            wasm     = await gen.assemble( wat, mem )
+            wat      = gen.module( func, false, 1 )
+
+      //console.log( 'wat:', wat )
+      //gen.write( wat, './trash/poke.wat' )
+
+      const wasm     = await gen.assemble( wat, mem )
 
       for( let i = 0; i < 64; i++ ) {
         indexp.value = i
@@ -73,6 +80,7 @@ gen.init().then( ()=> {
       assert( result )
     })
 
+    
     it( 'should fill 64 numbers with accum index', async () => {
       const mem      = makeMemory(),
             d        = data( 64 ),
@@ -151,6 +159,8 @@ gen.init().then( ()=> {
 
       assert( result )
     })
-    
+    /* */
+
+  utilities.__debugMemory = false
   })
 })

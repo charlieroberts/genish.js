@@ -8,10 +8,16 @@ let memf, memi,
 const utilities = {
   buffers: {},
   sampleRate: null,
+  __debugMemory: false,
 
-  getMemory( amt ) {
+  getMemoryIndex() { return m },
+
+  getMemory( amt, name='unknown' ) {
     if( m + amt > memf.length ) {
       throw( `Your memory request of ${amt} blocks would exceed the max memory size of ${memf.length} available blocks. Please allocate more memory in your call to TODO` )
+    }
+    if( utilities.__debugMemory === true ) {
+      console.log( 'getting ' + amt + ' block(s) of memory for ' + name + '.', m )
     }
     let idx = m
     m += amt
@@ -20,6 +26,7 @@ const utilities = {
 
   resetMemory( start = 0 ) { 
     if( utilities.memf !== undefined ) {
+      if( utilities.__debugMemory ) console.log( 'reset memory ', start )
       m = start
       utilities.memf.fill( 0, start )
     }
@@ -31,7 +38,7 @@ const utilities = {
     utilities.memf = memf   = new Float32Array( buffer )
     utilities.memi = memi   = new Int32Array( buffer )
 
-    utilities.sridx = utilities.getMemory( 1 )
+    utilities.sridx = utilities.getMemory( 1, 'sample rate' )
     memi[ utilities.sridx ] = 44100
     
     /*() for output buffer

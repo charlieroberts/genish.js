@@ -11,6 +11,7 @@ const wrap = function( obj, offset=0 ) {
   gen.addLocal(`(local ${memory_loc} i32)`)
   gen.addLocal(`(local $maxwrapped_${idx} f32)`)
 
+  obj.__flags = [ isNaN( obj.input ), isNaN( obj.min ), isNaN(obj.max) ]
   if( obj.__flags[0] ) {
     const input_compiled = gen.compile( obj.input, offset )
     memlength     += input_compiled.memlength

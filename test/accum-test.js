@@ -27,11 +27,12 @@ gen.init().then( ()=> {
             func     = gen.function( graph ),
             wat      = gen.module( func ),
             wasm     = await gen.assemble( wat, mem ),
-            actual   = decimate( wasm.render( graph.idx * 4 ), 1000 )
+            actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )    
     })
 
+    
     it( 'should ramp to .4 with an increment of .1 after five executions', async () => {
       const mem      = makeMemory(),
             expected = .4,
@@ -63,6 +64,7 @@ gen.init().then( ()=> {
 
       assert.strictEqual( actual, expected )    
     })
+
 
   //   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
   //     let answer = .0,

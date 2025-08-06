@@ -8,6 +8,12 @@ const isCompiled = true
 
 let fidx = 0
 
+let uid = 0
+
+function getUID() {
+  return uid++
+}
+
 const monop = function( name ) {
   const baseidx = fidx
   fidx += 2
@@ -15,7 +21,7 @@ const monop = function( name ) {
     const props = { '0':x },
           statics = {}
 
-    return { name, '0':x }//factory( props, statics, baseidx, name )
+    return makeugen({ name, '0':x })//factory( props, statics, baseidx, name )
   }
 
   return fnc
@@ -28,7 +34,7 @@ const binop = function( name ) {
     const props = { '0':x, '1':y },
           statics = {}
 
-    return { name, '0':x, '1':y }//factory( props, statics, baseidx, name )
+    return makeugen({ name, '0':x, '1':y })//factory( props, statics, baseidx, name )
   }
 
   return fnc
@@ -64,6 +70,20 @@ const add = binop( 'add' ),
       max = binop( 'max' ),
       pow = binop( 'pow' ),
       mod = binop( 'mod' )
+
+const ugen = {
+  memo() { 
+    this.__shouldMemo = true 
+    return this
+  }
+}
+
+const makeugen = function( props ) {
+  const out = Object.assign( Object.create(ugen), props, { uid:getUID() })
+  out.__memoName = '$' + out.name + '_' + out.uid + '_memo'
+
+  return out
+}
   
 let accum
 {
@@ -78,7 +98,7 @@ let accum
           }
 
     //const obj = factory( props, statics, baseidx, 'accum' )
-    const obj = { incr, reset, min, max, phase, name:'accum' } 
+    const obj = makeugen({ incr, reset, min, max, phase, name:'accum' })
 
     return obj
   }
@@ -94,7 +114,8 @@ let phasor
             'phase':{ value:phase, type:'f' } 
           }
 
-    return { frequency, reset, phase, name:'phasor' }//factory( props, statics, baseidx, 'phasor', true )
+    return makeugen({ frequency, reset, phase, name:'phasor' })
+    //factory( props, statics, baseidx, 'phasor', true )
   }
 }
 
@@ -113,13 +134,14 @@ let peek
             mode: { value: Number( mode==='phase' ), type:'i' }
           }
 
-    const obj = { 
+    const obj = makeugen({ 
       name:'peek', 
       index, 
       interpolation:Number( interp==='linear' ), 
       mode: Number( mode === 'phase' ),
       data: __data
-    }//factory( props, statics, baseidx, 'peek' )
+    })
+    //factory( props, statics, baseidx, 'peek' )
 
     //obj.data = __data
 
@@ -156,22 +178,24 @@ let cycle
             'phase':{ value:phase, type:'f' } 
           }
 
-    return factory( props, statics, baseidx, 'cycle' )
+    return makeugen({ name:'cycle', frequency, phase })
+    //factory( props, statics, baseidx, 'cycle' )
   }
 }
 
 let param
 {
   const baseidx = fidx++
-  param = value  => {
+  param = value => {
     const props = {},
           statics = {
             value:{ value, type:'f' }
           }
   
-    return { name:'param', value }//factory( props, statics, baseidx, 'param' )
+    return makeugen({ name:'param', value })
   }
 }
+
 
 let noise
 {
@@ -185,9 +209,11 @@ let noise
             b: { value:0xefcdab89, type:'i'}
           }
     
-    return factory( props, statics, baseidx, 'noise' )
+    return makeugen({ name:'noise', seed }) 
+    //factory( props, statics, baseidx, 'noise' )
   }
 }
+
 
 let sah
 {
@@ -247,7 +273,30 @@ let counter
       phase: { value:phase, type:'f' },
       __wrap:  { value:0, type:'f' },
     }
+
+    let obj = { name:'counter', incr, reset, max, phase }
     
+    Object.defineProperty( obj, 'wrap', {
+      get() {
+        let memlength = 1
+
+        const wrapobj = {
+          memlength,
+          resolve: function() { 
+            const myobj = {
+              string:`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
+              memlength
+            }
+            return myobj
+          },
+          name:'counter.wrap',
+          requires:obj
+        }
+
+        return wrapobj
+      }
+    })
+    /*
     let obj = factory( props, statics, fid, 'counter' )
 
     if( isCompiled ) {
@@ -261,11 +310,11 @@ let counter
         get() {
           let string = `(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+16})))`
           let memlength = 1
-          /*if( gen.__memo[ obj.__memoName ] === undefined ) {
-            const c = gen.compile( obj, 0 )
-            string = c.string +'\n' + string
-            memlength += c.memlength
-          }*/
+          //if( gen.__memo[ obj.__memoName ] === undefined ) {
+          //  const c = gen.compile( obj, 0 )
+          //  string = c.string +'\n' + string
+          //  memlength += c.memlength
+          //}
 
           const wrapobj = {
             memlength,
@@ -292,6 +341,7 @@ let counter
       
       obj = __memo
     }
+*/
   
     return obj
   }
@@ -334,7 +384,7 @@ let ssd
 {
   const fid = fidx++
   ssd = function() {
-    const obj = {
+    /*const obj = {
       idx: utilities.getMemory( 1 ),
       fid,
       name:'history',
@@ -343,7 +393,12 @@ let ssd
       // TODO should the input always be memo'd? that seems like
       // it would fit the most common use case...
       in( input ) { obj.__input = input.memo() } 
-    }
+    }*/
+    const obj = makeugen({ 
+      name:'history', 
+      in(input) { obj.__input = input; if( isNaN( input ) ) input.memo(); },
+      __input: null
+    })
     obj.out = obj 
 
     return obj
@@ -394,10 +449,9 @@ let delay
       readPos:{ value:0, type:'f'}
     }
 
-    const obj = factory( props, statics, baseidx, 'delay' )
+    //const obj = factory( props, statics, baseidx, 'delay' )
     //getMemory( maxSize )
-
-    return obj
+    return makeugen({ input, time, maxSize, name:'delay' })
   }
 }
 
@@ -411,7 +465,8 @@ let slide
             output: { value:0, type:'f' }
           }
     
-    return factory( props, statics, fid, 'slide' )
+    return makeugen({ name:'slide', input, slideUp, slideDown }) 
+    //factory( props, statics, fid, 'slide' )
   }
 }
 
@@ -452,7 +507,8 @@ let mix
   mix = function( in1=0, in2=0, t=1 ) {
     const props = { in1, in2, t }, statics = {}
     
-    return factory( props, statics, fid, 'mix' )
+    return makeugen({ name:'mix', in1, in2, t })
+    //factory( props, statics, fid, 'mix' )
   }
 }
 
@@ -499,7 +555,8 @@ let ifelse
     const props = { condition, "true":t, "false":f }
     const statics = {}
     
-    return factory( props, statics, baseidx, 'ifelse' )
+    return makeugen({ name:'ifelse', condition, t, f }) 
+    //factory( props, statics, baseidx, 'ifelse' )
   }
 }
 
@@ -526,30 +583,18 @@ const data = function( __data, type='float' ) {
       obj.name = 'data'
     }
   }else if( typeof __data === 'object' ){ 
-    // array of data should be passed, 
-    // copy into memory and return obj
+    // array of data should be passed,
+    // will be copied on compilation
     obj = { 
       __static:true,
-      idx : getMemory( __data.length ),
       length: __data.length,
-      name:'data'
+      name:'data',
+      value:__data
     }
-  
-    if( type === 'float' ) {
-      utilities.memf.set( __data, obj.idx )
-    }else{
-      utilities.memi.set( __data, obj.idx )
-    }
-
-    //utilities.memf[ obj.idx + __data.length ] = __data.length 
-  }else{
-
-    obj = { 
-      __static: true,
-      idx: getMemory( __data ),
-      length: __data,
-      name:'data'
-    }
+   }else{
+    obj = makeugen({ value:__data, name:'data' })
+    obj.__static = true
+    obj.length = 1
   }
 
   return obj
@@ -565,7 +610,8 @@ let poke
             data: { value:data.idx * 4, type:'i' }
           }
     
-    const obj = factory( props, statics, baseidx, 'poke' )
+    const obj = makeugen({ name:'poke', data, value, index }) 
+    //factory( props, statics, baseidx, 'poke' )
     //memi[ pokememoryindex + pokecounter ] = obj.idx * 4
 
     pokecounter++
@@ -601,7 +647,8 @@ let wrap
     const props = { input, min, max },
           statics = {} 
 
-    const obj = factory( props, statics, baseidx, 'wrap' )
+    const obj = makeugen({ name:'wrap', input, min, max }) 
+      //factory( props, statics, baseidx, 'wrap' )
 
     return obj
   }

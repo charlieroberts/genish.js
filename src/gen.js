@@ -32,6 +32,7 @@ const gen = {
     param:  ( await import( './ugens/param.js'   )  ).default,
     sah:    ( await import( './ugens/sah.js'     )  ).default,
     memo:   ( await import( './ugens/memo.js'    )  ).default,
+    noise:  ( await import( './ugens/noise.js'   )  ).default,
     poke:   ( await import( './ugens/poke.js'    )  ).default,
     history:( await import( './ugens/history.js' )  ).default,
     counter:( await import( './ugens/counter.js' )  ).default,
@@ -40,6 +41,7 @@ const gen = {
     delay:  ( await import( './ugens/delay.js'   )  ).default,
     ifelse: ( await import( './ugens/ifelse.js'  )  ).default,
     slide:  ( await import( './ugens/slide.js'   )  ).default,
+    data:   ( await import( './ugens/data.js'    )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -93,6 +95,7 @@ const gen = {
   compile( ugen, offset ) {
     if( ugen.name === undefined ) throw Error('ugen is not defined.', ugen )
 
+    //console.log( 'compiling ', ugen.name )
     let out = null, prereq = null
     const name = ugen.__memoName
 
@@ -112,16 +115,23 @@ const gen = {
     }
 
     if( typeof ugen.string === 'string' ) {
-      // if pre-compiled, like counter.wrap
+      // if pre-compiled
       out = ugen
+    } else if (typeof ugen.resolve === 'function' ) {
+      // if resolved at compile time but not via standard mechanisms
+      // like for counter.wrap
+      out = ugen.resolve()
     } else if( gen.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
       // if not already memo'd but should be...
+      
       const compiled = gen.ugens[ ugen.name ]( ugen, offset )
-      out = this.__memo[ name ] = compiled
+      ugen.__memoName = name
+      out = gen.__memo[ name ] = compiled
     }else if( ugen.__shouldMemo === true ){
       // memo found
+
       out = {
-        string:`local.get $${name}`,
+        string:`local.get ${name}`,
         memlength: 0
       }
     }else{

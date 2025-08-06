@@ -1,7 +1,7 @@
 let gen
 
 const ifelse = function( obj, offset=0 ) {
-  const idx = obj.idx
+  const idx = obj.uid
   const memory_loc = '$loc_'+idx
   const name = obj.__memoName 
   let memlength = obj.__memoryLength * 4
@@ -13,6 +13,8 @@ const ifelse = function( obj, offset=0 ) {
   gen.addLocal(`(local $ifelsef_${idx} f32)`)
   gen.addLocal(`(local ${memory_loc} i32)`)
   gen.addLocal(`(local $${name} f32)` )
+
+  obj.__flags = [ isNaN( obj.condition ), isNaN( obj.t ), isNaN( obj.f )]
 
   if( obj.__flags[0] ) {
     const condition_compiled = gen.compile( obj.condition, offset )
@@ -30,7 +32,7 @@ const ifelse = function( obj, offset=0 ) {
     offset         += t_compiled.memlength
     t_prop = `${t_compiled.string}`
   }else{
-    t_prop = `f32.const ${obj.true}`
+    t_prop = `f32.const ${obj.t}`
   }
 
   if( obj.__flags[2] ) {
@@ -39,7 +41,7 @@ const ifelse = function( obj, offset=0 ) {
     offset         += f_compiled.memlength
     f_prop = `${f_compiled.string}`
   }else{
-    f_prop = `f32.const ${obj.false}`
+    f_prop = `f32.const ${obj.f}`
   }
 
   // TODO for max we could just inline static values instead

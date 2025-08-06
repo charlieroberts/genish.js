@@ -1,3 +1,5 @@
+import utilities from '../utilities.js'
+
 let gen
 
 const counter = function( obj, offset=0 ) {
@@ -7,7 +9,7 @@ const counter = function( obj, offset=0 ) {
       resetblock    = null,
       reset_compiled= null
 
-  const phase_offset = 12,
+  const phase_offset = 0,
         phase_id     = '$counterphase_'+obj.idx,
         memory_loc   = '$countermemoryloc_'+obj.idx,
         phase_loc    = '$counterphaseloc_'+obj.idx,
@@ -15,6 +17,8 @@ const counter = function( obj, offset=0 ) {
         max_id       = '$countermax_'+obj.idx,
         reset_flag_id= '$resetflag_'+obj.idx
 
+  obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ) ]
+  obj.idx = utilities.getMemory( 2 )
 
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
@@ -74,8 +78,6 @@ local.set ${memory_loc}
 
 ;; load phase [48]
 local.get ${memory_loc}
-i32.const 12
-i32.add
 local.tee ${phase_loc}
 f32.load
 local.set ${out_id}
@@ -94,9 +96,7 @@ f32.add
 local.set ${phase_id}
 
 ;; push phase idx for set-property to the stack
-local.get ${memory_loc}
-i32.const 12 
-i32.add
+local.get ${phase_loc}
 
 ;; wrap phase if needed
 ;; no branch if condition is true so use that for
@@ -104,10 +104,10 @@ i32.add
 ;; also, set wrap flag to either 1 or 0
 (f32.lt (local.get ${phase_id}) (local.get ${max_id}))
 if (result f32)
-  (f32.store (i32.add (local.get ${memory_loc}) (i32.const 16) ) (f32.const 0) )
+  (f32.store (i32.add (local.get ${memory_loc}) (i32.const 4) ) (f32.const 0) )
   (local.get ${phase_id})
 else
-  (f32.store (i32.add (local.get ${memory_loc}) (i32.const 16) ) (f32.const 1) ) 
+  (f32.store (i32.add (local.get ${memory_loc}) (i32.const 4) ) (f32.const 1) ) 
   (f32.sub 
     (local.get ${phase_id}) 
     (local.get ${max_id})

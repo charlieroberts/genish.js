@@ -3,8 +3,8 @@ let gen
 const poke = function( data, value, index ) {
   const memory_loc   = '$pokememoryloc_'+gen.__pokes.length
   
-  if( typeof value === 'object' ) value.memo()
-  if( typeof index === 'object' ) index.memo()
+  if( typeof value === 'object' && typeof value.memo === 'function' ) value.memo()
+  if( typeof index === 'object' && typeof index.memo === 'function' ) index.memo()
 
   const post = function() {
     let inputcompiled, indexcompiled
@@ -12,8 +12,12 @@ const poke = function( data, value, index ) {
     // it must be compiled first, for the rare case when the
     // index and value are the same ugen... in this case we
     // want the value to be memoed
+    if( data.idx === undefined ) data = gen.compile( data )
+    
+    let isIndexDynamic = false
     if( typeof index === 'object' ) {
       indexcompiled = gen.compile( index ).string
+      isIndexDynamic = true
     }else{
       indexcompiled = `f32.const ${index}`
     }
@@ -23,7 +27,7 @@ const poke = function( data, value, index ) {
       inputcompiled = `f32.const ${value}`
     }
 
-    let string = `
+    let string = isIndexDynamic ? `
 ;;;;;;;; begin poke ;;;;;;;;
 i32.const ${data.idx*4}
 local.get $loc
@@ -36,6 +40,12 @@ i32.trunc_f32_u
 i32.const 4
 i32.mul
 i32.add
+`
+:`i32.const ${(data.idx+index) * 4}
+local.get $loc
+i32.add`
+
+   string+=`
 ;; final poke index
 ${inputcompiled}
 f32.store
@@ -51,7 +61,7 @@ f32.store
   }
   // use id that will identify this poke and prevent it from being pushed
   // multiple times
-  const pokeidx = data.idx + (typeof index === 'object' ? index.idx : index )
+  const pokeidx = data.uid + (typeof index === 'object' ? index.idx : index )
   post.idx = pokeidx
 
   // only push once!
