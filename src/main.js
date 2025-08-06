@@ -186,7 +186,7 @@ let cycle
 let param
 {
   const baseidx = fidx++
-  param = value => {
+  param = (value=1) => {
     const props = {},
           statics = {
             value:{ value, type:'f' }
