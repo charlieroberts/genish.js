@@ -9,14 +9,14 @@ const compile = function( obj, offset=0 ) {
       slideAmount = null
 
   //y (n) = y (n-1) + ((x (n) - y (n-1))/slide) 
-  slideAmount = obj.slideUp//ifelse( gt( obj.input, y1.out), obj.slideUp, obj.slideDown )
+  
+  // obj.input is used multiple times...
+  obj.input.memo()
 
-  // filter = memo( add( y1.out, div( sub( in1, y1.out ), slideAmount ) ) )
+  slideAmount = ifelse( gt( obj.input, y1.out), obj.slideUp, obj.slideDown )
+
   filter = add( y1.out, div( sub( obj.input, y1.out ), slideAmount) ).memo()
   
-  //add( y1.out, div( sub( obj.input, y1.out ), slideAmount ) )//.memo() 
-
-  //y1.in( 0 )
   y1.in( filter )
   
   filter.__shouldMemo = obj.__shouldMemo
