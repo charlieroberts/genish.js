@@ -2,10 +2,11 @@ import utilities from '../utilities.js'
 let gen
 const param_module = __gen => {
   gen = __gen
+
   const fnc = function( obj, offset = 0 ) {
     obj.offset = offset
 
-    obj.idx = utilities.getMemory(1, 'param' )
+    obj.idx = utilities.getMemory( 1, 'param' )
 
     utilities.memf[ obj.idx ] = obj.value
 
