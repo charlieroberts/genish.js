@@ -187,7 +187,7 @@ notes = mul( cycle( freqSignal ), envelope )
 // in the delay and also is directly passed to
 // play.
  
-gain = memo( mul( notes, .1 ) )
+gain = mul( notes, .1 ).memo()
  
 // create 1/4 second echo
 echo = delay( gain, 11025, 22050 )
