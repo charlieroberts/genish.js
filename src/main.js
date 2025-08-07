@@ -274,7 +274,7 @@ let counter
       __wrap:  { value:0, type:'f' },
     }
 
-    let obj = { name:'counter', incr, reset, max, phase }
+    let obj = makeugen({ name:'counter', incr, reset, max, phase })
     
     Object.defineProperty( obj, 'wrap', {
       get() {
