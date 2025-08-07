@@ -5,7 +5,8 @@ let gen
 const compile = function( obj, offset = 0 ) {
   const out = { 
     value: obj.value, 
-    length: typeof obj.value === 'object' ? obj.value.length : 1 
+    length: typeof obj.value === 'object' ? obj.value.length : 1,
+    name: obj.name
   }
 
   // if value is number, it is the number of memory slots
@@ -24,6 +25,7 @@ const compile = function( obj, offset = 0 ) {
   obj.idx = out.idx
 
   out.__static = obj.__static !== undefined ? obj.__static : true
+  obj.__memoName = '$data'+obj.idx
   
   return out
 }
