@@ -383,7 +383,7 @@ let bus
 let ssd
 {
   const fid = fidx++
-  ssd = function() {
+  ssd = function( value = 1 ) {
     /*const obj = {
       idx: utilities.getMemory( 1 ),
       fid,
@@ -397,7 +397,8 @@ let ssd
     const obj = makeugen({ 
       name:'history', 
       in(input) { obj.__input = input; if( isNaN( input ) ) input.memo(); },
-      __input: null
+      __input: null,
+      value
     })
     obj.out = obj 
 

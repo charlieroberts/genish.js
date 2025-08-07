@@ -6,7 +6,7 @@ import poke from './poke.js'
 let __poke = null
 
 const compile = function( obj, offset = 0 ) {
-  obj.__data = data(1)
+  obj.__data = data([obj.value])
   
   // triggers compilation of poke in current ugen
   __poke( obj.__data, obj.__input, offset  )

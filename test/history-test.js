@@ -26,7 +26,7 @@ gen.init().then( ()=> {
   describe( 'a history', ()=>{
     it( 'should return 0 on first sample before delay', async () => {
       const mem = makeMemory(),
-            s = ssd(),
+            s = ssd(0),
             p = param(1)
       
       s.in( p )
