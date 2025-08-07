@@ -79,7 +79,7 @@ const ugen = {
 }
 
 const makeugen = function( props ) {
-  const out = Object.assign( Object.create(ugen), props, { uid:getUID() })
+  const out = Object.assign( Object.create( ugen ), props, { uid:getUID() })
   out.__memoName = '$' + out.name + '_' + out.uid + '_memo'
 
   return out
@@ -282,6 +282,7 @@ let counter
 
         const wrapobj = {
           memlength,
+          __shouldMemo: false,
           resolve: function() { 
             const myobj = {
               string:`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
@@ -290,7 +291,10 @@ let counter
             return myobj
           },
           name:'counter.wrap',
-          requires:obj
+          // make sure the counter is memo'd otherwise .wrap will
+          // also trigger compilation and start a doom loop
+          requires:obj.memo(),
+          memo(){ wrapobj.__shouldMemo = true }
         }
 
         return wrapobj
@@ -586,13 +590,13 @@ const data = function( __data, type='float' ) {
   }else if( typeof __data === 'object' ){ 
     // array of data should be passed,
     // will be copied on compilation
-    obj = { 
+    obj = makeugen({ 
       __static:true,
       length: __data.length,
       name:'data',
       value:__data
-    }
-   }else{
+    })
+  }else{
     obj = makeugen({ value:__data, name:'data' })
     obj.__static = true
     obj.length = 1

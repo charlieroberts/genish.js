@@ -7,9 +7,11 @@ const counter = function( obj, offset=0 ) {
       incr_prop     = null,
       incr_compiled = null,
       resetblock    = null,
-      reset_compiled= null
+      reset_compiled= null,
+      max_compiled  = null,
+      maxblock      = null
 
-  obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ) ]
+  obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ), isNaN( obj.max ) ]
   obj.idx = utilities.getMemory( 2, 'counter' )
 
   const phase_offset = 0,
@@ -18,7 +20,8 @@ const counter = function( obj, offset=0 ) {
         phase_loc    = '$counterphaseloc_'+obj.idx,
         out_id       = '$counterout_'+obj.idx,
         max_id       = '$countermax_'+obj.idx,
-        reset_flag_id= '$resetflag_'+obj.idx
+        reset_flag_id= '$counterresetflag_'+obj.idx,
+        max_flag_id  = '$countermaxflag_'+obj.idx
 
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
@@ -33,6 +36,11 @@ const counter = function( obj, offset=0 ) {
     memlength      += reset_compiled.memlength
   }
 
+  if( obj.__flags[2] ) {
+    max_compiled = gen.compile( obj.max, memlength + offset )
+    memlength += max_compiled.memlength
+  }
+
   // TODO needs dynamic maximum e.g. for sequencing
 
   const name = obj.__memoName 
@@ -44,6 +52,7 @@ const counter = function( obj, offset=0 ) {
   gen.addLocal(`(local ${out_id} f32)`)
   gen.addLocal(`(local ${max_id} f32)`)
   gen.addLocal(`(local ${reset_flag_id} i32)`)
+  gen.addLocal(`(local ${max_flag_id} i32)`)
   
 
   const getReset = function() {
@@ -67,7 +76,17 @@ else
     return resetBlock 
   }
 
-console.log( 'conuter', offset, obj.idx )
+  const getMax = function() {
+    let str = ''
+    if( max_compiled !== null ) {
+      str += max_compiled.string
+    }else{
+      str += `f32.const ${obj.max}`
+    }
+
+    return str
+  }
+
 // TODO just get to work without dynamic min/max values and then add those in
 const string = `${obj.__flags[1] === 0 ? `;;;;;;;; begin counter ;;;;;;;;` : '' }
 i32.const ${(offset+obj.idx)*4}
@@ -83,8 +102,9 @@ local.set ${out_id}
 
 ;; TODO: there's no reason someone would ever use a static number besides 0 right?
 ${obj.__flags[1] ? getReset() : '' }
-;; get max [32]
-f32.const ${obj.max}
+;; get max 
+
+${getMax()}
 local.set ${max_id}
 
 ;; get phase increment [0] and add to current phase

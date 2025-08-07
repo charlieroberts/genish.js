@@ -134,12 +134,32 @@ gen.init().then( ()=> {
             func     = gen.function( graph ),
             wat      = gen.module( func )
 
-      gen.write( wat, './trash/counter.wat' )
+      //gen.write( wat, './trash/counter.wat' )
       const wasm     = await gen.assemble( wat, mem )
       wasm.render(0)
       const actual   = decimate( wasm.render( 0 ), 1000 )
 
       assert.strictEqual( actual, expected )    
     })
+    it( 'can change maximum value', async () => {
+      const mem      = makeMemory(),
+            expected = 3,
+            p        = param(2),
+            graph    = counter( 1, 0, p ),
+            func     = gen.function( graph ),
+            wat      = gen.module( func )
+
+      gen.write( wat, './trash/counter.wat' )
+      const wasm = await gen.assemble( wat, mem )
+      wasm.render(0)
+
+      p.value = 5
+      wasm.render(0)
+      wasm.render(0)
+      const actual = decimate( wasm.render( 0 ), 1000 )
+
+      assert.strictEqual( actual, expected )    
+    })
+
   })
 })
