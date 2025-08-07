@@ -23,7 +23,6 @@ const param_module = __gen => {
     }
 
     if( obj.__shouldMemo ) {
-      console.log( 'PARAM MEMO:', obj.__memoName )
       gen.addLocal(`(local ${obj.__memoName} f32)`)
       ugen.string += `\nlocal.tee ${obj.__memoName}\n`
     }
