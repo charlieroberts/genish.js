@@ -89,7 +89,7 @@ const initMenu = function() {
 }
 
 window.bitty.rules = {
-  keywords: /\b(new|if|else|do|while|switch|for|of|continue|break|return|typeof|function|var|const|let|\.length)(?=[^\w])/g,
+  keywords: /\b(new|if|else|do|while|switch|for|of|continue|break|return|typeof|function|var|const|let)(?=[^\w])/g,
 
   numbers: /\b(\d+)/g,
 
