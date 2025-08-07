@@ -47,7 +47,7 @@ window.onload = async function() {
     window.node = null
 
     // 0-1024 is samplerate (1) + cycle wavetable (1024)
-    // will need to increase to include pan wavetables
+    // TODO will need to increase to include pan wavetables
     utilities.resetMemory( 1025 )
   }
 
@@ -67,7 +67,8 @@ window.onload = async function() {
 
 const demos = [
   'intro.js',
-  'thereminish.js'
+  'thereminish.js',
+  'oneDelayLine.js'
 ]
 
 const initMenu = function() {

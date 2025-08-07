@@ -17,11 +17,11 @@ frequency = add( 220, mul( frequencyControl, 440 ) )
 osc = mul( cycle( slide( frequency, 2500, 2500 ) ), .025 )
  
 // create a single-sample delay
-feedback = ssd()
+feedback = ssd(1)
  
 // feed our oscillator and our ssd into a delay with a delay time of 
 // 22050 samples (assuming a 44.k sample rate)
-echo = delay( add( osc, feedback.out ), samplerate / 2, samplerate )
+echo = delay( add( osc, feedback.out ), 24000, 24000 )
  
 // control the mix between feedback and echo; this also damps the feedback.
 mixer = mix( echo, feedback.out, .9 )
