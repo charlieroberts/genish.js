@@ -7,7 +7,7 @@ const accum = function( obj, offset=0 ) {
   // TODO we should only ask for the memory we need?
   // we don't need any numbers that get compiled into place.
   // so, really we just need a number for phase I think
-  obj.idx = utilities.getMemory( 1 )
+  obj.idx = utilities.getMemory( 1, 'accum' )
   obj.__memoryLength = 1
   obj.__flags = [ isNaN(obj.incr), isNaN(obj.reset) ]
 
