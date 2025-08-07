@@ -27,9 +27,16 @@ window.onload = async function() {
   window.editor = b
 
   window.play = async function( graph, shouldPrintWat=false, shouldDebug=false ) {
-    if( window.node !== null ) window.clear()
+    if( window.node !== null ) {
+      window.clear()
+    }else{
+      utilities.resetMemory( 1025 )
+    }
+
+    utilities.__debugMemory = shouldDebug
 
     window.graph = graph
+
     const func     = gen.function( graph ),
           wat      = gen.module( func, false, 5 )
 
