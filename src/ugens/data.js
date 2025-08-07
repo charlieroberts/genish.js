@@ -13,6 +13,7 @@ const compile = function( obj, offset = 0 ) {
   if( typeof obj.value === 'number' ) {
     out.idx = utilities.getMemory( obj.value, 'data' )
   }else{
+    // if an array is passed, copy it to memory
     out.idx = utilities.getMemory( out.value.length, 'data' )
     utilities.memf.set( out.value, out.idx )
   }
