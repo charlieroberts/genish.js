@@ -9,6 +9,9 @@ const counter = function( obj, offset=0 ) {
       resetblock    = null,
       reset_compiled= null
 
+  obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ) ]
+  obj.idx = utilities.getMemory( 2, 'counter' )
+
   const phase_offset = 0,
         phase_id     = '$counterphase_'+obj.idx,
         memory_loc   = '$countermemoryloc_'+obj.idx,
@@ -17,13 +20,9 @@ const counter = function( obj, offset=0 ) {
         max_id       = '$countermax_'+obj.idx,
         reset_flag_id= '$resetflag_'+obj.idx
 
-  obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ) ]
-  obj.idx = utilities.getMemory( 2 )
-
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
     memlength     += incr_compiled.memlength
-    offset        += incr_compiled.memlength
     incr_prop     = `${incr_compiled.string}`
   }else{
     incr_prop = `f32.const ${obj.incr}`
@@ -32,12 +31,11 @@ const counter = function( obj, offset=0 ) {
   if( obj.__flags[1] ) {
     reset_compiled = gen.compile( obj.reset, memlength + offset )
     memlength      += reset_compiled.memlength
-    offset         += reset_compiled.memlength
   }
 
   // TODO needs dynamic maximum e.g. for sequencing
 
-  const name = '$'+obj.__memoName 
+  const name = obj.__memoName 
 
   gen.addLocal(`(local ${name} f32)` )
   gen.addLocal(`(local ${memory_loc} i32)`)
@@ -69,6 +67,7 @@ else
     return resetBlock 
   }
 
+console.log( 'conuter', offset, obj.idx )
 // TODO just get to work without dynamic min/max values and then add those in
 const string = `${obj.__flags[1] === 0 ? `;;;;;;;; begin counter ;;;;;;;;` : '' }
 i32.const ${(offset+obj.idx)*4}
