@@ -93,7 +93,10 @@ const gen = {
   // TODO add memoization step here?
   // main compile function
   compile( ugen, offset ) {
-    if( ugen.name === undefined ) throw Error('ugen is not defined.', ugen )
+    if( ugen.name === undefined ) {
+      console.log( ugen )
+      throw Error('ugen is not defined.' )
+    }
 
     //console.log( 'compiling ', ugen.name )
     let out = null, prereq = null
