@@ -42,6 +42,7 @@ const gen = {
     ifelse: ( await import( './ugens/ifelse.js'  )  ).default,
     slide:  ( await import( './ugens/slide.js'   )  ).default,
     data:   ( await import( './ugens/data.js'    )  ).default,
+    mod:    ( await import( './ugens/mod.js'     )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
