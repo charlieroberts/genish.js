@@ -700,13 +700,18 @@ let pan
   }
 } 
 
-const wobble = function( baseFreq, modFreq, modGain ) {
-  const mod   = mul( cycle( modFreq ), modGain )
-  const graph = cycle( add( baseFreq, mod ) )
-
-  return graph
+const seq = function( values, durations, rate=1 ) {
+  const del       = ssd( 0 ),
+        clockd    = counter( del.out, 0, durations.length ),
+        __durs    = peek( data(durations).memo(), clockd, 'none', 'samples' ),
+        clock     = counter( rate, 0, __durs ),
+        stepper   = counter( clock.wrap, 0, values.length ),
+        ugen      = peek( data(values), stepper, 'none', 'samples' )
+ 
+  del.in( clock.wrap )
+ 
+  return ugen
 }
-
 
 let pokememoryindex = 1000
 let pokelength = 50
@@ -723,9 +728,7 @@ const exports = {
   caller, counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, 
   
-  data,wrap, 
-
-  cycle_compiled, wobble
+  data,wrap,seq 
 }
 
 export {
@@ -739,7 +742,7 @@ export {
   caller, counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, 
   
-  data,wrap, 
+  data,wrap,seq, 
 
-  cycle_compiled, wobble, exports
+  exports
 }
