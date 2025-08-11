@@ -3,7 +3,9 @@ const front = function( memAmount = 5 ) {
 const code = `(module
   (import "env" "memory" (memory $mem ${memAmount} ${memAmount} shared))
   (import "env" "_logi" (func $_logi (param i32)  (result i32) ) ) 
+  (import "env" "__logi" (func $__logi (param i32) ) ) 
   (import "env" "_logf" (func $_logf (param f32)  (result f32) ) ) 
+  (import "env" "__logf" (func $__logf (param f32) ) ) 
 
   (import "math" "random"  (func $_random (result f32) ) )
   (import "math" "sin"     (func $_sin   (param f32) (result f32) ) )
