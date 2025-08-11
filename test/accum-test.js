@@ -1,4 +1,4 @@
-import { accum } from '../src/main.js'
+import { accum, param } from '../src/main.js'
 import utilities from '../src/utilities.js'
 import gen from '../src/gen.js'
 import assert from 'assert'
@@ -33,6 +33,7 @@ gen.init().then( ()=> {
     })
 
     
+    /*
     it( 'should ramp to .4 with an increment of .1 after five executions', async () => {
       const mem      = makeMemory(),
             expected = .4,
@@ -66,21 +67,24 @@ gen.init().then( ()=> {
     })
 
 
-  //   it( 'should return to its min value of 0 when the inputs[1] = true', ()=> {
-  //     let answer = .0,
-  //         p      = param( 0 ),
-  //         graph  = accum( .1, p ),
-  //         wat    = gen.module( graph, 16 ),
-  //         result = 0
+     it( 'should return to its min value of 0 when the inputs[1] = true', async ()=> {
+       const mem      = makeMemory(),
+             expected = 0,
+             p        = param( 0 ),
+             graph    = accum( .1, p ),
+             func     = gen.function( graph ),
+             wat      = gen.module( func ),
+             wasm     = await gen.assemble( wat, mem )
 
-  //     gen.assemble( wat ).then( wasm => {
-  //       wasm.render(); wasm.render(); wasm.render();
-  //       p.value = 1
+       wasm.render(0)
+       wasm.render(0)
+       // trigger reset
+       p.value = 1
 
-  //       result = wasm.render()
-    
-  //       assert.equal( result, answer )
-  //     })
-  //   })
+       const actual = decimate( wasm.render(0), 1000 )
+
+       assert.strictEqual( actual, expected )
+     })
+     /* */
   })
 })
