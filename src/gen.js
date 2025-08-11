@@ -108,15 +108,26 @@ const gen = {
     // parent must use 'set' for final value / memoization,
     // not tee, as the property string will also return a float
     if( ugen.requires !== undefined && gen.__memo[ ugen.requires.__memoName ] === undefined ) {
+      //console.log( '********************** BEING REQUIRED UGEN ******************************')
+      //console.log( 'COMPILING REQUIRED UGEN:', ugen.requires.__memoName, ugen )
       prereq = gen.compile( ugen.requires, offset )
       const prereqarray = prereq.string.split('\n')
+      //console.log( 'PREREQ ARRAY:', prereqarray )
       if( prereqarray.length > 2 ) {
-        const idx = prereqarray.length > 1 ? prereqarray.length - 2 : 0
+        const idx = prereqarray.length - 2
         if( idx >= 0 )
           prereqarray[ idx ] = prereqarray[ idx ].replace( '.tee', '.set' )
       }
       prereq.string = prereqarray.join('\n')
+      
+      if( ugen.requires.__shouldMemo ) {
+        //console.log( 'ADDING REQUIRED UGEN TO MEMO DICTIONARY:', ugen.requires.__memoName )
+        gen.__memo[ ugen.requires.__memoName ] = prereq
+      }
     }
+
+    //console.log( ugen.name, name, ugen.__shouldMemo, gen.__memo[ name ] )
+
 
     if( typeof ugen.string === 'string' ) {
       // if pre-compiled
@@ -124,27 +135,35 @@ const gen = {
     } else if (typeof ugen.resolve === 'function' ) {
       // if resolved at compile time but not via standard mechanisms
       // like for counter.wrap
+      //console.log( 'RESOLVING WRAP' )
       out = ugen.resolve()
     } else if( gen.__memo[ name ] === undefined && ugen.__shouldMemo === true ) {
       // if not already memo'd but should be...
       
       const compiled = gen.ugens[ ugen.name ]( ugen, offset )
-      ugen.__memoName = name
+      //ugen.__memoName = name
+      //console.log( 'ADD TO MEMO DICTIONARY:', ugen.__memoName )
       out = gen.__memo[ name ] = compiled
     }else if( ugen.__shouldMemo === true ){
       // memo found
 
+      //console.log( 'RETURNING FROM MEMO DICTIONARY:', ugen.__memoName )
       out = {
         string:`local.get ${name}`,
         memlength: 0
       }
     }else{
       // default compilation, no memoing
+      //console.log( 'COMPILE:', ugen.name )
       out = gen.ugens[ ugen.name ]( ugen, offset )
     }
 
-    if( prereq !== null ) out.string = prereq.string + '\n' + out.string
-
+    if( prereq !== null ) {
+      //console.log( 'ADDING PREREQ TO OUT:', out.string )
+      out.string = prereq.string + '\n' + out.string
+      console.log( out.string )
+    }
+    
     return out
   },
 
@@ -278,7 +297,7 @@ const gen = {
 
   // TODO refactor to use .blob() ? 
   assemble( wat, memory=null ) {
-    const modobj = this.__wabt.parseWat( 
+    const modobj = gen.__wabt.parseWat( 
       'gen', 
       wat, 
       { threads:true  } 
@@ -310,7 +329,10 @@ const gen = {
           env: { 
             memory, sr, clock, 
             _logi: n => { console.log(n); return n }, 
-            _logf: n => { console.log(n); return n }
+            _logf: n => { console.log(n); return n },
+            __logi: n => { console.log(n); }, 
+            __logf: n => { console.log(n); }
+
           },
           math: { 
             sin:  Math.sin,
