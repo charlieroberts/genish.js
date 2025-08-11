@@ -20,7 +20,9 @@ class WASMProcessor extends AudioWorkletProcessor {
               memory:msg.data.memory, 
               sr:this.sr, 
               _logi:function( n ) { console.log(n); return n }, 
-              _logf:function( n ) { console.log(n); return n } 
+              __logi:function( n ) { console.log(n); }, 
+              _logf:function( n ) { console.log(n); return n }, 
+              __logf:function( n ) { console.log(n); } 
             },
             math: { 
               sin:  Math.sin,
