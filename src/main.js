@@ -267,25 +267,23 @@ let counter
   fidx += 8
 
   counter = function( incr=0, reset=0, max=1, phase=0 ) {
-    
-    const props = { incr,reset,max }
-    const statics = { 
-      phase: { value:phase, type:'f' },
-      __wrap:  { value:0, type:'f' },
-    }
-
     let obj = makeugen({ name:'counter', incr, reset, max, phase })
+    obj.memo()
+    obj.hasWrap = false
     
     Object.defineProperty( obj, 'wrap', {
       get() {
         let memlength = 1
 
+        obj.hasWrap = true
         const wrapobj = {
           memlength,
-          __shouldMemo: false,
+          __shouldMemo: true,
           resolve: function() { 
+            console.log( 'COMPILING WRAP', obj.idx )
             const myobj = {
-              string:`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
+              string:`local.get ${obj.wrapFlag}\n`,
+              //`(f32.load ${obj.__locationString})\n`,//`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
               memlength
             }
             return myobj
@@ -293,8 +291,9 @@ let counter
           name:'counter.wrap',
           // make sure the counter is memo'd otherwise .wrap will
           // also trigger compilation and start a doom loop
-          requires:obj.memo(),
-          memo(){ wrapobj.__shouldMemo = true }
+          requires:obj,
+          memo(){ wrapobj.__shouldMemo = true },
+          __memoName : '$' + 'counter.wrap' + '_' + obj.uid + '_memo'
         }
 
         return wrapobj

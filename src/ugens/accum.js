@@ -45,35 +45,41 @@ const accum = function( obj, offset=0 ) {
 
   const getReset = function() {
     const resetBlock = 
-  `  ;; accum: reset
-  ${ reset_compiled.string }\n
-  if (result f32)
-    ;; set phase.value to $min
-    (f32.store
-      (local.get ${phase_loc}) 
-      (f32.const ${obj.min})   
-    ) 
-    (f32.const ${obj.min})
-    local.set ${name}
-  end
-  `
+  `;; accum: reset
+${ reset_compiled.string }\n
+;;i32.trunc_f32_s
+f32.const 1
+f32.eq
+if
+  ;; set phase.value to $min
+  (f32.store
+    (local.get ${phase_loc}) 
+    (f32.const ${obj.min})   
+  ) 
+  f32.const ${obj.min}
+  local.set ${name}
+end
+`
     return resetBlock 
   }
 
   offset = 0
 
+//Y${obj.__flags[1] ? getReset() : '' }
   const incrblock = 
 `
 ${obj.__flags[1] === 0 ? `;;;;;;;; begin accum ;;;;;;;;` : '' }
 i32.const ${offset+obj.idx*4}
 local.get $loc
 i32.add
-local.tee ${phase_loc}
+local.set ${phase_loc}
 
+${obj.__flags[1] ? getReset() : '' }
+
+local.get ${phase_loc}
 ;; accum: load phase
 f32.load
 local.tee ${name}
-${obj.__flags[1] ? getReset() : '' }
 ;; accum: phase increment
 ${incr_prop}
 f32.add
@@ -96,14 +102,15 @@ end
 
 f32.store
 local.get ${name}
-
 ;;;;;;;; end accum ;;;;;;;;
 `
+
+//${obj.__flags[1] ? 'end\n' : '' }
 
   memlength += 4
 
   const out = {
-    string: obj.__flags[1] ? resetblock : incrblock,
+    string: incrblock,//obj.__flags[1] ? getReset() + incrblock : incrblock,
     memlength
   }
 

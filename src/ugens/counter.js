@@ -1,5 +1,7 @@
 import utilities from '../utilities.js'
 
+// TODO memoization with wrap doesn't seem to be working
+// correctly?
 let gen
 
 const counter = function( obj, offset=0 ) {
@@ -11,6 +13,7 @@ const counter = function( obj, offset=0 ) {
       max_compiled  = null,
       maxblock      = null
 
+  console.log( 'COMPILING COUNTER, MEMO NAME:', obj.__memoName )
   obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ), isNaN( obj.max ) ]
   obj.idx = utilities.getMemory( 2, 'counter' )
 
@@ -21,7 +24,11 @@ const counter = function( obj, offset=0 ) {
         out_id       = '$counterout_'+obj.idx,
         max_id       = '$countermax_'+obj.idx,
         reset_flag_id= '$counterresetflag_'+obj.idx,
-        max_flag_id  = '$countermaxflag_'+obj.idx
+        max_flag_id  = '$countermaxflag_'+obj.idx,
+        wrap_flag    = '$counterwrapflag_'+obj.idx
+
+  obj.__locationString = `(i32.add (local.get ${memory_loc}) (i32.const 4) )`
+  obj.wrapFlag = wrap_flag
 
   if( obj.__flags[0] ) {
     incr_compiled = gen.compile( obj.incr, offset )
@@ -53,6 +60,7 @@ const counter = function( obj, offset=0 ) {
   gen.addLocal(`(local ${max_id} f32)`)
   gen.addLocal(`(local ${reset_flag_id} i32)`)
   gen.addLocal(`(local ${max_flag_id} i32)`)
+  gen.addLocal(`(local ${wrap_flag} f32)`)
   
 
   const getReset = function() {
@@ -88,8 +96,8 @@ else
   }
 
 // TODO just get to work without dynamic min/max values and then add those in
-const string = `${obj.__flags[1] === 0 ? `;;;;;;;; begin counter ;;;;;;;;` : '' }
-i32.const ${(offset+obj.idx)*4}
+const string = `;;;;;;;; begin counter ;;;;;;;; 
+i32.const ${(obj.idx)*4}
 local.get $loc
 i32.add
 local.set ${memory_loc}
@@ -125,19 +133,24 @@ local.get ${phase_loc}
 if (result f32)
   (f32.store (i32.add (local.get ${memory_loc}) (i32.const 4) ) (f32.const 0) )
   (local.get ${phase_id})
+  (local.set ${wrap_flag} (f32.const 0))
 else
   (f32.store (i32.add (local.get ${memory_loc}) (i32.const 4) ) (f32.const 1) ) 
   (f32.sub 
     (local.get ${phase_id}) 
     (local.get ${max_id})
   )
+  (local.set ${wrap_flag} (f32.const 1))
+  ;;(i32.add (local.get ${memory_loc}) (i32.const 4) )
+  ;;call $__logi
   local.tee ${phase_id}
 end
 
 f32.store
 local.get ${out_id} 
 ${obj.__flags[1] ? 'end': '' }
-local.tee ${name}
+${obj.hasWrap ? `local.set ${name}` : `local.tee ${name}` }
+;;;;;;;; end counter ;;;;;;;;;
 `
 
   memlength += 4

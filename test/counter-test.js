@@ -112,6 +112,10 @@ gen.init().then( ()=> {
 
       assert.strictEqual( actual, expected )    
     })
+    
+    // TODO right now counter needs to know if it's wrap is used
+    // before it is compiled; this determines whether or not
+    // the counter's output is tee'd up (if wrap isn't used) or merely set for memoing.
     it( 'can compile counter first, wrap second', async () => {
       const mem      = makeMemory(),
             expected = .25,
