@@ -84,6 +84,11 @@ const makeugen = function( props ) {
 
   return out
 }
+
+let samplerate = function() {
+  const out = { name:'samplerate', string:'global.get $sr\n' }
+  return out
+}
   
 let accum
 {
@@ -678,7 +683,7 @@ const exports = {
 
   accum, phasor, peek, cycle, noise, sah, memo,
   caller, counter, bus, ssd, delay, slide, param,
-  mix, bang, ad, ifelse, ifelse2, poke, 
+  mix, bang, ad, ifelse, ifelse2, poke, samplerate, 
   
   data,wrap,seq 
 }
@@ -694,7 +699,7 @@ export {
   caller, counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, 
   
-  data,wrap,seq, 
+  data,wrap,seq,samplerate, 
 
   exports
 }
