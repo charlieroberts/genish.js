@@ -109,13 +109,7 @@ let phasor
   const baseidx = fidx
   fidx += 4
   phasor = function( frequency=1, reset=0, phase=0 ) {
-    const props = { frequency, reset },
-          statics = { 
-            'phase':{ value:phase, type:'f' } 
-          }
-
     return makeugen({ frequency, reset, phase, name:'phasor' })
-    //factory( props, statics, baseidx, 'phasor', true )
   }
 }
 
@@ -275,7 +269,11 @@ let counter
       get() {
         let memlength = 1
 
+        // TODO what if wrap isn't compiled first? we fail a unit test
+        // because of this condition. for some reason loading the wrap value
+        // straight from memory doesn't seem to work correctly...
         obj.hasWrap = true
+
         const wrapobj = {
           memlength,
           __shouldMemo: true,
@@ -283,8 +281,9 @@ let counter
             console.log( 'COMPILING WRAP', obj.idx )
             const myobj = {
               string:`local.get ${obj.wrapFlag}\n`,
-              //`(f32.load ${obj.__locationString})\n`,//`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
               memlength
+              //`(f32.load ${obj.__locationString})\n`,
+              ////`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+4})))`,
             }
             return myobj
           },
@@ -299,53 +298,7 @@ let counter
         return wrapobj
       }
     })
-    /*
-    let obj = factory( props, statics, fid, 'counter' )
-
-    if( isCompiled ) {
-      obj.memo()
-
-      // need a special compilation stage for the 'wrap' instance variable
-      // first, we ensure that counter has already been compiled into graph,
-      // if not we compile it. then we add the string that grabs the wrap
-      // value from memory.
-      Object.defineProperty( obj, 'wrap', {
-        get() {
-          let string = `(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)+16})))`
-          let memlength = 1
-          //if( gen.__memo[ obj.__memoName ] === undefined ) {
-          //  const c = gen.compile( obj, 0 )
-          //  string = c.string +'\n' + string
-          //  memlength += c.memlength
-          //}
-
-          const wrapobj = {
-            memlength,
-            string,
-            name:'counter.wrap',
-            requires:obj
-          }
-
-          return wrapobj
-        }
-      })
-    }else{
-      // TODO return memoized object because output and .wrap
-      // might often both be used
-      const __memo = memo( obj )
-      
-      Object.defineProperty( __memo, 'wrap', {
-        get() {
-          // address of wrap static
-          const out =  caller( __memo, (obj.idx * 4) + 20 )
-          return out
-        }
-      })
-      
-      obj = __memo
-    }
-*/
-  
+    
     return obj
   }
 }

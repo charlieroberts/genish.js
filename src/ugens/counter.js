@@ -66,7 +66,9 @@ const counter = function( obj, offset=0 ) {
   const getReset = function() {
     const resetBlock = 
 
-`  ;; counter: reset
+    // if block started below is conditionally
+    // ended in main block when reset is dynamic
+`;; counter: reset
 ${ reset_compiled.string }\n
 i32.trunc_f32_s
 ;; TODO needs dynamic min
@@ -149,10 +151,13 @@ end
 f32.store
 local.get ${out_id} 
 ${obj.__flags[1] ? 'end': '' }
-${obj.hasWrap ? `local.set ${name}` : `local.tee ${name}` }
+;; the position of the next line is hardcoded as -2 in gen.compile()
+;; do not add anything beneath the next line, or at least change the index
+;; in gen.compile if you do
+local.tee ${name}
 ;;;;;;;; end counter ;;;;;;;;;
 `
-
+  
   memlength += 4
   const out = {
     string, 

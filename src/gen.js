@@ -114,7 +114,8 @@ const gen = {
       const prereqarray = prereq.string.split('\n')
       //console.log( 'PREREQ ARRAY:', prereqarray )
       if( prereqarray.length > 2 ) {
-        const idx = prereqarray.length - 2
+        const idx = prereqarray.length - 3
+        console.log( 'PREREQ IDX:', idx, prereqarray[ idx ] )
         if( idx >= 0 )
           prereqarray[ idx ] = prereqarray[ idx ].replace( '.tee', '.set' )
       }
