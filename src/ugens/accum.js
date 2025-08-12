@@ -91,7 +91,16 @@ local.get ${ phase_loc }
 ;; accum: wrap phase 
 (f32.lt (local.get ${phase_id}) (f32.const ${ obj.max }))
 if (result f32)
-  (local.get ${phase_id})
+  (f32.gt (local.get ${phase_id}) (f32.const 0.0))
+  if (result f32)
+    (local.get ${phase_id})
+  else
+    (f32.add 
+      (local.get ${phase_id}) 
+      (f32.const 1.0) 
+    )
+    local.tee ${phase_id}
+  end
 else
   (f32.sub 
     (local.get ${phase_id})
