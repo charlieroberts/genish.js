@@ -33,7 +33,7 @@ gen.init().then( ()=> {
     })
 
     
-    /*
+    
     it( 'should ramp to .4 with an increment of .1 after five executions', async () => {
       const mem      = makeMemory(),
             expected = .4,
