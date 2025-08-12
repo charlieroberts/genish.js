@@ -106,7 +106,7 @@ out = phasor( mul( 1000, sampler.out ) )
 // record the output to process the next sample
 sampler.in( out )
  
-play( mul( out, 1 ), true )
+play( mul( out, .1 ), true )
 
 /**********************************************************
 ******* using data with peek (linear interpolation) *******
