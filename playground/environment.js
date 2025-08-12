@@ -77,7 +77,10 @@ window.onload = async function() {
 const demos = [
   'intro.js',
   'thereminish.js',
-  'oneDelayLine.js'
+  'oneDelayLine.js',
+  null,
+  null,
+  'sync.js'
 ]
 
 const initMenu = function() {
