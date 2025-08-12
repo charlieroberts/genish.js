@@ -140,7 +140,7 @@ const dataBlock = obj.data.__static
 // for no interpolation round to nearest index number
 const baseIndexBlock = obj.interpolation === 1
   ? `i32.trunc_f32_u`
-  : `f32.nearest
+  : `f32.floor
 i32.trunc_f32_u`
 
 // TODO wtf is going on here when can data length be dynamic?
@@ -157,9 +157,11 @@ let dataLengthBlock = obj.data.__static === false
 f32.load\n`
   : obj.data.length <= 1 
     ? 'f32.const 0.0\n'
-    : `f32.const ${obj.data.length}
+    : obj.interpolation === 1 
+      ? `f32.const ${obj.data.length}
 f32.const 1
 f32.sub\n`
+      : `f32.const ${obj.data.length}\n`
 
 dataLengthBlock += `local.set ${data_length_val}\n`
 
