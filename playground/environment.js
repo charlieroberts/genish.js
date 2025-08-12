@@ -13,6 +13,8 @@ window.onload = async function() {
   })
   window.memf = new Float32Array( mem.buffer )
   window.memi = new Int32Array( mem.buffer )
+  window.gen = gen
+  window.utilities = utilities
 
   utilities.setupMemory( mem.buffer )
   utilities.createWavetables()
@@ -29,9 +31,9 @@ window.onload = async function() {
   window.play = async function( graph, shouldPrintWat=false, shouldDebug=false ) {
     if( window.node !== null ) {
       window.clear()
-    }else{
-      utilities.resetMemory( 1025 )
-    }
+    }//else{
+    //  utilities.resetMemory( 1025 )
+    //}
 
     utilities.__debugMemory = shouldDebug
 
