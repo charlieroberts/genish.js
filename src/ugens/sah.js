@@ -1,5 +1,7 @@
 let gen
-const noise = function( obj, offset=0 ) {
+import utilities from '../utilities.js'
+
+const sah = function( obj, offset=0 ) {
 
 const idx = obj.idx
 const memory_loc = '$loc_'+idx
@@ -12,6 +14,9 @@ gen.addLocal(`(local $lastcontrol_${idx} f32)`)
 gen.addLocal(`(local $trigger_${idx} f32)`)
 gen.addLocal(`(local ${memory_loc} i32)`)
 gen.addLocal(`(local $${obj.__memoName} f32)` )
+
+obj.__flags = [ isNaN( obj.input ), isNaN( obj.control ), isNaN( obj.threshold ) ]
+obj.idx = utilities.getMemory( 4 )
 
 let value_prop, value_compiled
 if( obj.__flags[0] ) {
@@ -119,7 +124,7 @@ const template = `
 
 const module = __gen => {
   gen = __gen
-  return noise
+  return sah 
 }
 
 export default module
