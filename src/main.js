@@ -56,8 +56,6 @@ const add = binop( 'add' ),
       sub = binop( 'sub' ),
       mul = binop( 'mul' ),
       div = binop( 'div' ),
-      and = binop( 'and' ),
-      or  = binop( 'or' ),
       gt  = binop( 'gt' ),
       gte = binop( 'gte' ),
       lt  = binop( 'lt' ),
@@ -450,22 +448,6 @@ let bang
   }
 }
 
-let ad
-{
-  let fid = fidx
-  fidx += 4
-  ad = function( attack=44100, decay=44100, __bang=null ) {
-    const obj = factory({ attack, decay }, {}, fid, 'ad' )
-    obj.bang = __bang === null ? bang() : __bang
-    obj.accum = accum( 1, obj.bang, 0, MAX, 0 )
-    obj.trigger = obj.bang.trigger
-
-    memi[ obj.idx ] = fid
-
-    return obj
-  }
-}
-
 let ifelse
 {
   const baseidx = fidx
@@ -479,7 +461,20 @@ let ifelse
     //factory( props, statics, baseidx, 'ifelse' )
   }
 }
+let ifelse2
+{
+  const baseidx = fidx
+  fidx += 8
 
+  ifelse2 = function( condition=1, t=1, f=0 ) {
+    const props = { condition, "true":t, "false":f }
+    const statics = {}
+    
+    return makeugen({ name:'ifelse2', condition, t, f }) 
+    //factory( props, statics, baseidx, 'ifelse' )
+  }
+}
+/*
 let ifelse2
 {
   const baseidx = fidx
@@ -492,6 +487,7 @@ let ifelse2
     return factory( props, statics, baseidx, 'ifelse2' )
   }
 }
+*/
 
 const data = function( __data, type='float' ) {
   let obj
@@ -635,6 +631,42 @@ const ltp = function( value, limit ) {
 const gtp = function( value, limit ) {
   return ifelse( gt( value.memo(), limit ), value, 0 )
 }
+
+const and = function( x,y ) {
+  return eq( x, eq( y, 1 ) )
+}
+
+const or = function( x,y ) {
+  return ne( add(x,y), 0 )
+}
+
+const ad = function( attackTime=44100, decayTime=44100 ) {
+  const trigger = bang(), 
+        phase = accum( 1, trigger, 0, 9999999, attackTime + decayTime).memo()
+
+  //const completeFlag = data( [0] )
+
+  const out = ifelse2( 
+    and( gte( phase, 0), lt( phase, attackTime ) ),
+    div( phase, attackTime ),
+
+    ifelse2( 
+      and( gte( phase, 0), lt( phase, add( attackTime, decayTime ) ) ),
+      sub( 1, div( sub( phase, attackTime ), decayTime ) ),
+      0
+    )
+      /*ifelse2( neq( phase, -Infinity),
+        poke( completeFlag, 1, 0, { inline:0 }),
+        0
+      )
+    )*/
+  )
+
+  out.trigger = ()=> trigger.trigger()
+  return out
+}
+
+
 
 let pokememoryindex = 1000
 let pokelength = 50
