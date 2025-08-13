@@ -7,9 +7,11 @@ import { download } from './download.js'
 window.onload = async function() {
   await gen.init()
 
+  const memAmount = 50
+
   window.node = null
   window.mem = new WebAssembly.Memory({ 
-    initial:5, maximum:5, shared:true
+    initial:memAmount, maximum:memAmount, shared:true
   })
   window.memf = new Float32Array( mem.buffer )
   window.memi = new Int32Array( mem.buffer )
@@ -18,6 +20,31 @@ window.onload = async function() {
 
   utilities.setupMemory( mem.buffer )
   utilities.createWavetables()
+
+  /*let sampleratefunc = exports.samplerate
+  delete window.samplerate
+
+  Object.defineProperty( window, 'samplerate', {
+    get() {
+      if( utilities.ctx !== null ) {
+        return utilities.ctx.sampleRate
+      }else{
+        return sampleratefunc()
+      }
+    },
+    set(v) {
+
+    }
+  })
+  */
+
+  const beginContext = function() {
+    utilities.ctx = new AudioContext()
+    startWorkletNode.setAudioContext( utilities.ctx )
+    window.removeEventListener( 'click', beginContext )
+  }
+  window.addEventListener( 'click', beginContext )
+
 
   Object.assign( window, exports )
   
@@ -40,7 +67,7 @@ window.onload = async function() {
     window.graph = graph
 
     const func     = gen.function( graph ),
-          wat      = gen.module( func, false, 5 )
+          wat      = gen.module( func, false, memAmount )
 
     if( shouldPrintWat ) console.log( wat )
 
@@ -57,7 +84,9 @@ window.onload = async function() {
 
     // 0-1024 is samplerate (1) + cycle wavetable (1024)
     // TODO will need to increase to include pan wavetables
-    utilities.resetMemory( 1025 )
+    utilities.resetMemory( 1 )
+    memf.fill(0,1)
+    utilities.createWavetables()
   }
 
   // problems accessing window scope when using eval...
@@ -71,6 +100,10 @@ window.onload = async function() {
 
   window.download = download
 
+  const file = fetch( './examples/'+demos[ 0 ] )
+      .then( response => response.text() ) 
+      .then( text => editor.value = text )
+
   initMenu()
 }
 
@@ -78,7 +111,7 @@ const demos = [
   'intro.js',
   'thereminish.js',
   'oneDelayLine.js',
-  null,
+  'slicingAndDicing.js',
   null,
   'sync.js'
 ]
