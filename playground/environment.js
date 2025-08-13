@@ -112,8 +112,11 @@ const demos = [
   'thereminish.js',
   'oneDelayLine.js',
   'slicingAndDicing.js',
-  null,
-  'sync.js'
+  'crush.js',
+  'sequencing.js',
+  'sync.js',
+  'bandlimited.js',
+  'enveloping.js'
 ]
 
 const initMenu = function() {
