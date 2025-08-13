@@ -629,11 +629,11 @@ const seq = function( values, durations, rate=1 ) {
 }
 
 const ltp = function( value, limit ) {
-  return ifelse( lt( value, limit ), value, 0 )
+  return ifelse( lt( value.memo(), limit ), value, 0 )
 }
 
 const gtp = function( value, limit ) {
-  return ifelse( gt( value, limit ), value, 0 )
+  return ifelse( gt( value.memo(), limit ), value, 0 )
 }
 
 let pokememoryindex = 1000
