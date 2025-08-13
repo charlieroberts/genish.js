@@ -4,7 +4,7 @@ const wrap = function( obj, offset=0 ) {
   const memory_loc = '$loc_'+idx
   let memlength = obj.__memoryLength * 4
 
-  let input_prop, min_prop, max_prop
+  let input_prop, min_prop, max_prop, max_compiled, min_compiled
 
   gen.addLocal(`(local $wrapinput_${idx} f32)`)
   gen.addLocal(`(local $wrapmax_${idx} f32)`)
