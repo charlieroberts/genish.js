@@ -44,6 +44,7 @@ const gen = {
     data:   ( await import( './ugens/data.js'    )  ).default,
     mod:    ( await import( './ugens/mod.js'     )  ).default,
     pow:    ( await import( './ugens/pow.js'     )  ).default,
+    bang:   ( await import( './ugens/bang.js'    )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
@@ -94,9 +95,8 @@ const gen = {
 
   // TODO add memoization step here?
   // main compile function
-  compile( ugen, offset ) {
+  compile( ugen, offset=0 ) {
     if( ugen.name === undefined ) {
-      console.log( ugen )
       throw Error('ugen is not defined.' )
     }
 
@@ -116,7 +116,7 @@ const gen = {
       //console.log( 'PREREQ ARRAY:', prereqarray )
       if( prereqarray.length > 2 ) {
         const idx = prereqarray.length - 3
-        console.log( 'PREREQ IDX:', idx, prereqarray[ idx ] )
+        //console.log( 'PREREQ IDX:', idx, prereqarray[ idx ] )
         if( idx >= 0 )
           prereqarray[ idx ] = prereqarray[ idx ].replace( '.tee', '.set' )
       }
@@ -129,7 +129,6 @@ const gen = {
     }
 
     //console.log( ugen.name, name, ugen.__shouldMemo, gen.__memo[ name ] )
-
 
     if( typeof ugen.string === 'string' ) {
       // if pre-compiled
@@ -156,14 +155,16 @@ const gen = {
       }
     }else{
       // default compilation, no memoing
-      //console.log( 'COMPILE:', ugen.name )
+      if( gen.ugens[ ugen.name ] === undefined ) {
+        debugger
+      }
       out = gen.ugens[ ugen.name ]( ugen, offset )
     }
 
     if( prereq !== null ) {
       //console.log( 'ADDING PREREQ TO OUT:', out.string )
       out.string = prereq.string + '\n' + out.string
-      console.log( out.string )
+      //console.log( out.string )
     }
     
     return out
