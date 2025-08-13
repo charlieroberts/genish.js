@@ -43,6 +43,7 @@ const gen = {
     slide:  ( await import( './ugens/slide.js'   )  ).default,
     data:   ( await import( './ugens/data.js'    )  ).default,
     mod:    ( await import( './ugens/mod.js'     )  ).default,
+    pow:    ( await import( './ugens/pow.js'     )  ).default,
   },
 
   __binops: ( await import( './ugens/binops.js' ) ).default,
