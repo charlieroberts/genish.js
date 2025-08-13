@@ -39,7 +39,7 @@ data( './resources/audiofiles/amen.wav' ).then( d => {
   end   = add( start, sliceLength )
   
   // add the current sliceCounter position to start to get the buffer index to read
-  read = peek( d, add( start, sliceCounter ), 'linear', 'samples' )
+  read = peek( d, add( sliceCounter, start ), 'linear', 'samples' )
   
   play( read )
 })

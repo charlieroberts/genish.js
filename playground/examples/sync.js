@@ -59,7 +59,7 @@ master = counter( incr, 0, 1 )
  
 // sweep our slave oscillator between 220-660 Hz
 // and back over two seconds
-syncSweep = peek( data([220,880]), phasor( 4 ) )
+syncSweep = peek( data([220,880]), phasor( .5 ) )
  
 // create a value to store our direction in.
 // the meta property lets us refer to indices in
