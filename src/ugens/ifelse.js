@@ -4,7 +4,7 @@ const ifelse = function( obj, offset=0 ) {
   const idx = obj.uid
   const memory_loc = '$loc_'+idx
   const name = obj.__memoName 
-  let memlength = obj.__memoryLength * 4
+  let memlength = 0//obj.__memoryLength * 4
 
   let condition_prop, t_prop, f_prop
 
@@ -12,7 +12,7 @@ const ifelse = function( obj, offset=0 ) {
   gen.addLocal(`(local $ifelset_${idx} f32)`)
   gen.addLocal(`(local $ifelsef_${idx} f32)`)
   gen.addLocal(`(local ${memory_loc} i32)`)
-  gen.addLocal(`(local $${name} f32)` )
+  gen.addLocal(`(local ${name} f32)` )
 
   obj.__flags = [ isNaN( obj.condition ), isNaN( obj.t ), isNaN( obj.f )]
 
@@ -28,7 +28,7 @@ const ifelse = function( obj, offset=0 ) {
   // TODO min is currently unused and assumed to be 0
   if( obj.__flags[1] ) {
     const t_compiled = gen.compile( obj.t, memlength + offset )
-    memlength      += t.memlength
+    memlength      += t_compiled.memlength
     offset         += t_compiled.memlength
     t_prop = `${t_compiled.string}`
   }else{
@@ -62,7 +62,7 @@ local.set $ifelsef_${idx}
   (i32.eq (i32.const 1) (i32.trunc_f32_s (local.get $ifelsecondition_${idx})))
 )
 
-local.tee $${name}
+local.tee ${name}
 ;;;;;;;; end ifelse ;;;;;;;;
 `
 
