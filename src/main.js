@@ -64,8 +64,6 @@ const add = binop( 'add' ),
       lte = binop( 'lte' ),
       eq  = binop( 'eq' ),
       neq = binop( 'neq' ),
-      gtp = binop( 'gtp' ),
-      ltp = binop( 'ltp' ),
       min = binop( 'min' ),
       max = binop( 'max' ),
       pow = binop( 'pow' ),
@@ -434,8 +432,7 @@ let bang
 {
   let fid = fidx++
   bang = function() {
-    const obj = {
-      idx : getMemory( 2 ),
+    /*const obj = {
       trigger() {
         memf[ obj.idx + 1 ] = 1
       },
@@ -444,6 +441,11 @@ let bang
     }
     
     memi[ obj.idx ] = fid
+    */
+    const obj = makeugen({ name:'bang' })
+    obj.trigger = function() {
+      memf[ obj.idx ] = 1
+    }
     return obj
   }
 }
@@ -624,6 +626,14 @@ const seq = function( values, durations, rate=1 ) {
   del.in( clock.wrap )
  
   return ugen
+}
+
+const ltp = function( value, limit ) {
+  return ifelse( lt( value, limit ), value, 0 )
+}
+
+const gtp = function( value, limit ) {
+  return ifelse( gt( value, limit ), value, 0 )
 }
 
 let pokememoryindex = 1000
