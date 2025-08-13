@@ -86,23 +86,13 @@ const makeugen = function( props ) {
 }
 
 let samplerate = function() {
-  const out = { name:'samplerate', string:'global.get $sr\n' }
+  const out = { name:'samplerate', string:'global.get $sr\n', memlength:0 }
   return out
 }
   
 let accum
 {
-  const baseidx = fidx
-  fidx += 4
   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
-    const props = { incr, reset },
-          statics = { 
-            'min':{ value:min, type:'f' }, 
-            'max':{ value:max, type:'f' }, 
-            'phase':{ value:phase, type:'f' }, 
-          }
-
-    //const obj = factory( props, statics, baseidx, 'accum' )
     const obj = makeugen({ incr, reset, min, max, phase, name:'accum' })
 
     return obj
@@ -198,16 +188,7 @@ let param
 
 let noise
 {
-  const baseidx = fidx
-  fidx++
   noise = function( seed=0 ) {
-    const props   = {},
-          statics = {
-            a: { value:2 / 0xffffffff, type:'f'},
-            seed: { value:0x67452301 + seed, type:'i' },
-            b: { value:0xefcdab89, type:'i'}
-          }
-    
     return makeugen({ name:'noise', seed }) 
     //factory( props, statics, baseidx, 'noise' )
   }
@@ -216,19 +197,8 @@ let noise
 
 let sah
 {
-  const baseidx = fidx
-  fidx += 8
-  sah = function( input=0, control=0, threshold=.9 ) { // 0, 4, 8
-    const props = { input, control, threshold },
-          statics = {
-            output: { value:0, type:'f' }, // 12
-            lastcontrol: { value:0, type:'f' } // 16
-          }
-  
-    if( typeof input === 'number' ) {
-      statics.output.value = input
-    }
-    return factory( props, statics, baseidx, 'sah' )
+  sah = function( input=0, control=0, threshold=.9 ) { 
+    return makeugen({ name:'sah', input, control, threshold })
   }
 }
 
@@ -283,7 +253,7 @@ let counter
           memlength,
           __shouldMemo: true,
           resolve: function() { 
-            console.log( 'COMPILING WRAP', obj.idx )
+            //console.log( 'COMPILING WRAP', obj.idx )
             const myobj = {
               string:`local.get ${obj.wrapFlag}\n`,
               memlength
@@ -343,24 +313,14 @@ let bus
 
 let ssd
 {
-  const fid = fidx++
   ssd = function( value = 1 ) {
-    /*const obj = {
-      idx: utilities.getMemory( 1 ),
-      fid,
-      name:'history',
-      __input: null,
-      __data: data(1),
-      // TODO should the input always be memo'd? that seems like
-      // it would fit the most common use case...
-      in( input ) { obj.__input = input.memo() } 
-    }*/
     const obj = makeugen({ 
       name:'history', 
       in(input) { obj.__input = input; if( isNaN( input ) ) input.memo(); },
       __input: null,
       value
     })
+
     obj.out = obj 
 
     return obj
@@ -404,13 +364,9 @@ let delay
   const baseidx = fidx
   fidx += 4
 
-  delay = function( input=0, time=22050, maxSize=44100 ) {
-    const props = { input, time },
-    statics = {
-      maxSize: { value:maxSize, type:'i'},
-      readPos:{ value:0, type:'f'}
-    }
+  delay = function( input=0, time=22050, maxSize=null ) {
 
+    if( maxSize === null ) maxSize = time
     //const obj = factory( props, statics, baseidx, 'delay' )
     //getMemory( maxSize )
     return makeugen({ input, time, maxSize, name:'delay' })
