@@ -3,9 +3,10 @@ let gen
 
 const bang = function( obj, offset=0 ) {
   const idx = obj.idx = utilities.getMemory( 1 )
-  obj.name = `$bang_${obj.idx}`
+  obj.__memoName = `$bang_${obj.idx}`
 
-  const string = `local.get $loc
+  let string = `;;;;;;;; begin bang ;;;;;;;;;
+local.get $loc
 i32.const ${(obj.idx)*4}
 i32.add
 f32.load
@@ -26,7 +27,9 @@ else
   f32.store
   
   f32.const 1
-end`
+end
+;;;;;;;;; end bang ;;;;;;;;;;`
+ 
   
   if( obj.__shouldMemo === true ) {
     const name = obj.__memoName
