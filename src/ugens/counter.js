@@ -13,7 +13,7 @@ const counter = function( obj, offset=0 ) {
       max_compiled  = null,
       maxblock      = null
 
-  console.log( 'COMPILING COUNTER, MEMO NAME:', obj.__memoName )
+  //console.log( 'COMPILING COUNTER, MEMO NAME:', obj.__memoName )
   obj.__flags = [ isNaN( obj.incr ), isNaN( obj.reset ), isNaN( obj.max ) ]
   obj.idx = utilities.getMemory( 2, 'counter' )
 
