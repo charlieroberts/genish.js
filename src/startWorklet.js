@@ -2,13 +2,15 @@ import utilities from './utilities.js'
 
 let audioContext = null
 let node = null
+let init = false
 
 const startWorkletNode = async function( wasmbuffer,  mem, shouldPrint=false, shouldDebug=false, path='../src/compiledWorklet.js', isStereo=false ) {
-  if( audioContext === null ) {
+  if( init === false ) {
     try {
       audioContext = new AudioContext()
       await audioContext.resume()
       await audioContext.audioWorklet.addModule( path )
+      init = true
     }catch(e) {
       console.log( 'could not make context:', e )
     }
@@ -70,5 +72,7 @@ const startWorkletNode = async function( wasmbuffer,  mem, shouldPrint=false, sh
 
   return node
 }
+
+startWorkletNode.setAudioContext = function( ctx ) { audioContext = ctx }
 
 export default startWorkletNode
