@@ -40,6 +40,7 @@ const gen = {
     wrap:   ( await import( './ugens/wrap.js'    )  ).default,
     delay:  ( await import( './ugens/delay.js'   )  ).default,
     ifelse: ( await import( './ugens/ifelse.js'  )  ).default,
+    ifelse2:( await import( './ugens/ifelse2.js' )  ).default,
     slide:  ( await import( './ugens/slide.js'   )  ).default,
     data:   ( await import( './ugens/data.js'    )  ).default,
     mod:    ( await import( './ugens/mod.js'     )  ).default,
