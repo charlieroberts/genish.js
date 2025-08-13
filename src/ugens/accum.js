@@ -9,16 +9,19 @@ const accum = function( obj, offset=0 ) {
   // so, really we just need a number for phase I think
   obj.idx = utilities.getMemory( 1, 'accum' )
   obj.__memoryLength = 1
-  obj.__flags = [ isNaN(obj.incr), isNaN(obj.reset) ]
+  obj.__flags = [ isNaN(obj.incr), isNaN(obj.reset), isNaN(obj.max) ]
 
   let memlength     = obj.__memoryLength * 4,
       incr_prop     = null,
       incr_compiled = null,
       resetblock    = null,
-      reset_compiled= null
+      reset_compiled= null,
+      max_compiled  = null,
+      max_prop      = null
 
   const phase_offset = 0,
         phase_id     = '$accumphase'+obj.idx,
+        max_id       = '$accummax'+obj.idx,
         memory_loc   = '$accummemoryloc'+obj.idx,
         phase_loc    = '$accumphaseloc'+obj.idx
 
@@ -37,8 +40,20 @@ const accum = function( obj, offset=0 ) {
     offset         += reset_compiled.memlength
   }
 
+  if( obj.__flags[2] ) {
+    max_compiled = gen.compile( obj.max, memlength + offset )
+    console.log( 'MAX COMPILED:', max_compiled )
+    memlength    += max_compiled.memlength
+    offset       += max_compiled.memlength
+    max_prop     = max_compiled.string
+    console.log( 'MAX:', memlength, offset )
+  }else{
+    max_prop     = `f32.const ${obj.max}`
+  }
+
   gen.addLocal(`(local ${phase_loc} i32)`)
   gen.addLocal(`(local ${phase_id} f32)`) 
+  gen.addLocal(`(local ${max_id} f32)`)
   
   const name = obj.__memoName 
   gen.addLocal(`(local ${name} f32)` )
@@ -63,6 +78,15 @@ end
     return resetBlock 
   }
 
+  const getMax = function() {
+    const maxBlock = 
+`;; accum: max
+${max_prop}
+local.set ${max_id}
+`
+    return maxBlock
+  }
+
   offset = 0
 
 //Y${obj.__flags[1] ? getReset() : '' }
@@ -85,11 +109,13 @@ ${incr_prop}
 f32.add
 local.set ${phase_id}
 
+${getMax()}
+
 ;; accum: push phase idx for set-property to the stack
 local.get ${ phase_loc }
 
 ;; accum: wrap phase 
-(f32.lt (local.get ${phase_id}) (f32.const ${ obj.max }))
+(f32.lt (local.get ${phase_id}) (local.get ${ max_id }))
 if (result f32)
   (f32.gt (local.get ${phase_id}) (f32.const 0.0))
   if (result f32)
@@ -104,7 +130,7 @@ if (result f32)
 else
   (f32.sub 
     (local.get ${phase_id})
-    (f32.const ${ obj.max - obj.min })
+    (local.get ${max_id})
   )
 local.tee ${phase_id} 
 end
