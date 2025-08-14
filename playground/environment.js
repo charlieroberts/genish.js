@@ -117,7 +117,8 @@ const demos = [
   'sync.js',
   'bandlimited.js',
   'enveloping.js',
-  'twopole_va.js'
+  'twopole_va.js',
+  'fourpole_ladder_va.js'
 ]
 
 const initMenu = function() {
