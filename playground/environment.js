@@ -116,7 +116,8 @@ const demos = [
   'sequencing.js',
   'sync.js',
   'bandlimited.js',
-  'enveloping.js'
+  'enveloping.js',
+  'twopole_va.js'
 ]
 
 const initMenu = function() {
