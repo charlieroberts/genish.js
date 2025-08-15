@@ -58,17 +58,18 @@ gen.init().then( ()=> {
              expected = 1,
              inputp   = param(0),
              controlp = param(0),
-             graph    = sah( inputp, controlp ),
+             graph    = sah( inputp, controlp, .9 ),
              func     = gen.function( graph ),
              wat      = gen.module( func ),
              wasm     = await gen.assemble( wat, mem )
 
-       const sample1  = decimate( wasm.render( 0 ), 1000 )
        inputp.value = 1
+       const sample1  = decimate( wasm.render( 0 ), 1000 )
        controlp.value = 1
        const sample2  = decimate( wasm.render( 0 ), 1000 )
+       const sample3  = decimate( wasm.render( 0 ), 1000 )
 
-       assert.strictEqual( sample2, expected )    
+       assert.strictEqual( sample3, expected )    
      })
     it( 'works with memory offsets', async () => {
        const mem      = makeMemory(),
