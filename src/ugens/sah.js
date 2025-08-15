@@ -3,6 +3,7 @@ import utilities from '../utilities.js'
 
 const sah = function( obj, offset=0 ) {
 
+obj.idx = utilities.getMemory( 4 )
 const idx = obj.idx
 const memory_loc = '$loc_'+idx
 let memlength = obj.__memoryLength * 4
@@ -16,14 +17,15 @@ gen.addLocal(`(local ${memory_loc} i32)`)
 gen.addLocal(`(local $${obj.__memoName} f32)` )
 
 obj.__flags = [ isNaN( obj.input ), isNaN( obj.control ), isNaN( obj.threshold ) ]
-obj.idx = utilities.getMemory( 4 )
 
 let value_prop, value_compiled
 if( obj.__flags[0] ) {
   value_compiled = gen.compile( obj.input )
   memlength += value_compiled.memlength
   value_prop = `${value_compiled.string}`
+  utilities.memf[ obj.idx + 3 ] = 0
 }else{
+  utilities.memf[ obj.idx + 3 ] = obj.input
   value_prop = `f32.const ${obj.input}`
 }
 
@@ -115,7 +117,7 @@ const template = `
 
   const ugen = {
     string:template,
-    memlength:12,
+    memlength:16,
     name:'sah'
   }
 
