@@ -1,24 +1,12 @@
 let gen
 
-/*
-const noise = function( obj, offset=0 ) {
-  const ugen = {
-    string:`call $_random`,
-    memlength:0,
-    name:'noise'
-  }
-
-  return ugen
-}
-*/
-
 const noise = function( obj, offset=0 ) {
   let string = 'call $_random'
   
   if( obj.__shouldMemo === true ) {
     const name = obj.__memoName
-    gen.addLocal(`(local $${name} f32)` )
-    string += `\nlocal.tee $${name}`
+    gen.addLocal(`(local ${name} f32)` )
+    string += `\nlocal.tee ${name}`
   }
 
   const ugen = {
@@ -29,6 +17,13 @@ const noise = function( obj, offset=0 ) {
 
   return ugen
 }
+
+const module = __gen => {
+  gen = __gen
+  return noise
+}
+
+export default module
 
 // TODO wasm function isn't getting memory addresses correct
 // they always turn up 0? I'm not sure why. Is Math.random
@@ -99,9 +94,4 @@ const template = `
   return ugen
 }*/
 
-const module = __gen => {
-  gen = __gen
-  return noise
-}
 
-export default module
