@@ -149,7 +149,7 @@ const gen = {
     }else if( ugen.__shouldMemo === true ){
       // memo found
 
-      //console.log( 'RETURNING FROM MEMO DICTIONARY:', ugen.__memoName )
+      //console.log( 'RETURNING MEMO:', name )
       out = {
         string:`local.get ${name}`,
         memlength: 0
@@ -223,8 +223,14 @@ const gen = {
   processPokes() {
     let str = ''
 
-    for( let poke of this.__pokes ) {
-      str += poke().string
+    // pokes might add pokes (think a delay that uses
+    // a history in its input) so we need a for loop
+    // to iterate to make sure any additions are also 
+    // compiled
+    for( let i = 0; i < gen.__pokes.length; i++ ) {
+      const poke = gen.__pokes[ i ]
+      const p = poke()
+      str += p.string
     }
     
     return str
