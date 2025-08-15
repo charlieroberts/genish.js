@@ -6,9 +6,11 @@ const compile = function( obj, offset = 0 ) {
   if( obj.out === undefined ) {
     out = { 
       value: obj.value, 
-      length: typeof obj.value === 'object' ? obj.value.length : 1,
+      length: typeof obj.value === 'object' ? obj.value.length : obj.value,
       name: obj.name
     }
+
+    //console.log( 'data length:', out.length  )
 
     // if value is number, it is the number of memory slots
     // to reserve, NOT THE ACTUAL DATA VALUE
