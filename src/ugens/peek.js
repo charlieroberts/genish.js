@@ -26,7 +26,7 @@ const compile = function( obj, offset=0 ) {
 
   obj.data = gen.compile( obj.data )
   obj.idx = obj.data.idx + '_' + getUID()
-  obj.__memoName = '$peek_'+obj.idx+'_memo'
+  //obj.__memoName = '$peek_'+obj.idx+'_memo'
 
   const phase_id = '$peekphase_'+obj.idx,
         floor_id = '$peekfloor_'+obj.idx,
@@ -63,8 +63,10 @@ local.get $loc
 i32.const ${(obj.data.idx + obj.index) * 4}
 i32.add
 f32.load
+${obj.__shouldMemo ? `local.tee ${obj.__memoName}` : '' }
 ;;;;;;;; end peek const ;;;;;;;;
 `
+    if( obj.__shouldMemo ) gen.addLocal( `(local ${obj.__memoName} f32)` )
     return { string, memlength }
   }
 
