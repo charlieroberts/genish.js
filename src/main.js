@@ -309,7 +309,7 @@ let bus
 
 let ssd
 {
-  ssd = function( value = 1 ) {
+  ssd = function( value = 0 ) {
     const obj = makeugen({ 
       name:'history', 
       in(input) { obj.__input = input; if( isNaN( input ) ) input.memo(); },
@@ -510,7 +510,7 @@ const data = function( __data, type='float' ) {
   }else{
     obj = makeugen({ value:__data, name:'data' })
     obj.__static = true
-    obj.length = 1
+    obj.length = __data
   }
 
   return obj
