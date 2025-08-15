@@ -47,6 +47,8 @@ window.onload = async function() {
 
 
   Object.assign( window, exports )
+
+  window.poke = gen.ugens.poke
   
   const b = bitty.create({ 
     flashColor:'white',
@@ -117,6 +119,7 @@ const demos = [
   'sync.js',
   'bandlimited.js',
   'enveloping.js',
+  'freeverb.js',
   'twopole_va.js',
   'fourpole_ladder_va.js'
 ]
