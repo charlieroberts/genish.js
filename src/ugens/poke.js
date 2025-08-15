@@ -1,4 +1,7 @@
 let gen
+let pokeid = 0
+
+const getuid = ()=> pokeid++
 
 const poke = function( data, value, index ) {
   const memory_loc   = '$pokememoryloc_'+gen.__pokes.length
@@ -41,7 +44,8 @@ i32.const 4
 i32.mul
 i32.add
 `
-:`i32.const ${(data.idx+index) * 4}
+:`;;;;;;;; begin poke ;;;;;;;;
+i32.const ${(data.idx+index) * 4}
 local.get $loc
 i32.add`
 
@@ -61,7 +65,7 @@ f32.store
   }
   // use id that will identify this poke and prevent it from being pushed
   // multiple times
-  const pokeidx = data.uid + (typeof index === 'object' ? index.idx : index )
+  const pokeidx = ''+data.uid + (typeof index === 'object' ? index.idx : index )
   post.idx = pokeidx
 
   // only push once!
