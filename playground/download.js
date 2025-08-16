@@ -7,7 +7,7 @@ import {
   Uint8ArrayReader
 } from '@zip.js/zip.js'
 
-const download = async function( name )  {
+const download = async function( name, memAmount=50 )  {
   const zipFileWriter = new BlobWriter()
 
   const wasmReader = new Uint8ArrayReader( node.buffer )
@@ -60,7 +60,7 @@ const play = ()=> {}
 const download = play
 
 const memory = new WebAssembly.Memory({ 
-  initial:5, maximum:5, shared:true 
+  initial:${memAmount}, maximum:${memAmount}, shared:true 
 })
 
 const { memf, memi } = utilities.setupMemory( memory.buffer )

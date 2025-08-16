@@ -4,10 +4,9 @@ import { exports } from '../src/main.js'
 import startWorkletNode from '../src/startWorklet.js'
 import { download } from './download.js'
 
+const memAmount = 50
 window.onload = async function() {
   await gen.init()
-
-  const memAmount = 50
 
   window.node = null
   window.mem = new WebAssembly.Memory({ 
@@ -100,7 +99,9 @@ window.onload = async function() {
     }
   })
 
-  window.download = download
+  window.download = function( name ) {
+    download( name, memAmount )
+  }
 
   const file = fetch( './examples/'+demos[ 0 ] )
       .then( response => response.text() ) 
