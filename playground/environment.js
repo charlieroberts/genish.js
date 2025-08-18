@@ -121,6 +121,7 @@ const demos = [
   'bandlimited.js',
   'enveloping.js',
   'freeverb.js',
+  'karplus.js',
   'twopole_va.js',
   'fourpole_ladder_va.js'
 ]
