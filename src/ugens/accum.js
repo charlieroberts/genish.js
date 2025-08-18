@@ -42,11 +42,9 @@ const accum = function( obj, offset=0 ) {
 
   if( obj.__flags[2] ) {
     max_compiled = gen.compile( obj.max, memlength + offset )
-    console.log( 'MAX COMPILED:', max_compiled )
     memlength    += max_compiled.memlength
     offset       += max_compiled.memlength
     max_prop     = max_compiled.string
-    console.log( 'MAX:', memlength, offset )
   }else{
     max_prop     = `f32.const ${obj.max}`
   }
