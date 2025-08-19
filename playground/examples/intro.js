@@ -2,14 +2,13 @@
 genish.js is a library designed to create optimized dsp graphs, using
 per-sample processing. Per-sample processing means the entire graph
 is processed one sample at a time, enabling fun techniques like
-single-sample feedback. In this demo, the callbacks are used to
-generate audio, but the library could also be used for modeling
-physical systems.
+single-sample feedback. 
 
-You can add a true argument to any call to "play()" to see the 
-generated webassembly function in the developers console. 
-calling this function once will output a single
-sample (potentially stereo) of data. The idea of genish.js is to 
+You can add a true argument to the end of any call to "play()" to see the 
+generated webassembly (wasm) function in the developers console. These
+functions are compiled to wasm blobs in-browser and then loaded as
+modules in an AudioWorklet node. calling this function once will output a 
+single sample (potentially stereo) of data. The idea of genish.js is to 
 provide a higher level kit for building these types of functions.
 
 genish.js is inspired by gen~ for Max/MSP: https://cycling74.com/max7/
@@ -194,10 +193,9 @@ echo = delay( gain, 11025, 22050 )
  
 // passing an array to play creates a stereo signal
 // notes on the left, echos on the right
-// use 64-bit memory storage for improved timing
 play( [gain, echo] ) 
 
-/****** 100 sine oscillators  *******/
+/****** 500 sine oscillators  *******/
 
 // if you play with these numbers, make
 // sure the final frequency doesn't get
