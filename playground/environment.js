@@ -16,6 +16,7 @@ window.onload = async function() {
   window.memi = new Int32Array( mem.buffer )
   window.gen = gen
   window.utilities = utilities
+  window.gen.utilities = window.utilities
 
   utilities.setupMemory( mem.buffer )
   utilities.createWavetables()
@@ -77,6 +78,32 @@ window.onload = async function() {
 
     return window.node
   }
+
+  window.playenv = async function( shouldPrintWat=false, shouldDebug=false ) {
+    if( window.node !== null ) {
+      window.clear()
+    }
+
+    utilities.__debugMemory = shouldDebug
+
+    const wat = gen.wasmenvironment( shouldPrintWat )
+
+    if( shouldPrintWat ) console.log( wat )
+
+    const blob = gen.blob( wat, window.mem, false )
+
+    window.node = await startWorkletNode( 
+      blob.buffer, 
+      window.mem, 
+      false, 
+      shouldDebug,
+      '../src/workletTest.js', 
+      false
+    )
+
+    return window.node
+  }
+
 
   window.clear = function() {
     window.node.port.postMessage({ address:'stop' })
