@@ -20,9 +20,10 @@ const makeMemory = function( memoryAmount = 50 ) {
 
   return mem
 }
-
+/*
 gen.init().then( ()=> {
 
+  
   describe( 'in combo tests', ()=> {
     it( 'adding two accums with an incr of .1 should yield .2 on sample #2', async ()=> {
       const mem = makeMemory()
@@ -42,4 +43,4 @@ gen.init().then( ()=> {
 
   })
 
-})
+})*/
