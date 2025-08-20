@@ -1,4 +1,5 @@
 let __wabt = null
+
 let fs = null
 
 const isBrowser = typeof window !== 'undefined'
@@ -52,6 +53,8 @@ const gen = {
   __monops: ( await import( './ugens/monops.js' ) ).default,
 
   ugens: {},
+  protos: {},
+  utilities:null,
 
   addLocal( local ) {
     if( this.__locals.indexOf( local ) === -1 ) {
@@ -174,6 +177,7 @@ const gen = {
   function( ugen, name='render' ) {
     gen.__locals.length = 0
 
+
     const isStereo = Array.isArray( ugen )
 
     // TODO I think memo init is OK to do here, but maybe
@@ -183,12 +187,17 @@ const gen = {
     
     let str = `\n(func $${name} (export "${name}") (param $loc i32) (result ${isStereo ?'f32 f32' : 'f32'})\n `
    
+    let memlength = 0
     let body = null
     if( isStereo ){ 
       const ugen1 = gen.compile( ugen[0], 0 )
-      body = ugen1.string + '\n' + gen.compile( ugen[1], ugen1.memlength ).string
+      const ugen2 = gen.compile( ugen[1], ugen1.memlength )
+      body = ugen1.string + '\n' + ugen2.string 
+      memlength = ugen1.memlength + ugen2.memlength
     }else{
-      body = gen.compile( ugen, 0 ).string
+      const ugen1 = gen.compile( ugen, 0 )
+      body = ugen1.string
+      memlength = ugen1.memlength
     }
 
     let bodystr = body
@@ -213,11 +222,39 @@ const gen = {
     
     const out = {
       string:str,
-      memlength: body.memlength 
+      memlength 
     }
+
+    console.log( 'memlength:', out.memlength )
 
     gen.__pokes = []
     return out
+  },
+
+  // an instance must contain the following:
+  // 
+  // 1. a reference to the function that will be called
+  // 2. a reference to the memory location (function loc + 1)
+  // 3. a way to allocate memory at the memory location
+  
+  // must put a reference to utilities in gen.utilities on
+  // init for this to work! 
+  makeproto( graph, name ) {
+    gen.protos[ name ] = gen.function( graph, name )
+    const idx = Object.keys( gen.protos ).length - 1
+    const factory = function( properties ) {
+      const loc = gen.utilities.getMemory(1)
+      const ugen = { loc }
+      graph.alloc()
+
+      return ugen
+    }
+  },
+
+  wasmenvironment( shouldPrint = false, memSize=50) {
+    let str = ''
+
+    return gen.module( Object.values( gen.protos ), shouldPrint, memSize )
   },
 
   processPokes() {
