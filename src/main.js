@@ -74,9 +74,10 @@ const ugen = {
   }
 }
 
-const makeugen = function( props ) {
+const makeugen = function( props, memorytotal=0 ) {
   const out = Object.assign( Object.create( ugen ), props, { uid:getUID() })
   out.__memoName = '$' + out.name + '_' + out.uid + '_memo'
+  out.__memorytotal = memorytotal
 
   return out
 }
@@ -89,7 +90,7 @@ let samplerate = function() {
 let accum
 {
   accum = function( incr=0, reset=0, min=0, max=1, phase=0 ) {
-    const obj = makeugen({ incr, reset, min, max, phase, name:'accum' })
+    const obj = makeugen({ incr, reset, min, max, phase, name:'accum' }, 1 )
 
     return obj
   }
@@ -100,7 +101,7 @@ let phasor
   const baseidx = fidx
   fidx += 4
   phasor = function( frequency=1, reset=0, phase=0 ) {
-    return makeugen({ frequency, reset, phase, name:'phasor' })
+    return makeugen({ frequency, reset, phase, name:'phasor' }, 1 )
   }
 }
 
@@ -125,29 +126,10 @@ let peek
       interpolation:Number( interp==='linear' ), 
       mode: Number( mode === 'phase' ),
       data: __data
-    })
+    }, 0 )
     //factory( props, statics, baseidx, 'peek' )
 
     //obj.data = __data
-
-    return obj
-  }
-}
-
-let cycle_compiled
-{
-  const baseidx = fidx
-  fidx+=2
-  cycle_compiled = function( frequency ) {
-    const props = { frequency },
-          statics = {
-            dataIndex: { value:utilities.sinedata.idx * 4, type:'i' },
-            length: { value:1023, type:'f' },
-            interpolation: { value: 1, type:'i' },
-            mode: { value: 1, type:'i' }
-          }
-
-    const obj = factory( props, statics, baseidx-2, 'cycle' )
 
     return obj
   }
@@ -158,12 +140,7 @@ let cycle
   const baseidx = fidx
   fidx += 2
   cycle = function( frequency=1, phase=0 ) {
-    const props = { frequency },
-          statics = { 
-            'phase':{ value:phase, type:'f' } 
-          }
-
-    return makeugen({ name:'cycle', frequency, phase })
+    return makeugen({ name:'cycle', frequency, phase }, 1 )
     //factory( props, statics, baseidx, 'cycle' )
   }
 }
@@ -177,7 +154,7 @@ let param
             value:{ value, type:'f' }
           }
   
-    return makeugen({ name:'param', value })
+    return makeugen({ name:'param', value }, 1 )
   }
 }
 
@@ -194,35 +171,7 @@ let noise
 let sah
 {
   sah = function( input=0, control=0, threshold=.9 ) { 
-    return makeugen({ name:'sah', input, control, threshold })
-  }
-}
-
-
-let memo
-{
-  const fid = fidx
-  fidx += 2
-  memo = function( input=0 ) {
-    const props = { input }
-    const statics = {
-      lastClock:  { value:999999, type:'i' },
-      lastSample: { value:0,   type:'f' }
-    }
-    
-    return factory( props, statics, fid, 'memo' )
-  }
-}
-
-let caller 
-{
-  const fid = fidx
-  fidx += 2
-  caller = function( input, dataOffset ) {
-    const props =   { input }
-    const statics = { dataOffset: { value:dataOffset, type:'i' } }
-    
-    return factory( props, statics, fid, 'caller' )
+    return makeugen({ name:'sah', input, control, threshold }, 4 )
   }
 }
 
@@ -232,7 +181,7 @@ let counter
   fidx += 8
 
   counter = function( incr=0, reset=0, max=1, phase=0 ) {
-    let obj = makeugen({ name:'counter', incr, reset, max, phase })
+    let obj = makeugen({ name:'counter', incr, reset, max, phase }, 2 )
     obj.memo()
     obj.hasWrap = false
     
@@ -263,7 +212,8 @@ let counter
           // also trigger compilation and start a doom loop
           requires:obj,
           memo(){ wrapobj.__shouldMemo = true },
-          __memoName : '$' + 'counter.wrap' + '_' + obj.uid + '_memo'
+          __memoName : '$' + 'counter.wrap' + '_' + obj.uid + '_memo',
+          __memorytotal: 1
         }
 
         return wrapobj
@@ -315,7 +265,7 @@ let ssd
       in(input) { obj.__input = input; if( isNaN( input ) ) input.memo(); },
       __input: null,
       value
-    })
+    }, 1 )
 
     obj.out = obj 
 
@@ -679,8 +629,8 @@ const exports = {
   add, sub, mul, div, and, or, gt, gte, lt, lte,
   eq, neq, gtp, ltp, min, max, pow, mod,
 
-  accum, phasor, peek, cycle, noise, sah, memo,
-  caller, counter, bus, ssd, delay, slide, param,
+  accum, phasor, peek, cycle, noise, sah,
+  counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, samplerate, 
   
   data,wrap,seq 
@@ -693,8 +643,8 @@ export {
   add, sub, mul, div, and, or, gt, gte, lt, lte,
   eq, neq, gtp, ltp, min, max, pow, mod,
 
-  accum, phasor, peek, cycle, noise, sah, memo,
-  caller, counter, bus, ssd, delay, slide, param,
+  accum, phasor, peek, cycle, noise, sah,
+  counter, bus, ssd, delay, slide, param,
   mix, bang, ad, ifelse, ifelse2, poke, 
   
   data,wrap,seq,samplerate, 
