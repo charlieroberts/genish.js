@@ -11,7 +11,7 @@ const accum = function( obj, offset=0 ) {
   obj.__memoryLength = 1
   obj.__flags = [ isNaN(obj.incr), isNaN(obj.reset), isNaN(obj.max) ]
 
-  let memlength     = obj.__memoryLength * 4,
+  let memlength     = 0, //obj.__memoryLength * 4,
       incr_prop     = null,
       incr_compiled = null,
       resetblock    = null,

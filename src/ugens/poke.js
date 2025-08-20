@@ -56,9 +56,15 @@ f32.store
 ;;;;;;;; end poke ;;;;;;;;
 `
 
+    let memlength = 0
+    if( data.shouldAddToMemoryTotal === true ) {
+      memlength += data.length
+    }
+
     const ugen = {
       string,
-      name:'poke'
+      name:'poke',
+      memlength
     }
 
     return ugen

@@ -27,7 +27,7 @@ const ifelse = function( obj, offset=0 ) {
 
   // TODO min is currently unused and assumed to be 0
   if( obj.__flags[1] ) {
-    const t_compiled = gen.compile( obj.t, memlength + offset )
+    const t_compiled = gen.compile( obj.t ) //, memlength + offset )
     memlength      += t_compiled.memlength
     offset         += t_compiled.memlength
     t_prop = `${t_compiled.string}`
@@ -36,7 +36,7 @@ const ifelse = function( obj, offset=0 ) {
   }
 
   if( obj.__flags[2] ) {
-    const f_compiled = gen.compile( obj.f, memlength + offset )
+    const f_compiled = gen.compile( obj.f ) //, memlength + offset )
     memlength      += f_compiled.memlength
     offset         += f_compiled.memlength
     f_prop = `${f_compiled.string}`
@@ -46,7 +46,7 @@ const ifelse = function( obj, offset=0 ) {
 
   // TODO for max we could just inline static values instead
   // of assigning to a local...
-  const template = `;;;;;;;;; begin ifelse ;;;;;;;;;
+const template = `;;;;;;;;; begin ifelse ;;;;;;;;;
 ${condition_prop}
 local.set $ifelsecondition_${idx}
 
@@ -65,7 +65,6 @@ local.set $ifelsef_${idx}
 local.tee ${name}
 ;;;;;;;; end ifelse ;;;;;;;;
 `
-
   const ugen = {
     string:template,
     memlength,

@@ -25,7 +25,7 @@ const param_module = __gen => {
       })
 
       ugen = {
-        memlength:1,
+        memlength:4,
         string:`(f32.load (i32.add (local.get $loc) (i32.const ${(obj.idx * 4)})))`,
         __memoName:obj.__memoName,
         name:'param'

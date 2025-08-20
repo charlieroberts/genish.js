@@ -68,6 +68,8 @@ for( let optype in opcategories ) {
         string += `local.tee ${name}\n`
       }
 
+      console.log( op, memlength )
+
       const out = {
         memlength,
         string

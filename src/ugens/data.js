@@ -7,8 +7,10 @@ const compile = function( obj, offset = 0 ) {
     out = { 
       value: obj.value, 
       length: typeof obj.value === 'object' ? obj.value.length : obj.value,
-      name: obj.name
+      name: obj.name,
+      shouldAddToMemoryTotal:true
     }
+    out.memorylength = length
 
     //console.log( 'data length:', out.length  )
 
@@ -18,7 +20,7 @@ const compile = function( obj, offset = 0 ) {
       out.idx = utilities.getMemory( obj.value, 'data' )
     }else{
       // if an array is passed, copy it to memory
-      out.idx = utilities.getMemory( out.value.length, 'data' )
+      out.idx = utilities.getMemory( out.length, 'data' )
       utilities.memf.set( out.value, out.idx )
     }
 
@@ -42,3 +44,5 @@ const module = _ => {
 }
 
 export default module
+
+
