@@ -58,6 +58,10 @@ const compile = function( obj, offset=0 ) {
     index_prop = `${index_compiled.string}`
   }else{
 
+    if( obj.data.shouldAddToMemoryTotal === true ) {
+      memlength += obj.data.length
+      obj.data.shouldAddToMemoryTotal = false
+    }
     const string = `;;;;;;;; peek const ;;;;;;;;
 local.get $loc
 i32.const ${(obj.data.idx + obj.index) * 4}
@@ -196,7 +200,14 @@ ${interpolation}
 local.tee ${obj.__memoName}
 ;;;;;;;; end peek ;;;;;;;;
 `
-  memlength += 4
+  // only uses memory if using a dyanmic data index
+  // ... which currently doesn't work anyways right?
+  memlength += obj.data.__static ? 0 : 4 
+  if( obj.data.shouldAddToMemoryTotal === true ) {
+    console.log( 'MEMORY ADD', obj.data.length )
+    memlength += obj.data.length
+    obj.data.shouldAddToMemoryTotal = false
+  }
   return { string:block, memlength }
 }
 
