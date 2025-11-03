@@ -251,6 +251,19 @@ const gen = {
     }
   },
 
+  getfunctable() {
+    let str = `  (table ${functioncount} funcref)
+  (elem (i32.const 0)\n`
+
+    for( let key in gen.protos ) {
+      str += '    ' + key + '\n'
+    }
+
+    str+= '  )'
+
+    return str
+  },
+
   wasmenvironment( shouldPrint = false, memSize=50) {
     let str = ''
 
