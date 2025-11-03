@@ -138,17 +138,28 @@ local.get ${name}
 ;;;;;;;; end accum ;;;;;;;;
 `
 
-//${obj.__flags[1] ? 'end\n' : '' }
-
   memlength += 4
 
   const out = {
     string: incrblock,//obj.__flags[1] ? getReset() + incrblock : incrblock,
-    memlength
+    memlength,
+    alloc( offset ) {
+      const idx = utilities.getMemory( 1, 'accum:alloc' )
+
+      // allocate potential inputs
+      if( obj.__flags[0] ) obj.incr.alloc( offset )
+      if( obj.__flags[1] ) obj.reset.alloc( offset )
+      if( obj.__flags[2] ) obj.max.alloc( offset )
+      
+      // return allocation amount
+      return utilties.getMemoryIndex - idx
+    }
   }
 
   return out
 }
+
+
 
 const accum_module = __gen => {
   gen = __gen
