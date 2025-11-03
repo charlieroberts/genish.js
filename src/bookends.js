@@ -1,4 +1,4 @@
-const front = function( memAmount = 5 ) {
+const front = function( memAmount = 5, functioncount=2 ) {
 
 const code = `(module
   (import "env" "memory" (memory $mem ${memAmount} ${memAmount} shared))
@@ -17,8 +17,9 @@ const code = `(module
   (import "math" "tanh"    (func $_tanh  (param f32) (result f32) ) )
   ;;(import "math" "atan2"   (func $_atan2 (param f32) (param f32) (result f32) ) )
 
-  (global $sr (import "env" "sr") f32)
   (export "memory" (memory $mem) )
+
+  (global $sr (import "env" "sr") f32)
   (global $clock (mut i32) (i32.const 0))
 
   ;; for noise function
@@ -29,7 +30,8 @@ const code = `(module
   (type $sig-i32--i32 (func (param $loc i32) (result i32) ) )
   ;; no return
   (type $sig-i32 (func (param $loc i32) ) )
-`
+
+  `
 
 return code
 
