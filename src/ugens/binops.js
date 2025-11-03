@@ -68,11 +68,13 @@ for( let optype in opcategories ) {
         string += `local.tee ${name}\n`
       }
 
-      console.log( op, memlength )
-
       const out = {
         memlength,
-        string
+        string,
+        alloc( offset ) {
+          if( obj.__flags[0] ) obj[0].alloc( offset )
+          if( obj.__flags[1] ) obj[1].alloc( offset )
+        }
       }
     
       return out
