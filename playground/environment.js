@@ -50,7 +50,7 @@ window.onload = async function() {
 
   window.poke = gen.ugens.poke
   
-  const b = bitty.create({ 
+  const b = teeny.create({ 
     flashColor:'white',
     flashTime: 100,
     value: `play( accum(.005) )`
@@ -163,7 +163,7 @@ const initMenu = function() {
   }
 }
 
-window.bitty.rules = {
+window.teeny.rules = {
   keywords: /\b(new|if|else|do|while|switch|for|of|continue|break|return|typeof|function|var|const|let)(?=[^\w])/g,
 
   numbers: /\b(\d+)/g,
