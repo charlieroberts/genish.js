@@ -4,6 +4,11 @@ let fs = null
 
 const isBrowser = typeof window !== 'undefined'
 
+String.prototype.replaceAt = function(index, replacement) {
+    replacement += '' // ensure length property exists with numbers
+    return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
 if( !isBrowser ) {
   import('wabt').then( m =>{ __wabt = m.default;  })
   import('fs').then( m => fs = m.default )
@@ -267,7 +272,7 @@ const gen = {
   wasmenvironment( shouldPrint = false, memSize=50) {
     let str = ''
 
-    return gen.module( Object.values( gen.protos ), shouldPrint, memSize )
+    return gen.wat( Object.values( gen.protos ), shouldPrint, memSize )
   },
 
   processPokes() {
@@ -287,21 +292,59 @@ const gen = {
   },
 
   __functionTable() {
-    let str = `  (table ${this.__functions.length} funcref)
-    (elem (i32.const 0)
-  `
-    this.__functions.forEach( v => str += '  $' + v + '\n' )
+    let mainwat = fs.readFileSync( 'src/main.wat', 'utf-8' ) 
+  //  let str = `  (table ${this.__functions.length} funcref)
+  //  (elem (i32.const 0)
+  //`
 
-    str += '  )\n'
-    return str
+    // sub function table count
+    const subcountidx = mainwat.indexOf( '999' ) 
+    console.log( 'table count', 175+this.__functions.length, subcountidx )
+    mainwat = mainwat.replaceAt( subcountidx, 175+this.__functions.length )
+
+    // add in custom function names
+    let names = ''
+    this.__functions.forEach( v => names += '$' + v + '\n' )
+    const tablenamestring = ';; SUB TABLE FUNCTION NAMES'
+
+    //const subnameidx = mainwat.indexOf( tablenamestring ) + tablenamestring.length + 1
+
+    const split = mainwat.split( tablenamestring )
+    split[0] += names 
+
+    mainwat = split.join('\n')
+
+    return mainwat
   },
 
-  module( functions, print=false, memoryAmount = 50 ) {
+  wat( functions, print=false, memoryAmount = 50 ) {
+    let table = this.__functionTable()
+
+    const split = table.split(')')
+    const idx = split.length - 2
+
+    
+    let str = ''
+    if( Array.isArray( functions ) ) {    
+      functions.forEach( fnc => {
+        str += fnc.string
+      })
+    }else{
+      str += functions.string
+    }
+    split[ idx ] = str
+    
+    let out = split.join(')')
+    
+    return out
+  },
+
+  /*wat( functions, print=false, memoryAmount = 50 ) {
     let str = gen.__bookends.front( memoryAmount )
 
     str += this.__functionTable()
 
-    if( Array.isArray( functions )) {    
+    if( Array.isArray( functions ) ) {    
       functions.forEach( fnc => {
         str += fnc.string
       })
@@ -317,7 +360,7 @@ const gen = {
     this.__functions.length = 0
 
     return str
-  },
+  },*/
 
   factory( constructor ) {
     constructor.compile = function() {

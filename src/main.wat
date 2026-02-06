@@ -30,7 +30,8 @@
   ;; this table will store an indirect reference to every
   ;; function, so that they can all be called by index via
   ;; call_indirect
-  (table 175 funcref)
+  ;; SUB TABLE ELEMENT COUNT 99x below is search target 
+  (table 999 funcref)
   (elem (i32.const 0)
     ;; monops (11*2 = 22)
     $floor_s
@@ -222,6 +223,8 @@
     ;; $tanh
     ;; $pow
     ;; $atan2
+    ;; SUB TABLE FUNCTION NAMES
+
   )
   
   (func $get-property (param $idx i32) (result f32) f32.const 0 )
@@ -4446,4 +4449,5 @@
     local.get $len
   )
 
+  ;; SUB FUNCTION CALLS
 ) ;; end of file
