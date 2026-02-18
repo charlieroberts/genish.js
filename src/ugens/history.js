@@ -1,6 +1,6 @@
 let gen
 
-import { peek, data } from '../main.js'
+import { peek, data } from '../ugens.compiled.js'
 import poke from './poke.js'
 
 let __poke = null

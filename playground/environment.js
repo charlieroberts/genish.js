@@ -69,7 +69,7 @@ window.onload = async function() {
     window.graph = graph
 
     const func     = gen.function( graph ),
-          wat      = gen.module( func, false, memAmount )
+          wat      = gen.wat( func, false, memAmount )
 
     if( shouldPrintWat ) console.log( wat )
 

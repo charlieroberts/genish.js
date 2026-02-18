@@ -1,6 +1,6 @@
 let gen
 
-import { data, peek, sub, accum, wrap, add, max, abs } from '../main.js'
+import { data, peek, sub, accum, wrap, add, max, abs } from '../ugens.compiled.js'
 import utilities from '../utilities.js'
 import poke from './poke.js'
 

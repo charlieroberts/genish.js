@@ -1,6 +1,6 @@
 let gen
 
-import { phasor,peek,accum, div, ssd, gt, ifelse } from '../main.js'
+import { phasor,peek,accum, div, ssd, gt, ifelse } from '../ugens.compiled.js'
 import utilities from '../utilities.js'
 
 const compile = function( obj, offset=0 ) {

@@ -1,4 +1,4 @@
-import { add,mul,sub,div,floor } from '../main.js'
+import { add,mul,sub,div,floor } from '../ugens.compiled.js'
 
 let gen
 

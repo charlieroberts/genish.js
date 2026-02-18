@@ -1,6 +1,6 @@
 let gen
 
-import { accum, div, samplerate } from '../main.js'
+import { accum, div, samplerate } from '../ugens.compiled.js'
 import utilities from '../utilities.js'
 
 // TODO: use actual samplerate

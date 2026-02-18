@@ -53,6 +53,8 @@ class WASMProcessor extends AudioWorkletProcessor {
           // buffer, byteOffset, length
           //this.outputL = new Float32Array( memory.buffer, 0, 256 )
           //this.outputR = new Float32Array( memory.buffer, 512, 128 )
+          this.count = 0
+          this.memory = new Float32Array( memory.buffer )
           this.output = new Float32Array( memory.buffer, 0, 256 )
           this.outputL = this.output.subarray( 0, 128 )
           this.outputR = this.output.subarray( 128, 256 )
@@ -79,6 +81,12 @@ class WASMProcessor extends AudioWorkletProcessor {
     const output = outputs[0][0]
     if( this.numChannels === 1 ) {
       this.wasm.render( this.renderLocation, len, 0 )
+      
+      //if( this.count++ % 1000 === 0 ) {
+      //  console.log( this.outputL.subarray( 0, 32)  )
+      //  console.log( len, this.renderLocation, this.memory[130] )
+      //}
+      
       outputs[0][0].set( this.outputL )
       outputs[0][1].set( this.outputL )
     }else{

@@ -1,4 +1,4 @@
-import { data } from './main.js'
+//import { data } from './main.js'
 
 let memf, memi,
     m = 0,
@@ -13,8 +13,9 @@ const utilities = {
   getMemoryIndex() { return m },
 
   getMemory( amt, name='unknown' ) {
-    if( m + amt > memf.length ) {
-      throw( `Your memory request of ${amt} blocks would exceed the max memory size of ${memf.length} available blocks. Please allocate more memory in your call to TODO` )
+    console.log( m, amt, m+amt )
+    if( m + amt > utilities.memf.length ) {
+      throw( `Your memory request of ${amt} blocks would exceed the max memory size of ${utilities.memf.length} available blocks. Please allocate more memory in your call to ${name}` )
     }
     if( utilities.__debugMemory === true ) {
       console.log( 'getting ' + amt + ' block(s) of memory for ' + name + '.', m )
@@ -38,12 +39,15 @@ const utilities = {
     utilities.memf = memf   = new Float32Array( buffer )
     utilities.memi = memi   = new Int32Array( buffer )
 
-    utilities.sridx = utilities.getMemory( 1, 'sample rate' )
-    memi[ utilities.sridx ] = 44100
+    console.log( 'memf:', utilities.memf )
+
+    //utilities.sridx = utilities.getMemory( 1, 'sample rate' )
+    //memi[ utilities.sridx ] = 44100
     
+    utilities.getMemory(128, 'output in setupMemory')
     /*() for output buffer
     getMemory( 128 )
-    // for right buffer if stereo 
+    /* for right buffer if stereo 
     // TODO: fix so that there is no memory
     // allocated for the right channel if the instrument
     // is mono

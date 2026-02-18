@@ -1,4 +1,3 @@
-import {cycle} from '../main.js'
 import utilities from '../utilities.js'
 let gen
 
@@ -152,7 +151,7 @@ local.get ${name}
       if( obj.__flags[2] ) obj.max.alloc( offset )
       
       // return allocation amount
-      return utilties.getMemoryIndex - idx
+      return utilties.getMemoryIndex() - idx
     }
   }
 

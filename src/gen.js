@@ -254,6 +254,7 @@ const gen = {
 
       return ugen
     }
+    return factory
   },
 
   getfunctable() {
